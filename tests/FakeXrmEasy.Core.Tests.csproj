@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2013</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2015'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2015</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2016'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2016</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_365'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_365</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_9'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_9</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FakeItEasy" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Powerplatform.Cds.Client" Version="0.0.1.7-Alpha" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.console" Version="2.4.1" />
+    <PackageReference Include="coverlet.collector" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\FakeXrmEasy.Core.csproj" />
+  </ItemGroup>
+
+</Project>

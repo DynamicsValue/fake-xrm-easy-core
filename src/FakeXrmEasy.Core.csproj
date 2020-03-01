@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2013</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2015'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2015</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2016'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2016</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_365'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_365</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_9'">
+    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_9</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FakeItEasy" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Powerplatform.Cds.Client" Version="0.0.1.7-Alpha" />
+  </ItemGroup>
+</Project>
