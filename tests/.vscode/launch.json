@@ -1,0 +1,21 @@
+{
+   // Use IntelliSense to find out which attributes exist for C# debugging
+   // Use hover for the description of the existing attributes
+   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+   "version": "0.2.0",
+   "configurations": [
+        {
+            "name": "xunit test (FAKE_XRM_EASY)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "dotnet",
+            "args": ["test", "--configuration", "FAKE_XRM_EASY"],
+            "cwd": "${workspaceFolder}",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }
+    ]
+}

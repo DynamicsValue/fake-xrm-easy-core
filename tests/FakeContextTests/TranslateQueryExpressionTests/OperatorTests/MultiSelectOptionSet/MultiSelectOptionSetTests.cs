@@ -65,7 +65,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var qe = new QueryExpression("contact");
             qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.Equal, new OptionSetValue(2));
 
-            Assert.Throws<FaultException>(() => service.RetrieveMultiple(qe));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.RetrieveMultiple(qe));
         }
 
         [Fact]
@@ -231,7 +231,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var qe = new QueryExpression("contact");
             qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.In, new OptionSetValue(2));
 
-            Assert.Throws<FaultException>(() => service.RetrieveMultiple(qe));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.RetrieveMultiple(qe));
         }
 
         [Fact]
@@ -245,7 +245,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var qe = new QueryExpression("contact");
             qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.In, new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) });
 
-            Assert.Throws<FaultException>(() => service.RetrieveMultiple(qe));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.RetrieveMultiple(qe));
         }
 
         [Fact]
@@ -502,7 +502,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var qe = new QueryExpression("contact");
             qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.ContainValues, new OptionSetValue(2));
 
-            Assert.Throws<FaultException>(() => service.RetrieveMultiple(qe));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.RetrieveMultiple(qe));
         }
 
         [Fact]
@@ -516,7 +516,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var qe = new QueryExpression("contact");
             qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.ContainValues, new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) });
 
-            Assert.Throws<FaultException>(() => service.RetrieveMultiple(qe));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.RetrieveMultiple(qe));
         }
 
         [Fact]
