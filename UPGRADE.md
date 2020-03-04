@@ -6,5 +6,8 @@ Breaking changes
 
  - Some messages returning FaultException now return FaultException&lt;OrganizationServiceFault&gt;
 
- - Pacakges will target .net core only, or .net standard, if crmsdk packages are updated to use .net standard eventually.
+ - Packages will target .net core only, or .net standard, if crmsdk packages are updated to use .net standard eventually.
+
+ - Workflows and CodeActivities are gone from this version, due to the .Cds.Client nuget package exposing only client functionality, and does not support plugins or workflows... yet.
+
 
