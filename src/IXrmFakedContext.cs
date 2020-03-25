@@ -23,6 +23,7 @@ namespace FakeXrmEasy
         /// DEPRECATED: Consider using GetOrganizationService instead
         /// </summary>
         /// <returns></returns>
+        [Obsolete("Use GetOrganizationService() instead")]
         IOrganizationService GetFakedOrganizationService();
 
         ///// <summary>
