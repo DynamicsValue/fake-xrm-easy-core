@@ -9,7 +9,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
 {
     public class OrgServiceContextTests
     {
-        /*   MS_ISSUE  Rpcrt4 related
+        //   MS_ISSUE  Rpcrt4 related
         [Fact]
         public void When_calling_context_add_and_save_changes_entity_is_added_to_the_faked_context()
         {
@@ -29,9 +29,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
             }
         }
 
-        */
 
-        /*    MS_ISSUE  Rpcrt4 related
+
+        //    MS_ISSUE  Rpcrt4 related
 
         [Fact]
         public void When_calling_context_add_and_save_changes_returns_correct_result()
@@ -52,9 +52,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
             }
         }
 
-        */
 
-        /*   MS_ISSUE  Rpcrt4 related
+
+        //   MS_ISSUE  Rpcrt4 related
 
         [Fact]
         public void When_calling_context_add_addrelated_and_save_changes_entities_are_added_to_the_faked_context()
@@ -103,6 +103,5 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
             }
         }
 
-        */
     }
 }
