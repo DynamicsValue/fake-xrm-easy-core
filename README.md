@@ -1,9 +1,11 @@
 ﻿Fake Xrm Easy: TDD for Dynamics CRM and Dynamics 365 (or now Common Data Service for Apps) made simple
 =================================================================================
 
+
+
 |Build|Line Coverage|Branch Coverage|
 |-----------|-----|-----------------|
-|[![Build status](https://ci.appveyor.com/api/projects/status/2g8yc8jg817746du?svg=true)](https://ci.appveyor.com/project/Jordi/fake-xrm-easy)|[![Line coverage](https://cdn.rawgit.com/jordimontana82/fake-xrm-easy/master/test/reports/badge_linecoverage.svg?v=1.55.0)](https://cdn.rawgit.com/jordimontana82/fake-xrm-easy/master/test/reports/index.htm?v=1.55.0)|[![Branch coverage](https://cdn.rawgit.com/jordimontana82/fake-xrm-easy/master/test/reports/badge_branchcoverage.svg?v=1.55.0)](https://cdn.rawgit.com/jordimontana82/fake-xrm-easy/master/test/reports/index.htm?v=1.55.0)|
+|[![.NET Core](https://github.com/DynamicsValue/fake-xrm-easy-core/workflows/.NET%20Core/badge.svg)|-|
 
 <b>Streamline unit testing</b> in Dynamics CRM by faking the `IOrganizationService` to work with an in-memory context.
 
