@@ -19,9 +19,6 @@ jobs:
       with:
         dotnet-version: 3.1.101
  
-    - name: Install sonar scanner .net Global Tool
-      run: dotnet tool install --global dotnet-sonarscanner --version 4.7.1
-
     - name: Install src dependencies
       run: dotnet restore src/FakeXrmEasy.Core.csproj
      
