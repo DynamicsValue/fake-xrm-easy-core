@@ -8,6 +8,9 @@
 		},
 		{
 			"path": ".github"
+		},
+		{
+			"path": ".git"
 		}
 	],
 	"settings": {}
