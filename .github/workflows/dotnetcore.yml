@@ -13,13 +13,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET Core
+
+    - name: Setup .NET Core 2.1 for Sonar
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.1.3
+
+    - name: Setup .NET Core for Actual Source
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
  
     - name: Install sonar scanner .net Global Tool
-      run: dotnet tool install --global dotnet-sonarscanner --version 4.8
+      run: dotnet tool install --global dotnet-sonarscanner --version 4.7.1
 
     - name: Install src dependencies
       run: dotnet restore src/FakeXrmEasy.Core.csproj
