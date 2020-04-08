@@ -19,16 +19,16 @@ jobs:
         dotnet-version: 3.1.101
  
     - name: Install src dependencies
-      run: dotnet restore src/FakeXrmEasyCore.csproj
+      run: dotnet restore src/FakeXrmEasy.Core.csproj
 
     - name: Build src proj
-      run: dotnet build src/FakeXrmEasyCore.csproj --configuration Debug --no-restore
+      run: dotnet build src/FakeXrmEasy.Core.csproj --configuration Debug --no-restore
 
     - name: Install test dependencies
-      run: dotnet restore tests/FakeXrmEasyCore.Tests.csproj
+      run: dotnet restore tests/FakeXrmEasy.Core.Tests.csproj
 
     - name: Build test proj
-      run: dotnet build tests/FakeXrmEasyCore.Tests.csproj --configuration Debug --no-restore
+      run: dotnet build tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore
   
     - name: Test
-      run: dotnet test tests/FakeXrmEasyCore.Tests.csproj--configuration Debug --no-restore --verbosity normal
+      run: dotnet test tests/FakeXrmEasy.Core.Tests.csproj--configuration Debug --no-restore --verbosity normal
