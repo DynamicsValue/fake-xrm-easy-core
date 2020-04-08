@@ -18,9 +18,19 @@ jobs:
       with:
         dotnet-version: 3.1.101
  
+    - name: Install sonar scanner .net Global Tool
+      run: dotnet tool install --global dotnet-sonarscanner --version 4.7.1
+
     - name: Install src dependencies
       run: dotnet restore src/FakeXrmEasy.Core.csproj
 
+    - name: SonarCloud Begin
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+      run: dotnet sonarscanner begin /k:"${SONAR_PROJECT_KEY}" /o:"dynamicsvalue" /d:sonar.login="${SONAR_TOKEN}"
+      
     - name: Build src proj
       run: dotnet build src/FakeXrmEasy.Core.csproj --configuration Debug --no-restore
 
@@ -33,9 +43,10 @@ jobs:
     - name: Test
       run: dotnet test tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore --verbosity normal
     
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
+    - name: SonarCloud End
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner end /d:sonar.login="<token>" 
+    
+    
     
