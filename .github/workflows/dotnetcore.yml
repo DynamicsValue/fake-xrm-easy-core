@@ -31,4 +31,4 @@ jobs:
       run: dotnet build tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore
   
     - name: Test
-      run: dotnet test tests/FakeXrmEasy.Core.Tests.csproj--configuration Debug --no-restore --verbosity normal
+      run: dotnet test tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore --verbosity normal
