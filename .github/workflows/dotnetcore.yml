@@ -17,9 +17,18 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
+ 
+    - name: Install src dependencies
+      run: dotnet restore src/FakeXrmEasyCore.csproj
+
+    - name: Build src proj
+      run: dotnet build src/FakeXrmEasyCore.csproj --configuration Debug --no-restore
+
+    - name: Install test dependencies
+      run: dotnet restore tests/FakeXrmEasyCore.Tests.csproj
+
+    - name: Build test proj
+      run: dotnet build tests/FakeXrmEasyCore.Tests.csproj --configuration Debug --no-restore
+  
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test tests/FakeXrmEasyCore.Tests.csproj--configuration Debug --no-restore --verbosity normal
