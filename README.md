@@ -5,7 +5,7 @@
 
 |Build|Line Coverage|Branch Coverage|
 |-----------|-----|-----------------|
-|[![.NET Core](https://github.com/DynamicsValue/fake-xrm-easy-core/workflows/.NET%20Core/badge.svg)|-|
+|![.NET Core](https://github.com/DynamicsValue/fake-xrm-easy-core/workflows/.NET%20Core/badge.svg)|-|
 
 <b>Streamline unit testing</b> in Dynamics CRM by faking the `IOrganizationService` to work with an in-memory context.
 
