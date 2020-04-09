@@ -19,26 +19,20 @@ jobs:
       with:
         dotnet-version: 3.1.101
  
-    - name: Install src dependencies
-      run: dotnet restore src/FakeXrmEasy.Core.csproj
+    - name: Install dependencies
+      run: dotnet restore
      
-    - name: Build src proj
-      run: dotnet build src/FakeXrmEasy.Core.csproj --configuration Debug --no-restore
-
-    - name: Install test dependencies
-      run: dotnet restore tests/FakeXrmEasy.Core.Tests.csproj
-
-    - name: Build test proj
-      run: dotnet build tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore
+    - name: Build
+      run: dotnet build --configuration Debug --no-restore
   
     - name: Test
-      run: dotnet test tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore --verbosity normal
+      run: dotnet test --configuration Debug --no-restore --verbosity normal
   
     - name: Sonarscanner for dotnet
       uses: Secbyte/dotnet-sonarscanner@v2.2
       with:
-        buildCommand: dotnet build ./tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug
-        testCommand: dotnet test ./tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --verbosity normal
+        buildCommand: dotnet build . --configuration Debug
+        testCommand: dotnet test . --configuration Debug --verbosity normal
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
         projectName: fake-xrm-easy-core
         sonarOrganisation: dynamicsvalue
