@@ -37,8 +37,8 @@ jobs:
     - name: Sonarscanner for dotnet
       uses: Secbyte/dotnet-sonarscanner@v2.2
       with:
-        buildCommand: dotnet build ./tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore
-        testCommand: dotnet test ./tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore --verbosity normal
+        buildCommand: dotnet build ./tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug
+        testCommand: dotnet test ./tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --verbosity normal
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
         projectName: fake-xrm-easy-core
         sonarOrganisation: dynamicsvalue
