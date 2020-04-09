@@ -34,11 +34,21 @@ jobs:
     - name: Test
       run: dotnet test tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore --verbosity normal
   
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
+    - name: Sonarscanner for dotnet
+      uses: Secbyte/dotnet-sonarscanner@v2.2
+      with:
+        buildCommand: dotnet build ./tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore
+        testCommand: dotnet test ./tests/FakeXrmEasy.Core.Tests.csproj --configuration Debug --no-restore --verbosity normal
+        projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
+        projectName: fake-xrm-easy-core
+        sonarOrganisation: dynamicsvalue
+        beginArguments: |
+            /d:sonar.verbose="true"
+            /d:sonar.cs.opencover.reportsPaths="/path/to/coverage.xml"
+            /d:sonar.coverage.exclusions="**/*.cs"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     
     
