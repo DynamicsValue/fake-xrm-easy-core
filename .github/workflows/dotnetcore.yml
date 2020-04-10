@@ -38,7 +38,7 @@ jobs:
         sonarOrganisation: dynamicsvalue
         beginArguments: >
             /d:sonar.verbose="true"
-            /d:sonar.cs.opencover.reportsPaths='"tests/TestResults"'
+            /d:sonar.cs.opencover.reportsPaths='"tests/TestResults/**/coverage.opencover.xml"'
             /d:sonar.coverage.exclusions='"tests/**"'
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
