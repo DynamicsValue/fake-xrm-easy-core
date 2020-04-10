@@ -16,7 +16,7 @@ namespace FakeXrmEasy.Extensions
         public static bool IsPrimitive(this Type type)
         {
             if (type == typeof(String)) return true;
-            return (type.IsValueType & type.IsPrimitive);
+            return (type.IsValueType && type.IsPrimitive);
         }
 
         private static FieldInfo GetFieldInfo(Type type, string fieldName)
