@@ -3,6 +3,9 @@ name: .NET Core
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - 'coverage/**'
+
   pull_request:
     branches: [ master ]
 
@@ -21,13 +24,19 @@ jobs:
  
     - name: Install dependencies
       run: dotnet restore
-     
+    
+    - name: Install Report Generator tool
+      run: dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
+
     - name: Build
       run: dotnet build --configuration Debug --no-restore
   
     - name: Test
-      run: dotnet test --configuration Debug --no-restore --verbosity normal
+      run: dotnet test --configuration Debug --no-restore --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings
   
+    - name: Report generator
+      run: ./reportgenerator "-reports:tests/TestResults/**/coverage.opencover.xml" "-targetdir:coverage/reports" "-reporttypes:HTMLInline;HTMLChart;Badges"
+
     - name: Sonarscanner for dotnet
       uses: DynamicsValue/dotnet-sonarscanner@v2.2
       with:
