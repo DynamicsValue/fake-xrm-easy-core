@@ -5,6 +5,7 @@
 *.suo
 *.user
 *.sln.docstates
+*.store
 
 # Build results
 [Dd]ebug/
@@ -201,3 +202,4 @@ test/*
 
 #Visual Studio
 .vs/
+reportgenerator
