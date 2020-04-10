@@ -17,19 +17,19 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (retrieveOptionSetRequest.MetadataId != Guid.Empty) //ToDo: Implement retrieving option sets by Id
             {
-                FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.ObjectDoesNotExist, $"Could not find optionset with optionset id: {retrieveOptionSetRequest.MetadataId}");
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.ObjectDoesNotExist, $"Could not find optionset with optionset id: {retrieveOptionSetRequest.MetadataId}");
             }
 
             var name = retrieveOptionSetRequest.Name;
 
             if (string.IsNullOrEmpty(name))
             {
-                FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.InvalidArgument, "Name is required when optionSet id is not specified");
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument, "Name is required when optionSet id is not specified");
             }
 
             if (!ctx.OptionSetValuesMetadata.ContainsKey(name))
             {
-                FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.ObjectDoesNotExist, string.Format("An OptionSetMetadata with the name {0} does not exist.", name));
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.ObjectDoesNotExist, string.Format("An OptionSetMetadata with the name {0} does not exist.", name));
             }
 
             var optionSetMetadata = ctx.OptionSetValuesMetadata[name];

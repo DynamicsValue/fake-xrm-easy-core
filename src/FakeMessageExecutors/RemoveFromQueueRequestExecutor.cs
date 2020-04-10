@@ -21,7 +21,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             var queueItemId = removeFromQueueRequest.QueueItemId;
             if (queueItemId == Guid.Empty)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Cannot remove without queue item.");
+                throw FakeOrganizationServiceFaultFactory.New("Cannot remove without queue item.");
             }
 
             var service = ctx.GetOrganizationService();

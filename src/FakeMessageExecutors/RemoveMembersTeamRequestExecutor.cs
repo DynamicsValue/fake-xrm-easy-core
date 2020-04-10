@@ -20,12 +20,12 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (req.TeamId == null || req.TeamId == Guid.Empty)
             {
-                FakeOrganizationServiceFaultFactory.Throw("TeamId parameter is required");
+                throw FakeOrganizationServiceFaultFactory.New("TeamId parameter is required");
             }
 
             if (req.MemberIds == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("MemberIds parameter is required");
+                throw FakeOrganizationServiceFaultFactory.New("MemberIds parameter is required");
             }
 
             var service = ctx.GetOrganizationService();
@@ -35,7 +35,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (team == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw(string.Format("Team with Id {0} wasn't found", req.TeamId.ToString()));
+                throw FakeOrganizationServiceFaultFactory.New(string.Format("Team with Id {0} wasn't found", req.TeamId.ToString()));
             }
 
             foreach (var memberId in req.MemberIds)
@@ -43,7 +43,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 var user = ctx.CreateQuery("systemuser").FirstOrDefault(e => e.Id == memberId);
                 if (user == null)
                 {
-                    FakeOrganizationServiceFaultFactory.Throw(string.Format("SystemUser with Id {0} wasn't found", memberId.ToString()));
+                    throw FakeOrganizationServiceFaultFactory.New(string.Format("SystemUser with Id {0} wasn't found", memberId.ToString()));
                 }
 
                 var queryTeamMember = new QueryExpression("teammembership")

@@ -18,12 +18,12 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
 			if (req.MemberIds == null)
 			{
-				FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.InvalidArgument, "MemberIds parameter is required");
+				throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument, "MemberIds parameter is required");
 			}
 
 			if (req.TeamId == Guid.Empty)
 			{
-				FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.InvalidArgument, "TeamId parameter is required");
+				throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument, "TeamId parameter is required");
 			}
 
 			var service = ctx.GetOrganizationService();
@@ -33,17 +33,17 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
 			if (team == null)
 			{
-				FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.ObjectDoesNotExist, string.Format("Team with Id {0} wasn't found", req.TeamId.ToString()));
+				throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.ObjectDoesNotExist, string.Format("Team with Id {0} wasn't found", req.TeamId.ToString()));
 			}
 
-			//ToDo:	FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.CannotAddMembersToDefaultTeam, "Can't add members to the default business unit team.");
+			//ToDo:	throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.CannotAddMembersToDefaultTeam, "Can't add members to the default business unit team.");
 
 			foreach (var memberId in req.MemberIds)
 			{
 				var user = ctx.CreateQuery("systemuser").FirstOrDefault(e => e.Id == memberId);
 				if (user == null)
 				{
-					FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.ObjectDoesNotExist, string.Format("SystemUser with Id {0} wasn't found", memberId.ToString()));
+					throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.ObjectDoesNotExist, string.Format("SystemUser with Id {0} wasn't found", memberId.ToString()));
 				}
 
 				// Create teammembership

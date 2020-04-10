@@ -27,20 +27,20 @@ namespace FakeXrmEasy.FakeMessageExecutors
             var incidentResolution = closeIncidentRequest.IncidentResolution;
             if (incidentResolution == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Cannot close incident without incident resolution.");
+                throw FakeOrganizationServiceFaultFactory.New("Cannot close incident without incident resolution.");
             }
 
             var status = closeIncidentRequest.Status;
             if (status == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Cannot close incident without status.");
+                throw FakeOrganizationServiceFaultFactory.New("Cannot close incident without status.");
             }
 
             var incidentId = (EntityReference)incidentResolution[AttributeIncidentId];
             if (ctx.Data.ContainsKey(IncidentLogicalName) &&
                 ctx.Data[IncidentLogicalName].Values.SingleOrDefault(p => p.Id == incidentId.Id) == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw(string.Format("Incident with id {0} not found.", incidentId.Id));
+                throw FakeOrganizationServiceFaultFactory.New(string.Format("Incident with id {0} not found.", incidentId.Id));
             }
 
             var newIncidentResolution = new Entity

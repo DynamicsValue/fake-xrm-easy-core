@@ -29,7 +29,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             var columnSet = request.ColumnSet;
             if (columnSet == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Required field 'ColumnSet' is missing");
+                throw FakeOrganizationServiceFaultFactory.New("Required field 'ColumnSet' is missing");
             }
 
             var id = context.GetRecordUniqueId(request.Target);
@@ -157,8 +157,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             else
             {
                 // Entity not found in the context => FaultException //unchecked((int)0x80040217)
-                FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.ObjectDoesNotExist, $"{entityName} With Id = {id:D} Does Not Exist");
-                return new RetrieveResponse(); //technically unreachable code
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.ObjectDoesNotExist, $"{entityName} With Id = {id:D} Does Not Exist");
             }
         }
 

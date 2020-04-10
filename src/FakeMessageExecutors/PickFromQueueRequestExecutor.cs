@@ -25,7 +25,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if ((queueItemId == Guid.Empty) || (workerid == Guid.Empty))
             {
-                FakeOrganizationServiceFaultFactory.Throw("Expected non-empty Guid.");
+                throw FakeOrganizationServiceFaultFactory.New("Expected non-empty Guid.");
             }
 
             var service = ctx.GetOrganizationService();
@@ -37,7 +37,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             var worker = service.RetrieveMultiple(query).Entities.FirstOrDefault();
             if (worker == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw(string.Format("Invalid workerid: {0} of type 8", workerid));
+                throw FakeOrganizationServiceFaultFactory.New(string.Format("Invalid workerid: {0} of type 8", workerid));
             }
 
             query = new QueryByAttribute("queueitem");
@@ -47,7 +47,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             var queueItem = service.RetrieveMultiple(query).Entities.FirstOrDefault();
             if (queueItem == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw(string.Format("queueitem With Id = {0} Does Not Exist", queueItemId));
+                throw FakeOrganizationServiceFaultFactory.New(string.Format("queueitem With Id = {0} Does Not Exist", queueItemId));
             }
 
             if (pickFromQueueRequest.RemoveQueueItem)

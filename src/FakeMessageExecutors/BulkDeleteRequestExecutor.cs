@@ -19,19 +19,19 @@ namespace FakeXrmEasy.FakeMessageExecutors
            
             if (string.IsNullOrEmpty(bulkDeleteRequest.JobName))
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not Bulk delete without JobName");
+                throw FakeOrganizationServiceFaultFactory.New("Can not Bulk delete without JobName");
             }
             if (bulkDeleteRequest.QuerySet == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not Bulk delete without QuerySet");
+                throw FakeOrganizationServiceFaultFactory.New("Can not Bulk delete without QuerySet");
             }
             if (bulkDeleteRequest.CCRecipients == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not Bulk delete without CCRecipients");
+                throw FakeOrganizationServiceFaultFactory.New("Can not Bulk delete without CCRecipients");
             }
             if (bulkDeleteRequest.ToRecipients == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not Bulk delete without ToRecipients");
+                throw FakeOrganizationServiceFaultFactory.New("Can not Bulk delete without ToRecipients");
             }
 
             var service = ctx.GetOrganizationService();

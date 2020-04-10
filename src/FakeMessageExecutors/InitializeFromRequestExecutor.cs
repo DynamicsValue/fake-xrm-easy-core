@@ -23,7 +23,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
         {
             var req = request as InitializeFromRequest;
             if (req == null)
-                FakeOrganizationServiceFaultFactory.Throw( "Cannot execute InitializeFromRequest without the request");
+                throw FakeOrganizationServiceFaultFactory.New( "Cannot execute InitializeFromRequest without the request");
 
             //TODO: Implement logic to filter mapping attributes based on the req.TargetFieldType
             if (req.TargetFieldType != TargetFieldType.All)

@@ -13,8 +13,7 @@ namespace FakeXrmEasy.Services
     }
     public class DefaultEntityInitializerService : IEntityInitializerService
     {
-        
-        public Dictionary<string, IEntityInitializerService> InitializerServiceDictionary;
+        public Dictionary<string, IEntityInitializerService> InitializerServiceDictionary { get; set; } 
 
         public DefaultEntityInitializerService()
         {

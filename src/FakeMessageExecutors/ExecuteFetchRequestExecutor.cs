@@ -25,7 +25,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (executeFetchRequest.FetchXml == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("You need to provide FetchXml value");
+                throw FakeOrganizationServiceFaultFactory.New("You need to provide FetchXml value");
             }
 
             var service = ctx.GetOrganizationService();

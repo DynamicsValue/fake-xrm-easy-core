@@ -24,12 +24,12 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (target == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not add to queue without target");
+                throw FakeOrganizationServiceFaultFactory.New("Can not add to queue without target");
             }
 
             if (destinationQueueId == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not add to queue without destination queue");
+                throw FakeOrganizationServiceFaultFactory.New("Can not add to queue without destination queue");
             }
 
             var service = ctx.GetOrganizationService();

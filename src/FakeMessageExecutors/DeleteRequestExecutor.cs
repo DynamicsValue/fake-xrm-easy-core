@@ -20,7 +20,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (target == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not delete without target");
+                throw FakeOrganizationServiceFaultFactory.New("Can not delete without target");
             }
 
             var targetId = ctx.GetRecordUniqueId(target);

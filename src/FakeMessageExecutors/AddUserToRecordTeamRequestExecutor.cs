@@ -24,17 +24,17 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (target == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not add to team without target");
+                throw FakeOrganizationServiceFaultFactory.New("Can not add to team without target");
             }
 
             if (systemuserId == Guid.Empty)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not add to team without user");
+                throw FakeOrganizationServiceFaultFactory.New("Can not add to team without user");
             }
 
             if (teamTemplateId == Guid.Empty)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not add to team without team");
+                throw FakeOrganizationServiceFaultFactory.New("Can not add to team without team");
             }
 
             IOrganizationService service = ctx.GetOrganizationService();
@@ -42,13 +42,13 @@ namespace FakeXrmEasy.FakeMessageExecutors
             Entity teamTemplate = ctx.CreateQuery("teamtemplate").FirstOrDefault(p => p.Id == teamTemplateId);
             if (teamTemplate == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Team template with id=" + teamTemplateId + " does not exist");
+                throw FakeOrganizationServiceFaultFactory.New("Team template with id=" + teamTemplateId + " does not exist");
             }
 
             Entity user = ctx.CreateQuery("systemuser").FirstOrDefault(p => p.Id == systemuserId);
             if (user == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("User with id=" + teamTemplateId + " does not exist");
+                throw FakeOrganizationServiceFaultFactory.New("User with id=" + teamTemplateId + " does not exist");
             }
 
 

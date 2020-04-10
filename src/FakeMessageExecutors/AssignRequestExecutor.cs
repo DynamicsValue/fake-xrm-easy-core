@@ -22,12 +22,12 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (target == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not assign without target");
+                throw FakeOrganizationServiceFaultFactory.New("Can not assign without target");
             }
 
             if (assignee == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not assign without assignee");
+                throw FakeOrganizationServiceFaultFactory.New("Can not assign without assignee");
             }
 
             var service = ctx.GetOrganizationService();

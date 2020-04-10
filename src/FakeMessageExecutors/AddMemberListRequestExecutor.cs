@@ -26,12 +26,12 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if ( req.ListId == Guid.Empty)
             {
-				FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.InvalidArgument, "ListId parameter is required");
+				throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument, "ListId parameter is required");
             }
 
             if ( req.EntityId == Guid.Empty)
             {
-				FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.InvalidArgument, "EntityId parameter is required");
+				throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument, "EntityId parameter is required");
             }
 
             var service = ctx.GetOrganizationService();
@@ -43,18 +43,18 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (list == null)
             {
-				FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.IsvAborted, string.Format("List with Id {0} wasn't found", req.ListId.ToString()));
+				throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.IsvAborted, string.Format("List with Id {0} wasn't found", req.ListId.ToString()));
             }
 
             //Find the member
             if (!list.Attributes.ContainsKey("createdfromcode"))
             {
-				FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.IsvUnExpected, string.Format("List with Id {0} must have a CreatedFromCode attribute defined and it has to be an option set value.", req.ListId.ToString()));
+				throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.IsvUnExpected, string.Format("List with Id {0} must have a CreatedFromCode attribute defined and it has to be an option set value.", req.ListId.ToString()));
             }
 
             if (list["createdfromcode"] != null && !(list["createdfromcode"] is OptionSetValue))
             {
-				FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.IsvUnExpected, string.Format("List with Id {0} must have a CreatedFromCode attribute defined and it has to be an option set value.", req.ListId.ToString()));
+				throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.IsvUnExpected, string.Format("List with Id {0} must have a CreatedFromCode attribute defined and it has to be an option set value.", req.ListId.ToString()));
             }
 
             var createdFromCodeValue = (list["createdfromcode"] as OptionSetValue).Value;
@@ -74,7 +74,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
                     break;
 
                 default:
-					FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.IsvUnExpected, string.Format("List with Id {0} must have a supported CreatedFromCode value (Account, Contact or Lead).", req.ListId.ToString()));
+					throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.IsvUnExpected, string.Format("List with Id {0} must have a supported CreatedFromCode value (Account, Contact or Lead).", req.ListId.ToString()));
 					break;
 			}
 
@@ -84,7 +84,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (member == null)
             {
-				FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.IsvAborted, string.Format("Member with Id {0} wasn't found", req.EntityId.ToString()));
+				throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.IsvAborted, string.Format("Member with Id {0} wasn't found", req.EntityId.ToString()));
             }
 
             //create member list

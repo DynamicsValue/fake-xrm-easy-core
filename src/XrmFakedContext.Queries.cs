@@ -316,7 +316,7 @@ namespace FakeXrmEasy
             {
                 if (!Regex.IsMatch(le.EntityAlias, "^[A-Za-z_](\\w|\\.)*$", RegexOptions.ECMAScript))
                 {
-                FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.QueryBuilderInvalid_Alias, $"Invalid character specified for alias: {le.EntityAlias}. Only characters within the ranges [A-Z], [a-z] or [0-9] or _ are allowed.  The first character may only be in the ranges [A-Z], [a-z] or _.");
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.QueryBuilderInvalid_Alias, $"Invalid character specified for alias: {le.EntityAlias}. Only characters within the ranges [A-Z], [a-z] or [0-9] or _ are allowed.  The first character may only be in the ranges [A-Z], [a-z] or _.");
                 }
             }
 
@@ -326,7 +326,7 @@ namespace FakeXrmEasy
 
             if (!context.AttributeExistsInMetadata(le.LinkToEntityName, le.LinkToAttributeName))
             {
-                FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.QueryBuilderNoAttribute, string.Format("The attribute {0} does not exist on this entity.", le.LinkToAttributeName));
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.QueryBuilderNoAttribute, string.Format("The attribute {0} does not exist on this entity.", le.LinkToAttributeName));
             }
 
             IQueryable<Entity> inner = null;
@@ -608,19 +608,19 @@ namespace FakeXrmEasy
             var matches = qe.LinkEntities != null ? MatchByAlias(qe, context, condition, qe.LinkEntities) : 0;
             if (matches > 1)
             {
-                FakeOrganizationServiceFaultFactory.Throw($"Table {condition.EntityName} is not unique amongst all top-level table and join aliases");
+                throw FakeOrganizationServiceFaultFactory.New($"Table {condition.EntityName} is not unique amongst all top-level table and join aliases");
             }
             else if (matches == 0)
             {
                 if (qe.LinkEntities != null) matches = MatchByEntity(qe, context, condition, qe.LinkEntities);
                 if (matches > 1)
                 {
-                    FakeOrganizationServiceFaultFactory.Throw($"There's more than one LinkEntity expressions with name={condition.EntityName}");
+                    throw FakeOrganizationServiceFaultFactory.New($"There's more than one LinkEntity expressions with name={condition.EntityName}");
                 }
                 else if (matches == 0)
                 {
                     if (condition.EntityName == qe.EntityName) return;
-                    FakeOrganizationServiceFaultFactory.Throw($"LinkEntity with name or alias {condition.EntityName} is not found");
+                    throw FakeOrganizationServiceFaultFactory.New($"LinkEntity with name or alias {condition.EntityName} is not found");
                 }
                 condition.EntityName += "1";
             }
@@ -908,7 +908,7 @@ namespace FakeXrmEasy
 
             if (!supportedOperators.Contains(typedExpression.CondExpression.Operator))
             {
-                FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.InvalidOperatorCode, "The operator is not valid or it is not supported.");
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidOperatorCode, "The operator is not valid or it is not supported.");
             }
         }
 
@@ -1293,7 +1293,7 @@ namespace FakeXrmEasy
                 }
                 else
                 {
-                    FakeOrganizationServiceFaultFactory.Throw(faultReason);
+                    throw FakeOrganizationServiceFaultFactory.New(faultReason);
                 }
             }
             else if (isOptionSetValueCollectionAccepted && input is OptionSetValueCollection)
@@ -1302,7 +1302,7 @@ namespace FakeXrmEasy
             }
             else
             {
-                FakeOrganizationServiceFaultFactory.Throw(faultReason);
+                throw FakeOrganizationServiceFaultFactory.New(faultReason);
             }
 
             return set;
@@ -1407,7 +1407,7 @@ namespace FakeXrmEasy
         {
             if (c.CondExpression.Values.Count != 1)
             {
-                FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.InvalidArgument, $"The {c.CondExpression.Operator} requires 1 value/s, not {c.CondExpression.Values.Count}.Parameter name: {c.CondExpression.AttributeName}");
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument, $"The {c.CondExpression.Operator} requires 1 value/s, not {c.CondExpression.Values.Count}.Parameter name: {c.CondExpression.AttributeName}");
             }
 
             var conditionValue = c.CondExpression.Values.Single();
@@ -1425,7 +1425,7 @@ namespace FakeXrmEasy
 
                 if (count != 1)
                 {
-                    FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.InvalidArgument, $"The {c.CondExpression.Operator} requires 1 value/s, not {count}.Parameter name: {c.CondExpression.AttributeName}");
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument, $"The {c.CondExpression.Operator} requires 1 value/s, not {count}.Parameter name: {c.CondExpression.AttributeName}");
                 }
             }
 

@@ -23,7 +23,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (currencyId == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("Can not retrieve Exchange Rate without Transaction Currency Guid");
+                throw FakeOrganizationServiceFaultFactory.New("Can not retrieve Exchange Rate without Transaction Currency Guid");
             }
 
             var service = ctx.GetOrganizationService();
@@ -42,7 +42,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (!result.Any())
             {
-                FakeOrganizationServiceFaultFactory.Throw("Transaction Currency not found");
+                throw FakeOrganizationServiceFaultFactory.New("Transaction Currency not found");
             }
 
             var exchangeRate = result.First().GetAttributeValue<decimal>("exchangerate");

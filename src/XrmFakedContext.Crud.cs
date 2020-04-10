@@ -186,7 +186,7 @@ namespace FakeXrmEasy
             else
             {
                 // The entity record was not found, return a CRM-ish update error message
-                FakeOrganizationServiceFaultFactory.Throw($"{e.LogicalName} with Id {e.Id} Does Not Exist");
+                throw FakeOrganizationServiceFaultFactory.New($"{e.LogicalName} with Id {e.Id} Does Not Exist");
             }
         }
 
@@ -200,7 +200,7 @@ namespace FakeXrmEasy
                 }
                 else
                 {
-                    FakeOrganizationServiceFaultFactory.Throw($"{er.LogicalName} With Id = {er.Id:D} Does Not Exist");
+                    throw FakeOrganizationServiceFaultFactory.New($"{er.LogicalName} With Id = {er.Id:D} Does Not Exist");
                 }
             }
             return er;
@@ -280,7 +280,7 @@ namespace FakeXrmEasy
             {
                 // Entity not found in the context => throw not found exception
                 // The entity record was not found, return a CRM-ish update error message
-                FakeOrganizationServiceFaultFactory.Throw($"{er.LogicalName} with Id {er.Id} Does Not Exist");
+                throw FakeOrganizationServiceFaultFactory.New($"{er.LogicalName} with Id {er.Id} Does Not Exist");
             }
         }
         #endregion

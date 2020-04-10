@@ -19,12 +19,12 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             if (executeMultipleRequest.Settings == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("You need to pass a value for 'Settings' in execute multiple request");
+                throw FakeOrganizationServiceFaultFactory.New("You need to pass a value for 'Settings' in execute multiple request");
             }
 
             if (executeMultipleRequest.Requests == null)
             {
-                FakeOrganizationServiceFaultFactory.Throw("You need to pass a value for 'Requests' in execute multiple request");
+                throw FakeOrganizationServiceFaultFactory.New("You need to pass a value for 'Requests' in execute multiple request");
             }
 
             var service = ctx.GetOrganizationService();

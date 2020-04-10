@@ -142,7 +142,7 @@ namespace FakeXrmEasy.Extensions
                     //Check if attribute really exists in metadata
                     if (!context.AttributeExistsInMetadata(e.LogicalName, attKey))
                     {
-                        FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.QueryBuilderNoAttribute, string.Format("The attribute {0} does not exist on this entity.", attKey));
+                        throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.QueryBuilderNoAttribute, string.Format("The attribute {0} does not exist on this entity.", attKey));
                     }
 
                     if (e.Attributes.ContainsKey(attKey) && e.Attributes[attKey] != null)
@@ -272,8 +272,6 @@ namespace FakeXrmEasy.Extensions
                 return attributeValue; //Not a reference type
             else if (type == typeof(byte))
                 return attributeValue; //Not a reference type
-            else if (type == typeof(float))
-                return attributeValue; //Not a reference type
             else if (type == typeof(bool))
                 return attributeValue; //Not a reference type
             else if (type == typeof(Guid))
@@ -383,7 +381,7 @@ namespace FakeXrmEasy.Extensions
                 {
                     if (!context.AttributeExistsInMetadata(otherEntity.LogicalName, attKey))
                     {
-                        FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.QueryBuilderNoAttribute, string.Format("The attribute {0} does not exist on this entity.", attKey));
+                        throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.QueryBuilderNoAttribute, string.Format("The attribute {0} does not exist on this entity.", attKey));
                     }
 
                     if (otherEntity.Attributes.ContainsKey(attKey))
@@ -429,7 +427,7 @@ namespace FakeXrmEasy.Extensions
                     {
                         if (!context.AttributeExistsInMetadata(otherEntity.LogicalName, attKey))
                         {
-                            FakeOrganizationServiceFaultFactory.Throw(ErrorCodes.QueryBuilderNoAttribute, string.Format("The attribute {0} does not exist on this entity.", attKey));
+                            throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.QueryBuilderNoAttribute, string.Format("The attribute {0} does not exist on this entity.", attKey));
                         }
 
                         if (otherClonedEntity.Attributes.ContainsKey(attKey))
