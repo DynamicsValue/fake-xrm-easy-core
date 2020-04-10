@@ -27,7 +27,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 throw FakeOrganizationServiceFaultFactory.New("Can not add to queue without target");
             }
 
-            if (destinationQueueId == null)
+            if (destinationQueueId == Guid.Empty)
             {
                 throw FakeOrganizationServiceFaultFactory.New("Can not add to queue without destination queue");
             }
