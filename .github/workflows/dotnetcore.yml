@@ -26,10 +26,10 @@ jobs:
       run: dotnet build --configuration Debug --no-restore
   
     - name: Test
-      run: dotnet test --configuration Debug --no-restore --verbosity normal
+      run: dotnet test --configuration Debug --no-restore --verbosity normal --collect:"XPlat Code Coverage"
   
     - name: Sonarscanner for dotnet
-      uses: Secbyte/dotnet-sonarscanner@v2.2
+      uses: DynamicsValue/dotnet-sonarscanner@v2.2
       with:
         buildCommand: dotnet build . --configuration Debug
         testCommand: dotnet test . --configuration Debug --verbosity normal
