@@ -26,13 +26,13 @@ jobs:
       run: dotnet build --configuration Debug --no-restore
   
     - name: Test
-      run: dotnet test --configuration Debug --no-restore --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings
+      run: dotnet test --configuration Debug --no-restore --verbosity normal
   
     - name: Sonarscanner for dotnet
       uses: DynamicsValue/dotnet-sonarscanner@v2.2
       with:
         buildCommand: dotnet build . --configuration Debug
-        testCommand: dotnet test . --configuration Debug --verbosity normal
+        testCommand: dotnet test . --configuration Debug --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
         projectName: fake-xrm-easy-core
         sonarOrganisation: dynamicsvalue
