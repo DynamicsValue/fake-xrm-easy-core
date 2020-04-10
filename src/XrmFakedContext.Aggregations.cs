@@ -40,11 +40,11 @@ namespace FakeXrmEasy
                 namespacedAlias.Add(attr.GetAttribute("name")?.Value);
                 var logicalName = string.Join(".", namespacedAlias);
 
-                if (string.IsNullOrEmpty("alias"))
+                if (string.IsNullOrEmpty(alias))
                 {
                     throw new Exception("Missing alias for attribute in aggregate fetch xml");
                 }
-                if (string.IsNullOrEmpty("name"))
+                if (string.IsNullOrEmpty(logicalName))
                 {
                     throw new Exception("Missing name for attribute in aggregate fetch xml");
                 }
@@ -146,9 +146,9 @@ namespace FakeXrmEasy
         private static List<Entity> OrderAggregateResult(XDocument xmlDoc, IQueryable<Entity> result)
         {
             var ns = xmlDoc.Root.Name.Namespace;
-            foreach (var order in
-                xmlDoc.Root.Element(ns + "entity")
-                .Elements(ns + "order"))
+            var orderByElements = xmlDoc.Root.Element(ns + "entity").Elements(ns + "order");
+
+            foreach (var order in orderByElements)
             {
                 var alias = order.GetAttribute("alias")?.Value;
 
@@ -157,7 +157,7 @@ namespace FakeXrmEasy
                 {
                     throw new Exception("An attribute cannot be specified for an order clause for an aggregate Query. Use an alias");
                 }
-                if (string.IsNullOrEmpty("alias"))
+                if (string.IsNullOrEmpty(alias))
                 {
                     throw new Exception("An alias is required for an order clause for an aggregate Query.");
                 }

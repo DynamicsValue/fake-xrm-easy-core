@@ -21,7 +21,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             var currencyId = retrieveExchangeRateRequest.TransactionCurrencyId;
 
-            if (currencyId == null)
+            if (currencyId == Guid.Empty)
             {
                 throw FakeOrganizationServiceFaultFactory.New("Can not retrieve Exchange Rate without Transaction Currency Guid");
             }
