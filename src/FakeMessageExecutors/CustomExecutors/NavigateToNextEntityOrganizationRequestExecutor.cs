@@ -42,22 +42,22 @@ namespace FakeXrmEasy.FakeMessageExecutors.CustomExecutors
             // Checking parameters
 
             Guid processId = (Guid)request.Parameters[ParameterProcessId]; // Workflow Id
-            if (processId == null) throw new Exception(ParameterProcessId + " is a required parameter.");
+            if (processId == Guid.Empty) throw new Exception(ParameterProcessId + " is a required parameter.");
 
             Guid newActiveStageId = (Guid)request.Parameters[ParameterNewActiveStageId];
-            if (newActiveStageId == null) throw new Exception(ParameterNewActiveStageId + " is a required parameter.");
+            if (newActiveStageId == Guid.Empty) throw new Exception(ParameterNewActiveStageId + " is a required parameter.");
 
             string currentEntityLogicalName = (string)request.Parameters[ParameterCurrentEntityLogicalName];
             if (currentEntityLogicalName == null) throw new Exception(ParameterCurrentEntityLogicalName + " is a required parameter.");
 
             Guid currentEntityId = (Guid)request.Parameters[ParameterCurrentEntityId];
-            if (currentEntityId == null) throw new Exception(ParameterCurrentEntityId + " is a required parameter.");
+            if (currentEntityId == Guid.Empty) throw new Exception(ParameterCurrentEntityId + " is a required parameter.");
 
             string nextEntityLogicalName = (string)request.Parameters[ParameterNextEntityLogicalName];
             if (nextEntityLogicalName == null) throw new Exception(ParameterNextEntityLogicalName + " is a required parameter.");
 
             Guid nextEntityId = (Guid)request.Parameters[ParameterNextEntityId];
-            if (nextEntityId == null) throw new Exception(ParameterNextEntityId + " is a required parameter.");
+            if (nextEntityId == Guid.Empty) throw new Exception(ParameterNextEntityId + " is a required parameter.");
 
             string traversedPath = (string)request.Parameters[ParameterNewTraversedPath];
 
