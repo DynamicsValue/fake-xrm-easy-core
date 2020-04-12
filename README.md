@@ -1,8 +1,6 @@
 ﻿Fake Xrm Easy: TDD for Dynamics CRM and Dynamics 365 (or now Common Data Service for Apps) made simple
 =================================================================================
 
-
-
 |Build|Code Quality|
 |-----|------------|
 |![.NET Core](https://github.com/DynamicsValue/fake-xrm-easy-core/workflows/.NET%20Core/badge.svg)|[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DynamicsValue_fake-xrm-easy-core&metric=alert_status&token=275c67c8b62adac17e4e9a0ae210c77703d671d1)](https://sonarcloud.io/dashboard?id=DynamicsValue_fake-xrm-easy-core)||
