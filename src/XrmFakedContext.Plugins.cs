@@ -2,10 +2,11 @@
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Linq;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy
 {
-    public partial class XrmFakedContext : IFakedXrmContext
+    public partial class XrmFakedContext : IXrmFakedContext
     {
         /// <summary>
         /// Returns a plugin context with default properties one can override

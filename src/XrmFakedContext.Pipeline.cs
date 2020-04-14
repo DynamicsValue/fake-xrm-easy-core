@@ -4,10 +4,11 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy
 {
-    public partial class XrmFakedContext : IFakedXrmContext
+    public partial class XrmFakedContext : IXrmFakedContext
     {
         public bool UsePipelineSimulation { get; set; }
 

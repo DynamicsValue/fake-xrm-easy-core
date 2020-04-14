@@ -8,10 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy
 {
-    public partial class XrmFakedContext : IFakedXrmContext
+    public partial class XrmFakedContext : IXrmFakedContext
     {
         protected const int EntityActiveStateCode = 0;
         protected const int EntityInactiveStateCode = 1;
