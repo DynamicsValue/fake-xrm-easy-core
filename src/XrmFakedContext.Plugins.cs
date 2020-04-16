@@ -370,14 +370,10 @@ namespace FakeXrmEasy
                        return fakedServiceFactory;
                    }
 
-                   if (t == typeof(IServiceEndpointNotificationService))
-                   {
-                       return GetFakedServiceEndpointNotificationService();
-                   }
 #if FAKE_XRM_EASY_9
                    if (t == typeof(IEntityDataSourceRetrieverService))
                    {
-                       return GetFakedEntityDataSourceRetrieverService();
+                       return GetEntityDataSourceRetrieverService();
                    }
 #endif
                    throw new PullRequestException("The specified service type is not supported");

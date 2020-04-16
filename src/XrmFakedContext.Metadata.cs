@@ -7,10 +7,11 @@ using System.Reflection;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Metadata;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy
 {
-    public partial class XrmFakedContext : IFakedXrmContext
+    public partial class XrmFakedContext : IXrmFakedContext
     {
         /// <summary>
         /// Stores some minimal metadata info if dynamic entities are used and no injected metadata was used

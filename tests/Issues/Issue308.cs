@@ -16,7 +16,7 @@ namespace FakeXrmEasy.Tests.Issues
             var endpointId = Guid.NewGuid();
             var fakedContext = new XrmFakedContext();
 
-            var fakedServiceEndpointNotificationService = fakedContext.GetFakedServiceEndpointNotificationService();
+            var fakedServiceEndpointNotificationService = fakedContext.GetServiceEndpointNotificationService();
 
             A.CallTo(() => fakedServiceEndpointNotificationService.Execute(A<EntityReference>._, A<IExecutionContext>._))
                 .Returns("response");

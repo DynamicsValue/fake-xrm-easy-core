@@ -1,4 +1,5 @@
 ﻿using FakeItEasy;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.FakeMessageExecutors;
 using FakeXrmEasy.Permissions;
 using FakeXrmEasy.Services;
@@ -18,7 +19,7 @@ namespace FakeXrmEasy
     /// how entities are persisted in Tables (with the logical name) and then the records themselves
     /// where the Primary Key is the Guid
     /// </summary>
-    public partial class XrmFakedContext : IFakedXrmContext
+    public partial class XrmFakedContext : IXrmFakedContext
     {
         protected internal IOrganizationService Service { get; set; }
 
@@ -126,6 +127,35 @@ namespace FakeXrmEasy
 
             ProxyTypesAssemblies = new List<Assembly>();
         }
+
+        public virtual IOrganizationService GetOrganizationService()
+        {
+            if (this is XrmRealContext)
+            {
+                Service = GetOrganizationService();
+                return Service;
+            }
+            return GetFakedOrganizationService(this);
+        }
+
+        public IOrganizationServiceFactory GetOrganizationServiceFactory() 
+        {
+            var fakedServiceFactory = A.Fake<IOrganizationServiceFactory>();
+            A.CallTo(() => fakedServiceFactory.CreateOrganizationService(A<Guid?>._)).ReturnsLazily((Guid? g) => GetOrganizationService());
+            return fakedServiceFactory;
+        }
+
+        public ITracingService GetTracingService() 
+        {
+            return TracingService;
+        }
+
+        public IServiceEndpointNotificationService GetServiceEndpointNotificationService() 
+        {
+            return _serviceEndpointNotificationService ??
+                   (_serviceEndpointNotificationService = A.Fake<IServiceEndpointNotificationService>());
+        }
+
 
         /// <summary>
         /// Initializes the context with the provided entities
@@ -273,15 +303,7 @@ namespace FakeXrmEasy
             AddEntityWithDefaults(attributeMap);
         }
 
-        public virtual IOrganizationService GetOrganizationService()
-        {
-            if (this is XrmRealContext)
-            {
-                Service = GetOrganizationService();
-                return Service;
-            }
-            return GetFakedOrganizationService(this);
-        }
+        
 
         /// <summary>
         /// Deprecated. Use GetOrganizationService instead
@@ -409,19 +431,18 @@ namespace FakeXrmEasy
                 .ReturnsLazily((QueryBase req) => entities);
         }
 
-        public IServiceEndpointNotificationService GetFakedServiceEndpointNotificationService()
+        public IEntityDataSourceRetrieverService GetEntityDataSourceRetrieverService()
         {
-            return _serviceEndpointNotificationService ??
-                   (_serviceEndpointNotificationService = A.Fake<IServiceEndpointNotificationService>());
+            #if FAKE_XRM_EASY_9
+                var service = A.Fake<IEntityDataSourceRetrieverService>();
+                A.CallTo(() => service.RetrieveEntityDataSource())
+                    .ReturnsLazily(() => EntityDataSourceRetriever);
+                return service;
+
+            #else 
+                throw new Exception("GetEntityDataSourceRetrieverService not supported for versions earlier than v9");
+            #endif
         }
-#if FAKE_XRM_EASY_9
-        public IEntityDataSourceRetrieverService GetFakedEntityDataSourceRetrieverService()
-        {
-            var service = A.Fake<IEntityDataSourceRetrieverService>();
-            A.CallTo(() => service.RetrieveEntityDataSource())
-                .ReturnsLazily(() => EntityDataSourceRetriever);
-            return service;
-        }
-#endif
+
     }
 }

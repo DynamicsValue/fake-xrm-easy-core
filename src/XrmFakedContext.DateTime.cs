@@ -1,10 +1,11 @@
-﻿using FakeXrmEasy.Metadata;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Metadata;
 using System;
 using System.Collections.Generic;
 
 namespace FakeXrmEasy
 {
-    public partial class XrmFakedContext : IFakedXrmContext
+    public partial class XrmFakedContext : IXrmFakedContext
     {
         public TimeZoneInfo SystemTimeZone { get; set; }
 

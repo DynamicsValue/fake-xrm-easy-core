@@ -8,6 +8,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;
 using FakeXrmEasy.Models;
@@ -17,7 +18,7 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy
 {
-    public partial class XrmFakedContext : IFakedXrmContext
+    public partial class XrmFakedContext : IXrmFakedContext
     {
         protected internal Type FindReflectedType(string logicalName)
         {

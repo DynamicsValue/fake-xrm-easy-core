@@ -11,6 +11,7 @@ using System.Linq;
 using System.IO.Compression;
 using System.Runtime.Serialization;
 using Microsoft.Powerplatform.Cds.Client;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy
 {
@@ -18,9 +19,10 @@ namespace FakeXrmEasy
     /// Reuse unit test syntax to test against a real CRM organisation
     /// It uses a real CRM organisation service instance
     /// </summary>
-    public class XrmRealContext : XrmFakedContext, IFakedXrmContext
+    public class XrmRealContext : IXrmRealContext
     {
         public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
+        protected IOrganizationService _service;
 
         public XrmRealContext()
         {
@@ -30,27 +32,21 @@ namespace FakeXrmEasy
         public XrmRealContext(string connectionStringName)
         {
             ConnectionStringName = connectionStringName;
-            //Don't setup fakes in this case.
+            _service = GetOrgService();
         }
 
         public XrmRealContext(IOrganizationService organizationService)
         {
-            Service = organizationService;
-            //Don't setup fakes in this case.
+            _service = organizationService;
         }
 
-        public override IOrganizationService GetOrganizationService()
+        public IOrganizationService GetOrganizationService()
         {
-            if (Service != null)
-                return Service;
+            if (_service != null)
+                return _service;
 
-            Service = GetOrgService();
-            return Service;
-        }
-
-        public override void Initialize(IEnumerable<Entity> entities)
-        {
-            //Does nothing...  otherwise it would create records in a real org db
+            _service = GetOrgService();
+            return _service;
         }
 
         protected IOrganizationService GetOrgService()
