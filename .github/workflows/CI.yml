@@ -28,17 +28,11 @@ jobs:
     - name: Enable GitHub packages feed
       run: dotnet nuget enable source github
 
-    - name: Install dependencies
-      run: dotnet restore
-    
     - name: Build
-      run: dotnet build --configuration Debug --no-restore
-  
-    - name: Test
-      run: dotnet test --configuration Debug --no-restore --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings
-  
-    - name: Report generator
-      run: ./reportgenerator "-reports:tests/TestResults/**/coverage.opencover.xml" "-targetdir:coverage/reports" "-reporttypes:HTMLInline;HTMLChart;Badges"
+      run: pwsh ./build.ps1
+      env: 
+        NUGET_USERNAME: DynamicsValue
+        NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
     - name: Sonarscanner for dotnet
       uses: DynamicsValue/dotnet-sonarscanner@v2.2
@@ -54,7 +48,9 @@ jobs:
             /d:sonar.coverage.exclusions='"tests/**"'
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+        NUGET_USERNAME: DynamicsValue
+        NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
     
     
     
