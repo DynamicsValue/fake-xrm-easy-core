@@ -22,12 +22,15 @@ jobs:
       with:
         dotnet-version: 3.1.101
  
+    - name: Disable local packages feed
+      run: dotnet nuget disable source "local-packages"
+
+    - name: Enable GitHub packages feed
+      run: dotnet nuget enable source github
+
     - name: Install dependencies
       run: dotnet restore
     
-    - name: Install Report Generator tool
-      run: dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
-
     - name: Build
       run: dotnet build --configuration Debug --no-restore
   
