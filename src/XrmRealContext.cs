@@ -33,7 +33,6 @@ namespace FakeXrmEasy
         public XrmRealContext(string connectionStringName)
         {
             ConnectionStringName = connectionStringName;
-            _service = GetOrgService();
         }
 
         public XrmRealContext(IOrganizationService organizationService)

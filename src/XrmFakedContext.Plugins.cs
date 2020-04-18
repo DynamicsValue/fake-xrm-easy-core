@@ -273,11 +273,6 @@ namespace FakeXrmEasy
             return this.ExecutePluginWithTarget<T>(ctx, target, messageName, stage);
         }
 
-        
-
-#if FAKE_XRM_EASY_9
-        public Entity EntityDataSourceRetriever { get; set; }
-#endif
 
 
     }

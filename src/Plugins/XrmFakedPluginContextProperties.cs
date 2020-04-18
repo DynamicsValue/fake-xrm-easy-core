@@ -13,6 +13,9 @@ namespace FakeXrmEasy
         protected readonly IEntityDataSourceRetrieverService _entityDataSourceRetrieverService;
         protected readonly IOrganizationServiceFactory _organizationServiceFactory;
         protected readonly IServiceEndpointNotificationService _serviceEndpointNotificationService;
+
+
+
         public XrmFakedPluginContextProperties(IOrganizationService service) 
         {
             _service = service;
@@ -21,6 +24,13 @@ namespace FakeXrmEasy
             _organizationServiceFactory = A.Fake<IOrganizationServiceFactory>();
             A.CallTo(() => _organizationServiceFactory.CreateOrganizationService(A<Guid?>._)).ReturnsLazily((Guid? g) => _service);
 
+            _serviceEndpointNotificationService = A.Fake<IServiceEndpointNotificationService>();
+
+            #if FAKE_XRM_EASY_9
+                _entityDataSourceRetrieverService = A.Fake<IEntityDataSourceRetrieverService>();
+                A.CallTo(() => _entityDataSourceRetrieverService.RetrieveEntityDataSource())
+                    .ReturnsLazily(() => EntityDataSourceRetriever);
+            #endif
         }
 
 
@@ -29,6 +39,10 @@ namespace FakeXrmEasy
         public IEntityDataSourceRetrieverService EntityDataSourceRetrieverService => _entityDataSourceRetrieverService;
         public IOrganizationServiceFactory OrganizationServiceFactory => _organizationServiceFactory;
         public IServiceEndpointNotificationService ServiceEndpointNotificationService => _serviceEndpointNotificationService;
+
+        #if FAKE_XRM_EASY_9
+        public Entity EntityDataSourceRetriever { get; set; }
+        #endif
 
         public IServiceProvider GetServiceProvider(XrmFakedPluginExecutionContext plugCtx) 
         {
@@ -62,6 +76,11 @@ namespace FakeXrmEasy
                    if (t == typeof(IOrganizationServiceFactory))
                    {
                        return _organizationServiceFactory;
+                   }
+
+                   if (t == typeof(IServiceEndpointNotificationService))
+                   {
+                       return _serviceEndpointNotificationService;
                    }
 
 #if FAKE_XRM_EASY_9

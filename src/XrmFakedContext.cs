@@ -420,18 +420,5 @@ namespace FakeXrmEasy
                 .ReturnsLazily((QueryBase req) => entities);
         }
 
-        public IEntityDataSourceRetrieverService GetEntityDataSourceRetrieverService()
-        {
-            #if FAKE_XRM_EASY_9
-                var service = A.Fake<IEntityDataSourceRetrieverService>();
-                A.CallTo(() => service.RetrieveEntityDataSource())
-                    .ReturnsLazily(() => EntityDataSourceRetriever);
-                return service;
-
-            #else 
-                throw new Exception("GetEntityDataSourceRetrieverService not supported for versions earlier than v9");
-            #endif
-        }
-
     }
 }
