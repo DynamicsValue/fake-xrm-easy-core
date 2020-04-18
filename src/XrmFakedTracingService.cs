@@ -1,10 +1,10 @@
-﻿using Microsoft.Xrm.Sdk;
-using System;
+﻿using System;
 using System.Text;
+using FakeXrmEasy.Abstractions.Plugins;
 
 namespace FakeXrmEasy
 {
-    public class XrmFakedTracingService : ITracingService
+    public class XrmFakedTracingService : IXrmFakedTracingService
     {
         protected StringBuilder _trace { get; set; }
 

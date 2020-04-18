@@ -2,7 +2,7 @@
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Linq;
-using System.ServiceModel;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {

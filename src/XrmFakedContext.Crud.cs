@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Plugins.Enums;
 
 namespace FakeXrmEasy
 {

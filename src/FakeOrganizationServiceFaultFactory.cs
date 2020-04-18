@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.ServiceModel;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy
 {

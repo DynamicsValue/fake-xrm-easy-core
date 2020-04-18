@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;  //TypedEntities generated code for testing
 using Xunit;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Tests
 {

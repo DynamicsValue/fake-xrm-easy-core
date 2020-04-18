@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.FakeMessageExecutors;
 using FakeXrmEasy.Permissions;
 using FakeXrmEasy.Services;
@@ -21,18 +22,14 @@ namespace FakeXrmEasy
     /// </summary>
     public partial class XrmFakedContext : IXrmFakedContext
     {
-        protected internal IOrganizationService Service { get; set; }
+        protected internal IOrganizationService _service;
 
-        private IServiceEndpointNotificationService _serviceEndpointNotificationService;
-
-        private readonly Lazy<XrmFakedTracingService> _tracingService = new Lazy<XrmFakedTracingService>(() => new XrmFakedTracingService());
+        public IXrmFakedPluginContextProperties PluginContextProperties { get; set; }
 
         /// <summary>
         /// All proxy type assemblies available on mocked database.
         /// </summary>
         private List<Assembly> ProxyTypesAssemblies { get; set; }
-
-        protected internal XrmFakedTracingService TracingService => _tracingService.Value;
 
         protected internal bool Initialised { get; set; }
 
@@ -126,15 +123,14 @@ namespace FakeXrmEasy
             InitializationLevel = EntityInitializationLevel.Default;
 
             ProxyTypesAssemblies = new List<Assembly>();
+
+            GetOrganizationService();
+
+            PluginContextProperties = new XrmFakedPluginContextProperties(_service);
         }
 
-        public virtual IOrganizationService GetOrganizationService()
+        public IOrganizationService GetOrganizationService()
         {
-            if (this is XrmRealContext)
-            {
-                Service = GetOrganizationService();
-                return Service;
-            }
             return GetFakedOrganizationService(this);
         }
 
@@ -145,17 +141,10 @@ namespace FakeXrmEasy
             return fakedServiceFactory;
         }
 
-        public ITracingService GetTracingService() 
+        public IXrmFakedTracingService GetFakeTracingService() 
         {
-            return TracingService;
+            return PluginContextProperties.TracingService;
         }
-
-        public IServiceEndpointNotificationService GetServiceEndpointNotificationService() 
-        {
-            return _serviceEndpointNotificationService ??
-                   (_serviceEndpointNotificationService = A.Fake<IServiceEndpointNotificationService>());
-        }
-
 
         /// <summary>
         /// Initializes the context with the provided entities
@@ -317,9 +306,9 @@ namespace FakeXrmEasy
 
         protected IOrganizationService GetFakedOrganizationService(XrmFakedContext context)
         {
-            if (context.Service != null)
+            if (context._service != null)
             {
-                return context.Service;
+                return context._service;
             }
 
             var fakedService = A.Fake<IOrganizationService>();
@@ -337,9 +326,9 @@ namespace FakeXrmEasy
             FakeExecute(context, fakedService);
             FakeAssociate(context, fakedService);
             FakeDisassociate(context, fakedService);
-            context.Service = fakedService;
+            context._service = fakedService;
 
-            return context.Service;
+            return context._service;
         }
 
         /// <summary>

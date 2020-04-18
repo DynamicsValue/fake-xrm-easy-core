@@ -13,11 +13,12 @@ namespace FakeXrmEasy.Services
         public Entity Initialize(Entity e, Guid gCallerId, XrmFakedContext ctx, bool isManyToManyRelationshipEntity = false)
         {
             Entity invoice = null;
+            var service = ctx.GetOrganizationService();
 
             var invoiceReference = e.GetAttributeValue<EntityReference>("invoiceid");
             if (invoiceReference != null)
             {
-                invoice = ctx.Service.Retrieve(invoiceReference.LogicalName, invoiceReference.Id, new ColumnSet(true));
+                invoice = service.Retrieve(invoiceReference.LogicalName, invoiceReference.Id, new ColumnSet(true));
             }
 
             var isPriceOverriden = e.GetAttributeValue<bool>("ispriceoverridden");
@@ -29,7 +30,7 @@ namespace FakeXrmEasy.Services
                 var productReference = e.GetAttributeValue<EntityReference>("productid");
 
                 if (productReference != null)
-                    product = ctx.Service.Retrieve(productReference.LogicalName, productReference.Id, new ColumnSet(true));
+                    product = service.Retrieve(productReference.LogicalName, productReference.Id, new ColumnSet(true));
 
                 Entity productOrInvoice = invoice;
                 if (productOrInvoice == null)
@@ -66,7 +67,7 @@ namespace FakeXrmEasy.Services
                     queryByAttribute.AddAttributeValue("productid", productReference.Id);
                     queryByAttribute.AddAttributeValue("uomid", uomReference.Id);
 
-                    var result = ctx.Service.RetrieveMultiple(queryByAttribute);
+                    var result = service.RetrieveMultiple(queryByAttribute);
                     if (result.Entities.Count > 0)
                     {
                         e["priceperunit"] = result.Entities[0].GetAttributeValue<Money>("amount");
@@ -109,7 +110,7 @@ namespace FakeXrmEasy.Services
                 totalAmount.Value += ((Money)e["extendedamount"]).Value;
 
                 invoice["totalamount"] = totalAmount;
-                ctx.Service.Update(invoice);
+                service.Update(invoice);
             }
 
             return e;

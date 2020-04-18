@@ -39,17 +39,6 @@ namespace FakeXrmEasy.Tests.XrmRealContextTests
         }
 
         [Fact]
-        public void Should_not_initialize_records_when_using_a_real_CRM_instance()
-        {
-            var ctx = new XrmRealContext();
-            ctx.Initialize(new List<Entity>
-            {
-                new Account { Id = Guid.NewGuid() }
-            });
-            Assert.Equal(0, ctx.Data.Count);
-        }
-
-        [Fact]
         public void Should_generate_plugin_context_from_a_serialised_profile()
         {
             var ctx = new XrmRealContext();

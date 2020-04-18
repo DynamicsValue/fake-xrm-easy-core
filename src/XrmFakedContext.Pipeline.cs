@@ -5,6 +5,8 @@ using System.Reflection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Plugins;
+using FakeXrmEasy.Abstractions.Plugins.Enums;
 
 namespace FakeXrmEasy
 {
@@ -205,8 +207,8 @@ namespace FakeXrmEasy
             };
 
             var entityTypeCode = (int?)entity.GetType().GetField("EntityTypeCode")?.GetValue(entity);
-
-            var plugins = this.Service.RetrieveMultiple(query).Entities.AsEnumerable();
+            var service = this.GetOrganizationService();
+            var plugins = service.RetrieveMultiple(query).Entities.AsEnumerable();
             plugins = plugins.Where(p =>
             {
                 var primaryObjectTypeCode = p.GetAttributeValue<AliasedValue>("sdkmessagefilter.primaryobjecttypecode");

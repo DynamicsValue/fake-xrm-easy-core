@@ -6,6 +6,7 @@ using FakeXrmEasy.Tests.PluginsForTesting;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
+using FakeXrmEasy.Abstractions.Plugins.Enums;
 
 namespace FakeXrmEasy.Tests
 {

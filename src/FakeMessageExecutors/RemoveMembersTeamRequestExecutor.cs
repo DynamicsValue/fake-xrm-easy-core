@@ -2,7 +2,6 @@
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Linq;
-using System.ServiceModel;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.FakeMessageExecutors
@@ -60,7 +59,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
                     }
                 };
 
-                var teamMember = ctx.Service.RetrieveMultiple(queryTeamMember).Entities.FirstOrDefault();
+                var teamMember = service.RetrieveMultiple(queryTeamMember).Entities.FirstOrDefault();
 
                 if (teamMember != null)
                 {

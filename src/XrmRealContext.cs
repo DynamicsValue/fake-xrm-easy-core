@@ -12,6 +12,7 @@ using System.IO.Compression;
 using System.Runtime.Serialization;
 using Microsoft.Powerplatform.Cds.Client;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Plugins;
 
 namespace FakeXrmEasy
 {
