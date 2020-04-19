@@ -146,7 +146,7 @@ namespace FakeXrmEasy
             {
                 if (this.UsePipelineSimulation)
                 {
-                    ExecutePipelineStage("Update", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
+                    //ExecutePipelineStage("Update", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
                 }
 
                 // Add as many attributes to the entity as the ones received (this will keep existing ones)
@@ -179,10 +179,10 @@ namespace FakeXrmEasy
 
                 if (this.UsePipelineSimulation)
                 {
-                    ExecutePipelineStage("Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, e);
+                    //ExecutePipelineStage("Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, e);
 
                     var clone = e.Clone(e.GetType());
-                    ExecutePipelineStage("Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, clone);
+                    //ExecutePipelineStage("Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, clone);
                 }
             }
             else
@@ -266,7 +266,7 @@ namespace FakeXrmEasy
             {
                 if (this.UsePipelineSimulation)
                 {
-                    ExecutePipelineStage("Delete", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, er);
+                    //ExecutePipelineStage("Delete", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, er);
                 }
 
                 // Entity found => return only the subset of columns specified or all of them
@@ -274,8 +274,8 @@ namespace FakeXrmEasy
 
                 if (this.UsePipelineSimulation)
                 {
-                    ExecutePipelineStage("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, er);
-                    ExecutePipelineStage("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, er);
+                    //ExecutePipelineStage("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, er);
+                    //ExecutePipelineStage("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, er);
                 }
             }
             else
@@ -434,7 +434,7 @@ namespace FakeXrmEasy
 
             if (usePluginPipeline)
             {
-                ExecutePipelineStage("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
+                //ExecutePipelineStage("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
             }
 
             // Store
@@ -442,8 +442,8 @@ namespace FakeXrmEasy
 
             if (usePluginPipeline)
             {
-                ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, e);
-                ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, e);
+                //ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, e);
+                //ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, e);
             }
         }
 
