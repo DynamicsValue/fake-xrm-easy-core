@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
     <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY</DefineConstants>
   </PropertyGroup>
 
@@ -34,8 +36,18 @@
 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="6.0.0" />
-    <PackageReference Include="FakeXrmEasy.Abstractions" Version="2.0.1-*" />
     <PackageReference Include="Microsoft.Powerplatform.Cds.Client" Version="0.0.1.11-Alpha" />
     <PackageReference Include="Microsoft.Dynamics.Sdk.Messages" Version="0.0.1.11-Alpha" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.console" Version="2.4.1" />
+    <PackageReference Include="coverlet.collector" Version="1.2.1" />
+    <PackageReference Include="FakeXrmEasy.Abstractions" Version="2.0.1-*" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FakeXrmEasy.Core\FakeXrmEasy.Core.csproj" />
+  </ItemGroup>
+
 </Project>

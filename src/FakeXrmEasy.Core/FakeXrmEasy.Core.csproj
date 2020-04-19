@@ -1,10 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-
-    <IsPackable>false</IsPackable>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <PackageId>FakeXrmEasy.Core</PackageId>
+    <VersionPrefix>2.0.1</VersionPrefix>
+    <Authors>Jordi Montaña</Authors>
+    <Company>Dynamics Value</Company>
+    <Title>FakeXrmEasy Core</Title>
+    <PackageDescription>FakeXrmEasy is the open source test automation framework for .net core and the Power Platform. This is an abstractions package containing only interfaces</PackageDescription>
+    <Copyright>(c) 2014 Jordi Montaña</Copyright>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>FakeXrmEasyLogo_128x128.png</PackageIcon>
+    <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform</PackageTags>
+    <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-abstractions</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+    <None Include="../../FakeXrmEasyLogo_128x128.png" Pack="true" PackagePath="/"/>
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
     <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY</DefineConstants>
@@ -36,18 +51,8 @@
 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="6.0.0" />
+    <PackageReference Include="FakeXrmEasy.Abstractions" Version="2.0.1-*" />
     <PackageReference Include="Microsoft.Powerplatform.Cds.Client" Version="0.0.1.11-Alpha" />
     <PackageReference Include="Microsoft.Dynamics.Sdk.Messages" Version="0.0.1.11-Alpha" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.console" Version="2.4.1" />
-    <PackageReference Include="coverlet.collector" Version="1.2.1" />
-    <PackageReference Include="FakeXrmEasy.Abstractions" Version="2.0.1-*" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\src\FakeXrmEasy.Core.csproj" />
-  </ItemGroup>
-
 </Project>

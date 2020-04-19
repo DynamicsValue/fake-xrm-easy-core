@@ -203,3 +203,6 @@ test/*
 #Visual Studio
 .vs/
 reportgenerator
+
+#Coverage results
+coverage/

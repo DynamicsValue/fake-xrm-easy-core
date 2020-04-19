@@ -19,7 +19,7 @@ if(!($LASTEXITCODE -eq 0)) {
     throw "Error during build step"
 }
 
-dotnet test --configuration Debug --no-restore --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings
+dotnet test --configuration Debug --no-restore --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
 if(!($LASTEXITCODE -eq 0)) {
     throw "Error during test step"
 }
