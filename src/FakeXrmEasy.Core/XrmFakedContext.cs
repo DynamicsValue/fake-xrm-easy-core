@@ -89,8 +89,11 @@ namespace FakeXrmEasy
 
         public EntityInitializationLevel InitializationLevel { get; set; }
 
+        public ICallerProperties CallerProperties { get; set; }
         public XrmFakedContext()
         {
+            CallerProperties = new CallerProperties();
+            
             MaxRetrieveCount = 5000;
 
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
@@ -126,7 +129,7 @@ namespace FakeXrmEasy
 
             GetOrganizationService();
 
-            PluginContextProperties = new XrmFakedPluginContextProperties(_service);
+
         }
 
         public IOrganizationService GetOrganizationService()

@@ -1,6 +1,7 @@
 ﻿using FakeXrmEasy.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using Xunit;
 
@@ -18,14 +19,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             context.Initialize(new[] { e });
             context.AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock);
 
-            var inputs = new ParameterCollection
+            var request = new RetrieveEntityRequest
             {
-                {"Target", e }
+                LogicalName = "Contact",
+                EntityFilters = EntityFilters.All,
+                RetrieveAsIfPublished = false
             };
+            var response = (RetrieveEntityResponse)service.Execute(request);
 
-            context.ExecutePluginWith<CustomMockPlugin>(inputs, new ParameterCollection(), new EntityImageCollection(), new EntityImageCollection());
-
-            Assert.Equal("Successful", (string)e["response"]);
+            Assert.Equal("Successful", response.ResponseName);
             var ex = Record.Exception(() => context.RemoveExecutionMock<RetrieveEntityRequest>());
             Assert.Null(ex);
         }
@@ -51,14 +53,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             context.AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock);
             context.AddExecutionMock<RetrieveEntityRequest>(AnotherRetrieveEntityMock);
 
-            var inputs = new ParameterCollection
+            var request = new RetrieveEntityRequest
             {
-                {"Target", e }
+                LogicalName = "Contact",
+                EntityFilters = EntityFilters.All,
+                RetrieveAsIfPublished = false
             };
+            var response = (RetrieveEntityResponse)service.Execute(request);
 
-            context.ExecutePluginWith<CustomMockPlugin>(inputs, new ParameterCollection(), new EntityImageCollection(), new EntityImageCollection());
-
-            Assert.Equal("Another", (string)e["response"]);
+            Assert.Equal("Another", response.ResponseName);
             var ex = Record.Exception(() => context.RemoveExecutionMock<RetrieveEntityRequest>());
             Assert.Null(ex);
         }
@@ -73,14 +76,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             context.Initialize(new[] { e });
             context.AddFakeMessageExecutor<RetrieveEntityRequest>(new FakeRetrieveEntityRequestExecutor());
 
-            var inputs = new ParameterCollection
+            var request = new RetrieveEntityRequest
             {
-                {"Target", e }
+                LogicalName = "Contact",
+                EntityFilters = EntityFilters.All,
+                RetrieveAsIfPublished = false
             };
+            var response = (RetrieveEntityResponse)service.Execute(request);
 
-            context.ExecutePluginWith<CustomMockPlugin>(inputs, new ParameterCollection(), new EntityImageCollection(), new EntityImageCollection());
-
-            Assert.Equal("Successful", (string)e["response"]);
+            Assert.Equal("Successful", response.ResponseName);
             var ex = Record.Exception(() => context.RemoveFakeMessageExecutor<RetrieveEntityRequest>());
             Assert.Null(ex);
         }

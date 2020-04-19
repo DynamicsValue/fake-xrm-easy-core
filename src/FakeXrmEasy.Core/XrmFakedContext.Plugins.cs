@@ -10,31 +10,7 @@ namespace FakeXrmEasy
 {
     public partial class XrmFakedContext : IXrmFakedContext
     {
-        /// <summary>
-        /// Returns a plugin context with default properties one can override
-        /// </summary>
-        /// <returns></returns>
-        public XrmFakedPluginExecutionContext GetDefaultPluginContext()
-        {
-            var userId = CallerId?.Id ?? Guid.NewGuid();
-            Guid businessUnitId = BusinessUnitId?.Id ?? Guid.NewGuid();
-
-            return new XrmFakedPluginExecutionContext
-            {
-                Depth = 1,
-                IsExecutingOffline = false,
-                MessageName = "Create",
-                UserId = userId,
-                BusinessUnitId = businessUnitId,
-                InitiatingUserId = userId,
-                InputParameters = new ParameterCollection(),
-                OutputParameters = new ParameterCollection(),
-                SharedVariables = new ParameterCollection(),
-                PreEntityImages = new EntityImageCollection(),
-                PostEntityImages = new EntityImageCollection(),
-                IsolationMode = 1
-            };
-        }
+        
 
         
 
