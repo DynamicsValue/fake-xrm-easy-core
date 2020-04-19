@@ -20,7 +20,7 @@ namespace FakeXrmEasy
 {
     public partial class XrmFakedContext : IXrmFakedContext
     {
-        protected internal Type FindReflectedType(string logicalName)
+        public Type FindReflectedType(string logicalName)
         {
             var types =
                 ProxyTypesAssemblies.Select(a => FindReflectedType(logicalName, a))

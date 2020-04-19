@@ -130,7 +130,7 @@ namespace FakeXrmEasy
                 });
         }
 
-        protected void UpdateEntity(Entity e)
+        public void UpdateEntity(Entity e)
         {
             if (e == null)
             {
@@ -244,7 +244,7 @@ namespace FakeXrmEasy
                 });
         }
 
-        protected void DeleteEntity(EntityReference er)
+        public void DeleteEntity(EntityReference er)
         {
             // Don't fail with invalid operation exception, if no record of this entity exists, but entity is known
             if (!this.Data.ContainsKey(er.LogicalName))
@@ -311,7 +311,7 @@ namespace FakeXrmEasy
             //};
         }
 
-        protected void AddEntityDefaultAttributes(Entity e)
+        public void AddEntityDefaultAttributes(Entity e)
         {
             // Add createdon, modifiedon, createdby, modifiedby properties
             if (CallerId == null)
@@ -427,7 +427,7 @@ namespace FakeXrmEasy
             return clone.Id;
         }
 
-        protected internal void AddEntityWithDefaults(Entity e, bool clone = false, bool usePluginPipeline = false)
+        public void AddEntityWithDefaults(Entity e, bool clone = false, bool usePluginPipeline = false)
         {
             // Create the entity with defaults
             AddEntityDefaultAttributes(e);
@@ -447,7 +447,7 @@ namespace FakeXrmEasy
             }
         }
 
-        protected internal void AddEntity(Entity e)
+        public void AddEntity(Entity e)
         {
             //Automatically detect proxy types assembly if an early bound type was used.
             if (ProxyTypesAssembly == null &&

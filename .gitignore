@@ -206,3 +206,4 @@ reportgenerator
 
 #Coverage results
 coverage/
+nupkgs/
