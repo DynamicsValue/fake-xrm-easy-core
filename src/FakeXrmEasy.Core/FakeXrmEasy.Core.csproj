@@ -13,7 +13,7 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>FakeXrmEasyLogo_128x128.png</PackageIcon>
     <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform</PackageTags>
-    <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-abstractions</RepositoryUrl>
+    <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-core</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
