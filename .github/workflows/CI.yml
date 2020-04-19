@@ -33,7 +33,7 @@ jobs:
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
-    - name: Sonarscanner for dotnet
+    - name: Quality Gate
       uses: DynamicsValue/dotnet-sonarscanner@v2.2
       with:
         buildCommand: dotnet build . --configuration Debug
