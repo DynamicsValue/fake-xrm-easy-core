@@ -1,37 +1,61 @@
 using System;
+using System.Collections.Generic;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Middleware;
+using System.Linq;
 using Microsoft.Xrm.Sdk;
+using FakeItEasy;
 
 namespace FakeXrmEasy.Middleware
 {
     public class MiddlewareBuilder: IMiddlewareBuilder
     {
-        internal MiddlewareFunc First { get; set; }
+        private readonly IList<Func<OrganizationRequestDelegate, OrganizationRequestDelegate>> _components = new List<Func<OrganizationRequestDelegate, OrganizationRequestDelegate>>();
+
+        internal IXrmFakedContext _context;
         internal MiddlewareBuilder() 
         {
-            First = null;
+            _context = new XrmFakedContext();
         }
+
         public static IMiddlewareBuilder New() 
         {
             return new MiddlewareBuilder();
         }
-        public IMiddlewareBuilder Add(Func<IXrmFakedContext, OrganizationRequest, Func<IXrmFakedContext, OrganizationRequest, OrganizationResponse>, OrganizationResponse> funcOrNext) 
+
+        public IMiddlewareBuilder Add(Action<IXrmFakedContext> addToContextAction)
         {
-            throw new NotImplementedException();
+            addToContextAction.Invoke(_context);
+            return this;
         }
 
-        public IMiddlewareBuilder AddCrud() 
+        public IMiddlewareBuilder Use(Func<OrganizationRequestDelegate, OrganizationRequestDelegate> middleware) 
         {
-            throw new NotImplementedException();
+            _components.Add(middleware);
+            return this;
         }
-        public IMiddlewareBuilder AddFakeMessages() 
-        {
-            throw new NotImplementedException();
-        }
+
         public IXrmFakedContext Build() 
         {
-            throw new NotImplementedException();
+            OrganizationRequestDelegate app = (context, request) => {
+                
+                //return default PullRequestException at the end of the pipeline
+                throw PullRequestException.NotImplementedOrganizationRequest(request.GetType());
+            };
+
+            foreach(var component in _components.Reverse())
+            {
+                app = component(app);
+            }
+
+            var service = _context.GetOrganizationService();
+
+            A.CallTo(() => service.Execute(A<OrganizationRequest>._))
+                .ReturnsLazily((OrganizationRequest request) => app.Invoke(_context, request));
+
+            return _context;
         }
+
+        
     }
 }
