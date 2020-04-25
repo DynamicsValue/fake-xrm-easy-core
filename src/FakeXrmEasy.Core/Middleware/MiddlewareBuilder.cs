@@ -1,5 +1,7 @@
 using System;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Middleware;
+using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Middleware
 {
@@ -16,20 +18,20 @@ namespace FakeXrmEasy.Middleware
         }
         public IMiddlewareBuilder Add(Func<IXrmFakedContext, OrganizationRequest, Func<IXrmFakedContext, OrganizationRequest, OrganizationResponse>, OrganizationResponse> funcOrNext) 
         {
-
+            throw new NotImplementedException();
         }
 
         public IMiddlewareBuilder AddCrud() 
         {
-
+            throw new NotImplementedException();
         }
         public IMiddlewareBuilder AddFakeMessages() 
         {
-
+            throw new NotImplementedException();
         }
         public IXrmFakedContext Build() 
         {
-
+            throw new NotImplementedException();
         }
     }
 }

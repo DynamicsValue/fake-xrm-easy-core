@@ -9,5 +9,7 @@ namespace FakeXrmEasy.Middleware
     {
         internal Func<IXrmFakedContext, OrganizationRequest, OrganizationResponse> Current { get; set; }
         internal MiddlewareFunc Next { get; set;}
+
+        
     }
 }

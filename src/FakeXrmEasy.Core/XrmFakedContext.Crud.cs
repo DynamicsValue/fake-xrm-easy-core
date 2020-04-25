@@ -355,7 +355,7 @@ namespace FakeXrmEasy
             }
         }
 
-        protected internal Guid CreateEntity(Entity e)
+        public Guid CreateEntity(Entity e)
         {
             if (e == null)
             {
