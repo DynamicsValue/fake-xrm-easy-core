@@ -24,9 +24,9 @@ namespace FakeXrmEasy.FakeMessageExecutors
             }
 
             var targetId = ctx.GetRecordUniqueId(target);
+            target.Id = targetId;
 
-            var service = ctx.GetOrganizationService();
-            service.Delete(target.LogicalName, targetId);
+            ctx.DeleteEntity(target);
 
             return new DeleteResponse();
         }
