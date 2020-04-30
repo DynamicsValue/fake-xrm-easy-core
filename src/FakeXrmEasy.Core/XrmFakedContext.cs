@@ -90,8 +90,13 @@ namespace FakeXrmEasy
         public EntityInitializationLevel InitializationLevel { get; set; }
 
         public ICallerProperties CallerProperties { get; set; }
+
+        private readonly Dictionary<string, object> _properties;
+
         public XrmFakedContext()
         {
+            _properties = new Dictionary<string, object>();
+
             CallerProperties = new CallerProperties();
             
             MaxRetrieveCount = 5000;
@@ -130,6 +135,28 @@ namespace FakeXrmEasy
             GetOrganizationService();
 
 
+        }
+
+        public T GetProperty<T>() 
+        {
+            if(!_properties.ContainsKey(typeof(T).FullName)) 
+            {
+                throw new TypeAccessException($"Property of type '{typeof(T).FullName}' doesn't exists");  
+            }
+
+            return (T) _properties[typeof(T).FullName];
+        }
+
+        public void SetProperty<T>(T property) 
+        {
+            if(!_properties.ContainsKey(typeof(T).FullName)) 
+            {
+                _properties.Add(typeof(T).FullName, property);
+            }
+            else 
+            {
+                _properties[typeof(T).FullName] = property;
+            }
         }
 
         public IOrganizationService GetOrganizationService()
@@ -318,7 +345,7 @@ namespace FakeXrmEasy
 
             //Fake CRUD methods
             FakeRetrieve(context, fakedService);
-            FakeCreate(context, fakedService);
+            //FakeCreate(context, fakedService);
             FakeUpdate(context, fakedService);
             FakeDelete(context, fakedService);
 

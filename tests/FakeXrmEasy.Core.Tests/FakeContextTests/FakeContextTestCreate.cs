@@ -1,4 +1,6 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Messages;
@@ -13,11 +15,17 @@ namespace FakeXrmEasy.Tests
 {
     public class FakeContextTestCreate
     {
+        protected IXrmFakedContext _ctx;
+        
+        public FakeContextTestCreate()
+        {
+            _ctx = XrmFakedContextFactory.New();
+        }
+
         [Fact]
         public void When_a_null_entity_is_created_an_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var ex = Assert.Throws<InvalidOperationException>(() => service.Create(null));
             Assert.Equal(ex.Message, "The entity must not be null");
@@ -26,8 +34,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_an_entity_is_created_with_an_empty_logical_name_an_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var e = new Entity("") { Id = Guid.Empty };
 
@@ -38,22 +45,19 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_adding_an_entity_the_returned_guid_must_not_be_empty_and_the_context_should_have_it()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var e = new Entity("account") { Id = Guid.Empty };
             var guid = service.Create(e);
 
             Assert.True(guid != Guid.Empty);
-            Assert.True(context.Data.Count == 1);
-            Assert.True(context.Data["account"].Count == 1);
+            Assert.True(_ctx.CreateQuery("account").Count() == 1);
         }
 
         [Fact]
         public void When_Creating_Without_Id_It_should_Be_set_Automatically()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var account = new Account
             {
@@ -68,8 +72,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_Creating_With_Id_It_should_Be_set()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
             var accId = Guid.NewGuid();
 
             var account = new Account
@@ -86,8 +89,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_Creating_With_Already_Existing_Id_Exception_Should_Be_Thrown()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
             var accId = Guid.NewGuid();
 
             var account = new Account
@@ -103,8 +105,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_Creating_With_A_StateCode_Property_Exception_Is_Thrown()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
             var accId = Guid.NewGuid();
 
             var account = new Account
@@ -120,12 +121,11 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_Creating_Using_Organization_Context_Record_Should_Be_Created()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account));
+            (_ctx as XrmFakedContext).ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account));
 
             var account = new Account() { Id = Guid.NewGuid(), Name = "Super Great Customer", AccountNumber = "69" };
 
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             using (var ctx = new OrganizationServiceContext(service))
             {
@@ -139,12 +139,11 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_Creating_Using_Organization_Context_Without_Saving_Changes_Record_Should_Not_Be_Created()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account));
+            (_ctx as XrmFakedContext).ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account));
 
             var account = new Account() { Id = Guid.NewGuid(), Name = "Super Great Customer", AccountNumber = "69" };
 
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             using (var ctx = new OrganizationServiceContext(service))
             {
@@ -158,15 +157,13 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_creating_a_record_using_early_bound_entities_primary_key_should_be_populated()
         {
-            var context = new XrmFakedContext();
-
             var c = new Contact();
 
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _ctx.GetOrganizationService();
             var id = service.Create(c);
 
             //Retrieve the record created
-            var contact = (from con in context.CreateQuery<Contact>()
+            var contact = (from con in _ctx.CreateQuery<Contact>()
                            select con).FirstOrDefault();
 
             Assert.True(contact.Attributes.ContainsKey("contactid"));
@@ -176,15 +173,13 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_creating_a_record_using_dynamic_entities_primary_key_should_be_populated()
         {
-            var context = new XrmFakedContext();
-
             Entity e = new Entity("new_myentity");
 
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _ctx.GetOrganizationService();
             var id = service.Create(e);
 
             //Retrieve the record created
-            var record = (from r in context.CreateQuery("new_myentity")
+            var record = (from r in _ctx.CreateQuery("new_myentity")
                           select r).FirstOrDefault();
 
             Assert.True(record.Attributes.ContainsKey("new_myentityid"));
@@ -194,17 +189,16 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_creating_a_record_using_early_bound_entities_and_proxytypes_primary_key_should_be_populated()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            (_ctx as XrmFakedContext).ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
             var c = new Contact();
             c.Id = Guid.NewGuid();
 
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _ctx.GetOrganizationService();
 
-            context.Initialize(new List<Entity>() { c });
+            _ctx.Initialize(new List<Entity>() { c });
 
             //Retrieve the record created
-            var contact = (from con in context.CreateQuery<Contact>()
+            var contact = (from con in _ctx.CreateQuery<Contact>()
                            select con).FirstOrDefault();
 
             Assert.True(contact.Attributes.ContainsKey("contactid"));
@@ -214,8 +208,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_related_entities_are_used_without_relationship_info_exception_is_raised()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var order = new SalesOrder();
 
@@ -246,10 +239,9 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_related_entities_and_relationship_are_used_child_entities_are_created()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
-            ctx.AddRelationship("order_details",
+            (_ctx as XrmFakedContext).AddRelationship("order_details",
                 new XrmFakedRelationship()
                 {
                     Entity1LogicalName = SalesOrder.EntityLogicalName,  //Referenced
@@ -280,7 +272,7 @@ namespace FakeXrmEasy.Tests
             };
 
             var id = (service.Execute(request) as CreateResponse).id;
-            var createdOrderDetails = ctx.CreateQuery<SalesOrderDetail>().ToList();
+            var createdOrderDetails = _ctx.CreateQuery<SalesOrderDetail>().ToList();
 
             Assert.Equal(createdOrderDetails.Count, 2);
             Assert.Equal(createdOrderDetails[0].SalesOrderId.Id, id);
@@ -290,8 +282,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void Shouldnt_store_references_to_variables_but_actual_clones()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             //create an account and then retrieve it with no changes
             Entity newAccount = new Entity("account");
@@ -326,13 +317,12 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void Shouldnt_modify_objects_passed_to_the_service() // *PLEASE_READ* This test is correct?
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            (_ctx as XrmFakedContext).ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
             var account = new Account { Id = Guid.NewGuid(), Name = "Test account" };
 
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _ctx.GetOrganizationService();
 
-            context.Initialize(new List<Entity>() { account });
+            _ctx.Initialize(new List<Entity>() { account });
 
             //Retrieve the record created
             Contact c = new Contact
@@ -346,7 +336,7 @@ namespace FakeXrmEasy.Tests
                 service.Create(c);
             }
 
-            var createdContacts = context.CreateQuery<Contact>().ToList();
+            var createdContacts = _ctx.CreateQuery<Contact>().ToList();
 
             Assert.Equal(Guid.Empty, c.Id);
             Assert.Null(c.ContactId);
@@ -358,8 +348,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_Creating_Without_Default_Attributes_They_Should_Be_Set_By_Default()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var account = new Account
             {
@@ -367,7 +356,7 @@ namespace FakeXrmEasy.Tests
             };
 
             service.Create(account);
-            var createdAccount = context.CreateQuery<Account>().FirstOrDefault();
+            var createdAccount = _ctx.CreateQuery<Account>().FirstOrDefault();
 
             Assert.True(createdAccount.Attributes.ContainsKey("createdon"));
             Assert.True(createdAccount.Attributes.ContainsKey("createdby"));
@@ -379,9 +368,8 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_Creating_Without_Default_Attributes_They_Should_Be_Set_By_Default_With_Early_Bound()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-            context.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account));
+            var service = _ctx.GetOrganizationService();
+            (_ctx as XrmFakedContext).ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account));
 
             var account = new Account
             {
@@ -389,7 +377,7 @@ namespace FakeXrmEasy.Tests
             };
 
             service.Create(account);
-            var createdAccount = context.CreateQuery<Account>().FirstOrDefault();
+            var createdAccount = _ctx.CreateQuery<Account>().FirstOrDefault();
 
             Assert.True(createdAccount.Attributes.ContainsKey("createdon"));
             Assert.True(createdAccount.Attributes.ContainsKey("createdby"));
@@ -401,8 +389,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_creating_a_record_overridencreatedon_should_override_created_on()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var now = DateTime.Now.Date;
 
@@ -414,7 +401,7 @@ namespace FakeXrmEasy.Tests
 
             service.Create(account);
 
-            var createdAccount = ctx.CreateQuery<Account>().FirstOrDefault();
+            var createdAccount = _ctx.CreateQuery<Account>().FirstOrDefault();
             Assert.Equal(now, createdAccount.CreatedOn);
         }
     }

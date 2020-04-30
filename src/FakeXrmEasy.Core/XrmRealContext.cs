@@ -25,9 +25,12 @@ namespace FakeXrmEasy
         public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
         protected IOrganizationService _service;
 
+        private readonly Dictionary<string, object> _properties;
+
         public XrmRealContext()
         {
             //Don't setup fakes in this case.
+            _properties = new Dictionary<string, object>();
         }
 
         public XrmRealContext(string connectionStringName)
@@ -40,6 +43,27 @@ namespace FakeXrmEasy
             _service = organizationService;
         }
 
+        public T GetProperty<T>() 
+        {
+            if(!_properties.ContainsKey(typeof(T).FullName)) 
+            {
+                throw new TypeAccessException($"Property of type '{typeof(T).FullName}' doesn't exists");  
+            }
+
+            return (T) _properties[typeof(T).FullName];
+        }
+
+        public void SetProperty<T>(T property) 
+        {
+            if(!_properties.ContainsKey(typeof(T).FullName)) 
+            {
+                _properties.Add(typeof(T).FullName, property);
+            }
+            else 
+            {
+                _properties[typeof(T).FullName] = property;
+            }
+        }
         public IOrganizationService GetOrganizationService()
         {
             if (_service != null)

@@ -11,6 +11,8 @@ using System.Linq;
 using Microsoft.Crm.Sdk.Messages;
 using Crm;
 using System.ServiceModel;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
 {
@@ -23,11 +25,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
             Lead = 4
         }
 
+        private readonly IXrmFakedContext _ctx;
+        public Tests()
+        {
+            _ctx = XrmFakedContextFactory.New();
+        }
+
         [Fact]
         public void When_a_member_is_added_to_a_non_existing_list_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             AddListMembersListRequest addListMembersListRequest = new AddListMembersListRequest
             {
@@ -45,8 +52,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
         [Fact]
         public void When_a_request_is_called_with_an_empty_listid_parameter_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             AddListMembersListRequest addListMembersListRequest = new AddListMembersListRequest
             {
@@ -64,8 +70,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
         [Fact]
         public void When_a_request_is_called_with_an_empty_memberid_parameter_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             AddListMembersListRequest addListMembersListRequest = new AddListMembersListRequest
             {
@@ -83,8 +88,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
         [Fact]
         public void When_a_member_is_added_to_an_existing_list_without_membercode_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var list = new List
             {
@@ -92,7 +96,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
                 ListName = "Some list"
             };
 
-            ctx.Initialize(new List<Entity>
+            _ctx.Initialize(new List<Entity>
             {
                 list
             });
@@ -112,8 +116,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
         [Fact]
         public void When_a_non_existing_member_is_added_to_an_existing_list_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var list = new List
             {
@@ -122,7 +125,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
                 CreatedFromCode = new OptionSetValue((int)ListCreatedFromCode.Account)
             };
 
-            ctx.Initialize(new List<Entity>
+            _ctx.Initialize(new List<Entity>
             {
                 list
             });
@@ -142,8 +145,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
         [Fact]
         public void When_different_membertypes_are_added_to_an_existing_list_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var list = new List
             {
@@ -162,7 +164,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
                 Id = Guid.NewGuid()
             };
 
-            ctx.Initialize(new List<Entity>
+            _ctx.Initialize(new List<Entity>
             {
                 list,
                 account,
@@ -185,8 +187,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
         [Fact]
         public void When_a_member_is_added_to_an_existing_list_member_is_added_successfully_account()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var list = new List
             {
@@ -199,7 +200,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
             {
                 Id = Guid.NewGuid()
             };
-            ctx.Initialize(new List<Entity>
+            _ctx.Initialize(new List<Entity>
             {
                 list,
                 account
@@ -233,8 +234,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
         [Fact]
         public void When_a_member_is_added_to_an_existing_list_member_is_added_successfully_contact()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var list = new List
             {
@@ -247,7 +247,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
             {
                 Id = Guid.NewGuid()
             };
-            ctx.Initialize(new List<Entity>
+            _ctx.Initialize(new List<Entity>
             {
                 list,
                 contact
@@ -281,8 +281,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
         [Fact]
         public void When_a_member_is_added_to_an_existing_list_member_is_added_successfully_lead()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
             var list = new List()
             {
@@ -295,7 +294,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
             {
                 Id = Guid.NewGuid()
             };
-            ctx.Initialize(new List<Entity>
+            _ctx.Initialize(new List<Entity>
             {
                 list,
                 lead
