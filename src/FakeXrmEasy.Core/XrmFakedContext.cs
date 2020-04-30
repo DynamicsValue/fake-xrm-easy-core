@@ -386,6 +386,7 @@ namespace FakeXrmEasy
                 throw PullRequestException.NotImplementedOrganizationRequest(req.GetType());
             };
 
+            
             A.CallTo(() => fakedService.Execute(A<OrganizationRequest>._))
                 .Invokes((OrganizationRequest req) => response = execute(req))
                 .ReturnsLazily((OrganizationRequest req) => response);

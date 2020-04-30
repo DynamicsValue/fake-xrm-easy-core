@@ -8,15 +8,11 @@ namespace FakeXrmEasy.Middleware
     {
         public static IXrmFakedContext New()
         {
-            var builder = MiddlewareBuilder.New();
-
-            //Dependency "injection"
-            builder.AddCrud();
-
-            //Pipeline sequence
-            builder.UseCrud();
-            
-            return builder.Build();
+            return MiddlewareBuilder
+                            .New()
+                            .AddCrud()   //Crud  setup 
+                            .UseCrud()   //Pipeline sequence
+                            .Build();
         }
     }
 }
