@@ -5,6 +5,7 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using Xunit;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Tests.Issues
 {

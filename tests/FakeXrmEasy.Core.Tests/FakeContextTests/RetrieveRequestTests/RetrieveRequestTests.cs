@@ -1,6 +1,8 @@
 ﻿using Crm;
 using FakeItEasy;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -15,8 +17,17 @@ namespace FakeXrmEasy.Tests.FakeContextTests
 {
     public class RetrieveRequestTests
     {
+        private readonly IXrmFakedContext _ctx;
+        private readonly IOrganizationService _service;
+
+        public RetrieveRequestTests() 
+        {
+            _ctx = XrmFakedContextFactory.New();
+            _service = _ctx.GetOrganizationService();
+        }
+
         [Fact]
-        public static void Should_Populate_EntityReference_Name_When_Metadata_Is_Provided()
+        public void Should_Populate_EntityReference_Name_When_Metadata_Is_Provided()
         {
             var userMetadata = new EntityMetadata() { LogicalName = "systemuser" };
             userMetadata.SetSealedPropertyValue("PrimaryNameAttribute", "fullname");
@@ -24,24 +35,23 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             var user = new Entity() { LogicalName = "systemuser", Id=Guid.NewGuid() };
             user["fullname"] = "Fake XrmEasy";
 
-            var context = new XrmFakedContext();
-            context.InitializeMetadata(userMetadata);
-            context.Initialize(user);
-            context.CallerId = user.ToEntityReference();
+            _ctx.InitializeMetadata(userMetadata);
+            _ctx.Initialize(user);
+            (_ctx as XrmFakedContext).CallerId = user.ToEntityReference();
 
             var account = new Entity() { LogicalName = "account" };
 
-            var service = context.GetOrganizationService();
+            var service = _ctx.GetOrganizationService();
 
-            var accountId = service.Create(account);
+            var accountId = _service.Create(account);
 
-            account = service.Retrieve("account", accountId, new ColumnSet(true));
+            account = _service.Retrieve("account", accountId, new ColumnSet(true));
 
             Assert.Equal("Fake XrmEasy", account.GetAttributeValue<EntityReference>("ownerid").Name);
         }
 
         [Fact]
-        public static void Should_Retrieve_A_Correct_Entity()
+        public void Should_Retrieve_A_Correct_Entity()
         {
             var account1 = new Account
             {
@@ -61,10 +71,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Name = "Account 3"
             };
 
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
-            fakedContext.Initialize(new[] { account1, account2, account3 });
+            _ctx.Initialize(new[] { account1, account2, account3 });
 
             var request = new RetrieveRequest
             {
@@ -72,7 +79,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Target = account2.ToEntityReference(),
             };
 
-            var result = (RetrieveResponse)fakedService.Execute(request);
+            var result = (RetrieveResponse)_service.Execute(request);
 
             Assert.NotNull(result.Entity);
 
@@ -82,7 +89,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public static void Should_Retrieve_A_Correct_Entity_With_1_To_N_Related_Records()
+        public void Should_Retrieve_A_Correct_Entity_With_1_To_N_Related_Records()
         {
             var account1 = new Account
             {
@@ -136,11 +143,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 FirstName = "Contact 5"
             };
 
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
-            fakedContext.Initialize(new Entity[] { account1, account2, account3, contact1, contact2, contact3, contact4, contact5 });
-            fakedContext.AddRelationship("contact_customer_accounts", new XrmFakedRelationship
+            _ctx.Initialize(new Entity[] { account1, account2, account3, contact1, contact2, contact3, contact4, contact5 });
+            (_ctx as XrmFakedContext).AddRelationship("contact_customer_accounts", new XrmFakedRelationship
             (
                 entity1LogicalName: Contact.EntityLogicalName,
                 entity1Attribute: "parentcustomerid",
@@ -165,7 +169,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = (RetrieveResponse)fakedService.Execute(request);
+            var result = (RetrieveResponse)_service.Execute(request);
 
             Assert.NotNull(result.Entity);
 
@@ -190,7 +194,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public static void Should_Retrieve_A_Correct_Entity_With_N_To_N_Related_Records()
+        public void Should_Retrieve_A_Correct_Entity_With_N_To_N_Related_Records()
         {
             var account1 = new Account
             {
@@ -240,12 +244,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Subject = "Lead 5"
             };
 
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             var relationshipName = "accountleads_association";
 
-            fakedContext.AddRelationship(relationshipName, new XrmFakedRelationship
+            (_ctx as XrmFakedContext).AddRelationship(relationshipName, new XrmFakedRelationship
             {
                 IntersectEntity = "accountleads",
                 Entity1LogicalName = Account.EntityLogicalName,
@@ -254,8 +255,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Entity2Attribute = "leadid"
             });
 
-            fakedContext.Initialize(new Entity[] { account1, account2, account3, lead1, lead2, lead3, lead4, lead5 });
-            fakedService.Associate(Account.EntityLogicalName, account2.Id, new Relationship(relationshipName),
+            _ctx.Initialize(new Entity[] { account1, account2, account3, lead1, lead2, lead3, lead4, lead5 });
+            _service.Associate(Account.EntityLogicalName, account2.Id, new Relationship(relationshipName),
                 new EntityReferenceCollection()
                 {
                     lead2.ToEntityReference(),
@@ -263,7 +264,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                     lead5.ToEntityReference()
                 });
 
-            fakedService.Associate(Account.EntityLogicalName, account1.Id, new Relationship(relationshipName),
+            _service.Associate(Account.EntityLogicalName, account1.Id, new Relationship(relationshipName),
                 new EntityReferenceCollection()
                 {
                     lead2.ToEntityReference(),
@@ -287,7 +288,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = (RetrieveResponse)fakedService.Execute(request);
+            var result = (RetrieveResponse)_service.Execute(request);
 
             Assert.NotNull(result.Entity);
 
@@ -314,7 +315,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public static void Should_Retrieve_A_Correct_Entity_With_N_To_N_Related_Records_Vice_Versa()
+        public void Should_Retrieve_A_Correct_Entity_With_N_To_N_Related_Records_Vice_Versa()
         {
             var account1 = new Account
             {
@@ -364,12 +365,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Subject = "Lead 5"
             };
 
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             var relationshipName = "accountleads_association";
 
-            fakedContext.AddRelationship(relationshipName, new XrmFakedRelationship
+            (_ctx as XrmFakedContext).AddRelationship(relationshipName, new XrmFakedRelationship
             {
                 IntersectEntity = "accountleads",
                 Entity1LogicalName = Account.EntityLogicalName,
@@ -378,8 +376,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Entity2Attribute = "leadid"
             });
 
-            fakedContext.Initialize(new Entity[] { account1, account2, account3, lead1, lead2, lead3, lead4, lead5 });
-            fakedService.Associate(Account.EntityLogicalName, account2.Id, new Relationship(relationshipName),
+            (_ctx as XrmFakedContext).Initialize(new Entity[] { account1, account2, account3, lead1, lead2, lead3, lead4, lead5 });
+            _service.Associate(Account.EntityLogicalName, account2.Id, new Relationship(relationshipName),
                 new EntityReferenceCollection()
                 {
                     lead2.ToEntityReference(),
@@ -387,7 +385,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                     lead5.ToEntityReference()
                 });
 
-            fakedService.Associate(Account.EntityLogicalName, account1.Id, new Relationship(relationshipName),
+            _service.Associate(Account.EntityLogicalName, account1.Id, new Relationship(relationshipName),
                 new EntityReferenceCollection()
                 {
                     lead2.ToEntityReference(),
@@ -411,7 +409,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = (RetrieveResponse)fakedService.Execute(request);
+            var result = (RetrieveResponse) _service.Execute(request);
 
             Assert.NotNull(result.Entity);
 
@@ -436,7 +434,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public static void Should_Retrieve_A_Correct_Entity_With_Multiple_Related_Record_Queries()
+        public void Should_Retrieve_A_Correct_Entity_With_Multiple_Related_Record_Queries()
         {
             var account1 = new Account
             {
@@ -489,13 +487,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 ParentCustomerId = account2.ToEntityReference()
             };
 
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             var accountLeadsRelationshipName = "accountleads_association";
 
             //account N:N leads
-            fakedContext.AddRelationship(accountLeadsRelationshipName, new XrmFakedRelationship
+            _ctx.AddRelationship(accountLeadsRelationshipName, new XrmFakedRelationship
             {
                 IntersectEntity = "accountleads",
                 Entity1LogicalName = Account.EntityLogicalName,
@@ -505,7 +500,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             });
 
             //account 1:N contacts
-            fakedContext.AddRelationship("contact_customer_accounts", new XrmFakedRelationship
+            _ctx.AddRelationship("contact_customer_accounts", new XrmFakedRelationship
             (
                 entity1LogicalName: Contact.EntityLogicalName,
                 entity1Attribute: "parentcustomerid",
@@ -513,17 +508,17 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 entity2Attribute: "accountid"
             ));
 
-            fakedContext.Initialize(new Entity[] { account1, account2, lead1, lead2, lead3, contact1, contact2, contact3 });
+            _ctx.Initialize(new Entity[] { account1, account2, lead1, lead2, lead3, contact1, contact2, contact3 });
 
             //associate account N:N leads
-            fakedService.Associate(Account.EntityLogicalName, account2.Id, new Relationship(accountLeadsRelationshipName),
+            _service.Associate(Account.EntityLogicalName, account2.Id, new Relationship(accountLeadsRelationshipName),
                 new EntityReferenceCollection()
                 {
                     lead1.ToEntityReference(),
                     lead3.ToEntityReference(),
                 });
 
-            fakedService.Associate(Account.EntityLogicalName, account1.Id, new Relationship(accountLeadsRelationshipName),
+            _service.Associate(Account.EntityLogicalName, account1.Id, new Relationship(accountLeadsRelationshipName),
                 new EntityReferenceCollection()
                 {
                     lead2.ToEntityReference()
@@ -556,7 +551,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             };
 
             //execute request
-            var result = (RetrieveResponse)fakedService.Execute(request);
+            var result = (RetrieveResponse)_service.Execute(request);
 
             Assert.NotNull(result.Entity);
 
@@ -574,7 +569,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public static void Should_Retrieve_A_Correct_Entity_With_Relationship_Early_Bound()
+        public void Should_Retrieve_A_Correct_Entity_With_Relationship_Early_Bound()
         {
             var account1 = new Entity("account")
             {
@@ -632,12 +627,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                     { "firstname", "Contact 4"}
                 }
             };
-
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
-            fakedContext.Initialize(new[] { account1, account2, contact1, contact2, contact3, contact4 });
-            fakedContext.AddRelationship("contact_customer_accounts", new XrmFakedRelationship
+            _ctx.Initialize(new[] { account1, account2, contact1, contact2, contact3, contact4 });
+            _ctx.AddRelationship("contact_customer_accounts", new XrmFakedRelationship
             (
                 entity1LogicalName: "contact",
                 entity1Attribute: "parentcustomerid",
@@ -662,7 +653,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = (RetrieveResponse)fakedService.Execute(request);
+            var result = (RetrieveResponse)_service.Execute(request);
 
             Assert.NotNull(result.Entity);
 
@@ -690,7 +681,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public static void Should_Retrieve_A_Correct_Entity_With_1_To_N_Related_Records_And_Related_Record_Query_Criteria()
+        public void Should_Retrieve_A_Correct_Entity_With_1_To_N_Related_Records_And_Related_Record_Query_Criteria()
         {
             var account1 = new Account
             {
@@ -725,11 +716,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 ParentCustomerId = account2.ToEntityReference()
             };
 
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
-            fakedContext.Initialize(new Entity[] { account1, account2, contact1, contact2, contact3 });
-            fakedContext.AddRelationship("contact_customer_accounts", new XrmFakedRelationship
+            _ctx.Initialize(new Entity[] { account1, account2, contact1, contact2, contact3 });
+            _ctx.AddRelationship("contact_customer_accounts", new XrmFakedRelationship
             (
                 entity1LogicalName: Contact.EntityLogicalName,
                 entity1Attribute: "parentcustomerid",
@@ -762,7 +750,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = (RetrieveResponse)fakedService.Execute(request);
+            var result = (RetrieveResponse)_service.Execute(request);
 
             Assert.NotNull(result.Entity);
 
@@ -775,7 +763,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public static void Should_Retrieve_A_Correct_Entity_With_N_To_N_Related_Records_And_Related_Record_Query_Criteria()
+        public void Should_Retrieve_A_Correct_Entity_With_N_To_N_Related_Records_And_Related_Record_Query_Criteria()
         {
             var account1 = new Account
             {
@@ -813,12 +801,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Subject = "Lead 3"
             };
 
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             var relationshipName = "accountleads_association";
 
-            fakedContext.AddRelationship(relationshipName, new XrmFakedRelationship
+            _ctx.AddRelationship(relationshipName, new XrmFakedRelationship
             {
                 IntersectEntity = "accountleads",
                 Entity1LogicalName = Account.EntityLogicalName,
@@ -827,15 +812,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Entity2Attribute = "leadid"
             });
 
-            fakedContext.Initialize(new Entity[] { account1, account2, account3, lead1, lead2, lead3 });
-            fakedService.Associate(Account.EntityLogicalName, account2.Id, new Relationship(relationshipName),
+            _ctx.Initialize(new Entity[] { account1, account2, account3, lead1, lead2, lead3 });
+            _service.Associate(Account.EntityLogicalName, account2.Id, new Relationship(relationshipName),
                 new EntityReferenceCollection()
                 {
                     lead2.ToEntityReference(),
                     lead3.ToEntityReference(),
                 });
 
-            fakedService.Associate(Account.EntityLogicalName, account1.Id, new Relationship(relationshipName),
+            _service.Associate(Account.EntityLogicalName, account1.Id, new Relationship(relationshipName),
                 new EntityReferenceCollection()
                 {
                     lead1.ToEntityReference(),
@@ -866,7 +851,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = (RetrieveResponse)fakedService.Execute(request);
+            var result = (RetrieveResponse)_service.Execute(request);
 
             Assert.NotNull(result.Entity);
 
@@ -880,7 +865,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public static void Should_Retrieve_All_Related_Records()
+        public void Should_Retrieve_All_Related_Records()
         {
             //related entities should all be returned
             //even when PageInfo is set
@@ -904,13 +889,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             {
                 leads.Add(new Lead { Id = Guid.NewGuid() });
             }
-
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             var relationshipName = "accountleads_association";
 
-            fakedContext.AddRelationship(relationshipName, new XrmFakedRelationship
+            _ctx.AddRelationship(relationshipName, new XrmFakedRelationship
             {
                 IntersectEntity = "accountleads",
                 Entity1LogicalName = Account.EntityLogicalName,
@@ -923,8 +904,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             initData.AddRange(new Entity[] { account1, account2 });
             initData.AddRange(leads);
 
-            fakedContext.Initialize(initData);
-            fakedService.Associate(Account.EntityLogicalName, account2.Id, new Relationship(relationshipName),
+            _ctx.Initialize(initData);
+            _service.Associate(Account.EntityLogicalName, account2.Id, new Relationship(relationshipName),
                 new EntityReferenceCollection(leads.Select(x => x.ToEntityReference()).ToList()));
 
             var request = new RetrieveRequest
@@ -945,7 +926,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = (RetrieveResponse)fakedService.Execute(request);
+            var result = (RetrieveResponse)_service.Execute(request);
 
             Assert.NotNull(result.Entity);
 
@@ -959,28 +940,23 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public static void Should_Throw_When_Target_Not_Set()
+        public void Should_Throw_When_Target_Not_Set()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             var request = new RetrieveRequest
             {
                 ColumnSet = new ColumnSet("name")
             };
 
-            var exception = Assert.Throws<ArgumentNullException>(() => fakedService.Execute(request));
+            var exception = Assert.Throws<ArgumentNullException>(() => _service.Execute(request));
             Assert.Equal("Target", exception.ParamName);
         }
 
         [Fact]
-        public static void Should_Throw_When_Related_Record_Query_Not_Set_For_Relationship()
+        public void Should_Throw_When_Related_Record_Query_Not_Set_For_Relationship()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
             var account = new Entity(Account.EntityLogicalName);
             account.Id = Guid.NewGuid();
-            fakedContext.Initialize(account);
+            _ctx.Initialize(account);
 
             var request = new RetrieveRequest
             {
@@ -992,19 +968,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var exception = Assert.Throws<ArgumentNullException>(() => fakedService.Execute(request));
+            var exception = Assert.Throws<ArgumentNullException>(() => _service.Execute(request));
             Assert.Equal("relateEntitiesQuery.Value", exception.ParamName);
         }
 
         [Fact]
-        public static void Should_Throw_When_Relationship_Not_Set_In_Metadata()
+        public void Should_Throw_When_Relationship_Not_Set_In_Metadata()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             var account = new Entity(Account.EntityLogicalName);
             account.Id = Guid.NewGuid();
-            fakedContext.Initialize(account);
+            _ctx.Initialize(account);
 
             var request = new RetrieveRequest
             {
@@ -1016,14 +989,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var exception = Assert.Throws<Exception>(() => fakedService.Execute(request));
+            var exception = Assert.Throws<Exception>(() => _service.Execute(request));
             Assert.Equal("Relationship \"any\" does not exist in the metadata cache.", exception.Message);
         }
 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
         [Fact]
-        public static void Should_Retrieve_A_Correct_Entity_By_Alternate_Key()
+        public void Should_Retrieve_A_Correct_Entity_By_Alternate_Key()
         {
-            var fakedContext = new XrmFakedContext();
             var accountMetadata = new Microsoft.Xrm.Sdk.Metadata.EntityMetadata();
             accountMetadata.LogicalName = Account.EntityLogicalName;
             var alternateKeyMetadata = new Microsoft.Xrm.Sdk.Metadata.EntityKeyMetadata();
@@ -1032,12 +1004,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                  {
                  alternateKeyMetadata
                  });
-            fakedContext.InitializeMetadata(accountMetadata);
+            _ctx.InitializeMetadata(accountMetadata);
+            
             var account = new Entity(Account.EntityLogicalName);
             account.Id = Guid.NewGuid();
             account.Attributes.Add("alternateKey", "key");
-            fakedContext.Initialize(account);
-            var fakedService = fakedContext.GetOrganizationService();
+            _ctx.Initialize(account);
 
             var request = new RetrieveRequest
             {
@@ -1045,20 +1017,18 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 ColumnSet = new ColumnSet(allColumns: true)
             };
 
-            var retrievedAccount = (RetrieveResponse)fakedService.Execute(request);
+            var retrievedAccount = (RetrieveResponse)_service.Execute(request);
             Assert.Equal(account.Id, retrievedAccount.Entity.Id);
         }
 
 
         [Fact]
-        public static void Should_Throw_When_Alternate_Key_Not_In_Metadata()
+        public void Should_Throw_When_Alternate_Key_Not_In_Metadata()
         {
-            var fakedContext = new XrmFakedContext();
             var account = new Entity(Account.EntityLogicalName);
             account.Id = Guid.NewGuid();
             account.Attributes.Add("alternateKey", "key");
-            fakedContext.Initialize(account);
-            var fakedService = fakedContext.GetOrganizationService();
+            _ctx.Initialize(account);
 
             var request = new RetrieveRequest
             {
@@ -1066,7 +1036,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 ColumnSet = new ColumnSet(allColumns: true)
             };
 
-            var exception = Assert.Throws<InvalidOperationException>(() => fakedService.Execute(request));
+            var exception = Assert.Throws<InvalidOperationException>(() => _service.Execute(request));
             Assert.Equal($"The requested key attributes do not exist for the entity {Account.EntityLogicalName}", exception.Message);
         }
 #endif 

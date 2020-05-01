@@ -3,6 +3,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using Xunit;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {

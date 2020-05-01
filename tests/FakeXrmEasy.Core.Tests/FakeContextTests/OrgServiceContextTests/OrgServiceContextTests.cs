@@ -4,6 +4,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Linq;
 using Xunit;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
 {
