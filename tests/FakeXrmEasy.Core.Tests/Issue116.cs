@@ -1,4 +1,6 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -9,6 +11,15 @@ namespace FakeXrmEasy
 {
     public class Issue116
     {
+        private readonly IXrmFakedContext _ctx;
+        private readonly IOrganizationService _service;
+        
+        public Issue116()
+        {
+            _ctx = XrmFakedContextFactory.New();
+            _service = _ctx.GetOrganizationService();
+        }
+
         private List<Entity> SetupContactTests()
         {
             var entityList = new List<Entity>();
@@ -137,24 +148,18 @@ namespace FakeXrmEasy
         [Fact]
         public void __QueryExpression_Test_CodeBased__Contact_Account_Contact_Broken()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            _ctx.Initialize(SetupContactTests());
 
-            ctx.Initialize(SetupContactTests());
-
-            EntityCollection ec = service.RetrieveMultiple(CreateBrokenTestQuery("B6B4B46B-3209-4A8F-8FC8-A16F27CC44F3"));
+            EntityCollection ec = _service.RetrieveMultiple(CreateBrokenTestQuery("B6B4B46B-3209-4A8F-8FC8-A16F27CC44F3"));
             Assert.Equal(3, ec.Entities.Count);
         }
 
         [Fact]
         public void __QueryExpression_Test_CodeBased_Contact_Account_Contact_Working()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            _ctx.Initialize(SetupContactTests());
 
-            ctx.Initialize(SetupContactTests());
-
-            EntityCollection ec = service.RetrieveMultiple(CreateWorkingTestQuery("B6B4B46B-3209-4A8F-8FC8-A16F27CC44F3"));
+            EntityCollection ec = _service.RetrieveMultiple(CreateWorkingTestQuery("B6B4B46B-3209-4A8F-8FC8-A16F27CC44F3"));
             Assert.Equal(3, ec.Entities.Count);
         }
     }

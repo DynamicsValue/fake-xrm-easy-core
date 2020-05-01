@@ -8,11 +8,21 @@ using System.Linq;
 using System.ServiceModel;  //TypedEntities generated code for testing
 using Xunit;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests
 {
     public class FakeContextTestTranslateQueryExpression
     {
+        private readonly IXrmFakedContext _ctx;
+        private readonly IOrganizationService _service;
+        
+        public FakeContextTestTranslateQueryExpression()
+        {
+            _ctx = XrmFakedContextFactory.New();
+            _service = _ctx.GetOrganizationService();
+        }
+
         [Fact]
         public void When_translating_a_null_query_expression_the_linq_query_is_also_null()
         {
@@ -475,7 +485,6 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_with_simple_equals_condition_expression_returns_right_number_of_results()
         {
-            var context = new XrmFakedContext();
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -486,7 +495,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _ctx.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -510,8 +519,7 @@ namespace FakeXrmEasy.Tests
                 }
             };
 
-            var service = context.GetOrganizationService();
-            var result = service.Execute(new RetrieveMultipleRequest()
+            var result = _service.Execute(new RetrieveMultipleRequest()
             {
                 Query = qe
             }) as RetrieveMultipleResponse;
@@ -524,7 +532,6 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_with_simple_equals_condition_expression_returns_right_number_of_results_with_execute_request()
         {
-            var context = new XrmFakedContext();
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -535,7 +542,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _ctx.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -559,8 +566,7 @@ namespace FakeXrmEasy.Tests
                 }
             };
 
-            var service = context.GetOrganizationService();
-            var result = service.Execute(new RetrieveMultipleRequest()
+            var result = _service.Execute(new RetrieveMultipleRequest()
             {
                 Query = qe
             }) as RetrieveMultipleResponse;
@@ -573,7 +579,6 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_with_simple_equals_condition_expression_returns_right_number_of_results_with_retrieve_multiple()
         {
-            var context = new XrmFakedContext();
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -584,7 +589,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _ctx.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -608,8 +613,7 @@ namespace FakeXrmEasy.Tests
                 }
             };
 
-            var service = context.GetOrganizationService();
-            var result = service.RetrieveMultiple(qe);
+            var result = _service.RetrieveMultiple(qe);
 
             Assert.True(result.Entities.Count == 1);
             var firstContact = result.Entities.FirstOrDefault();
@@ -621,8 +625,6 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_using_joins_attribute_projection_shouldnt_affect_column_sets()
         {
-            var context = new XrmFakedContext();
-
             Entity invoice_entity = new Entity("invoice");
             invoice_entity.Id = Guid.NewGuid();
 
@@ -652,10 +654,7 @@ namespace FakeXrmEasy.Tests
             opi_entity.Attributes.Add("statecode", new OptionSetValue(0));
 
             //create these objects in crm
-            context.Initialize(new List<Entity>() { invoice_entity, pmr_entity, op_entity, opi_entity });
-
-            //create the mock service
-            IOrganizationService service = context.GetOrganizationService();
+            _ctx.Initialize(new List<Entity>() { invoice_entity, pmr_entity, op_entity, opi_entity });
 
             QueryExpression query = new QueryExpression("new_onlinepaymentitem");
             query.Criteria.AddCondition("new_onlinepaymentid", ConditionOperator.Equal, op_entity.Id);
@@ -670,7 +669,7 @@ namespace FakeXrmEasy.Tests
 
             query.ColumnSet = new ColumnSet("new_invoicepaymentmethodid");
 
-            EntityCollection paymentitems = service.RetrieveMultiple(query);
+            EntityCollection paymentitems = _service.RetrieveMultiple(query);
             Assert.True(paymentitems.Entities.Count == 1);
         }
 
@@ -711,38 +710,25 @@ namespace FakeXrmEasy.Tests
             };
 
             // initialise
-            var context = new XrmFakedContext();
-            context.Initialize(new[] { contact, child, pet });
-            var service = context.GetOrganizationService();
+            _ctx.Initialize(new[] { contact, child, pet });
 
-            // 1st Query: join contact and child
-            //var query1 = new QueryExpression("contact");
-            //var link1 = query1.AddLink("child", "contactid", "contactid", JoinOperator.Inner);
-
-            //var count1 = service.RetrieveMultiple(query1).Entities.Count;
-            //Console.WriteLine(count1); // returns 1 record (expected)
-
-            // 2nd Query: join contact and child and pet
             var query2 = new QueryExpression("contact");
             var link2 = query2.AddLink("child", "contactid", "contactid", JoinOperator.Inner);
             var link22 = link2.AddLink("pet", "childid", "childid", JoinOperator.Inner);
 
-            var count2 = service.RetrieveMultiple(query2).Entities.Count;
-            Assert.Equal(1, count2); // returns 0 records (unexpected?)
+            var count2 = _service.RetrieveMultiple(query2).Entities.Count;
+            Assert.Equal(1, count2); 
         }
 
         [Fact]
         public void When_querying_early_bound_entities_attribute_not_initialised_returns_null_in_joins()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var role = new Role() { Id = Guid.NewGuid() };
             var parentRole = new Role() { Id = Guid.NewGuid() };
 
-            context.Initialize(new[] { role, parentRole });
+            _ctx.Initialize(new[] { role, parentRole });
 
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 var roleResult = (from r in ctx.CreateQuery<Role>()
                                   join parent in ctx.CreateQuery<Role>() on r.ParentRoleId.Id equals parent.RoleId.Value
@@ -841,12 +827,9 @@ namespace FakeXrmEasy.Tests
         }
 
         [Fact]
-        public static void Should_Not_Fail_On_Conditions_In_Link_Entities_Multiple()
+        public void Should_Not_Fail_On_Conditions_In_Link_Entities_Multiple()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
-            fakedContext.AddRelationship("new_invoicepaymentmethod_invoicedetail",
+            (_ctx as XrmFakedContext).AddRelationship("new_invoicepaymentmethod_invoicedetail",
                 new XrmFakedRelationship("new_invoicepaymentmethod_invoicedetail",
                             "invoicedetailid", "new_invoicepaymentmethodid",
                             "invoicedetail",
@@ -876,15 +859,15 @@ namespace FakeXrmEasy.Tests
             pmr02.Attributes.Add("new_invoicepaymentmethodid", pmr02.Id);
             pmr02.Attributes.Add("new_name", "PMR0000000002");
 
-            fakedService.Create(product01);
+            _service.Create(product01);
 
-            fakedService.Create(invoicedetail01);
-            fakedService.Create(invoicedetail02);
-            fakedService.Create(pmr01);
-            fakedService.Create(pmr02);
+            _service.Create(invoicedetail01);
+            _service.Create(invoicedetail02);
+            _service.Create(pmr01);
+            _service.Create(pmr02);
 
-            fakedService.Associate("invoicedetail", invoicedetail01.Id, new Relationship("new_invoicepaymentmethod_invoicedetail"), new EntityReferenceCollection() { pmr01.ToEntityReference() });
-            fakedService.Associate("invoicedetail", invoicedetail02.Id, new Relationship("new_invoicepaymentmethod_invoicedetail"), new EntityReferenceCollection() { pmr02.ToEntityReference() });
+            _service.Associate("invoicedetail", invoicedetail01.Id, new Relationship("new_invoicepaymentmethod_invoicedetail"), new EntityReferenceCollection() { pmr01.ToEntityReference() });
+            _service.Associate("invoicedetail", invoicedetail02.Id, new Relationship("new_invoicepaymentmethod_invoicedetail"), new EntityReferenceCollection() { pmr02.ToEntityReference() });
 
             EntityCollection invoiceDetails = new EntityCollection();
 
@@ -911,7 +894,7 @@ namespace FakeXrmEasy.Tests
             link1.LinkEntities.Add(link2);
             query.LinkEntities.Add(link1);
 
-            invoiceDetails = fakedService.RetrieveMultiple(query);
+            invoiceDetails = _service.RetrieveMultiple(query);
 
             Assert.Equal(1, invoiceDetails.Entities.Count);
             Assert.Equal(invoicedetail02.Id, invoiceDetails.Entities[0].Id);
