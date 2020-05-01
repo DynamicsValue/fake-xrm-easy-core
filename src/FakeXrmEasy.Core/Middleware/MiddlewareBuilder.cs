@@ -17,8 +17,7 @@ namespace FakeXrmEasy.Middleware
         {
             _context = new XrmFakedContext();
         }
-
-        public static IMiddlewareBuilder New() 
+         public static IMiddlewareBuilder New() 
         {
             return new MiddlewareBuilder();
         }

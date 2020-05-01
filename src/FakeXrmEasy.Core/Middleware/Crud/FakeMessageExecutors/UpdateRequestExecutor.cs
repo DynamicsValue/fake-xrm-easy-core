@@ -1,8 +1,10 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 
-namespace FakeXrmEasy.FakeMessageExecutors
+namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
     public class UpdateRequestExecutor : IFakeMessageExecutor
     {
@@ -11,7 +13,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is UpdateRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var updateRequest = (UpdateRequest)request;
 

@@ -97,15 +97,6 @@ namespace FakeXrmEasy
                 });
         }
 
-        protected static void FakeUpdate(XrmFakedContext context, IOrganizationService fakedService)
-        {
-            A.CallTo(() => fakedService.Update(A<Entity>._))
-                .Invokes((Entity e) =>
-                {
-                    context.UpdateEntity(e);
-                });
-        }
-
         public void UpdateEntity(Entity e)
         {
             if (e == null)

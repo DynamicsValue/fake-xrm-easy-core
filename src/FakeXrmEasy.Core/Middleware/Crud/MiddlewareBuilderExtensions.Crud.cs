@@ -28,11 +28,13 @@ namespace FakeXrmEasy.Middleware.Crud
                 crudMessageExecutors.Add(typeof(CreateRequest), new CreateRequestExecutor());
                 crudMessageExecutors.Add(typeof(RetrieveMultipleRequest), new RetrieveMultipleRequestExecutor());
                 crudMessageExecutors.Add(typeof(RetrieveRequest), new RetrieveRequestExecutor());
+                crudMessageExecutors.Add(typeof(UpdateRequest), new UpdateRequestExecutor());
 
                 context.SetProperty(crudMessageExecutors);
                 AddFakeCreate(context, service);
                 AddFakeRetrieve(context, service);
                 AddFakeRetrieveMultiple(context, service);
+                AddFakeUpdate(context,service);
             });
 
             return builder;
@@ -81,6 +83,17 @@ namespace FakeXrmEasy.Middleware.Crud
                     request.Target = e;
                     var response = service.Execute(request) as CreateResponse;
                     return response.id;
+                });
+        }
+
+        private static void AddFakeUpdate(IXrmFakedContext context, IOrganizationService service) 
+        {
+            A.CallTo(() => service.Update(A<Entity>._))
+                .Invokes((Entity e) =>
+                {
+                    var request = new UpdateRequest();
+                    request.Target = e;
+                    service.Execute(request);
                 });
         }
 

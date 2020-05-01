@@ -344,7 +344,6 @@ namespace FakeXrmEasy
             var fakedService = A.Fake<IOrganizationService>();
 
             //Fake CRUD methods
-            FakeUpdate(context, fakedService);
             FakeDelete(context, fakedService);
 
             //Fake / Intercept other requests
