@@ -7,6 +7,7 @@ using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Middleware.Crud.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Middleware.Crud
 {
@@ -25,10 +26,13 @@ namespace FakeXrmEasy.Middleware.Crud
                 //Get Crud Message Executors
                 var crudMessageExecutors = new CrudMessageExecutors();
                 crudMessageExecutors.Add(typeof(CreateRequest), new CreateRequestExecutor());
-                
+                crudMessageExecutors.Add(typeof(RetrieveMultipleRequest), new RetrieveMultipleRequestExecutor());
+                crudMessageExecutors.Add(typeof(RetrieveRequest), new RetrieveRequestExecutor());
 
                 context.SetProperty(crudMessageExecutors);
                 AddFakeCreate(context, service);
+                AddFakeRetrieve(context, service);
+                AddFakeRetrieveMultiple(context, service);
             });
 
             return builder;
@@ -77,6 +81,34 @@ namespace FakeXrmEasy.Middleware.Crud
                     request.Target = e;
                     var response = service.Execute(request) as CreateResponse;
                     return response.id;
+                });
+        }
+
+        private static void AddFakeRetrieveMultiple(IXrmFakedContext context, IOrganizationService service)
+        {
+            //refactored from RetrieveMultipleExecutor
+            A.CallTo(() => service.RetrieveMultiple(A<QueryBase>._))
+                .ReturnsLazily((QueryBase req) => {
+                    var request = new RetrieveMultipleRequest { Query = req };
+
+                    var response = service.Execute(request) as RetrieveMultipleResponse;
+                    return response.EntityCollection;
+                });
+        }
+
+        private static void AddFakeRetrieve(IXrmFakedContext context, IOrganizationService service)
+        {
+            A.CallTo(() => service.Retrieve(A<string>._, A<Guid>._, A<ColumnSet>._))
+                .ReturnsLazily((string entityName, Guid id, ColumnSet columnSet) =>
+                {
+                    var request = new RetrieveRequest()
+                    {
+                        Target = new EntityReference() { LogicalName = entityName, Id = id },
+                        ColumnSet = columnSet
+                    };
+
+                    var response = service.Execute(request) as RetrieveResponse;
+                    return response.Entity;
                 });
         }
 

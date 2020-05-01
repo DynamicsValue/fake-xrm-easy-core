@@ -4,8 +4,9 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 
-namespace FakeXrmEasy.FakeMessageExecutors
+namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
     public class RetrieveRequestExecutor : IFakeMessageExecutor
     {
@@ -16,8 +17,9 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
 
 
-        public OrganizationResponse Execute(OrganizationRequest req, XrmFakedContext context)
+        public OrganizationResponse Execute(OrganizationRequest req, IXrmFakedContext ctx)
         {
+            var context = (ctx as XrmFakedContext);
             var request = req as RetrieveRequest;
 
             if (request.Target == null)

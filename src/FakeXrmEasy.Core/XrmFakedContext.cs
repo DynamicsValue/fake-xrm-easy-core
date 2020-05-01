@@ -344,13 +344,8 @@ namespace FakeXrmEasy
             var fakedService = A.Fake<IOrganizationService>();
 
             //Fake CRUD methods
-            FakeRetrieve(context, fakedService);
-            //FakeCreate(context, fakedService);
             FakeUpdate(context, fakedService);
             FakeDelete(context, fakedService);
-
-            //Fake / Intercept Retrieve Multiple Requests
-            FakeRetrieveMultiple(context, fakedService);
 
             //Fake / Intercept other requests
             FakeExecute(context, fakedService);
@@ -432,24 +427,7 @@ namespace FakeXrmEasy
                 });
         }
 
-        public static void FakeRetrieveMultiple(XrmFakedContext context, IOrganizationService fakedService)
-        {
-            EntityCollection entities = null;
-            Func<QueryBase, EntityCollection> retriveMultiple = (QueryBase req) =>
-            {
-                var request = new RetrieveMultipleRequest { Query = req };
-
-                var executor = new RetrieveMultipleRequestExecutor();
-                var response = executor.Execute(request, context) as RetrieveMultipleResponse;
-
-                return response.EntityCollection;
-            };
-
-            //refactored from RetrieveMultipleExecutor
-            A.CallTo(() => fakedService.RetrieveMultiple(A<QueryBase>._))
-                .Invokes((QueryBase req) => entities = retriveMultiple(req))
-                .ReturnsLazily((QueryBase req) => entities);
-        }
+        
 
     }
 }

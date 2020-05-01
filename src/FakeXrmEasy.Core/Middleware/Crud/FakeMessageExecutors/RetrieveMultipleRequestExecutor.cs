@@ -1,4 +1,6 @@
-﻿using FakeXrmEasy.Extensions;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -7,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FakeXrmEasy.FakeMessageExecutors
+namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
     public class RetrieveMultipleRequestExecutor : IFakeMessageExecutor
     {
@@ -16,8 +18,9 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is RetrieveMultipleRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest req, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest req, IXrmFakedContext ctx)
         {
+            var context = ctx as XrmFakedContext;
             var request = req as RetrieveMultipleRequest;
             List<Entity> list = null;
             PagingInfo pageInfo = null;
@@ -30,22 +33,22 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 qe = (request.Query as QueryExpression).Clone();
                 entityName = qe.EntityName;
 
-                var linqQuery = XrmFakedContext.TranslateQueryExpressionToLinq(ctx, qe);
+                var linqQuery = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
                 list = linqQuery.ToList();
             }
             else if (request.Query is FetchExpression)
             {
                 var fetchXml = (request.Query as FetchExpression).Query;
                 var xmlDoc = XrmFakedContext.ParseFetchXml(fetchXml);
-                qe = XrmFakedContext.TranslateFetchXmlDocumentToQueryExpression(ctx, xmlDoc);
+                qe = XrmFakedContext.TranslateFetchXmlDocumentToQueryExpression(context, xmlDoc);
                 entityName = qe.EntityName;
 
-                var linqQuery = XrmFakedContext.TranslateQueryExpressionToLinq(ctx, qe);
+                var linqQuery = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
                 list = linqQuery.ToList();
 
                 if (xmlDoc.IsAggregateFetchXml())
                 {
-                    list = XrmFakedContext.ProcessAggregateFetchXml(ctx, xmlDoc, list);
+                    list = XrmFakedContext.ProcessAggregateFetchXml(context, xmlDoc, list);
                 }
             }
             else if (request.Query is QueryByAttribute)
@@ -70,7 +73,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 qe.PageInfo = query.PageInfo;
 
                 // QueryExpression now done... execute it!
-                var linqQuery = XrmFakedContext.TranslateQueryExpressionToLinq(ctx, qe);
+                var linqQuery = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
                 list = linqQuery.ToList();
             }
             else
@@ -97,13 +100,13 @@ namespace FakeXrmEasy.FakeMessageExecutors
             }
 
             // Handle paging
-            var pageSize = ctx.MaxRetrieveCount;
+            var pageSize = context.MaxRetrieveCount;
             pageInfo = qe.PageInfo;
             int pageNumber = 1;
             if (pageInfo != null && pageInfo.PageNumber > 0)
             {
                 pageNumber = pageInfo.PageNumber;
-                pageSize = pageInfo.Count == 0 ? ctx.MaxRetrieveCount : pageInfo.Count;
+                pageSize = pageInfo.Count == 0 ? context.MaxRetrieveCount : pageInfo.Count;
             }
 
             // Figure out where in the list we need to start and how many items we need to grab
@@ -126,7 +129,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             var recordsToReturn = startPosition + numberToGet > list.Count ? new List<Entity>() : list.GetRange(startPosition, numberToGet);
 
-            recordsToReturn.ForEach(e => e.ApplyDateBehaviour(ctx));
+            recordsToReturn.ForEach(e => e.ApplyDateBehaviour(context));
             recordsToReturn.ForEach(e => PopulateFormattedValues(e));
 
             var response = new RetrieveMultipleResponse

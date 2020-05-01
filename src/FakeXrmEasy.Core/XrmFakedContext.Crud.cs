@@ -82,31 +82,7 @@ namespace FakeXrmEasy
             
             return record.Id;
         }   
-
-        /// <summary>
-        /// A fake retrieve method that will query the FakedContext to retrieve the specified
-        /// entity and Guid, or null, if the entity was not found
-        /// </summary>
-        /// <param name="context">The faked context</param>
-        /// <param name="fakedService">The faked service where the Retrieve method will be faked</param>
-        /// <returns></returns>
-        protected static void FakeRetrieve(XrmFakedContext context, IOrganizationService fakedService)
-        {
-            A.CallTo(() => fakedService.Retrieve(A<string>._, A<Guid>._, A<ColumnSet>._))
-                .ReturnsLazily((string entityName, Guid id, ColumnSet columnSet) =>
-                {
-                    RetrieveRequest retrieveRequest = new RetrieveRequest()
-                    {
-                        Target = new EntityReference() { LogicalName = entityName, Id = id },
-                        ColumnSet = columnSet
-                    };
-                    var executor = context.FakeMessageExecutors[typeof(RetrieveRequest)];
-
-                    RetrieveResponse retrieveResponse = (RetrieveResponse)executor.Execute(retrieveRequest, context);
-
-                    return retrieveResponse.Entity;
-                });
-        }
+        
         /// <summary>
         /// Fakes the Create message
         /// </summary>
