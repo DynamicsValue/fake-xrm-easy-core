@@ -2,37 +2,41 @@
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using FakeXrmEasy.Services;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.Services.EntityInitializer
 {
     public class InvoiceInitializerServiceTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        public InvoiceInitializerServiceTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void TestPopulateFields()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
-
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity invoice = new Entity("invoice");
             invoice.Id = Guid.NewGuid();
             initialEntities.Add(invoice);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve("invoice", invoice.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve("invoice", invoice.Id, new ColumnSet(true));
             Assert.NotNull(testPostCreate["invoicenumber"]);
         }
 
         [Fact]
         public void When_InvoiceNumberSet_DoesNot_Overridde_It()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
-
             List<Entity> initialEntities = new List<Entity>();
 
             Entity invoice = new Entity("invoice");
@@ -40,8 +44,8 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoice["invoicenumber"] = "TEST";
             initialEntities.Add(invoice);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve("invoice", invoice.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve("invoice", invoice.Id, new ColumnSet(true));
             Assert.NotNull(testPostCreate["invoicenumber"]);
             Assert.Equal("TEST", testPostCreate["invoicenumber"]);
         }

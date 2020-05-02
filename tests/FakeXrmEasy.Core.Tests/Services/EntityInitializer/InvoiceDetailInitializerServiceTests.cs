@@ -2,38 +2,43 @@
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using FakeItEasy;
 using FakeXrmEasy.Services;
-
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.Services.EntityInitializer
 {
     public class InvoiceDetailInitializerServiceTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        public InvoiceDetailInitializerServiceTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_using_default_entity_initialization_level_invoice_detail_init_service_is_not_called()
         {
-            XrmFakedContext context = new XrmFakedContext(); //By default it is using the default setting
-            IOrganizationService service = context.GetOrganizationService();
             var fakeService = A.Fake<IEntityInitializerService>();
             var overridenDefaultInitializer = new DefaultEntityInitializerService();
             overridenDefaultInitializer.InitializerServiceDictionary["invoicedetail"] = fakeService;
-            context.EntityInitializerService = overridenDefaultInitializer;
+            (_context as XrmFakedContext).EntityInitializerService = overridenDefaultInitializer;
 
             Entity invoiceDetail = new Entity("invoicedetail");
             invoiceDetail.Id = Guid.NewGuid();
             invoiceDetail["ispriceoverridden"] = false;
-            context.Initialize(invoiceDetail);
+            _context.Initialize(invoiceDetail);
 
             A.CallTo(() => fakeService.Initialize(A<Entity>._, A<Guid>._, A<XrmFakedContext>._, A<bool>._)).MustNotHaveHappened();
         }
         [Fact]
         public void No_Invoice_And_Price_Overriden_Is_False_Result_0()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -42,8 +47,8 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["ispriceoverridden"] = false;
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(0m), testPostCreate["priceperunit"]);
             Assert.Equal(1m, testPostCreate["quantity"]);
             Assert.Equal(new Money(0m), testPostCreate["amount"]);
@@ -53,9 +58,7 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
         [Fact]
         public void Invoice_And_Price_Overriden_Is_False_Result_0()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
-
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity invoice = new Entity("invoice");
@@ -68,22 +71,21 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["invoiceid"] = invoice.ToEntityReference();
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(0m), testPostCreate["priceperunit"]);
             Assert.Equal(1m, testPostCreate["quantity"]);
             Assert.Equal(new Money(0m), testPostCreate["amount"]);
             Assert.Equal(new Money(0m), testPostCreate["extendedamount"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(0m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_Product_And_Price_Overriden_Is_False_Result_0()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -102,22 +104,21 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["productid"] = product.ToEntityReference();
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(0m), testPostCreate["priceperunit"]);
             Assert.Equal(1m, testPostCreate["quantity"]);
             Assert.Equal(new Money(0m), testPostCreate["amount"]);
             Assert.Equal(new Money(0m), testPostCreate["extendedamount"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(0m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_Product_Pricelist_And_Price_Overriden_Is_False_Result_0()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -142,22 +143,21 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["productid"] = product.ToEntityReference();
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(0m), testPostCreate["priceperunit"]);
             Assert.Equal(1m, testPostCreate["quantity"]);
             Assert.Equal(new Money(0m), testPostCreate["amount"]);
             Assert.Equal(new Money(0m), testPostCreate["extendedamount"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(0m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_Product_Pricelist_UoM_And_Price_Overriden_Is_False_Result_0()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -187,22 +187,21 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["uomid"] = uom.ToEntityReference();
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(0m), testPostCreate["priceperunit"]);
             Assert.Equal(1m, testPostCreate["quantity"]);
             Assert.Equal(new Money(0m), testPostCreate["amount"]);
             Assert.Equal(new Money(0m), testPostCreate["extendedamount"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(0m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_Product_Pricelist_UoM_And_Price_Overriden_Is_False_Price_Is_In_ProductPriceLevel()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -249,22 +248,21 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["uomid"] = uom.ToEntityReference();
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostCreate["priceperunit"]);
             Assert.Equal(1m, testPostCreate["quantity"]);
             Assert.Equal(new Money(10m), testPostCreate["amount"]);
             Assert.Equal(new Money(10m), testPostCreate["extendedamount"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_Product_Pricelist_And_Price_Overriden_Is_False_Price_Is_In_ProductPriceLevel_UoM_In_Product()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -311,23 +309,22 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["productid"] = product.ToEntityReference();
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostCreate["priceperunit"]);
             Assert.Equal(1m, testPostCreate["quantity"]);
             Assert.Equal(new Money(10m), testPostCreate["amount"]);
             Assert.Equal(new Money(10m), testPostCreate["extendedamount"]);
             Assert.Equal(uom.ToEntityReference(), testPostCreate["uomid"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_Product_Pricelist_And_Price_Overriden_Is_False_Price_Is_In_ProductPriceLevel_UoM_In_Product_2()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -374,23 +371,22 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["productid"] = product.ToEntityReference();
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostCreate["priceperunit"]);
             Assert.Equal(1m, testPostCreate["quantity"]);
             Assert.Equal(new Money(10m), testPostCreate["amount"]);
             Assert.Equal(new Money(10m), testPostCreate["extendedamount"]);
             Assert.Equal(uom.ToEntityReference(), testPostCreate["uomid"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_Product_Pricelist_UoM_And_Price_Overriden_Is_False_Price_Is_In_ProductPriceLevel_Quantity_3()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -438,22 +434,21 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["quantity"] = 3m;
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostCreate["priceperunit"]);
             Assert.Equal(3m, testPostCreate["quantity"]);
             Assert.Equal(new Money(3m * 10m), testPostCreate["amount"]);
             Assert.Equal(new Money(3m * 10m), testPostCreate["extendedamount"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(3m * 10m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_Product_Pricelist_UoM_And_Price_Overriden_Is_False_Price_Is_In_ProductPriceLevel_Quantity_3_ManualDiscount_Tax()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -503,22 +498,21 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["tax"] = new Money(3m);
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostCreate["priceperunit"]);
             Assert.Equal(3m, testPostCreate["quantity"]);
             Assert.Equal(new Money(3m * 10m), testPostCreate["amount"]);
             Assert.Equal(new Money(3m * 10m - 12m + 3m), testPostCreate["extendedamount"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(3m * 10m - 12m + 3m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_Product_Pricelist_UoM_And_Price_Overriden_Is_False_Price_Is_In_ProductPriceLevel_Quantity_3_AddsAmountToInvoice()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -567,22 +561,21 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["quantity"] = 3m;
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostCreate["priceperunit"]);
             Assert.Equal(3m, testPostCreate["quantity"]);
             Assert.Equal(new Money(3m * 10m), testPostCreate["amount"]);
             Assert.Equal(new Money(3m * 10m), testPostCreate["extendedamount"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(40m + 3m * 10m), testPostInvoiceCreate["totalamount"]);
         }
 
         [Fact]
         public void Invoice_And_Price_Overriden_Is_True()
         {
-            var context = new XrmFakedContext() { InitializationLevel = EntityInitializationLevel.PerEntity };
-            IOrganizationService service = context.GetOrganizationService();
+            (_context as XrmFakedContext).InitializationLevel = EntityInitializationLevel.PerEntity;
 
             List<Entity> initialEntities = new List<Entity>();
 
@@ -597,14 +590,14 @@ namespace FakeXrmEasy.Tests.Services.EntityInitializer
             invoiceDetail["invoiceid"] = invoice.ToEntityReference();
             initialEntities.Add(invoiceDetail);
 
-            context.Initialize(initialEntities);
-            Entity testPostCreate = service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
+            _context.Initialize(initialEntities);
+            Entity testPostCreate = _service.Retrieve(invoiceDetail.LogicalName, invoiceDetail.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostCreate["priceperunit"]);
             Assert.Equal(1m, testPostCreate["quantity"]);
             Assert.Equal(new Money(10m), testPostCreate["amount"]);
             Assert.Equal(new Money(10m), testPostCreate["extendedamount"]);
 
-            Entity testPostInvoiceCreate = service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
+            Entity testPostInvoiceCreate = _service.Retrieve(invoice.LogicalName, invoice.Id, new ColumnSet(true));
             Assert.Equal(new Money(10m), testPostInvoiceCreate["totalamount"]);
         }
     }
