@@ -190,26 +190,7 @@ namespace FakeXrmEasy
         /// </summary>
         /// <param name="context"></param>
         /// <param name="fakedService"></param>
-        protected static void FakeDelete(XrmFakedContext context, IOrganizationService fakedService)
-        {
-            A.CallTo(() => fakedService.Delete(A<string>._, A<Guid>._))
-                .Invokes((string entityName, Guid id) =>
-                {
-                    if (string.IsNullOrWhiteSpace(entityName))
-                    {
-                        throw new InvalidOperationException("The entity logical name must not be null or empty.");
-                    }
-
-                    if (id == Guid.Empty)
-                    {
-                        throw new InvalidOperationException("The id must not be empty.");
-                    }
-
-                    var entityReference = new EntityReference(entityName, id);
-
-                    context.DeleteEntity(entityReference);
-                });
-        }
+        
 
         public void DeleteEntity(EntityReference er)
         {

@@ -13,7 +13,7 @@ namespace FakeXrmEasy.Middleware.Crud
 {
     public static class MiddlewareBuilderCrudExtensions 
     {
-        public class CrudMessageExecutors : Dictionary<Type, IFakeMessageExecutor>
+        private class CrudMessageExecutors : Dictionary<Type, IFakeMessageExecutor>
         {
 
         }
@@ -29,12 +29,14 @@ namespace FakeXrmEasy.Middleware.Crud
                 crudMessageExecutors.Add(typeof(RetrieveMultipleRequest), new RetrieveMultipleRequestExecutor());
                 crudMessageExecutors.Add(typeof(RetrieveRequest), new RetrieveRequestExecutor());
                 crudMessageExecutors.Add(typeof(UpdateRequest), new UpdateRequestExecutor());
+                crudMessageExecutors.Add(typeof(DeleteRequest), new DeleteRequestExecutor());
 
                 context.SetProperty(crudMessageExecutors);
                 AddFakeCreate(context, service);
                 AddFakeRetrieve(context, service);
                 AddFakeRetrieveMultiple(context, service);
                 AddFakeUpdate(context,service);
+                AddFakeDelete(context,service);
             });
 
             return builder;
@@ -122,6 +124,28 @@ namespace FakeXrmEasy.Middleware.Crud
 
                     var response = service.Execute(request) as RetrieveResponse;
                     return response.Entity;
+                });
+        }
+
+        private static void AddFakeDelete(IXrmFakedContext context, IOrganizationService service)
+        {
+            A.CallTo(() => service.Delete(A<string>._, A<Guid>._))
+                .Invokes((string entityName, Guid id) =>
+                {
+                    if (string.IsNullOrWhiteSpace(entityName))
+                    {
+                        throw new InvalidOperationException("The entity logical name must not be null or empty.");
+                    }
+
+                    if (id == Guid.Empty)
+                    {
+                        throw new InvalidOperationException("The id must not be empty.");
+                    }
+
+                    var entityReference = new EntityReference(entityName, id);
+
+                    var request = new DeleteRequest() { Target = entityReference };
+                    service.Execute(request);
                 });
         }
 

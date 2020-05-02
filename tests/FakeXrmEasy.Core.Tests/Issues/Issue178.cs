@@ -5,18 +5,26 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.Issues
 {
     public class Issue178
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public Issue178() 
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void Reproduce_issue_178_ManyToMany()
         {
-
-            // ARRANGE
-            IOrganizationService fakedService = Arrange();
-            using (var ctx = new XrmServiceContext(fakedService))
+            Arrange();
+            using (var ctx = new XrmServiceContext(_service))
             {
                 // ACT
                 var contact = ctx.ContactSet.First();
@@ -29,9 +37,8 @@ namespace FakeXrmEasy.Tests.Issues
         [Fact]
         public void Reproduce_issue_178_ManyToOne()
         {
-            // ARRANGE
-            IOrganizationService fakedService = Arrange();
-            using (var ctx = new XrmServiceContext(fakedService))
+            Arrange();
+            using (var ctx = new XrmServiceContext(_service))
             {
                 // ACT
                 var contact = ctx.ContactSet.First();
@@ -44,9 +51,8 @@ namespace FakeXrmEasy.Tests.Issues
         [Fact]
         public void Reproduce_issue_178_OneToMany()
         {
-            // ARRANGE
-            IOrganizationService fakedService = Arrange();
-            using (var ctx = new XrmServiceContext(fakedService))
+            Arrange();
+            using (var ctx = new XrmServiceContext(_service))
             {
                 // ACT
                 var account = ctx.AccountSet.First();
@@ -58,8 +64,7 @@ namespace FakeXrmEasy.Tests.Issues
         }
 
 
-
-        private static IOrganizationService Arrange()
+        private void Arrange()
         {
             Account account = new Account();
             account.Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
@@ -88,8 +93,7 @@ namespace FakeXrmEasy.Tests.Issues
             ugh.Attributes["contactid"] = contact.Id;
             ugh.Attributes["gbp_customaddressid"] = customAddress.Id;
 
-            var context = new XrmFakedContext();
-            context.AddRelationship("gbp_gbp_customaddress_contact",
+            _context.AddRelationship("gbp_gbp_customaddress_contact",
                 new XrmFakedRelationship()
                 {
                     RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.ManyToMany,
@@ -105,7 +109,7 @@ namespace FakeXrmEasy.Tests.Issues
               this doen't work, need to step through the code to see what the query is doing
               or maybe determine if it's an n:1
              */
-            context.AddRelationship("contact_customer_accounts",
+            _context.AddRelationship("contact_customer_accounts",
                 new XrmFakedRelationship()
                 {
                     RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.OneToMany,
@@ -117,13 +121,10 @@ namespace FakeXrmEasy.Tests.Issues
                 });
 
 
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 account, contact, customAddress, ugh
             });
-
-            var fakedService = context.GetOrganizationService();
-            return fakedService;
         }
     }
 }

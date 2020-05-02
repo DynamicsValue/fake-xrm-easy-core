@@ -1,119 +1,115 @@
 ﻿using System;
 
 using Xunit;
-using FakeItEasy;
-using FakeXrmEasy;
 
 using System.Collections.Generic;
 using Microsoft.Xrm.Sdk;
 using System.Linq;
 using System.Threading;
-using FakeXrmEasy.Tests.PluginsForTesting;
 using Crm;
 using System.Reflection;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests
 {
     public class FakeXrmEasyTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public FakeXrmEasyTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_a_fake_context_is_created_the_data_is_initialized()
         {
-            var context = new XrmFakedContext();
-            Assert.True(context.Data != null);
+            Assert.True((_context as XrmFakedContext).Data != null);
         }
 
         [Fact]
         public void When_initializing_the_context_with_a_null_list_of_entities_an_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
-            var ex = Assert.Throws<InvalidOperationException>(() => context.Initialize(entities: null));
+            var ex = Assert.Throws<InvalidOperationException>(() => _context.Initialize(entities: null));
             Assert.Equal(ex.Message, "The entities parameter must be not null");
         }
 
         [Fact]
         public void When_initializing_the_context_with_an_entity_with_an_empty_logical_name_an_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
             IEnumerable<Entity> data = new List<Entity>() {
                 new Entity() { Id = Guid.NewGuid()}
             };
 
-            var ex = Assert.Throws<InvalidOperationException>(() => context.Initialize(data));
+            var ex = Assert.Throws<InvalidOperationException>(() => _context.Initialize(data));
             Assert.Equal(ex.Message, "The LogicalName property must not be empty");
         }
 
         [Fact]
         public void When_initializing_the_context_with_an_entity_with_an_empty_guid_an_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
             IEnumerable<Entity> data = new List<Entity>() {
                 new Entity("account") { Id = Guid.Empty }
             };
 
-            var ex = Assert.Throws<InvalidOperationException>(() => context.Initialize(data));
+            var ex = Assert.Throws<InvalidOperationException>(() => _context.Initialize(data));
             Assert.Equal(ex.Message, "The Id property must not be empty");
         }
 
         [Fact]
         public void When_initializing_the_context_with_a_dynamic_entity_without_a_primary_key_but_id_entity_is_added()
         {
-            var context = new XrmFakedContext();
             IEnumerable<Entity> data = new List<Entity>() {
                 new Entity("account") { Id = Guid.NewGuid() }
             };
 
-            context.Initialize(data);
-            Assert.True(context.Data.Count == 1);
-            Assert.True(context.Data["account"].Count == 1);
+            _context.Initialize(data);
+            Assert.True(_context.CreateQuery("account").Count() == 1);
         }
 
 
         [Fact]
         public void When_initializing_the_context_with_a_dynamic_entity_with_a_primary_key_is_added_to_the_context()
         {
-            var context = new XrmFakedContext();
             IEnumerable<Entity> data = new List<Entity>() {
                 new Entity("account") { Id = Guid.NewGuid(), Attributes = new AttributeCollection { { "accountid", Guid.NewGuid() } }  }
             };
 
-            context.Initialize(data);
-            Assert.True(context.Data.Count == 1);
-            Assert.True(context.Data["account"].Count == 1);
+            _context.Initialize(data);
+            Assert.True(_context.CreateQuery("account").Count() == 1);
         }
 
         [Fact]
         public void When_initializing_the_context_with_an_entity_the_context_has_that_entity()
         {
-            var context = new XrmFakedContext();
             var guid = Guid.NewGuid();
 
             IQueryable<Entity> data = new List<Entity>() {
                 new Entity("account") { Id = guid }
             }.AsQueryable();
 
-            context.Initialize(data);
-            Assert.True(context.Data.Count == 1);
-            Assert.True(context.Data["account"].Count == 1);
-            Assert.Equal(context.Data["account"][guid].Id, data.FirstOrDefault().Id);
+            _context.Initialize(data);
+            Assert.True(_context.CreateQuery("account").Count() == 1);
+            Assert.Equal(guid, _context.CreateQuery("account").FirstOrDefault().Id);
         }
 
         [Fact]
         public void When_initializing_the_context_with_the_single_entity_overload_the_context_has_that_entity()
         {
-            var context = new XrmFakedContext();
             var guid = Guid.NewGuid();
 
-            context.Initialize(new Entity("account") { Id = guid });
-            Assert.True(context.Data.Count == 1);
-            Assert.True(context.Data["account"].Count == 1);
-            Assert.Equal(context.Data["account"][guid].Id, guid);
+            _context.Initialize(new Entity("account") { Id = guid });
+
+            Assert.True(_context.CreateQuery("account").Count() == 1);
+            Assert.Equal(guid, _context.CreateQuery("account").FirstOrDefault().Id);
         }
 
         [Fact]
         public void When_initializing_with_two_entities_with_the_same_guid_only_the_latest_will_be_in_the_context()
         {
-            var context = new XrmFakedContext();
             var guid = Guid.NewGuid();
 
             IQueryable<Entity> data = new List<Entity>() {
@@ -121,16 +117,15 @@ namespace FakeXrmEasy.Tests
                 new Entity("account") { Id = guid }
             }.AsQueryable();
 
-            context.Initialize(data);
-            Assert.True(context.Data.Count == 1);
-            Assert.True(context.Data["account"].Count == 1);
-            Assert.Equal(context.Data["account"][guid].Id, data.LastOrDefault().Id);
+            _context.Initialize(data);
+
+            Assert.True(_context.CreateQuery("account").Count() == 1);
+            Assert.Equal(guid, _context.CreateQuery("account").FirstOrDefault().Id);
         }
 
         [Fact]
         public void When_initializing_with_two_entities_with_two_different_guids_the_context_will_have_both()
         {
-            var context = new XrmFakedContext();
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
 
@@ -139,11 +134,11 @@ namespace FakeXrmEasy.Tests
                 new Entity("account") { Id = guid2 }
             }.AsQueryable();
 
-            context.Initialize(data);
-            Assert.True(context.Data.Count == 1);
-            Assert.True(context.Data["account"].Count == 2);
-            Assert.Equal(context.Data["account"][guid1].Id, data.FirstOrDefault().Id);
-            Assert.Equal(context.Data["account"][guid2].Id, data.LastOrDefault().Id);
+            _context.Initialize(data);
+
+            Assert.True(_context.CreateQuery("account").Count() == 2);
+            Assert.Equal(guid1, _context.CreateQuery("account").FirstOrDefault().Id);
+            Assert.Equal(guid2, _context.CreateQuery("account").LastOrDefault().Id);
         }
         [Fact]
         public void When_initializing_with_two_entities_of_same_logical_name_and_another_one_the_context_will_have_all_three()
