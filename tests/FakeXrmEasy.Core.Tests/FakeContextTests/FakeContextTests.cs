@@ -143,7 +143,6 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_initializing_with_two_entities_of_same_logical_name_and_another_one_the_context_will_have_all_three()
         {
-            var context = new XrmFakedContext();
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
@@ -154,12 +153,13 @@ namespace FakeXrmEasy.Tests
                 new Entity("contact") { Id = guid3 }
             }.AsQueryable();
 
-            context.Initialize(data);
-            Assert.True(context.Data.Count == 2);
-            Assert.True(context.Data["account"].Count == 2);
-            Assert.True(context.Data["contact"].Count == 1);
-            Assert.Equal(context.Data["account"][guid1].Id, data.FirstOrDefault().Id);
-            Assert.Equal(context.Data["contact"][guid3].Id, data.LastOrDefault().Id);
+            _context.Initialize(data);
+            Assert.True(_context.CreateQuery("account").Count() == 2);
+            Assert.True(_context.CreateQuery("contact").Count() == 1);
+
+            Assert.Equal(guid1, _context.CreateQuery("account").FirstOrDefault().Id);
+            Assert.Equal(guid2, _context.CreateQuery("account").LastOrDefault().Id);
+            Assert.Equal(guid3, _context.CreateQuery("contact").FirstOrDefault().Id);
 
         }
 
@@ -167,13 +167,10 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_initializing_the_context_with_an_entity_it_should_have_default_createdon_createdby_modifiedon_and_modifiedby_attributes()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var e = new Entity("account") { Id = Guid.NewGuid() };
-            context.Initialize(new List<Entity>() { e });
+            _context.Initialize(new List<Entity>() { e });
 
-            var createdEntity = context.CreateQuery("account").FirstOrDefault();
+            var createdEntity = _context.CreateQuery("account").FirstOrDefault();
             Assert.True(createdEntity.Attributes.ContainsKey("createdon"));
             Assert.True(createdEntity.Attributes.ContainsKey("modifiedon"));
             Assert.True(createdEntity.Attributes.ContainsKey("createdby"));
@@ -183,20 +180,17 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_updating_an_entity_Modified_On_Should_Also_Be_Updated()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var e = new Entity("account") { Id = Guid.NewGuid() };
-            context.Initialize(new List<Entity>() { e });
+            _context.Initialize(new List<Entity>() { e });
 
-            var oldModifiedOn = context.CreateQuery<Account>()
+            var oldModifiedOn = _context.CreateQuery<Account>()
                                         .FirstOrDefault()
                                         .ModifiedOn;
 
             Thread.Sleep(1000);
 
-            service.Update(e);
-            var newModifiedOn = context.CreateQuery<Account>()
+            _service.Update(e);
+            var newModifiedOn = _context.CreateQuery<Account>()
                                         .FirstOrDefault()
                                         .ModifiedOn;
 
@@ -206,14 +200,11 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_using_typed_entities_ProxyTypesAssembly_is_not_mandatory()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var c = new Contact() { Id = Guid.NewGuid(), FirstName = "Jordi" };
-            context.Initialize(new List<Entity>() { c });
+            _context.Initialize(new List<Entity>() { c });
 
             //Linq 2 Query Expression
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 var contacts = (from con in ctx.CreateQuery<Contact>()
                                 select con).ToList();
@@ -222,7 +213,7 @@ namespace FakeXrmEasy.Tests
             }
 
             //Query faked context directly
-            var ex = Record.Exception(() => context.CreateQuery<Contact>());
+            var ex = Record.Exception(() => _context.CreateQuery<Contact>());
             Assert.Null(ex);
 
         }
@@ -235,63 +226,50 @@ namespace FakeXrmEasy.Tests
 
             var assembly = Assembly.GetAssembly(typeof(Contact));
 
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var c = new Contact() { Id = Guid.NewGuid(), FirstName = "Jordi" };
-            context.Initialize(new List<Entity>() { c });
+            _context.Initialize(new List<Entity>() { c });
 
-            Assert.Equal(assembly, context.ProxyTypesAssembly);
+            Assert.Equal(assembly, (_context as XrmFakedContext).ProxyTypesAssembly);
         }
 
         [Fact]
         public void When_using_proxy_types_entity_names_are_validated()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var c = new Contact() { Id = Guid.NewGuid(), FirstName = "Jordi" };
-            context.Initialize(new List<Entity>() { c });
+            _context.Initialize(new List<Entity>() { c });
 
-            Assert.Throws<Exception>(() => service.Create(new Entity("thisDoesntExist")));
+            Assert.Throws<Exception>(() => _service.Create(new Entity("thisDoesntExist")));
         }
 
         [Fact]
         public void When_initialising_the_context_once_exception_is_not_thrown()
         {
-            var context = new XrmFakedContext();
             var c = new Contact() { Id = Guid.NewGuid(), FirstName = "Lionel" };
-            var ex = Record.Exception(() => context.Initialize(new List<Entity>() { c }));
+            var ex = Record.Exception(() => _context.Initialize(new List<Entity>() { c }));
             Assert.Null(ex);
         }
 
         [Fact]
         public void When_initialising_the_context_twice_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
             var c = new Contact() { Id = Guid.NewGuid(), FirstName = "Lionel" };
-            var ex = Record.Exception(() => context.Initialize(new List<Entity>() { c }));
+            var ex = Record.Exception(() => _context.Initialize(new List<Entity>() { c }));
             Assert.Null(ex);
-            Assert.Throws<Exception>(() => context.Initialize(new List<Entity>() { c }));
+            Assert.Throws<Exception>(() => _context.Initialize(new List<Entity>() { c }));
         }
 
         [Fact]
         public void When_getting_a_fake_service_reference_it_uses_a_singleton_pattern()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-            var service2 = context.GetOrganizationService();
-
-            Assert.Equal(service, service2);
+            var service2 = _context.GetOrganizationService();
+            Assert.Equal(_service, service2);
         }
 
         [Fact]
-        public void When_enabling_proxy_types_exception_is_not_be_thrown() {
+        public void When_enabling_proxy_types_exception_is_not_thrown() {
 
             var assembly = typeof(Crm.Account).Assembly;
-
-            var context = new XrmFakedContext();
-            var ex = Record.Exception(() => context.EnableProxyTypes(assembly));
+            var ex = Record.Exception(() => _context.EnableProxyTypes(assembly));
             Assert.Null(ex);
         }
 
@@ -300,9 +278,8 @@ namespace FakeXrmEasy.Tests
 
             var assembly = typeof(Crm.Account).Assembly;
 
-            var context = new XrmFakedContext();
-            context.EnableProxyTypes(assembly);
-            Assert.Throws<InvalidOperationException>(() => context.EnableProxyTypes(assembly));
+            _context.EnableProxyTypes(assembly);
+            Assert.Throws<InvalidOperationException>(() => _context.EnableProxyTypes(assembly));
         }
 
         [Fact]
@@ -310,10 +287,9 @@ namespace FakeXrmEasy.Tests
         {
             var assembly = typeof(Crm.Account).Assembly;
 
-            var context = new XrmFakedContext();
-            context.EnableProxyTypes(assembly);
+            _context.EnableProxyTypes(assembly);
             var c = new Contact() { Id = Guid.NewGuid(), FirstName = "Lionel" };
-            var ex = Record.Exception(() => context.Initialize(new List<Entity>() { c }));
+            var ex = Record.Exception(() => _context.Initialize(new List<Entity>() { c }));
             Assert.Null(ex);
         }
 
