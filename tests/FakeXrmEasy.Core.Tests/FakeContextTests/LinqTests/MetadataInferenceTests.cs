@@ -1,6 +1,8 @@
 ﻿using Crm;
 using FakeItEasy;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
@@ -14,17 +16,21 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
 {
     public class MetadataInferenceTests
     {
-        [Fact]
-        public static void When_using_proxy_types_assembly_the_entity_metadata_is_inferred_from_the_proxy_types_assembly()
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        public MetadataInferenceTests()
         {
-            var fakedContext = new XrmFakedContext();
-            fakedContext.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
+        [Fact]
+        public void When_using_proxy_types_assembly_the_entity_metadata_is_inferred_from_the_proxy_types_assembly()
+        {
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             //Empty contecxt (no Initialize), but we should be able to query any typed entity without an entity not found exception
-
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c.FirstName.Equals("Anything!")
@@ -35,23 +41,20 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         }
 
         [Fact]
-        public static void When_using_proxy_types_assembly_the_attribute_metadata_is_inferred_from_the_proxy_types_assembly()
+        public void When_using_proxy_types_assembly_the_attribute_metadata_is_inferred_from_the_proxy_types_assembly()
         {
-            var fakedContext = new XrmFakedContext();
-            fakedContext.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
 
-            fakedContext.Initialize(new List<Entity>() { contact1, contact2 });
+            _context.Initialize(new List<Entity>() { contact1, contact2 });
 
             var guid = Guid.NewGuid();
 
             //Empty contecxt (no Initialize), but we should be able to query any typed entity without an entity not found exception
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c.FirstName.Equals("First 1")
@@ -62,15 +65,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         }
 
         [Fact]
-        public static void When_using_proxy_types_assembly_the_attribute_metadata_is_inferred_from_injected_metadata_as_a_fallback()
+        public void When_using_proxy_types_assembly_the_attribute_metadata_is_inferred_from_injected_metadata_as_a_fallback()
         {
-            var fakedContext = new XrmFakedContext();
-            fakedContext.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["injectedAttribute"] = "Contact 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["injectedAttribute"] = "Contact 2";
 
-            fakedContext.Initialize(new List<Entity>() { contact1, contact2 });
+            _context.Initialize(new List<Entity>() { contact1, contact2 });
 
             var contactMetadata = new EntityMetadata()
             {
@@ -83,15 +85,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
             };
 
             contactMetadata.SetAttribute(injectedAttribute);
-            fakedContext.InitializeMetadata(contactMetadata);
+            _context.InitializeMetadata(contactMetadata);
 
             var guid = Guid.NewGuid();
 
             //Empty contecxt (no Initialize), but we should be able to query any typed entity without an entity not found exception
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c["injectedAttribute"].Equals("Contact 1")
@@ -103,15 +103,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
 
 #if FAKE_XRM_EASY_9
         [Fact]
-        public static void When_using_proxy_types_assembly_the_optionset_metadata_is_inferred_from_injected_metadata_as_a_fallback()
+        public void When_using_proxy_types_assembly_the_optionset_metadata_is_inferred_from_injected_metadata_as_a_fallback()
         {
-            var fakedContext = new XrmFakedContext();
-            fakedContext.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["injectedAttribute"] = new OptionSetValue(10001);
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["injectedAttribute"] = new OptionSetValue(10002);
 
-            fakedContext.Initialize(new List<Entity>() { contact1, contact2 });
+            _context.Initialize(new List<Entity>() { contact1, contact2 });
 
             var contactMetadata = new EntityMetadata()
             {
@@ -124,15 +123,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
             };
 
             contactMetadata.SetAttribute(injectedAttribute);
-            fakedContext.InitializeMetadata(contactMetadata);
+            _context.InitializeMetadata(contactMetadata);
 
             var guid = Guid.NewGuid();
 
             //Empty contecxt (no Initialize), but we should be able to query any typed entity without an entity not found exception
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c["injectedAttribute"].Equals(new OptionSetValue(10002))
@@ -143,10 +140,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         }
 
         [Fact]
-        public static void When_using_proxy_types_assembly_multi_select_option_set_metadata_is_inferred_from_injected_metadata_as_a_fallback()
+        public void When_using_proxy_types_assembly_multi_select_option_set_metadata_is_inferred_from_injected_metadata_as_a_fallback()
         {
-            var fakedContext = new XrmFakedContext();
-            fakedContext.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var record1 = new Entity("contact")
             {
@@ -170,7 +166,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
                     })
             };
 
-            fakedContext.Initialize(new List<Entity>() { record1, record2 });
+            _context.Initialize(new List<Entity>() { record1, record2 });
 
             var entityMetadata = new EntityMetadata()
             {
@@ -183,15 +179,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
             };
 
             entityMetadata.SetAttribute(injectedAttribute);
-            fakedContext.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
             var guid = Guid.NewGuid();
 
             //Empty context (no Initialize), but we should be able to query any typed entity without an entity not found exception
 
-            var service = fakedContext.GetOrganizationService();
-
-            var contacts = service.RetrieveMultiple(new QueryExpression(Contact.EntityLogicalName)
+            var contacts = _service.RetrieveMultiple(new QueryExpression(Contact.EntityLogicalName)
             {
                 Criteria = new FilterExpression()
                 {
@@ -207,21 +201,18 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
 #endif
 
         [Fact]
-        public static void When_using_proxy_types_assembly_the_finding_attribute_metadata_fails_if_neither_proxy_type_or_injected_metadata_exist()
+        public void When_using_proxy_types_assembly_the_finding_attribute_metadata_fails_if_neither_proxy_type_or_injected_metadata_exist()
         {
-            var fakedContext = new XrmFakedContext();
-            fakedContext.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["injectedAttribute"] = "Contact 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["injectedAttribute"] = "Contact 2";
 
-            fakedContext.Initialize(new List<Entity>() { contact1, contact2 });
+            _context.Initialize(new List<Entity>() { contact1, contact2 });
 
             var guid = Guid.NewGuid();
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 Assert.Throws<Exception>(() => (from c in ctx.CreateQuery<Contact>()
                                where c["injectedAttribute"].Equals("Contact 1")

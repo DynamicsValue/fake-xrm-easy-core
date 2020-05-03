@@ -1,5 +1,7 @@
 ﻿using Crm;
 using FakeItEasy;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -16,18 +18,24 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
     /// </summary>
     public class EqualityWithDifferentDataTypesTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        
+        public EqualityWithDifferentDataTypesTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_strings_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid, FirstName = "Jordi" }
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c.FirstName == "Jordi"
@@ -40,15 +48,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_strings_with_date_format_right_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid, FirstName = "11.1" }
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c.FirstName == "11.1"
@@ -61,16 +66,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_booleans_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid, IsBackofficeCustomer = true},
                 new Contact() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c.IsBackofficeCustomer != null && c.IsBackofficeCustomer.Value == true
@@ -84,16 +86,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_boolean_managed_properties_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Report() { Id = guid, IsCustomizable = new BooleanManagedProperty(true) },
                 new Report() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Report>()
                                where c.IsCustomizable.Value == true
@@ -106,16 +105,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_integers_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid, NumberOfChildren = 2},
                 new Contact() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c.NumberOfChildren != null && c.NumberOfChildren.Value == 2
@@ -128,18 +124,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_longs_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid },
-                new Contact() { Id = Guid.NewGuid()}  //To test also nulls
+                new Contact() { 
+                    Id = Guid.NewGuid(), 
+                    ["versionnumber"] = long.MaxValue
+                }  
             });
 
-            fakedContext.Data["contact"][guid]["versionnumber"] = long.MaxValue; //Couldn´t be set by the Proxy types but set here just for testing long data types
-
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c.VersionNumber == long.MaxValue
@@ -152,16 +146,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_dates_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid, BirthDate = DateTime.Today },
                 new Contact() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c.BirthDate != null && c.BirthDate == DateTime.Today
@@ -174,16 +165,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_date_times_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid, BirthDate = new DateTime(2015,02,26,3,42,59) },
                 new Contact() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<Contact>()
                                where c.BirthDate != null && c.BirthDate == new DateTime(2015, 02, 26, 3, 42, 59)
@@ -196,16 +184,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_decimals_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new SalesOrderDetail() { Id = guid, Quantity = 1.1M },
                 new SalesOrderDetail() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<SalesOrderDetail>()
                                where c.Quantity == 1.1M
@@ -218,17 +203,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_doubles_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
             var barcelonaLatitude = 41.387128;
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Account() { Id = guid, Address1_Latitude = barcelonaLatitude  },
                 new Account() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from a in ctx.CreateQuery<Account>()
                                where a.Address1_Latitude == barcelonaLatitude
@@ -241,16 +223,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_moneys_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var guid = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new SalesOrderDetail() { Id = guid, BaseAmount = new Money(1.1M) },
                 new SalesOrderDetail() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from c in ctx.CreateQuery<SalesOrderDetail>()
                                where c.BaseAmount == new Money(1.1M)
@@ -263,16 +242,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_entityreferences_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var productId = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new SalesOrderDetail() { Id = Guid.NewGuid(), ProductId = new EntityReference(Product.EntityLogicalName, productId) },
                 new SalesOrderDetail() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from s in ctx.CreateQuery<SalesOrderDetail>()
                                where s.ProductId == new EntityReference(Product.EntityLogicalName, productId)
@@ -285,17 +261,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_guids_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var productId = Guid.NewGuid();
             var salesOrderDetailId = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new SalesOrderDetail() { Id = salesOrderDetailId, ProductId = new EntityReference(Product.EntityLogicalName, productId) },
                 new SalesOrderDetail() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from s in ctx.CreateQuery<SalesOrderDetail>()
                                where s.SalesOrderDetailId == salesOrderDetailId
@@ -308,16 +281,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_optionsets_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
             var productId = Guid.NewGuid();
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Account() { Id = Guid.NewGuid(), StatusCode = new OptionSetValue(1) },
                 new Account() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var contact = (from a in ctx.CreateQuery<Account>()
                                where a.StatusCode == new OptionSetValue(1)
@@ -330,8 +300,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_activityparties_result_is_returned()
         {
-            var fakedContext = new XrmFakedContext();
-            fakedContext.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
             var activityId = Guid.NewGuid();
@@ -343,7 +312,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
                 PartyId = new EntityReference(Contact.EntityLogicalName, contactId)
             };
 
-            fakedContext.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Email() { Id = activityId, ActivityId = activityId, Subject = "Test email"},
                 new ActivityPointer () { Id = Guid.NewGuid(), ActivityId = activityId },
                 partyRecord,
@@ -351,9 +320,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
                 new ActivityParty() { Id = Guid.NewGuid()}  //To test also nulls
             });
 
-            var service = fakedContext.GetOrganizationService();
-
-            using (XrmServiceContext ctx = new XrmServiceContext(service))
+            using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var activities = (from pointer in ctx.CreateQuery<Email>()
                                   join party in ctx.CreateQuery<ActivityParty>() on pointer.ActivityId.Value equals party.ActivityId.Id
@@ -368,10 +335,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
         [Fact]
         public void When_querying_option_sets_with_string_values_right_result_is_returned()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
-            ctx.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 new Account() { Id = Guid.NewGuid(), IndustryCode = new OptionSetValue(23) },
                 new Account() { Id = Guid.NewGuid(), IndustryCode = new OptionSetValue(69) }
@@ -383,7 +347,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
                 ColumnSet = new ColumnSet(new string[] { "accountid", "industrycode" }),
             };
             query.Criteria.AddCondition("industrycode", ConditionOperator.Equal, "23");
-            var result = service.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
 
             Assert.Equal(1, result.Entities.Count);
             Assert.Equal(23, (result.Entities[0] as Account).IndustryCode.Value);
