@@ -31,6 +31,10 @@ namespace FakeXrmEasy.Middleware.Crud
                 crudMessageExecutors.Add(typeof(UpdateRequest), new UpdateRequestExecutor());
                 crudMessageExecutors.Add(typeof(DeleteRequest), new DeleteRequestExecutor());
 
+                #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
+                crudMessageExecutors.Add(typeof(UpsertRequest), new UpsertRequestExecutor());
+                #endif
+
                 context.SetProperty(crudMessageExecutors);
                 AddFakeCreate(context, service);
                 AddFakeRetrieve(context, service);

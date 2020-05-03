@@ -1,11 +1,13 @@
-﻿using FakeXrmEasy.Extensions;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 
 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
 
-namespace FakeXrmEasy.FakeMessageExecutors
+namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
     public class UpsertRequestExecutor : IFakeMessageExecutor
     {
@@ -14,8 +16,9 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is UpsertRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
+            var fakedContext = ctx as XrmFakedContext;
             var upsertRequest = (UpsertRequest)request;
             bool recordCreated;
 
@@ -24,8 +27,8 @@ namespace FakeXrmEasy.FakeMessageExecutors
             var entityLogicalName = upsertRequest.Target.LogicalName;
             var entityId = ctx.GetRecordUniqueId(upsertRequest.Target.ToEntityReferenceWithKeyAttributes(), validate: false);
 
-            if (ctx.Data.ContainsKey(entityLogicalName) &&
-                ctx.Data[entityLogicalName].ContainsKey(entityId))
+            if (fakedContext.Data.ContainsKey(entityLogicalName) &&
+                fakedContext.Data[entityLogicalName].ContainsKey(entityId))
             {
                 recordCreated = false;
                 service.Update(upsertRequest.Target);

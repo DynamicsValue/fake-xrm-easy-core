@@ -1,5 +1,8 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Middleware;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
@@ -12,12 +15,18 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
     public class UpsertRequestTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        public UpsertRequestTests() 
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void Upsert_Creates_Record_When_It_Does_Not_Exist()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetOrganizationService();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact = new Contact()
             {
@@ -31,9 +40,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
                 Target = contact
             };
 
-            var response = (UpsertResponse)service.Execute(request);
+            var response = (UpsertResponse)_service.Execute(request);
 
-            var contactCreated = context.CreateQuery<Contact>().FirstOrDefault();
+            var contactCreated = _context.CreateQuery<Contact>().FirstOrDefault();
 
             Assert.Equal(true, response.RecordCreated);
             Assert.NotNull(contactCreated);
@@ -42,16 +51,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
         [Fact]
         public void Upsert_Updates_Record_When_It_Exists()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetOrganizationService();
-
             var contact = new Contact()
             {
                 Id = Guid.NewGuid(),
                 FirstName = "FakeXrm"
             };
-            context.Initialize(new[] { contact });
+            _context.Initialize(new[] { contact });
 
             contact = new Contact()
             {
@@ -66,8 +71,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
             };
 
 
-            var response = (UpsertResponse)service.Execute(request);
-            var contactUpdated = context.CreateQuery<Contact>().FirstOrDefault();
+            var response = (UpsertResponse)_service.Execute(request);
+            var contactUpdated = _context.CreateQuery<Contact>().FirstOrDefault();
 
             Assert.Equal(false, response.RecordCreated);
             Assert.Equal("FakeXrm2", contactUpdated.FirstName);
@@ -76,12 +81,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
         [Fact]
         public void Upsert_Creates_Record_When_It_Does_Not_Exist_Using_Alternate_Key()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            context.InitializeMetadata(Assembly.GetExecutingAssembly());
-            var service = context.GetOrganizationService();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.InitializeMetadata(Assembly.GetExecutingAssembly());
 
-            var metadata = context.GetEntityMetadataByName("contact");
+            var metadata = _context.GetEntityMetadataByName("contact");
             metadata.SetFieldValue("_keys", new EntityKeyMetadata[]
             {
                 new EntityKeyMetadata()
@@ -89,7 +92,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
                     KeyAttributes = new string[]{"firstname"}
                 }
             });
-            context.SetEntityMetadata(metadata);
+            _context.SetEntityMetadata(metadata);
             var contact = new Contact()
             {
                 FirstName = "FakeXrm",
@@ -102,7 +105,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
                 Target = contact
             };
 
-            var response = (UpsertResponse)service.Execute(request);
+            var response = (UpsertResponse)_service.Execute(request);
 
             Assert.Equal(true, response.RecordCreated);
         }
@@ -110,13 +113,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
         [Fact]
         public void Upsert_Updates_Record_When_It_Exists_Using_Alternate_Key()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            context.InitializeMetadata(Assembly.GetExecutingAssembly());
-            var service = context.GetOrganizationService();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.InitializeMetadata(Assembly.GetExecutingAssembly());
 
 
-            var metadata = context.GetEntityMetadataByName("contact");
+            var metadata = _context.GetEntityMetadataByName("contact");
             metadata.SetFieldValue("_keys", new EntityKeyMetadata[]
             {
                 new EntityKeyMetadata()
@@ -124,7 +125,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
                     KeyAttributes = new string[]{"firstname"}
                 }
             });
-            context.SetEntityMetadata(metadata);
+            _context.SetEntityMetadata(metadata);
 
             var contact = new Contact()
             {
@@ -132,7 +133,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
                 FirstName = "FakeXrm",
                 LastName = "Easy"
             };
-            context.Initialize(new[] { contact });
+            _context.Initialize(new[] { contact });
 
             contact = new Contact()
             {
@@ -147,7 +148,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
                 Target = contact
             };
 
-            var response = (UpsertResponse)service.Execute(request);
+            var response = (UpsertResponse)_service.Execute(request);
 
             Assert.Equal(false, response.RecordCreated);
         }
