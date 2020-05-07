@@ -1,24 +1,34 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 {
     public class ConditionExpressionTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        
+        public ConditionExpressionTests() 
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_executing_a_query_expression_with_a_not_implemented_operator_pull_request_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
+            var context = _context as XrmFakedContext;
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
 
-            context.Initialize(new List<Entity>() { contact1, contact2 });
+            _context.Initialize(new List<Entity>() { contact1, contact2 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.ColumnSet = new ColumnSet(true);
@@ -26,17 +36,17 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var condition = new ConditionExpression("fullname", ConditionOperator.LastXFiscalPeriods, "Contact 1");
             qe.Criteria.AddCondition(condition);
 
-            Assert.Throws<PullRequestException>(() => XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList());
+            Assert.Throws<PullRequestException>(() => XrmFakedContext.TranslateQueryExpressionToLinq(_context, qe).ToList());
         }
 
         [Fact]
         public void When_executing_a_query_expression_with_equals_operator_right_result_is_returned()
         {
-            var context = new XrmFakedContext();
+            var context = _context as XrmFakedContext;
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
 
-            context.Initialize(new List<Entity>() { contact1, contact2 });
+            _context.Initialize(new List<Entity>() { contact1, contact2 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.ColumnSet = new ColumnSet(true);

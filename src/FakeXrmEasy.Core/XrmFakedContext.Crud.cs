@@ -236,28 +236,7 @@ namespace FakeXrmEasy
         #endregion
 
         #region Other protected methods
-        protected void EnsureEntityNameExistsInMetadata(string sEntityName)
-        {
-            if (Relationships.Values.Any(value => new[] { value.Entity1LogicalName, value.Entity2LogicalName, value.IntersectEntity }.Contains(sEntityName, StringComparer.InvariantCultureIgnoreCase)))
-            {
-                return;
-            }
-
-            // Entity metadata is checked differently when we are using a ProxyTypesAssembly => we can infer that from the generated types assembly
-            if (ProxyTypesAssembly != null)
-            {
-                var subClassType = FindReflectedType(sEntityName);
-                if (subClassType == null)
-                {
-                    throw new Exception($"Entity {sEntityName} does not exist in the metadata cache");
-                }
-            }
-            //else if (!Data.ContainsKey(sEntityName))
-            //{
-            //    //No Proxy Types Assembly
-            //    throw new Exception(string.Format("Entity {0} does not exist in the metadata cache", sEntityName));
-            //};
-        }
+        
 
         public void AddEntityDefaultAttributes(Entity e)
         {
@@ -279,7 +258,7 @@ namespace FakeXrmEasy
 
             }
 
-            var isManyToManyRelationshipEntity = e.LogicalName != null && this.Relationships.ContainsKey(e.LogicalName);
+            var isManyToManyRelationshipEntity = e.LogicalName != null && this._relationships.ContainsKey(e.LogicalName);
 
             EntityInitializerService.Initialize(e, CallerId.Id, this, isManyToManyRelationshipEntity);
         }
@@ -472,7 +451,7 @@ namespace FakeXrmEasy
 
         protected internal bool AttributeExistsInMetadata(string sEntityName, string sAttributeName)
         {
-            var relationships = this.Relationships.Values.Where(value => new[] { value.Entity1LogicalName, value.Entity2LogicalName, value.IntersectEntity }.Contains(sEntityName, StringComparer.InvariantCultureIgnoreCase)).ToArray();
+            var relationships = this._relationships.Values.Where(value => new[] { value.Entity1LogicalName, value.Entity2LogicalName, value.IntersectEntity }.Contains(sEntityName, StringComparer.InvariantCultureIgnoreCase)).ToArray();
             if (relationships.Any(e => e.Entity1Attribute == sAttributeName || e.Entity2Attribute == sAttributeName))
             {
                 return true;

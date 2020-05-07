@@ -2,6 +2,7 @@
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;
+using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -33,7 +34,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
                 qe = (request.Query as QueryExpression).Clone();
                 entityName = qe.EntityName;
 
-                var linqQuery = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+                var linqQuery = qe.ToQueryable(context);
                 list = linqQuery.ToList();
             }
             else if (request.Query is FetchExpression)
@@ -43,7 +44,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
                 qe = XrmFakedContext.TranslateFetchXmlDocumentToQueryExpression(context, xmlDoc);
                 entityName = qe.EntityName;
 
-                var linqQuery = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+                var linqQuery = qe.ToQueryable(context);
                 list = linqQuery.ToList();
 
                 if (xmlDoc.IsAggregateFetchXml())
@@ -73,7 +74,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
                 qe.PageInfo = query.PageInfo;
 
                 // QueryExpression now done... execute it!
-                var linqQuery = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+                var linqQuery = qe.ToQueryable(context);
                 list = linqQuery.ToList();
             }
             else

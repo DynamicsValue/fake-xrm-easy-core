@@ -29,33 +29,30 @@ namespace FakeXrmEasy
         /// <summary>
         /// All proxy type assemblies available on mocked database.
         /// </summary>
-        private List<Assembly> ProxyTypesAssemblies { get; set; }
+        private List<Assembly> _proxyTypesAssemblies { get; set; }
+        public IEnumerable<Assembly> ProxyTypesAssemblies 
+        {
+            get => _proxyTypesAssemblies;
+        }
 
         protected internal bool Initialised { get; set; }
 
         public Dictionary<string, Dictionary<Guid, Entity>> Data { get; set; }
 
-        /// <summary>
-        /// Specify which assembly is used to search for early-bound proxy
-        /// types when used within simulated CRM context.
-        ///
-        /// If you want to specify multiple different assemblies for early-bound
-        /// proxy types please use <see cref="EnableProxyTypes(Assembly)"/>
-        /// instead.
-        /// </summary>
+        [Obsolete("Please use ProxyTypesAssemblies to retrieve assemblies and EnableProxyTypes to add new ones")]
         public Assembly ProxyTypesAssembly
         {
             get
             {
                 // TODO What we should do when ProxyTypesAssemblies contains multiple assemblies? One shouldn't throw exceptions from properties.
-                return ProxyTypesAssemblies.FirstOrDefault();
+                return _proxyTypesAssemblies.FirstOrDefault();
             }
             set
             {
-                ProxyTypesAssemblies = new List<Assembly>();
+                _proxyTypesAssemblies = new List<Assembly>();
                 if (value != null)
                 {
-                    ProxyTypesAssemblies.Add(value);
+                    _proxyTypesAssemblies.Add(value);
                 }
             }
         }
@@ -79,8 +76,11 @@ namespace FakeXrmEasy
 
         private Dictionary<string, IFakeMessageExecutor> GenericFakeMessageExecutors { get; set; }
 
-        private Dictionary<string, XrmFakedRelationship> Relationships { get; set; }
-
+        private Dictionary<string, XrmFakedRelationship> _relationships { get; set; }
+        public IEnumerable<XrmFakedRelationship> Relationships 
+        { 
+            get => _relationships.Values;
+        }
 
         public IEntityInitializerService EntityInitializerService { get; set; }
         public IAccessRightsRepository AccessRightsRepository { get; set; }
@@ -115,7 +115,7 @@ namespace FakeXrmEasy
 
             GenericFakeMessageExecutors = new Dictionary<string, IFakeMessageExecutor>();
 
-            Relationships = new Dictionary<string, XrmFakedRelationship>();
+            _relationships = new Dictionary<string, XrmFakedRelationship>();
 
             EntityInitializerService = new DefaultEntityInitializerService();
 
@@ -130,7 +130,7 @@ namespace FakeXrmEasy
 
             InitializationLevel = EntityInitializationLevel.Default;
 
-            ProxyTypesAssemblies = new List<Assembly>();
+            _proxyTypesAssemblies = new List<Assembly>();
 
             GetOrganizationService();
 
@@ -222,12 +222,12 @@ namespace FakeXrmEasy
                 throw new ArgumentNullException(nameof(assembly));
             }
 
-            if (ProxyTypesAssemblies.Contains(assembly))
+            if (_proxyTypesAssemblies.Contains(assembly))
             {
                 throw new InvalidOperationException($"Proxy types assembly { assembly.GetName().Name } is already enabled.");
             }
 
-            ProxyTypesAssemblies.Add(assembly);
+            _proxyTypesAssemblies.Add(assembly);
         }
 
         public void AddExecutionMock<T>(ServiceRequestExecution mock) where T : OrganizationRequest
