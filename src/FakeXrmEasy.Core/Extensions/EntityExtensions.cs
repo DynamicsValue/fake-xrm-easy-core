@@ -30,7 +30,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="columnSet"></param>
         /// <param name="alias"></param>
         /// <returns></returns>
-        public static Entity ProjectAttributes(this Entity e, ColumnSet columnSet, XrmFakedContext context)
+        public static Entity ProjectAttributes(this Entity e, ColumnSet columnSet, IXrmFakedContext context)
         {
             return ProjectAttributes(e, new QueryExpression() { ColumnSet = columnSet }, context);
         }
@@ -68,7 +68,7 @@ namespace FakeXrmEasy.Extensions
 #endif
         }
 
-        public static void ProjectAttributes(Entity e, Entity projected, LinkEntity le, XrmFakedContext context)
+        public static void ProjectAttributes(Entity e, Entity projected, LinkEntity le, IXrmFakedContext context)
         {
             var sAlias = string.IsNullOrWhiteSpace(le.EntityAlias) ? le.LinkToEntityName : le.EntityAlias;
 
@@ -110,7 +110,7 @@ namespace FakeXrmEasy.Extensions
             }
         }
 
-        public static Entity ProjectAttributes(this Entity e, QueryExpression qe, XrmFakedContext context)
+        public static Entity ProjectAttributes(this Entity e, QueryExpression qe, IXrmFakedContext context)
         {
             if (qe.ColumnSet == null || qe.ColumnSet.AllColumns)
             {
@@ -122,7 +122,7 @@ namespace FakeXrmEasy.Extensions
                 Entity projected = null;
 
                 //However, if we are using proxy types, we must create a instance of the appropiate class
-                if (context.ProxyTypesAssembly != null)
+                if (context.ProxyTypesAssemblies.Count() > 0)
                 {
                     var subClassType = context.FindReflectedType(e.LogicalName);
                     if (subClassType != null)
@@ -182,7 +182,7 @@ namespace FakeXrmEasy.Extensions
             return entity;
         }
 
-        public static object CloneAttribute(object attributeValue, XrmFakedContext context = null)
+        public static object CloneAttribute(object attributeValue, IXrmFakedContext context = null)
         {
             if (attributeValue == null)
                 return null;
@@ -197,10 +197,17 @@ namespace FakeXrmEasy.Extensions
                 var original = (attributeValue as EntityReference);
                 var clone = new EntityReference(original.LogicalName, original.Id);
 
-                if (context != null && !string.IsNullOrEmpty(original.LogicalName) && context.EntityMetadata.ContainsKey(original.LogicalName) && !string.IsNullOrEmpty(context.EntityMetadata[original.LogicalName].PrimaryNameAttribute) &&
-                    context.Data.ContainsKey(original.LogicalName) && context.Data[original.LogicalName].ContainsKey(original.Id))
+                var entityMetadata = context.GetEntityMetadataByName(original.LogicalName);
+                bool containsEntity = context.ContainsEntity(original.LogicalName, original.Id);
+
+                if (context != null 
+                        && !string.IsNullOrEmpty(original.LogicalName) 
+                        && entityMetadata != null 
+                        && !string.IsNullOrEmpty(entityMetadata.PrimaryNameAttribute) 
+                        && containsEntity)
                 {
-                    clone.Name = context.Data[original.LogicalName][original.Id].GetAttributeValue<string>(context.EntityMetadata[original.LogicalName].PrimaryNameAttribute);
+                    var entity = context.GetEntityById(original.LogicalName, original.Id);
+                    clone.Name = entity.GetAttributeValue<string>(entityMetadata.PrimaryNameAttribute);
                 }
                 else
                 {
@@ -285,7 +292,7 @@ namespace FakeXrmEasy.Extensions
             throw new Exception(string.Format("Attribute type not supported when trying to clone attribute '{0}'", type.ToString()));
         }
 
-        public static Entity Clone(this Entity e, XrmFakedContext context = null)
+        public static Entity Clone(this Entity e, IXrmFakedContext context = null)
         {
             var cloned = new Entity(e.LogicalName);
             cloned.Id = e.Id;
@@ -318,7 +325,7 @@ namespace FakeXrmEasy.Extensions
             return (T)e.Clone(typeof(T));
         }
 
-        public static Entity Clone(this Entity e, Type t, XrmFakedContext context = null)
+        public static Entity Clone(this Entity e, Type t, IXrmFakedContext context = null)
         {
             if (t == null)
                 return e.Clone(context);
@@ -357,7 +364,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="otherEntity"></param>
         /// <param name="attributes"></param>
         /// <returns></returns>
-        public static Entity JoinAttributes(this Entity e, Entity otherEntity, ColumnSet columnSet, string alias, XrmFakedContext context)
+        public static Entity JoinAttributes(this Entity e, Entity otherEntity, ColumnSet columnSet, string alias, IXrmFakedContext context)
         {
             if (otherEntity == null) return e; //Left Join where otherEntity was not matched
 
@@ -403,7 +410,7 @@ namespace FakeXrmEasy.Extensions
             return e;
         }
 
-        public static Entity JoinAttributes(this Entity e, IEnumerable<Entity> otherEntities, ColumnSet columnSet, string alias, XrmFakedContext context)
+        public static Entity JoinAttributes(this Entity e, IEnumerable<Entity> otherEntities, ColumnSet columnSet, string alias, IXrmFakedContext context)
         {
             foreach (var otherEntity in otherEntities)
             {
@@ -456,7 +463,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="e"></param>
         /// <param name="sAttributeName"></param>
         /// <returns></returns>
-        public static object KeySelector(this Entity e, string sAttributeName, XrmFakedContext context)
+        public static object KeySelector(this Entity e, string sAttributeName, IXrmFakedContext context)
         {
             if (sAttributeName.Contains("."))
             {

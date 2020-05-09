@@ -11,6 +11,33 @@ namespace FakeXrmEasy.Query
 {
     public static class QueryExpressionExtensions
     {
+        public static string GetEntityNameFromAlias(this QueryExpression qe, string sAlias)
+        {
+            if (sAlias == null)
+                return qe.EntityName;
+
+            var linkedEntity = qe.LinkEntities
+                            .Where(le => le.EntityAlias != null && le.EntityAlias.Equals(sAlias))
+                            .FirstOrDefault();
+
+            if (linkedEntity != null)
+            {
+                return linkedEntity.LinkToEntityName;
+            }
+
+            //If the alias wasn't found, it means it  could be any of the EntityNames
+            return sAlias;
+        }
+
+        /// <summary>
+        /// Makes a deep clone of the Query Expression
+        /// </summary>
+        /// <param name="qe">Query Expression</param>
+        /// <returns></returns>
+        public static QueryExpression Clone(this QueryExpression qe)
+        {
+            return qe.Copy();
+        }
         public static IQueryable<Entity> ToQueryable(this QueryExpression qe, IXrmFakedContext context)
         {
             if (qe == null) return null;
@@ -42,7 +69,7 @@ namespace FakeXrmEasy.Query
 
             // Compose the expression tree that represents the parameter to the predicate.
             ParameterExpression entity = Expression.Parameter(typeof(Entity));
-            var expTreeBody = TranslateQueryExpressionFiltersToExpression(context, qe, entity);
+            var expTreeBody = qe.TranslateQueryExpressionFiltersToExpression(context, entity);
             Expression<Func<Entity, bool>> lambda = Expression.Lambda<Func<Entity, bool>>(expTreeBody, entity);
             query = query.Where(lambda);
 
@@ -173,7 +200,7 @@ namespace FakeXrmEasy.Query
 #endif
 
 
-        private static string EnsureUniqueLinkedEntityAlias(IDictionary<string, int> linkedEntities, string entityName)
+        internal static string EnsureUniqueLinkedEntityAlias(IDictionary<string, int> linkedEntities, string entityName)
         {
             if (linkedEntities.ContainsKey(entityName))
             {
@@ -185,6 +212,45 @@ namespace FakeXrmEasy.Query
             }
 
             return $"{entityName}{linkedEntities[entityName]}";
+        }
+
+        internal static Expression TranslateQueryExpressionFiltersToExpression(this QueryExpression qe, IXrmFakedContext context, ParameterExpression entity)
+        {
+            var linkedEntitiesQueryExpressions = new List<Expression>();
+            foreach (var le in qe.LinkEntities)
+            {
+                var listOfExpressions = le.TranslateLinkedEntityFilterExpressionToExpression(qe, context, entity);
+                linkedEntitiesQueryExpressions.AddRange(listOfExpressions);
+            }
+
+            if (linkedEntitiesQueryExpressions.Count > 0 && qe.Criteria != null)
+            {
+                //Return the and of the two
+                Expression andExpression = Expression.Constant(true);
+                foreach (var e in linkedEntitiesQueryExpressions)
+                {
+                    andExpression = Expression.And(e, andExpression);
+
+                }
+                var feExpression = qe.Criteria.TranslateFilterExpressionToExpression(qe, context, qe.EntityName, entity, false);
+                return Expression.And(andExpression, feExpression);
+            }
+            else if (linkedEntitiesQueryExpressions.Count > 0)
+            {
+                //Linked entity expressions only
+                Expression andExpression = Expression.Constant(true);
+                foreach (var e in linkedEntitiesQueryExpressions)
+                {
+                    andExpression = Expression.And(e, andExpression);
+
+                }
+                return andExpression;
+            }
+            else
+            {
+                //Criteria only
+                return qe.Criteria.TranslateFilterExpressionToExpression(qe, context, qe.EntityName, entity, false);
+            }
         }
     }
 }

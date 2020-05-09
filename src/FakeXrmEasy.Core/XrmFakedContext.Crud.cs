@@ -10,6 +10,7 @@ using System.Reflection;
 using System.ServiceModel;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins.Enums;
+using Microsoft.Xrm.Sdk.Client;
 
 namespace FakeXrmEasy
 {
@@ -159,6 +160,50 @@ namespace FakeXrmEasy
             }
         }
 
+        public Entity GetEntityById(string sLogicalName, Guid id)
+        {
+            if(!Data.ContainsKey(sLogicalName)) 
+            {
+                throw new InvalidOperationException($"The entity logical name '{sLogicalName}' is not valid.");
+            }
+
+            if(!Data[sLogicalName].ContainsKey(id)) 
+            {
+                throw new InvalidOperationException($"The id parameter '{id.ToString()}' for entity logical name '{sLogicalName}' is not valid.");
+            }
+
+            return Data[sLogicalName][id];
+        }
+
+        public bool ContainsEntity(string sLogicalName, Guid id)
+        {
+            if(!Data.ContainsKey(sLogicalName)) 
+            {
+                return false;
+            }
+
+            if(!Data[sLogicalName].ContainsKey(id)) 
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public T GetEntityById<T>(Guid id) where T: Entity
+        {
+            var typeParameter = typeof(T);
+
+            var logicalName = "";
+
+            if (typeParameter.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true).Length > 0)
+            {
+                logicalName = (typeParameter.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true)[0] as EntityLogicalNameAttribute).LogicalName;
+            }
+
+            return GetEntityById(logicalName, id) as T;
+        }
+
         protected EntityReference ResolveEntityReference(EntityReference er)
         {
             if (!Data.ContainsKey(er.LogicalName) || !Data[er.LogicalName].ContainsKey(er.Id))
@@ -197,12 +242,12 @@ namespace FakeXrmEasy
             // Don't fail with invalid operation exception, if no record of this entity exists, but entity is known
             if (!this.Data.ContainsKey(er.LogicalName))
             {
-                if (this.ProxyTypesAssembly == null)
+                if (ProxyTypesAssemblies.Count() == 0)
                 {
                     throw new InvalidOperationException($"The entity logical name {er.LogicalName} is not valid.");
                 }
 
-                if (!this.ProxyTypesAssembly.GetTypes().Any(type => this.FindReflectedType(er.LogicalName) != null))
+                if (FindReflectedType(er.LogicalName) == null)
                 {
                     throw new InvalidOperationException($"The entity logical name {er.LogicalName} is not valid.");
                 }
@@ -377,10 +422,10 @@ namespace FakeXrmEasy
         public void AddEntity(Entity e)
         {
             //Automatically detect proxy types assembly if an early bound type was used.
-            if (ProxyTypesAssembly == null &&
+            if (ProxyTypesAssemblies.Count() == 0 &&
                 e.GetType().IsSubclassOf(typeof(Entity)))
             {
-                ProxyTypesAssembly = Assembly.GetAssembly(e.GetType());
+                EnableProxyTypes(Assembly.GetAssembly(e.GetType()));
             }
 
             ValidateEntity(e); //Entity must have a logical name and an Id
@@ -419,7 +464,7 @@ namespace FakeXrmEasy
                 AttributeMetadataNames.Add(e.LogicalName, new Dictionary<string, string>());
 
             //Update attribute metadata
-            if (ProxyTypesAssembly != null)
+            if (ProxyTypesAssemblies.Count() > 0)
             {
                 //If the context is using a proxy types assembly then we can just guess the metadata from the generated attributes
                 var type = FindReflectedType(e.LogicalName);
@@ -447,61 +492,6 @@ namespace FakeXrmEasy
                 }
             }
 
-        }
-
-        protected internal bool AttributeExistsInMetadata(string sEntityName, string sAttributeName)
-        {
-            var relationships = this._relationships.Values.Where(value => new[] { value.Entity1LogicalName, value.Entity2LogicalName, value.IntersectEntity }.Contains(sEntityName, StringComparer.InvariantCultureIgnoreCase)).ToArray();
-            if (relationships.Any(e => e.Entity1Attribute == sAttributeName || e.Entity2Attribute == sAttributeName))
-            {
-                return true;
-            }
-
-            //Early bound types
-            if (ProxyTypesAssembly != null)
-            {
-                //Check if attribute exists in the early bound type 
-                var earlyBoundType = FindReflectedType(sEntityName);
-                if (earlyBoundType != null)
-                {
-                    //Get that type properties
-                    var attributeFound = earlyBoundType
-                        .GetProperties()
-                        .Where(pi => pi.GetCustomAttributes(typeof(AttributeLogicalNameAttribute), true).Length > 0)
-                        .Where(pi => (pi.GetCustomAttributes(typeof(AttributeLogicalNameAttribute), true)[0] as AttributeLogicalNameAttribute).LogicalName.Equals(sAttributeName))
-                        .FirstOrDefault();
-
-                    if (attributeFound != null)
-                        return true;
-
-                    if (attributeFound == null && EntityMetadata.ContainsKey(sEntityName))
-                    {
-                        //Try with metadata
-                        return AttributeExistsInInjectedMetadata(sEntityName, sAttributeName);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                //Try with metadata
-                return false;
-            }
-
-            if (EntityMetadata.ContainsKey(sEntityName))
-            {
-                //Try with metadata
-                return AttributeExistsInInjectedMetadata(sEntityName, sAttributeName);
-            }
-
-            //Dynamic entities and not entity metadata injected for entity => just return true if not found
-            return true;
-        }
-
-        protected internal bool AttributeExistsInInjectedMetadata(string sEntityName, string sAttributeName)
-        {
-            var attributeInMetadata = FindAttributeTypeInInjectedMetadata(sEntityName, sAttributeName);
-            return attributeInMetadata != null;
         }
 
         protected internal DateTime ConvertToUtc(DateTime attribute)

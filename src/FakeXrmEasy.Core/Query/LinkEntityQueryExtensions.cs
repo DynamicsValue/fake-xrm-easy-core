@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
@@ -43,20 +45,15 @@ namespace FakeXrmEasy.Query
                     ColumnSet = new ColumnSet(true)
                 };
 
-                var outerQuery = TranslateQueryExpressionToLinq(context, outerQueryExpression);
+                var outerQuery = outerQueryExpression.ToQueryable(context);
                 inner = outerQuery;
 
             }
             else
             {
                 //Filters are applied after joins
-                inner = context.CreateQuery<Entity>(le.LinkToEntityName);
+                inner = context.CreateQuery(le.LinkToEntityName);
             }
-
-            //if (!le.Columns.AllColumns && le.Columns.Columns.Count == 0)
-            //{
-            //    le.Columns.AllColumns = true;   //Add all columns in the joined entity, otherwise we can't filter by related attributes, then the Select will actually choose which ones we need
-            //}
 
             if (string.IsNullOrWhiteSpace(linkFromAlias))
             {
@@ -103,13 +100,86 @@ namespace FakeXrmEasy.Query
 
                 if (string.IsNullOrWhiteSpace(nestedLinkedEntity.EntityAlias))
                 {
-                    nestedLinkedEntity.EntityAlias = EnsureUniqueLinkedEntityAlias(linkedEntities, nestedLinkedEntity.LinkToEntityName);
+                    nestedLinkedEntity.EntityAlias = QueryExpressionExtensions.EnsureUniqueLinkedEntityAlias(linkedEntities, nestedLinkedEntity.LinkToEntityName);
                 }
 
-                query = TranslateLinkedEntityToLinq(context, nestedLinkedEntity, query, le.Columns, linkedEntities, le.EntityAlias, le.LinkToEntityName);
+                query = nestedLinkedEntity.ToQueryable(context, query, le.Columns, linkedEntities, le.EntityAlias, le.LinkToEntityName);
             }
 
             return query;
         }
+
+        internal static List<Expression> TranslateLinkedEntityFilterExpressionToExpression(this LinkEntity le, QueryExpression qe, IXrmFakedContext context, ParameterExpression entity)
+        {
+            //In CRM 2011, condition expressions are at the LinkEntity level without an entity name
+            //From CRM 2013, condition expressions were moved to outside the LinkEntity object at the QueryExpression level,
+            //with an EntityName alias attribute
+
+            //If we reach this point, it means we are translating filters at the Link Entity level (2011),
+            //Therefore we need to prepend the alias attribute because the code to generate attributes for Joins (JoinAttribute extension) is common across versions
+            var linkedEntitiesQueryExpressions = new List<Expression>();
+
+            if (le.LinkCriteria != null)
+            {
+                var earlyBoundType = context.FindReflectedType(le.LinkToEntityName);
+
+                var fakedContext = context as XrmFakedContext;
+                var attributeMetadata = fakedContext.AttributeMetadataNames.ContainsKey(le.LinkToEntityName) ? fakedContext.AttributeMetadataNames[le.LinkToEntityName] : null;
+
+                foreach (var ce in le.LinkCriteria.Conditions)
+                {
+                    if (earlyBoundType != null)
+                    {
+                        var attributeInfo = earlyBoundType.GetEarlyBoundTypeAttribute(ce.AttributeName);
+                        if (attributeInfo == null && ce.AttributeName.EndsWith("name"))
+                        {
+                            // Special case for referencing the name of a EntityReference
+                            var sAttributeName = ce.AttributeName.Substring(0, ce.AttributeName.Length - 4);
+                            attributeInfo = earlyBoundType.GetEarlyBoundTypeAttribute(sAttributeName);
+
+                            if (attributeInfo.PropertyType == typeof(EntityReference))
+                            {
+                                // Don't mess up if other attributes follow this naming pattern
+                                ce.AttributeName = sAttributeName;
+                            }
+                        }
+                    }
+                    else if (attributeMetadata != null && !attributeMetadata.ContainsKey(ce.AttributeName) && ce.AttributeName.EndsWith("name"))
+                    {
+                        // Special case for referencing the name of a EntityReference
+                        var sAttributeName = ce.AttributeName.Substring(0, ce.AttributeName.Length - 4);
+                        if (attributeMetadata.ContainsKey(sAttributeName))
+                        {
+                            ce.AttributeName = sAttributeName;
+                        }
+                    }
+
+                    var entityAlias = !string.IsNullOrEmpty(le.EntityAlias) ? le.EntityAlias : le.LinkToEntityName;
+                    ce.AttributeName = entityAlias + "." + ce.AttributeName;
+                }
+
+                foreach (var fe in le.LinkCriteria.Filters)
+                {
+                    foreach (var ce in fe.Conditions)
+                    {
+                        var entityAlias = !string.IsNullOrEmpty(le.EntityAlias) ? le.EntityAlias : le.LinkToEntityName;
+                        ce.AttributeName = entityAlias + "." + ce.AttributeName;
+                    }
+                }
+            }
+
+            //Translate this specific Link Criteria
+            linkedEntitiesQueryExpressions.Add(le.LinkCriteria.TranslateFilterExpressionToExpression(qe, context, le.LinkToEntityName, entity, le.JoinOperator == JoinOperator.LeftOuter));
+
+            //Processed nested linked entities
+            foreach (var nestedLinkedEntity in le.LinkEntities)
+            {
+                var listOfExpressions = nestedLinkedEntity.TranslateLinkedEntityFilterExpressionToExpression(qe, context, entity);
+                linkedEntitiesQueryExpressions.AddRange(listOfExpressions);
+            }
+
+            return linkedEntitiesQueryExpressions;
+        }
+
     }
 }

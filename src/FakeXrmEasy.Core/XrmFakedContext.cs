@@ -272,19 +272,19 @@ namespace FakeXrmEasy
 
         public void AddRelationship(string schemaname, XrmFakedRelationship relationship)
         {
-            Relationships.Add(schemaname, relationship);
+            _relationships.Add(schemaname, relationship);
         }
 
         public void RemoveRelationship(string schemaname)
         {
-            Relationships.Remove(schemaname);
+            _relationships.Remove(schemaname);
         }
 
         public XrmFakedRelationship GetRelationship(string schemaName)
         {
-            if (Relationships.ContainsKey(schemaName))
+            if (_relationships.ContainsKey(schemaName))
             {
-                return Relationships[schemaName];
+                return _relationships[schemaName];
             }
 
             return null;

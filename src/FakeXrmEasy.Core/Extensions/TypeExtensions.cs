@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace FakeXrmEasy.Extensions
@@ -36,6 +36,16 @@ namespace FakeXrmEasy.Extensions
                 t.IsGenericType
                 && t.GetGenericTypeDefinition() == typeof(Nullable<>)
                 && t.GetGenericArguments()[0].IsEnum;
+        }
+
+        public static PropertyInfo GetEarlyBoundTypeAttribute(this Type earlyBoundType, string attributeName)
+        {
+            var attributeInfo = earlyBoundType.GetProperties()
+                .Where(pi => pi.GetCustomAttributes(typeof(AttributeLogicalNameAttribute), true).Length > 0)
+                .Where(pi => (pi.GetCustomAttributes(typeof(AttributeLogicalNameAttribute), true)[0] as AttributeLogicalNameAttribute).LogicalName.Equals(attributeName))
+                .FirstOrDefault();
+
+            return attributeInfo;
         }
     }
 }
