@@ -5,16 +5,26 @@ using Microsoft.Xrm.Sdk.Query;
 using System.Reflection;
 using Xunit;
 using FakeXrmEasy.Query;
+using FakeXrmEasy.Abstractions;
+using Microsoft.Xrm.Sdk;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 {
     public class StringOperatorTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        public StringOperatorTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void FetchXml_Operator_Lt_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -28,7 +38,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 
             var ct = new Contact();
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -40,8 +50,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
         [Fact]
         public void FetchXml_Operator_Lt_Execution()
         {
-            var ctx = new XrmFakedContext();
-
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='nickname' />
@@ -54,10 +62,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
             var ct1 = new Contact() { Id = Guid.NewGuid(), NickName = "Alice" };
             var ct2 = new Contact() { Id = Guid.NewGuid(), NickName = "Bob" };
             var ct3 = new Contact() { Id = Guid.NewGuid(), NickName = "Nati" };
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            
+            _context.Initialize(new[] { ct1, ct2, ct3 });
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
             Assert.Equal("Alice", collection.Entities[0]["nickname"]);
@@ -67,8 +75,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
         [Fact]
         public void FetchXml_Operator_Gt_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -82,7 +89,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 
             var ct = new Contact();
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -94,8 +101,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
         [Fact]
         public void FetchXml_Operator_Gt_Execution()
         {
-            var ctx = new XrmFakedContext();
-
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='nickname' />
@@ -108,10 +113,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
             var ct1 = new Contact() { Id = Guid.NewGuid(), NickName = "Alice" };
             var ct2 = new Contact() { Id = Guid.NewGuid(), NickName = "Bob" };
             var ct3 = new Contact() { Id = Guid.NewGuid(), NickName = "Nati" };
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            
+            _context.Initialize(new[] { ct1, ct2, ct3 });
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
             Assert.Equal("Bob", collection.Entities[0]["nickname"]);
