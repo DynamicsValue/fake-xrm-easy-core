@@ -8,17 +8,23 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
     public class QueryLinkEntityTests
     {
-        [Fact]
-        public static void Should_Find_Faked_N_To_N_Records()
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        public QueryLinkEntityTests()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+        
+        [Fact]
+        public void Should_Find_Faked_N_To_N_Records()
+        {
             var userId = new Guid("11111111-7982-4276-A8FE-7CE05FABEAB4");
             var businessId = Guid.NewGuid();
 
@@ -34,9 +40,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 BusinessUnitId = new EntityReference(BusinessUnit.EntityLogicalName, businessId)
             };
 
-            fakedContext.Initialize(new Entity[] { testUser, testRole });
+            _context.Initialize(new Entity[] { testUser, testRole });
 
-            fakedContext.AddRelationship("systemuserroles_association", new XrmFakedRelationship
+            _context.AddRelationship("systemuserroles_association", new XrmFakedRelationship
             {
                 IntersectEntity = "systemuserroles",
                 Entity1LogicalName = SystemUser.EntityLogicalName,
@@ -55,7 +61,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Relationship = new Relationship("systemuserroles_association")
             };
 
-            fakedService.Execute(request);
+            _service.Execute(request);
 
             var query = new QueryExpression()
             {
@@ -86,17 +92,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = fakedService.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             Assert.NotEmpty(result.Entities);
             Assert.Equal(1, result.Entities.Count);
         }
 
         [Fact]
-        public static void Should_Only_Find_Correct_Faked_N_To_N_Records()
+        public void Should_Only_Find_Correct_Faked_N_To_N_Records()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             var userId = new Guid("11111111-7982-4276-A8FE-7CE05FABEAB4");
             var businessId = Guid.NewGuid();
 
@@ -124,9 +127,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 BusinessUnitId = new EntityReference(BusinessUnit.EntityLogicalName, businessId)
             };
 
-            fakedContext.Initialize(new Entity[] { testUser, testRole, testUser2, testRole2 });
+            _context.Initialize(new Entity[] { testUser, testRole, testUser2, testRole2 });
 
-            fakedContext.AddRelationship("systemuserroles_association", new XrmFakedRelationship
+            _context.AddRelationship("systemuserroles_association", new XrmFakedRelationship
             {
                 IntersectEntity = "systemuserroles",
                 Entity1LogicalName = SystemUser.EntityLogicalName,
@@ -145,7 +148,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Relationship = new Relationship("systemuserroles_association")
             };
 
-            fakedService.Execute(request);
+            _service.Execute(request);
 
             var request2 = new AssociateRequest()
             {
@@ -157,7 +160,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Relationship = new Relationship("systemuserroles_association")
             };
 
-            fakedService.Execute(request2);
+            _service.Execute(request2);
 
             var query = new QueryExpression()
             {
@@ -188,16 +191,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = fakedService.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             Assert.NotEmpty(result.Entities);
             Assert.Equal(1, result.Entities.Count);
         }
 
         [Fact]
-        public static void Should_Not_Find_Faked_N_To_N_Records_If_Disassociated_Again()
+        public void Should_Not_Find_Faked_N_To_N_Records_If_Disassociated_Again()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
 
             var userId = new Guid("11111111-7982-4276-A8FE-7CE05FABEAB4");
             var businessId = Guid.NewGuid();
@@ -214,9 +215,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 BusinessUnitId = new EntityReference(BusinessUnit.EntityLogicalName, businessId)
             };
 
-            fakedContext.Initialize(new Entity[] { testUser, testRole });
+            _context.Initialize(new Entity[] { testUser, testRole });
 
-            fakedContext.AddRelationship("systemuserroles_association", new XrmFakedRelationship
+            _context.AddRelationship("systemuserroles_association", new XrmFakedRelationship
             {
                 IntersectEntity = "systemuserroles",
                 Entity1LogicalName = SystemUser.EntityLogicalName,
@@ -235,7 +236,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Relationship = new Relationship("systemuserroles_association")
             };
 
-            fakedService.Execute(request);
+            _service.Execute(request);
 
             var disassociate = new DisassociateRequest
             {
@@ -247,7 +248,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Relationship = new Relationship("systemuserroles_association")
             };
 
-            fakedService.Execute(disassociate);
+            _service.Execute(disassociate);
 
             var query = new QueryExpression()
             {
@@ -278,16 +279,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = fakedService.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             Assert.Empty(result.Entities);
         }
 
         [Fact]
-        public static void Should_Find_Faked_N_To_N_Records_Using_Associate_Method()
+        public void Should_Find_Faked_N_To_N_Records_Using_Associate_Method()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
+            
             var userId = new Guid("11111111-7982-4276-A8FE-7CE05FABEAB4");
             var businessId = Guid.NewGuid();
 
@@ -303,9 +302,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 BusinessUnitId = new EntityReference(BusinessUnit.EntityLogicalName, businessId)
             };
 
-            fakedContext.Initialize(new Entity[] { testUser, testRole });
+            _context.Initialize(new Entity[] { testUser, testRole });
 
-            fakedContext.AddRelationship("systemuserroles", new XrmFakedRelationship
+            _context.AddRelationship("systemuserroles", new XrmFakedRelationship
             {
                 IntersectEntity = "systemuserroles",
                 Entity1LogicalName = SystemUser.EntityLogicalName,
@@ -314,7 +313,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Entity2Attribute = "roleid"
             });
 
-            fakedService.Associate("systemuserroles",
+            _service.Associate("systemuserroles",
                 testUser.Id,
                 new Relationship("systemuserroles"),
                 new EntityReferenceCollection()
@@ -351,16 +350,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = fakedService.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             Assert.NotEmpty(result.Entities);
             Assert.Equal(1, result.Entities.Count);
         }
 
         [Fact]
-        public static void Should_Not_Find_Faked_N_To_N_Records_If_Disassociated_Again_Using_Disassociate_Method()
+        public void Should_Not_Find_Faked_N_To_N_Records_If_Disassociated_Again_Using_Disassociate_Method()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
+            
+            
 
             var userId = new Guid("11111111-7982-4276-A8FE-7CE05FABEAB4");
             var businessId = Guid.NewGuid();
@@ -377,9 +376,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 BusinessUnitId = new EntityReference(BusinessUnit.EntityLogicalName, businessId)
             };
 
-            fakedContext.Initialize(new Entity[] { testUser, testRole });
+            _context.Initialize(new Entity[] { testUser, testRole });
 
-            fakedContext.AddRelationship("systemuserroles", new XrmFakedRelationship
+            _context.AddRelationship("systemuserroles", new XrmFakedRelationship
             {
                 IntersectEntity = "systemuserroles",
                 Entity1LogicalName = SystemUser.EntityLogicalName,
@@ -388,7 +387,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Entity2Attribute = "roleid"
             });
 
-            fakedService.Associate("systemuserroles",
+            _service.Associate("systemuserroles",
                 testUser.Id,
                 new Relationship("systemuserroles"),
                 new EntityReferenceCollection()
@@ -396,7 +395,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                     new EntityReference(Role.EntityLogicalName, testRole.Id),
                 });
 
-            fakedService.Disassociate("systemuserroles",
+            _service.Disassociate("systemuserroles",
                 testUser.Id,
                 new Relationship("systemuserroles"),
                 new EntityReferenceCollection()
@@ -433,16 +432,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = fakedService.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             Assert.Empty(result.Entities);
         }
 
         [Fact]
-        public static void Should_Not_Fail_On_Conditions_In_Link_Entities()
+        public void Should_Not_Fail_On_Conditions_In_Link_Entities()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             var testEntity1 = new Entity("entity1")
             {
                 Attributes = new AttributeCollection
@@ -458,8 +454,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            testEntity1.Id = fakedService.Create(testEntity1);
-            testEntity2.Id = fakedService.Create(testEntity2);
+            testEntity1.Id = _service.Create(testEntity1);
+            testEntity2.Id = _service.Create(testEntity2);
 
             var testRelation = new XrmFakedRelationship
             {
@@ -469,8 +465,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Entity2LogicalName = "entity2",
                 Entity2Attribute = "entity2attr"
             };
-            fakedContext.AddRelationship(testRelation.Entity2LogicalName, testRelation);
-            fakedService.Associate(testEntity1.LogicalName, testEntity1.Id,
+            _context.AddRelationship(testRelation.Entity2LogicalName, testRelation);
+            _service.Associate(testEntity1.LogicalName, testEntity1.Id,
                 new Relationship(testRelation.Entity2LogicalName),
                 new EntityReferenceCollection { testEntity2.ToEntityReference() });
 
@@ -504,7 +500,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             };
             query.LinkEntities.Add(link);
 
-            var result = fakedService.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             Assert.NotEmpty(result.Entities);
             Assert.Equal(1, result.Entities.Count);
         }
@@ -512,15 +508,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void Entities_Can_Be_Linked_On_String_Attribute()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            
+            
             var entity = new Entity("entity") { Id = Guid.NewGuid(), ["name"] = "test" };
-            context.Initialize(entity);
+            _context.Initialize(entity);
             var query = new QueryExpression("entity");
             query.ColumnSet = new ColumnSet(true);
             query.AddLink("entity", "name", "name");
 
-            var queryResult = service.RetrieveMultiple(query);
+            var queryResult = _service.RetrieveMultiple(query);
 
             Assert.Equal(1, queryResult.Entities.Count);
         }
@@ -528,8 +524,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void Should_evaluate_all_LinkEntity_conditions()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
+            
+            
 
             var entity1 = new Entity("entity1")
             {
@@ -574,9 +570,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            fakedContext.Initialize(new[] { entity1, entity2, entity3 });
+            _context.Initialize(new[] { entity1, entity2, entity3 });
 
-            var result = fakedService.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
 
             Assert.Equal(0, result.Entities.Count);
         }
@@ -584,11 +580,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_querying_by_an_attribute_which_wasnt_initialised_null_value_is_returned_for_early_bound_and_not_an_exception()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
-            var service = ctx.GetOrganizationService();
-            ctx.Initialize(new List<Entity>()
+            
+            _context.Initialize(new List<Entity>()
             {
                 new Contact()
                 {
@@ -599,9 +595,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
 
             var name = "Mcdonald";
 
-            using (var context = new XrmServiceContext(service))
+            using (var _context = new XrmServiceContext(_service))
             {
-                var contacts = (from c in context.ContactSet
+                var contacts = (from c in _context.ContactSet
                                 where c.FirstName == name || c.LastName == name
                                 select new Contact { Id = c.Id, FirstName = c.FirstName, LastName = c.LastName }).ToList();
 
@@ -613,19 +609,19 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_sorting_by_an_attribute_which_wasnt_initialised_an_exception_is_not_thrown()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
-            var service = ctx.GetOrganizationService();
-            ctx.Initialize(new List<Entity>()
+            
+            _context.Initialize(new List<Entity>()
             {
                 new Contact() {Id = Guid.NewGuid(), FirstName = "Ronald", LastName = "Mcdonald"},
                 new Contact() {Id = Guid.NewGuid(), LastName = "Jordan"}
             });
 
-            using (var context = new XrmServiceContext(service))
+            using (var _context = new XrmServiceContext(_service))
             {
-                var contacts = (from c in context.ContactSet
+                var contacts = (from c in _context.ContactSet
                                 orderby c.FirstName
                                 select new Contact { Id = c.Id, FirstName = c.FirstName, LastName = c.LastName }).ToList();
 
@@ -648,11 +644,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             var contact5 = new Contact() { Id = Guid.NewGuid(), FirstName = "5 Cont", LastName = "Cont 5", Address1_City = "2 City", ParentCustomerId = account2.ToEntityReference() };
             var contact6 = new Contact() { Id = Guid.NewGuid(), FirstName = "6 Cont", LastName = "Cont 6", Address1_City = "2 City", ParentCustomerId = account3.ToEntityReference() };
 
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
-
-            var service = ctx.GetOrganizationService();
-            ctx.Initialize(new List<Entity>() {
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
+            
+            _context.Initialize(new List<Entity>() {
                 account1, account2, account3, contact1, contact2, contact3, contact4, contact5, contact6
             });
 
@@ -687,7 +682,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            EntityCollection entities = service.RetrieveMultiple(query);
+            EntityCollection entities = _service.RetrieveMultiple(query);
             Assert.Equal(6, entities.Entities.Count);
         }
 
@@ -695,8 +690,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void Should_Not_Apply_Left_Outer_Join_Filters_When_The_Right_hand_side_of_the_expression_wasnt_found()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             // Date for filtering, we only want "expired" records, i.e. those that weren't set as regarding in any emails for this period and logically even exist this long
             var days = 5;
@@ -709,7 +704,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             };
             incident["createdon"] = DateTime.UtcNow.AddDays(-6);
 
-            context.Initialize(new[] { incident });
+            _context.Initialize(new[] { incident });
 
             // Remove either incident createdon conditionexpression, or LinkEntities and the e-mail conditionexpression and it will pass
             // What this query expresses: Get all incidents, that are older than given number of days and that also didn't receive emails for this number of days
@@ -760,15 +755,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var incidents = service.RetrieveMultiple(query).Entities;
+            var incidents = _service.RetrieveMultiple(query).Entities;
             Assert.Equal(1, incidents.Count);
         }
 
         [Fact]
         public void Should_Apply_Left_Outer_Join_Filters_When_The_Right_hand_side_of_the_expression_was_found()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             // Date for filtering, we only want "expired" records, i.e. those that weren't set as regarding in any emails for this period and logically even exist this long
             var days = 5;
@@ -789,7 +784,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             incident["createdon"] = DateTime.UtcNow.AddDays(-6);
             email["createdon"] = DateTime.UtcNow.AddDays(10);
 
-            context.Initialize(new List<Entity>() { incident, email });
+            _context.Initialize(new List<Entity>() { incident, email });
 
             // Remove either incident createdon conditionexpression, or LinkEntities and the e-mail conditionexpression and it will pass
             // What this query expresses: Get all incidents, that are older than given number of days and that also didn't receive emails for this number of days
@@ -840,7 +835,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var incidents = service.RetrieveMultiple(query).Entities;
+            var incidents = _service.RetrieveMultiple(query).Entities;
             Assert.Equal(1, incidents.Count);
         }
 #endif
@@ -848,8 +843,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_There_Is_A_LinkedEntity_The_Output_EntityAlias_Should_Be_Suffixed_With_1()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var entities = new List<Entity>();
 
@@ -868,7 +863,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             };
             entities.Add(user2);
 
-            context.Initialize(entities);
+            _context.Initialize(entities);
 
             var query = new QueryExpression(SystemUser.EntityLogicalName)
             {
@@ -881,7 +876,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = service.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             var resultingEntity = result.Entities[0];
             Assert.Equal(2, resultingEntity.Attributes.Count);
             Assert.Equal("User1", ((AliasedValue)resultingEntity["systemuser1.fullname"]).Value);
@@ -891,8 +886,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         public void When_There_Are_Multiple_LinkedEntities_The_Output_EntityAlias_Should_All_Be_Suffixed_With_1()
 
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var entities = new List<Entity>();
 
@@ -919,7 +914,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             };
             entities.Add(user2);
 
-            context.Initialize(entities);
+            _context.Initialize(entities);
 
             var query = new QueryExpression(SystemUser.EntityLogicalName)
             {
@@ -936,7 +931,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = service.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             var resultingEntity = result.Entities[0];
             Assert.Equal(3, resultingEntity.Attributes.Count);
             Assert.Equal("User1", ((AliasedValue)resultingEntity["systemuser1.fullname"]).Value);
@@ -946,8 +941,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_There_Are_Multiple_LinkedEntities_With_The_Same_Entitiy_The_Output_EntityAlias_Should_All_Be_Suffixed_With_Incrementally()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var entities = new List<Entity>();
 
@@ -974,7 +969,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             };
             entities.Add(user3);
 
-            context.Initialize(entities);
+            _context.Initialize(entities);
 
             var query = new QueryExpression(SystemUser.EntityLogicalName)
             {
@@ -994,7 +989,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = service.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             var resultingEntity = result.Entities[0];
             Assert.Equal(3, resultingEntity.Attributes.Count);
             Assert.Equal("User2", ((AliasedValue)resultingEntity["systemuser1.fullname"]).Value);
@@ -1004,8 +999,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_There_Are_Multiple_LinkedEntities_With_The_Same_Entitiy_And_One_Has_An_Alias_The_Output_EntityAlias_Should_All_Be_Suffixed_With_Incrementally_Ignoring_The_Aliased_One()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var entities = new List<Entity>();
 
@@ -1040,7 +1035,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             };
             entities.Add(user4);
 
-            context.Initialize(entities);
+            _context.Initialize(entities);
 
             var query = new QueryExpression(SystemUser.EntityLogicalName)
             {
@@ -1068,7 +1063,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            var result = service.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             var resultingEntity = result.Entities[0];
             Assert.Equal(4, resultingEntity.Attributes.Count);
             Assert.Equal("User3", ((AliasedValue)resultingEntity["systemuser1.fullname"]).Value);
@@ -1104,10 +1099,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             childEntity2.Id = Guid.NewGuid();
             initialEntities.Add(childEntity2);
 
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
-
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             // the query selects the "parent" entity, and joins to the "child" entities
             QueryExpression query = new QueryExpression("parent");
@@ -1121,7 +1113,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
 
             // ACT
 
-            DataCollection<Entity> results = service.RetrieveMultiple(query).Entities;
+            DataCollection<Entity> results = _service.RetrieveMultiple(query).Entities;
 
             // ASSERT
 
