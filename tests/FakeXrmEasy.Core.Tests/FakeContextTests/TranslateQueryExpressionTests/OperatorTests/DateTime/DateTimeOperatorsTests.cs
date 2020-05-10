@@ -4,8 +4,8 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
+using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.OperatorTests.DateTimes
 {
@@ -36,7 +36,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.On, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count() == 2);
             Assert.True(result[0].Id == contact1.Id);
@@ -76,7 +76,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.OnOrAfter, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count() == 3);
             Assert.True(result[0].Id == contact1.Id);
@@ -116,7 +116,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.OnOrBefore, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count() == 3);
             Assert.True(result[0].Id == contact1.Id);
@@ -147,7 +147,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.Today, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count() == 1);
             Assert.True(result[0].Id == contact1.Id);
@@ -176,7 +176,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.Yesterday, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count() == 1);
             Assert.True(result[0].Id == contact2.Id);
@@ -205,7 +205,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.Tomorrow, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count() == 1);
             Assert.True(result[0].Id == contact2.Id);

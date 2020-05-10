@@ -96,7 +96,7 @@ namespace FakeXrmEasy.Tests.Issues
             _context.AddRelationship("gbp_gbp_customaddress_contact",
                 new XrmFakedRelationship()
                 {
-                    RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.ManyToMany,
+                    RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany,
                     IntersectEntity = "gbp_gbp_customaddress_contact",
                     Entity1LogicalName = gbp_customaddress.EntityLogicalName,
                     Entity1Attribute = "gbp_customaddressid",
@@ -112,7 +112,7 @@ namespace FakeXrmEasy.Tests.Issues
             _context.AddRelationship("contact_customer_accounts",
                 new XrmFakedRelationship()
                 {
-                    RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.OneToMany,
+                    RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany,
                     IntersectEntity = "contact_customer_accounts",
                     Entity1LogicalName = Contact.EntityLogicalName,
                     Entity1Attribute = "parentcustomerid",

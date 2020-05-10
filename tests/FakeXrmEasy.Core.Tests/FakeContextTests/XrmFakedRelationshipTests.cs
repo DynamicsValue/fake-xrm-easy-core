@@ -18,7 +18,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             Assert.Equal(rel.Entity2LogicalName, "entity2LogicalName");
             Assert.Equal(rel.Entity1Attribute, "entity1Attribute");
             Assert.Equal(rel.Entity2Attribute, "entity2Attribute");
-            Assert.Equal(rel.RelationshipType, XrmFakedRelationship.enmFakeRelationshipType.OneToMany);
+            Assert.Equal(rel.RelationshipType, XrmFakedRelationship.FakeRelationshipType.OneToMany);
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             Assert.Equal(rel.Entity1Attribute, "entity1Attribute");
             Assert.Equal(rel.Entity2Attribute, "entity2Attribute");
             Assert.Equal(rel.IntersectEntity, "intersectName");
-            Assert.Equal(rel.RelationshipType, XrmFakedRelationship.enmFakeRelationshipType.ManyToMany);
+            Assert.Equal(rel.RelationshipType, XrmFakedRelationship.FakeRelationshipType.ManyToMany);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Entity1Attribute = idAttribute.LogicalName,
                 Entity2LogicalName = exampleMetadata.LogicalName,
                 Entity2Attribute = idAttribute.LogicalName,
-                RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.ManyToMany
+                RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany
             });
 
             var record1 = new Entity(exampleMetadata.LogicalName)
@@ -153,7 +153,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 Entity1Attribute = idAttribute.LogicalName,
                 Entity2LogicalName = otherMetadata.LogicalName,
                 Entity2Attribute = otherIdAttribute.LogicalName,
-                RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.ManyToMany
+                RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany
             });
 
             var record1 = new Entity(exampleMetadata.LogicalName)

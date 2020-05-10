@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Extensions
 {
@@ -197,9 +198,15 @@ namespace FakeXrmEasy.Extensions
                 var original = (attributeValue as EntityReference);
                 var clone = new EntityReference(original.LogicalName, original.Id);
 
-                var entityMetadata = context.GetEntityMetadataByName(original.LogicalName);
-                bool containsEntity = context.ContainsEntity(original.LogicalName, original.Id);
+                EntityMetadata entityMetadata = null;
+                bool containsEntity = false;
 
+                if(context != null)
+                {
+                    entityMetadata = context.GetEntityMetadataByName(original.LogicalName);
+                    containsEntity = context.ContainsEntity(original.LogicalName, original.Id);
+                }
+                
                 if (context != null 
                         && !string.IsNullOrEmpty(original.LogicalName) 
                         && entityMetadata != null 

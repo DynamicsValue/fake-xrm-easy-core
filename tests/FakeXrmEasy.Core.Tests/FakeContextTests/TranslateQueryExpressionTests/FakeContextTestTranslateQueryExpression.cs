@@ -9,6 +9,7 @@ using System.ServiceModel;  //TypedEntities generated code for testing
 using Xunit;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Middleware;
+using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests
 {
@@ -27,7 +28,8 @@ namespace FakeXrmEasy.Tests
         public void When_translating_a_null_query_expression_the_linq_query_is_also_null()
         {
             var context = new XrmFakedContext();
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, null);
+            QueryExpression qe = null;
+            var result = qe.ToQueryable(context);
             Assert.True(result == null);
         }
 
@@ -47,7 +49,7 @@ namespace FakeXrmEasy.Tests
 
             context.Initialize(data);
             var qe = new QueryExpression() { EntityName = "nonexistingentityname" };
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+            var result = qe.ToQueryable(context);
             Assert.Equal(0, result.Count());
         }
 
@@ -80,7 +82,7 @@ namespace FakeXrmEasy.Tests
             );
             qe.ColumnSet = new ColumnSet(new string[] { "fullname", "parentcustomerid" });
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+            var result = qe.ToQueryable(context);
 
             Assert.True(result.Count() == 2); //2 Contacts related to the same account
             var firstContact = result.FirstOrDefault();
@@ -128,7 +130,7 @@ namespace FakeXrmEasy.Tests
             );
             qe.ColumnSet = new ColumnSet(new string[] { "fullname", "parentcustomerid" });
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+            var result = qe.ToQueryable(context);
 
             Assert.True(result.Count() == 3); //2 Contacts related to the same account + 1 contact without parent account
             var firstContact = result.FirstOrDefault();
@@ -170,7 +172,7 @@ namespace FakeXrmEasy.Tests
             );
             qe.ColumnSet = new ColumnSet(new string[] { "fullname", "parentcustomerid" });
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+            var result = qe.ToQueryable(context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -212,7 +214,7 @@ namespace FakeXrmEasy.Tests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "fullname", "parentcustomerid" });
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+            var result = qe.ToQueryable(context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -240,9 +242,7 @@ namespace FakeXrmEasy.Tests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "this attribute doesnt exists!" });
 
-            XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
-
-            var list = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var list = qe.ToQueryable(context).ToList();
 
             Assert.False(list[0].Attributes.ContainsKey("this attribute doesnt exists!"));
         }
@@ -265,7 +265,7 @@ namespace FakeXrmEasy.Tests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "this attribute doesnt exists!" });
 
-            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList());
+            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(context).ToList());
             Assert.Equal(exception.Detail.ErrorCode, (int)ErrorCodes.QueryBuilderNoAttribute);
         }
 
@@ -301,7 +301,7 @@ namespace FakeXrmEasy.Tests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "this attribute doesnt exists!" });
 
-            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList());
+            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(context).ToList());
             Assert.Equal(exception.Detail.ErrorCode, (int)ErrorCodes.QueryBuilderNoAttribute);
         }
 
@@ -336,7 +336,7 @@ namespace FakeXrmEasy.Tests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(true);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+            var result = qe.ToQueryable(context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -379,7 +379,7 @@ namespace FakeXrmEasy.Tests
             );
 
             qe.ColumnSet = new ColumnSet(false);
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+            var result = qe.ToQueryable(context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -418,7 +418,7 @@ namespace FakeXrmEasy.Tests
                 }
             );
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+            var result = qe.ToQueryable(context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -464,7 +464,7 @@ namespace FakeXrmEasy.Tests
                 }
             );
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe);
+            var result = qe.ToQueryable(context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -764,7 +764,7 @@ namespace FakeXrmEasy.Tests
                     }
                 );
 
-                Assert.Throws<FaultException<OrganizationServiceFault>>(() => XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList());
+                Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(context).ToList());
             }
         }
 
@@ -794,7 +794,7 @@ namespace FakeXrmEasy.Tests
                     }
                 );
 
-                Assert.Throws<FaultException<OrganizationServiceFault>>(() => XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList());
+                Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(context).ToList());
             }
         }
 

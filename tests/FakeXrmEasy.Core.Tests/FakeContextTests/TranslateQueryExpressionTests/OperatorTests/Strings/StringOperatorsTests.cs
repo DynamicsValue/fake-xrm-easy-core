@@ -5,8 +5,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using Xunit;
+using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.OperatorTests.Strings
 {
@@ -69,7 +69,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("fullname", ConditionOperator.EndsWith, "2");
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count() == 1);
         }
@@ -89,7 +89,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("fullname", ConditionOperator.BeginsWith, "2");
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count() == 1);
         }
@@ -110,7 +110,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("fullname", ConditionOperator.Contains, "Contact");
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count() == 2);
         }
@@ -131,7 +131,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("nickname", ConditionOperator.LessThan, "B");
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(ctx, qe).ToList();
+            var result = qe.ToQueryable(ctx).ToList();
 
             Assert.Equal(1, result.Count);
             Assert.Equal("Al", result[0]["nickname"]);
@@ -153,7 +153,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("nickname", ConditionOperator.LessEqual, "Bob");
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(ctx, qe).ToList();
+            var result = qe.ToQueryable(ctx).ToList();
 
             Assert.Equal(2, result.Count);
             Assert.Equal("Bob", result[0]["nickname"]);
@@ -176,7 +176,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("nickname", ConditionOperator.GreaterThan, "Bob");
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(ctx, qe).ToList();
+            var result = qe.ToQueryable(ctx).ToList();
 
             Assert.Equal(1, result.Count);
             Assert.Equal("Charlie", result[0]["nickname"]);
@@ -198,7 +198,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("nickname", ConditionOperator.GreaterEqual, "Bob");
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(ctx, qe).ToList();
+            var result = qe.ToQueryable(ctx).ToList();
 
             Assert.Equal(2, result.Count);
             Assert.Equal("Bob", result[0]["nickname"]);

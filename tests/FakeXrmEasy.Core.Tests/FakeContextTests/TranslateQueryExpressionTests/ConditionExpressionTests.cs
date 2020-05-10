@@ -1,6 +1,7 @@
 ﻿using Crm;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Middleware;
+using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -36,7 +37,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var condition = new ConditionExpression("fullname", ConditionOperator.LastXFiscalPeriods, "Contact 1");
             qe.Criteria.AddCondition(condition);
 
-            Assert.Throws<PullRequestException>(() => XrmFakedContext.TranslateQueryExpressionToLinq(_context, qe).ToList());
+            Assert.Throws<PullRequestException>(() => qe.ToQueryable(_context).ToList());
         }
 
         [Fact]
@@ -54,7 +55,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var condition = new ConditionExpression("fullname", ConditionOperator.Equal, "Contact 1");
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 1);
         }
@@ -75,7 +76,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var condition = new ConditionExpression("fullname", ConditionOperator.In, new string[] { "McDonald", "King" });
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 2);
         }
@@ -97,7 +98,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var condition = new ConditionExpression("fullname", ConditionOperator.Null);
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 2);
         }
@@ -118,7 +119,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var condition = new ConditionExpression("fullname", ConditionOperator.NotNull);
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 1);
         }
@@ -139,7 +140,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var condition = new ConditionExpression("fullname", ConditionOperator.Null);
             qe.Criteria.AddCondition(condition);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 2);
         }

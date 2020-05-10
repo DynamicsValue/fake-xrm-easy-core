@@ -248,7 +248,7 @@ namespace FakeXrmEasy.Tests
                     Entity1Attribute = "salesorderid",              //Pk
                     Entity2LogicalName = SalesOrderDetail.EntityLogicalName,
                     Entity2Attribute = "salesorderid",              //Lookup attribute
-                    RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.OneToMany
+                    RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany
                 });
 
             var order = new SalesOrder();

@@ -59,7 +59,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.DisassociateRequestTests
 
             context.AddRelationship("teammembership", new XrmFakedRelationship()
             {
-                RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.ManyToMany,
+                RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany,
                 IntersectEntity = "teammembership",
                 Entity1Attribute = "systemuserid",
                 Entity1LogicalName = "systemuser",
@@ -153,7 +153,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.DisassociateRequestTests
 
             context.AddRelationship("teammembership", new XrmFakedRelationship()
             {
-                RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.ManyToMany,
+                RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany,
                 IntersectEntity = "teammembership",
                 Entity1Attribute = "systemuserid",
                 Entity1LogicalName = "systemuser",

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using FakeXrmEasy.Query;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             qe.Criteria.AddFilter(filter1);
             qe.Criteria.AddFilter(filter2);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count == 2);
         }
@@ -55,7 +56,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 
             qe.Criteria.AddFilter(filter1);
 
-            var result = XrmFakedContext.TranslateQueryExpressionToLinq(context, qe).ToList();
+            var result = qe.ToQueryable(context).ToList();
 
             Assert.True(result.Count == 2);
         }

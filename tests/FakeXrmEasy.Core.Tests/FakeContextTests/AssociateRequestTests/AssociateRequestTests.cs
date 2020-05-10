@@ -64,7 +64,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
 
             context.AddRelationship("teammembership", new XrmFakedRelationship()
             {
-                RelationshipType = XrmFakedRelationship.enmFakeRelationshipType.ManyToMany,
+                RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany,
                 IntersectEntity = "teammembership",
                 Entity1Attribute = "systemuserid",
                 Entity1LogicalName = "systemuser",
