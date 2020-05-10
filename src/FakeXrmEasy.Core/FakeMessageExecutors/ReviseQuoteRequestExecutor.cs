@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.FakeMessageExecutors
@@ -16,7 +16,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is ReviseQuoteRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var service = ctx.GetOrganizationService();
 

@@ -3,6 +3,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -13,7 +14,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is AssociateRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var associateRequest = request as AssociateRequest;
             var service = ctx.GetOrganizationService();

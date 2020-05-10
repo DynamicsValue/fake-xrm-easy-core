@@ -1,9 +1,10 @@
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Linq;
-using System.ServiceModel;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -14,7 +15,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is AddToQueueRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var addToQueueRequest = (AddToQueueRequest)request;
 

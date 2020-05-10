@@ -4,6 +4,9 @@ using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Linq;
 using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -14,7 +17,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is InsertOptionValueRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var req = request as InsertOptionValueRequest;
 
@@ -39,10 +42,8 @@ namespace FakeXrmEasy.FakeMessageExecutors
             else
                 key = string.Format("{0}#{1}", req.EntityLogicalName, req.AttributeLogicalName);
 
-            if (!ctx.OptionSetValuesMetadata.ContainsKey(key))
-                ctx.OptionSetValuesMetadata.Add(key, new OptionSetMetadata());
-
-            var optionSetMetadata = ctx.OptionSetValuesMetadata[key];
+            var optionSetMetadataRepository = ctx.GetProperty<IOptionSetMetadataRepository>();  
+            optionSetMetadataRepository.Set(key, new OptionSetMetadata());
             optionSetMetadata.Options.Add(new OptionMetadata()
             {
                 MetadataId = Guid.NewGuid(),

@@ -1,8 +1,9 @@
-﻿using Microsoft.Crm.Sdk.Messages;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Linq;
-using System.ServiceModel;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -19,7 +20,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is CloseIncidentRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var service = ctx.GetOrganizationService();
             var closeIncidentRequest = (CloseIncidentRequest)request;
@@ -37,8 +38,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             }
 
             var incidentId = (EntityReference)incidentResolution[AttributeIncidentId];
-            if (ctx.Data.ContainsKey(IncidentLogicalName) &&
-                ctx.Data[IncidentLogicalName].Values.SingleOrDefault(p => p.Id == incidentId.Id) == null)
+            if (!ctx.ContainsEntity(IncidentLogicalName,incidentId.Id))
             {
                 throw FakeOrganizationServiceFaultFactory.New(string.Format("Incident with id {0} not found.", incidentId.Id));
             }

@@ -1,11 +1,12 @@
-﻿using Microsoft.Crm.Sdk.Messages;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
 using System.Xml.Linq;
 
 namespace FakeXrmEasy.FakeMessageExecutors
@@ -19,7 +20,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is ExecuteFetchRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var executeFetchRequest = (ExecuteFetchRequest)request;
 
@@ -68,7 +69,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return response;
         }
 
-        private XElement CreateXmlResult(Entity entity, XrmFakedContext ctx, string[] allowedAliases)
+        private XElement CreateXmlResult(Entity entity, IXrmFakedContext ctx, string[] allowedAliases)
         {
             var row = new XElement("result");
             var formattedValues = entity.FormattedValues;
@@ -110,7 +111,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return row;
         }
 
-        public XElement AttributeValueToFetchResult(KeyValuePair<string, object> entAtt, FormattedValueCollection formattedValues, XrmFakedContext ctx)
+        public XElement AttributeValueToFetchResult(KeyValuePair<string, object> entAtt, FormattedValueCollection formattedValues, IXrmFakedContext ctx)
         {
             XElement attributeValueElement;
             if (entAtt.Value == null)
@@ -124,7 +125,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 var entRef = (EntityReference)entAtt.Value;
                 if (!_typeCodes.ContainsKey(entRef.LogicalName))
                 {
-                    var entType = RetrieveEntityRequestExecutor.GetEntityProxyType(entRef.LogicalName, ctx);
+                    var entType = ctx.FindReflectedType(entRef.LogicalName);
                     var typeCode = entType.GetField("EntityTypeCode").GetValue(null);
 
                     _typeCodes.Add(entRef.LogicalName, (int?)typeCode);

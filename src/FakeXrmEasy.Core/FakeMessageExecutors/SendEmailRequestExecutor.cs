@@ -1,4 +1,6 @@
 ﻿using System;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 
@@ -11,7 +13,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is SendEmailRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var req = request as SendEmailRequest;
 #if FAKE_XRM_EASY || FAKE_XRM_EASY_2013

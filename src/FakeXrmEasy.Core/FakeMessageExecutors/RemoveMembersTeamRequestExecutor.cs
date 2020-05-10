@@ -3,6 +3,8 @@ using Microsoft.Xrm.Sdk;
 using System;
 using System.Linq;
 using Microsoft.Xrm.Sdk.Query;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -13,7 +15,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is RemoveMembersTeamRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var req = (RemoveMembersTeamRequest)request;
 

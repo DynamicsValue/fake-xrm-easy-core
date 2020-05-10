@@ -2,8 +2,11 @@
 using System;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
-using System.ServiceModel;
 using Microsoft.Crm.Sdk.Messages;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Permissions;
+using FakeXrmEasy.Abstractions.Permissions;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -14,7 +17,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is AddUserToRecordTeamRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             AddUserToRecordTeamRequest addReq = (AddUserToRecordTeamRequest)request;
 
@@ -77,7 +80,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             };
             poa.Id = service.Create(poa);
 
-            ctx.AccessRightsRepository.GrantAccessTo(target, new PrincipalAccess
+            ctx.GetProperty<IAccessRightsRepository>().GrantAccessTo(target, new PrincipalAccess
             {
                 Principal = user.ToEntityReference(),
                 AccessMask = (AccessRights)poa["accessrightsmask"]

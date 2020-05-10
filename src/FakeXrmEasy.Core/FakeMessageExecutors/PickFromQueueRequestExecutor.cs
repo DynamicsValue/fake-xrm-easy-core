@@ -1,11 +1,12 @@
 #if FAKE_XRM_EASY_2013 || FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
 
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Linq;
-using System.ServiceModel;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -16,7 +17,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is PickFromQueueRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var pickFromQueueRequest = (PickFromQueueRequest)request;
 

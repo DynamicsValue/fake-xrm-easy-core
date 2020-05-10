@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Crm.Sdk.Messages;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -11,7 +13,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is RetrieveVersionRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             string version =  "";
 

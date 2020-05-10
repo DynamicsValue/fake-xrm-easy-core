@@ -1,4 +1,6 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Linq;
@@ -12,7 +14,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is RetrieveAttributeRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var req = request as RetrieveAttributeRequest;
 

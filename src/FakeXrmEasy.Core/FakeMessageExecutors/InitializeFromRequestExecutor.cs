@@ -1,9 +1,10 @@
-﻿using Microsoft.Crm.Sdk.Messages;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Linq;
-using System.ServiceModel;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -19,7 +20,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return typeof(InitializeFromRequest);
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var req = request as InitializeFromRequest;
             if (req == null)
@@ -45,7 +46,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 Id = Guid.Empty
             };
 
-            if (ctx.ProxyTypesAssembly != null)
+            if (ctx.ProxyTypesAssemblies.Count() > 0)
             {                
                 var subClassType = ctx.FindReflectedType(req.TargetEntityName);
                 if (subClassType != null)

@@ -2,6 +2,7 @@
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -12,7 +13,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is RetrieveOptionSetRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var retrieveOptionSetRequest = (RetrieveOptionSetRequest)request;
 

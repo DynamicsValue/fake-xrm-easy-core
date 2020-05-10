@@ -1,4 +1,7 @@
-﻿using Microsoft.Crm.Sdk.Messages;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions.Permissions;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
 
@@ -11,10 +14,10 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is GrantAccessRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             GrantAccessRequest req = (GrantAccessRequest)request;
-            ctx.AccessRightsRepository.GrantAccessTo(req.Target, req.PrincipalAccess);
+            ctx.GetProperty<IAccessRightsRepository>().GrantAccessTo(req.Target, req.PrincipalAccess);
             return new GrantAccessResponse();
         }
 

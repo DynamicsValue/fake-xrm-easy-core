@@ -1,7 +1,11 @@
 ﻿using FakeItEasy;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions.Metadata;
+using FakeXrmEasy.Abstractions.Permissions;
 using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.FakeMessageExecutors;
+using FakeXrmEasy.Metadata;
 using FakeXrmEasy.Permissions;
 using FakeXrmEasy.Services;
 using Microsoft.Xrm.Sdk;
@@ -83,7 +87,6 @@ namespace FakeXrmEasy
         }
 
         public IEntityInitializerService EntityInitializerService { get; set; }
-        public IAccessRightsRepository AccessRightsRepository { get; set; }
 
         public int MaxRetrieveCount { get; set; }
 
@@ -104,7 +107,6 @@ namespace FakeXrmEasy
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
             Data = new Dictionary<string, Dictionary<Guid, Entity>>();
             ExecutionMocks = new Dictionary<Type, ServiceRequestExecution>();
-            OptionSetValuesMetadata = new Dictionary<string, OptionSetMetadata>();
             StatusAttributeMetadata = new Dictionary<string, StatusAttributeMetadata>();
 
             FakeMessageExecutors = Assembly.GetExecutingAssembly()
@@ -119,8 +121,9 @@ namespace FakeXrmEasy
 
             EntityInitializerService = new DefaultEntityInitializerService();
 
-            AccessRightsRepository = new AccessRightsRepository();
-
+            SetProperty<IAccessRightsRepository>(new AccessRightsRepository());
+            SetProperty<IOptionSetMetadataRepository>(new OptionSetMetadataRepository());
+            
             SystemTimeZone = TimeZoneInfo.Local;
             DateBehaviour = DefaultDateBehaviour();
 

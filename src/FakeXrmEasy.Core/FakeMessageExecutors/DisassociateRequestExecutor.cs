@@ -1,4 +1,6 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -13,7 +15,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is DisassociateRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var disassociateRequest = request as DisassociateRequest;
             var service = ctx.GetOrganizationService();

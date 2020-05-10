@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.FakeMessageExecutors.CustomExecutors
@@ -35,7 +37,7 @@ namespace FakeXrmEasy.FakeMessageExecutors.CustomExecutors
             return request.RequestName.Equals(RequestName);
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var orgService = ctx.GetOrganizationService();
 

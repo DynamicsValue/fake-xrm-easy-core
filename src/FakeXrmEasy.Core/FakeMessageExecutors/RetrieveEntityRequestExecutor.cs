@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using Microsoft.Xrm.Sdk.Client;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -16,23 +15,8 @@ namespace FakeXrmEasy.FakeMessageExecutors
         {
             return request is RetrieveEntityRequest;
         }
-        public static Type GetEntityProxyType(string entityName, XrmFakedContext ctx)
-        {
-            //Find the reflected type in the proxy types assembly
-            var assembly = ctx.ProxyTypesAssembly;
-            var subClassType = assembly.GetTypes()
-                    .Where(t => typeof(Entity).IsAssignableFrom(t))
-                    .Where(t => t.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true).Length > 0)
-                    .Where(t => ((EntityLogicalNameAttribute)t.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true)[0]).LogicalName.Equals(entityName.ToLower()))
-                    .FirstOrDefault();
-
-            if (subClassType == null)
-            {
-                throw new Exception(string.Format("Entity {0} was not found in the proxy types", entityName));
-            }
-            return subClassType;
-        }
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var req = request as RetrieveEntityRequest;
 
@@ -45,7 +29,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             if (req.EntityFilters.HasFlag(Microsoft.Xrm.Sdk.Metadata.EntityFilters.Entity) ||
                 req.EntityFilters.HasFlag(Microsoft.Xrm.Sdk.Metadata.EntityFilters.Attributes))
             {
-                if(!ctx.EntityMetadata.ContainsKey(req.LogicalName))
+                if(ctx.GetEntityMetadataByName(req.LogicalName) == null)
                 {
                     throw new Exception($"Entity '{req.LogicalName}' is not found in the metadata cache");
                 }

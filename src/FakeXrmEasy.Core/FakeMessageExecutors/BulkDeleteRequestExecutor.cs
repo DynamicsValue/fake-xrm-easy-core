@@ -1,5 +1,6 @@
 ﻿using System;
-using System.ServiceModel;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -13,7 +14,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is BulkDeleteRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var bulkDeleteRequest = (BulkDeleteRequest)request;
            

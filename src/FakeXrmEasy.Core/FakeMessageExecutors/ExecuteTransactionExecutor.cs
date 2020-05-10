@@ -1,5 +1,7 @@
 ﻿#if FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
 
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
@@ -13,7 +15,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is ExecuteTransactionRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var executeTransactionRequest = (ExecuteTransactionRequest)request;
             var response = new ExecuteTransactionResponse { ["Responses"] = new OrganizationResponseCollection() };

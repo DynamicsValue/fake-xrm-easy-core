@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
-using FakeXrmEasy;
 using Microsoft.Xrm.Sdk;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
@@ -37,14 +36,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
     }
 
-    class FakeMessageExecutor : FakeMessageExecutors.IFakeMessageExecutor
+    class FakeMessageExecutor : IFakeMessageExecutor
     {
         public bool CanExecute(OrganizationRequest request)
         {
             return request.RequestName == "new_TestAction";
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             OrganizationResponse response = new OrganizationResponse();
             response["output"] = request["input"];

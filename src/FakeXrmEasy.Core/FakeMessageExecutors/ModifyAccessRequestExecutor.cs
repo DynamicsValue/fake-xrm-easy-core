@@ -1,4 +1,8 @@
 ﻿using System;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions.Permissions;
+using FakeXrmEasy.Permissions;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 
@@ -11,10 +15,10 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is ModifyAccessRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             ModifyAccessRequest req = (ModifyAccessRequest)request;
-            ctx.AccessRightsRepository.ModifyAccessOn(req.Target, req.PrincipalAccess);
+            ctx.GetProperty<IAccessRightsRepository>().ModifyAccessOn(req.Target, req.PrincipalAccess);
             return new ModifyAccessResponse();
         }
 

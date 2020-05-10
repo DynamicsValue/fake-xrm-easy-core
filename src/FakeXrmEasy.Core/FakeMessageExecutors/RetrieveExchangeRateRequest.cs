@@ -1,10 +1,10 @@
 ﻿using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
 using Microsoft.Xrm.Sdk.Query;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -15,7 +15,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is RetrieveExchangeRateRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var retrieveExchangeRateRequest = (RetrieveExchangeRateRequest)request;
 

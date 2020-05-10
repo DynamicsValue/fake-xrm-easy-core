@@ -1,4 +1,6 @@
-﻿using Microsoft.Crm.Sdk.Messages;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
 
@@ -11,14 +13,14 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is WhoAmIRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var req = request as WhoAmIRequest;
 
             var response = new WhoAmIResponse
             {
                 Results = new ParameterCollection
-                                { { "UserId", ctx.CallerId.Id } }
+                                { { "UserId", ctx.CallerProperties.CallerId.Id } }
             };
             return response;
         }

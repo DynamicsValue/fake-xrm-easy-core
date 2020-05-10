@@ -1,8 +1,9 @@
-﻿using Microsoft.Crm.Sdk.Messages;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.ServiceModel;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -13,7 +14,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is AssignRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var assignRequest = (AssignRequest)request;
 

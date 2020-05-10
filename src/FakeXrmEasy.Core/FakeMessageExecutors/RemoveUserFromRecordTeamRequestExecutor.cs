@@ -2,8 +2,11 @@
 using System;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
-using System.ServiceModel;
 using Microsoft.Crm.Sdk.Messages;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Permissions;
+using FakeXrmEasy.Abstractions.Permissions;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -14,7 +17,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is RemoveUserFromRecordTeamRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             RemoveUserFromRecordTeamRequest remReq = (RemoveUserFromRecordTeamRequest)request;
 
@@ -51,7 +54,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             IOrganizationService service = ctx.GetOrganizationService();
 
-            ctx.AccessRightsRepository.RevokeAccessTo(target, user.ToEntityReference());
+            ctx.GetProperty<IAccessRightsRepository>().RevokeAccessTo(target, user.ToEntityReference());
             Entity team = ctx.CreateQuery("team").FirstOrDefault(p => ((EntityReference)p["teamtemplateid"]).Id == teamTemplateId);
             if (team == null)
             {

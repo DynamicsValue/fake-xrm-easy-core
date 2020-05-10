@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -15,7 +17,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             return request is InsertStatusValueRequest;
         }
 
-        public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+        public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var req = request as InsertStatusValueRequest;
 
