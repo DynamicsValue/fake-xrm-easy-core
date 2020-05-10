@@ -1,4 +1,5 @@
-﻿using FakeXrmEasy.FakeMessageExecutors;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -101,7 +102,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 return typeof(RetrieveEntityRequest);
             }
 
-            public OrganizationResponse Execute(OrganizationRequest request, XrmFakedContext ctx)
+            public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
             {
                 return new RetrieveEntityResponse { ResponseName = "Successful" };
             }

@@ -3,6 +3,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using System;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -29,12 +30,13 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument, "Name is required when optionSet id is not specified");
             }
 
-            if (!ctx.OptionSetValuesMetadata.ContainsKey(name))
+            var optionSetMetadataRepository = ctx.GetProperty<IOptionSetMetadataRepository>();
+
+            var optionSetMetadata = optionSetMetadataRepository.GetByName(name);
+            if (optionSetMetadata == null)
             {
                 throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.ObjectDoesNotExist, string.Format("An OptionSetMetadata with the name {0} does not exist.", name));
             }
-
-            var optionSetMetadata = ctx.OptionSetValuesMetadata[name];
 
             var response = new RetrieveOptionSetResponse()
             {

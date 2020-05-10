@@ -1,4 +1,5 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions.Metadata;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
@@ -75,9 +76,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OptionSetValuesRequestTests
             service.Execute(req);
 
             //Check the optionsetmetadata was updated
-            Assert.True(ctx.OptionSetValuesMetadata.ContainsKey("GlobalOptionSet"));
+            var optionSetMetadata = ctx.GetProperty<IOptionSetMetadataRepository>().GetByName("GlobalOptionSet");
+            Assert.NotNull(optionSetMetadata);
 
-            var option = ctx.OptionSetValuesMetadata["GlobalOptionSet"].Options.FirstOrDefault();
+            var option = optionSetMetadata.Options.FirstOrDefault();
             Assert.NotEqual(null, option);
             Assert.Equal("Yeah! This is a fake label!", option.Label.LocalizedLabels[0].Label);
         }
@@ -99,10 +101,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OptionSetValuesRequestTests
 
             //Check the optionsetmetadata was updated
             var key = string.Format("{0}#{1}", req.EntityLogicalName, req.AttributeLogicalName);
+            var optionSetMetadata = ctx.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
 
-            Assert.True(ctx.OptionSetValuesMetadata.ContainsKey(key));
+            Assert.NotNull(optionSetMetadata);
 
-            var option = ctx.OptionSetValuesMetadata[key].Options.FirstOrDefault();
+            var option = optionSetMetadata.Options.FirstOrDefault();
             Assert.NotEqual(null, option);
             Assert.Equal("Yeah! This is a fake label!", option.Label.LocalizedLabels[0].Label);
         }

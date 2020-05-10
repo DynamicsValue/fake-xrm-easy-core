@@ -7,6 +7,7 @@ using System.Linq;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -34,15 +35,39 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 && (string.IsNullOrEmpty(req.EntityLogicalName)
                 || string.IsNullOrEmpty(req.AttributeLogicalName)))
             {
-                throw new Exception("At least OptionSetName or both the EntityName and AttributeName must not be provided");
+                throw new Exception("At least OptionSetName or both the EntityName and AttributeName must be provided");
             }
+
+            bool isUsingOptionSet = !string.IsNullOrWhiteSpace(req.OptionSetName);
 
             var key = !string.IsNullOrWhiteSpace(req.OptionSetName) ? req.OptionSetName : $"{req.EntityLogicalName}#{req.AttributeLogicalName}";
 
-            if (!ctx.StatusAttributeMetadata.ContainsKey(key))
-                ctx.StatusAttributeMetadata.Add(key, new StatusAttributeMetadata());
+            var statusAttributeMetadataRepository = ctx.GetProperty<IStatusAttributeMetadataRepository>();
+            
+            StatusAttributeMetadata statusValuesMetadata = null;
+            if(isUsingOptionSet)
+            {
+                statusValuesMetadata = statusAttributeMetadataRepository.GetByGlobalOptionSetName(req.OptionSetName);
+            }
+            else 
+            {
+                statusValuesMetadata = statusAttributeMetadataRepository.GetByAttributeName(req.EntityLogicalName, req.AttributeLogicalName);
+            }
 
-            var statusValuesMetadata = ctx.StatusAttributeMetadata[key];
+            if(statusValuesMetadata == null)
+            {
+                statusValuesMetadata = new StatusAttributeMetadata();
+            }
+
+            if(isUsingOptionSet)
+            {
+                statusAttributeMetadataRepository.Set(req.OptionSetName, statusValuesMetadata);
+            }
+            else 
+            {
+                statusAttributeMetadataRepository.Set(req.EntityLogicalName, req.AttributeLogicalName, statusValuesMetadata);
+            }
+
             //statusValuesMetadata.
             statusValuesMetadata.OptionSet = new OptionSetMetadata();
             statusValuesMetadata.OptionSet.Options.Add(new StatusOptionMetadata()

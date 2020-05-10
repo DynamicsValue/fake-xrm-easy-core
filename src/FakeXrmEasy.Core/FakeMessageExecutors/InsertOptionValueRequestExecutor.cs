@@ -43,13 +43,19 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 key = string.Format("{0}#{1}", req.EntityLogicalName, req.AttributeLogicalName);
 
             var optionSetMetadataRepository = ctx.GetProperty<IOptionSetMetadataRepository>();  
-            optionSetMetadataRepository.Set(key, new OptionSetMetadata());
+            var optionSetMetadata = optionSetMetadataRepository.GetByName(key);
+            if(optionSetMetadata == null) 
+            {
+                optionSetMetadata = new OptionSetMetadata();
+            }
+
             optionSetMetadata.Options.Add(new OptionMetadata()
             {
                 MetadataId = Guid.NewGuid(),
                 Value = req.Value,
                 Label = req.Label
             });
+            optionSetMetadataRepository.Set(key, new OptionSetMetadata());
 
             if (!string.IsNullOrEmpty(req.EntityLogicalName))
             {

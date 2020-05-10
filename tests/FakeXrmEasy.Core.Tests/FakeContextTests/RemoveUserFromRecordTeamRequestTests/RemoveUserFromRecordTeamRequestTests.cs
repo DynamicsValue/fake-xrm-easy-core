@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using Crm;
 using Xunit;
+using FakeXrmEasy.Abstractions.Permissions;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RemoveUserFromRecordTeamRequestTests
 {
@@ -67,7 +68,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RemoveUserFromRecordTeamRequestTest
                 TeamTemplateId = teamTemplate.Id
             };
 
-            context.AccessRightsRepository.GrantAccessTo(account.ToEntityReference(), new PrincipalAccess
+            context.GetProperty<IAccessRightsRepository>().GrantAccessTo(account.ToEntityReference(), new PrincipalAccess
             {
                 Principal = user.ToEntityReference(),
                 AccessMask = AccessRights.ReadAccess
@@ -78,7 +79,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RemoveUserFromRecordTeamRequestTest
             var retrievedTeamMembership = context.CreateQuery<TeamMembership>().FirstOrDefault(p => p.SystemUserId == user.Id && p.TeamId == team.Id);
             Assert.Null(retrievedTeamMembership);
 
-            var response = context.AccessRightsRepository.RetrievePrincipalAccess(account.ToEntityReference(),
+            var response = context.GetProperty<IAccessRightsRepository>().RetrievePrincipalAccess(account.ToEntityReference(),
                 user.ToEntityReference());
             Assert.Equal(AccessRights.None, response.AccessRights);
 

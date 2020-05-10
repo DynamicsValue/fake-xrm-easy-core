@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using Crm;
 using Xunit;
+using FakeXrmEasy.Abstractions.Permissions;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AddUserToRecordTeamRequestTests
 {
@@ -66,7 +67,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddUserToRecordTeamRequestTests
                                                                                        (Guid)p["principalid"] == team.Id);
             Assert.NotNull(poa);
 
-            var response = context.AccessRightsRepository.RetrievePrincipalAccess(account.ToEntityReference(),
+            var response = context.GetProperty<IAccessRightsRepository>().RetrievePrincipalAccess(account.ToEntityReference(),
                 user.ToEntityReference());
             Assert.Equal((AccessRights)teamTemplate.DefaultAccessRightsMask, response.AccessRights);
 

@@ -5,7 +5,7 @@ using Xunit;
 using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk.Messages;
 using System.Linq;
-
+using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.InsertStatusValueRequestTests
 {
@@ -42,10 +42,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertStatusValueRequestTests
             service.Execute(req);
 
             //Check the status metadata was updated
-            var key = $"{Contact.EntityLogicalName}#{attributeName}";
-            Assert.True(ctx.StatusAttributeMetadata.ContainsKey(key));
+            var storedStatusAttributeMetadata = ctx.GetProperty<IStatusAttributeMetadataRepository>().GetByAttributeName(Contact.EntityLogicalName, attributeName);
+            Assert.NotNull(storedStatusAttributeMetadata);
 
-            var option = ctx.StatusAttributeMetadata[key].OptionSet.Options.FirstOrDefault();            
+            var option = storedStatusAttributeMetadata.OptionSet.Options.FirstOrDefault();            
             Assert.Equal(label, option.Label.LocalizedLabels[0].Label);
 
             // Get a list of Status values for the Status Reason fields from its metadata

@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 
 using System.Linq;
+using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
 {
@@ -43,9 +44,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
 
             //Check the optionsetmetadata was updated
             var key = $"{Contact.EntityLogicalName}#{attributeName}";
-            Assert.True(ctx.OptionSetValuesMetadata.ContainsKey(key));
+            var optionSetMetadata = ctx.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
+            Assert.NotNull(optionSetMetadata);
 
-            var option = ctx.OptionSetValuesMetadata[key].Options.FirstOrDefault();
+            var option = optionSetMetadata.Options.FirstOrDefault();
             Assert.Equal(label, option.Label.LocalizedLabels[0].Label);
 
             // Get a list of Option Set values for the Status Reason fields from its metadata
@@ -97,9 +99,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
 
             //Check the optionsetmetadata was updated
             var key = $"{Contact.EntityLogicalName}#{attributeName}";
-            Assert.True(ctx.OptionSetValuesMetadata.ContainsKey(key));
+            var optionSetMetadata = ctx.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
 
-            var option = ctx.OptionSetValuesMetadata[key].Options.FirstOrDefault();
+            Assert.NotNull(optionSetMetadata);
+
+            var option = optionSetMetadata.Options.FirstOrDefault();
             Assert.Equal(label, option.Label.LocalizedLabels[0].Label);
 
             // Get a list of Option Set values for the Status Reason fields from its metadata

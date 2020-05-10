@@ -19,16 +19,6 @@ namespace FakeXrmEasy
         protected internal Dictionary<string, Dictionary<string, string>> AttributeMetadataNames { get; set; }
 
         /// <summary>
-        /// Stores fake global option set metadata
-        /// </summary>
-        public Dictionary<string, OptionSetMetadata> OptionSetValuesMetadata { get; set; }
-
-        /// <summary>
-        /// Stores fake global status values metadata
-        /// </summary>
-        public Dictionary<string, StatusAttributeMetadata> StatusAttributeMetadata { get; set; }
-
-        /// <summary>
         /// Stores fake entity metadata
         /// </summary>
         protected internal Dictionary<string, EntityMetadata> EntityMetadata { get; set; }

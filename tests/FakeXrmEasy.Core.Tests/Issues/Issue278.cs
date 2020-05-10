@@ -10,6 +10,7 @@ using Crm;
 using Microsoft.Xrm.Sdk;
 using System.Reflection;
 using System.Linq;
+using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.Tests.Issues
 {
@@ -51,9 +52,10 @@ namespace FakeXrmEasy.Tests.Issues
             //Check the optionsetmetadata was updated
             var key = string.Format("{0}#{1}", Contact.EntityLogicalName, attributeName);
 
-            Assert.True(fakedContext.OptionSetValuesMetadata.ContainsKey(key));
+            var optionSetMetadata = fakedContext.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
+            Assert.NotNull(optionSetMetadata);
 
-            var option = fakedContext.OptionSetValuesMetadata[key].Options.FirstOrDefault();
+            var option = optionSetMetadata.Options.FirstOrDefault();
 
             Assert.Equal(label, option.Label.LocalizedLabels[0].Label);
 
@@ -69,7 +71,6 @@ namespace FakeXrmEasy.Tests.Issues
             StatusAttributeMetadata statusAttributeMetadata = (StatusAttributeMetadata)attResponse.AttributeMetadata;
 
             Assert.Equal(label, statusAttributeMetadata.OptionSet.Options.First().Label.LocalizedLabels[0].Label);
-            //Assert.Equal(label, statusAttributeMetadata.OptionSet.Options.First().Label.UserLocalizedLabel.Label); This one is null when using the above Label constructor
         }
     }
 }

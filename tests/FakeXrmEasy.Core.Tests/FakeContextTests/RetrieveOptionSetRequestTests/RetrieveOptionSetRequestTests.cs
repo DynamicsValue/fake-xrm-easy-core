@@ -1,4 +1,5 @@
-﻿using FakeXrmEasy.FakeMessageExecutors;
+﻿using FakeXrmEasy.Abstractions.Metadata;
+using FakeXrmEasy.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System.ServiceModel;
@@ -22,7 +23,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveOptionSetRequestTests
             var context = new XrmFakedContext();
 
             var optionSet = new Microsoft.Xrm.Sdk.Metadata.OptionSetMetadata { Name = "test" };
-            context.OptionSetValuesMetadata.Add("test", optionSet);
+            context.GetProperty<IOptionSetMetadataRepository>().Set("test", optionSet);
             var executor = new RetrieveOptionSetRequestExecutor();
 
             var req = new RetrieveOptionSetRequest { Name = "test" };

@@ -107,7 +107,6 @@ namespace FakeXrmEasy
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
             Data = new Dictionary<string, Dictionary<Guid, Entity>>();
             ExecutionMocks = new Dictionary<Type, ServiceRequestExecution>();
-            StatusAttributeMetadata = new Dictionary<string, StatusAttributeMetadata>();
 
             FakeMessageExecutors = Assembly.GetExecutingAssembly()
                 .GetTypes()
@@ -123,7 +122,8 @@ namespace FakeXrmEasy
 
             SetProperty<IAccessRightsRepository>(new AccessRightsRepository());
             SetProperty<IOptionSetMetadataRepository>(new OptionSetMetadataRepository());
-            
+            SetProperty<IStatusAttributeMetadataRepository>(new StatusAttributeMetadataRepository());
+
             SystemTimeZone = TimeZoneInfo.Local;
             DateBehaviour = DefaultDateBehaviour();
 
