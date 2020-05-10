@@ -170,7 +170,7 @@ namespace FakeXrmEasy.Query
 
         internal static Expression GetAppropiateCastExpressionBasedOnOptionSetValueCollection(Expression input)
         {
-            return Expression.Call(typeof(XrmFakedContext).GetMethod("ConvertToHashSetOfInt"), input, Expression.Constant(true));
+            return Expression.Call(typeof(OptionSetValueCollectionExtensions).GetMethod("ConvertToHashSetOfInt"), input, Expression.Constant(true));
         }
 
         internal static Expression GetAppropiateCastExpressionDefault(Expression input, object value)

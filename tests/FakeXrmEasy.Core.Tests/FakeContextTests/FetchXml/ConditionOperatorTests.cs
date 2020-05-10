@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
 using System.Reflection;
-using System.Text;
 using Xunit;
 using FakeXrmEasy.Abstractions.Settings;
 using FakeXrmEasy.Query;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 {
@@ -120,10 +121,17 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
     /// </summary>
     public class ConditionOperatorTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        public ConditionOperatorTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void FetchXml_Operator_Eq()
         {
-            var ctx = new XrmFakedContext();
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -135,7 +143,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -147,7 +155,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Ne()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -159,7 +167,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -171,7 +179,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Neq()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -183,7 +191,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -195,7 +203,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Like()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -207,7 +215,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -219,7 +227,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Like_As_BeginsWith()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -231,7 +239,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -243,7 +251,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_BeginsWith()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -255,7 +263,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -267,7 +275,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotBeginWith()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -279,7 +287,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -291,7 +299,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Like_As_EndsWith()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -303,7 +311,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -315,7 +323,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_EndsWith()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -327,7 +335,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -339,7 +347,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotEndWith()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -351,7 +359,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -363,7 +371,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotLike()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -375,7 +383,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -387,7 +395,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotLike_As_Not_BeginWith()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -399,7 +407,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -411,7 +419,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotLike_As_Not_EndWith()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -423,7 +431,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -435,7 +443,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_In()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -450,7 +458,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -463,7 +471,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotIn()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -478,7 +486,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -492,8 +500,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_In_MultiSelectOptionSet()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -507,7 +515,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -520,8 +528,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotIn_MultiSelectOptionSet()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -535,7 +543,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -549,7 +557,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Null()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -561,7 +569,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -573,7 +581,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotNull()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -585,7 +593,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -597,8 +605,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Gt_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -613,7 +621,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
 
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -625,7 +633,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Gt_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -639,10 +647,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.23 };
             var ct2 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.33 };
             var ct3 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.2345 };
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             Assert.Equal(1.33, collection.Entities[0]["address1_longitude"]);
@@ -651,8 +659,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Ge_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -665,7 +673,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -677,8 +685,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Months_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -691,7 +699,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -703,8 +711,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Months_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -718,7 +726,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -729,10 +737,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(-1) }; //Shouldnt
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(-3) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -743,8 +751,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Minutes_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -757,7 +765,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -769,8 +777,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Minutes_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -784,7 +792,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -795,10 +803,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMinutes(-1) }; //Shouldnt
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMinutes(1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMinutes(-3) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -808,8 +816,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Hours_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -822,7 +830,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -834,8 +842,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Hours_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -849,7 +857,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -860,10 +868,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddHours(-1) }; //Shouldnt
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddHours(1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddHours(-3) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -873,8 +881,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Days_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -887,7 +895,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -899,8 +907,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Days_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -914,7 +922,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -925,10 +933,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-1) }; //Shouldnt
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-3) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -938,8 +946,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Weeks_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -952,7 +960,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -964,8 +972,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Weeks_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -979,7 +987,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -990,10 +998,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-7) }; //Shouldnt
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(7) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-21) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -1003,8 +1011,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Years_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1017,7 +1025,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1029,8 +1037,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Years_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -1044,7 +1052,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -1055,10 +1063,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddYears(-1) }; //Shouldnt
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddYears(1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddYears(-3) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -1069,8 +1077,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_Seven_Days_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1083,7 +1091,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1095,8 +1103,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_Seven_Days_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1114,10 +1122,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), BirthDate = date.AddDays(-1) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), BirthDate = date.AddDays(-8) }; //Shouldn't be returned
             var ct3 = new Contact() { Id = Guid.NewGuid(), BirthDate = date.AddDays(1) }; //Shouldn't be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             Assert.Equal(ct1.Id, collection.Entities[0].Id);
@@ -1126,7 +1134,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Ge_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1140,10 +1148,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.23 };
             var ct2 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.33 };
             var ct3 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.2345 };
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
             Assert.Equal(1.33, collection.Entities[0]["address1_longitude"]);
@@ -1153,8 +1161,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Lt_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1167,7 +1175,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1179,7 +1187,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Lt_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1193,10 +1201,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.23 };
             var ct2 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.33 };
             var ct3 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.2345 };
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             Assert.Equal(1.23, collection.Entities[0]["address1_longitude"]);
@@ -1205,8 +1213,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Le_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1219,7 +1227,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1231,7 +1239,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Le_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='address1_longitude' />
@@ -1243,10 +1251,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.23 };
             var ct2 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.33 };
             var ct3 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.2345 };
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
             Assert.Equal(1.23, collection.Entities[0]["address1_longitude"]);
@@ -1256,8 +1264,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_On_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1268,7 +1276,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1285,7 +1293,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_On_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1298,10 +1306,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var date = new DateTime(2014, 11, 23);
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date };
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(1) };
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             var retrievedDate = collection.Entities[0]["anniversary"] as DateTime?;
@@ -1314,7 +1322,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_On_Or_Before_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1328,10 +1336,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-1) }; //Should be returned
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(1) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
             var retrievedDateFirst = collection.Entities[0]["anniversary"] as DateTime?;
@@ -1343,7 +1351,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_On_Or_After_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1357,10 +1365,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(1) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
             var retrievedDateFirst = collection.Entities[0]["anniversary"] as DateTime?;
@@ -1372,7 +1380,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Today_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1385,10 +1393,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var date = DateTime.Today;
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-1) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
 
@@ -1399,7 +1407,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Yesterday_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1412,10 +1420,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var date = DateTime.Today;
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date }; //Shouldnt 
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-1) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
 
@@ -1426,7 +1434,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Tomorrow_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1439,10 +1447,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var date = DateTime.Today;
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date }; //Shouldnt 
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(1) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
 
@@ -1453,8 +1461,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Between_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1468,7 +1476,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1481,8 +1489,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Between_Execution_Without_Exact_Values_Raises_Exception()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1494,7 +1502,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            Assert.Throws<Exception>(() => service.RetrieveMultiple(new FetchExpression(fetchXml)));
+            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
 
             fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1507,13 +1515,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            Assert.Throws<Exception>(() => service.RetrieveMultiple(new FetchExpression(fetchXml)));
+            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
         }
 
         [Fact]
         public void FetchXml_Operator_Between_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1529,10 +1537,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var date = DateTime.Today;
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date }; //Shouldnt 
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(2013, 05, 19) }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
 
@@ -1543,8 +1551,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotBetween_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1558,7 +1566,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1571,8 +1579,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotBetween_Execution_Without_Exact_Values_Raises_Exception()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1584,7 +1592,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            Assert.Throws<Exception>(() => service.RetrieveMultiple(new FetchExpression(fetchXml)));
+            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
 
             fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -1597,13 +1605,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            Assert.Throws<Exception>(() => service.RetrieveMultiple(new FetchExpression(fetchXml)));
+            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
         }
 
         [Fact]
         public void FetchXml_Operator_NotBetween_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1619,10 +1627,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var date = DateTime.Today;
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date }; //Should
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(2013, 05, 19) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
 
@@ -1633,7 +1641,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_ThisYear_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1652,10 +1660,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct5 = new Contact() { Id = Guid.NewGuid(), Anniversary = today.AddYears(1) };                   // One year in the future - should not be returned
             var ct6 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear + 1, 1, 1) };      // First day of next year - should not be returned
             var ct7 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear - 1, 12, 31) };    // Last day of last year - should not be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
 
@@ -1670,8 +1678,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var today = DateTime.Today;
             var thisYear = today.Year;
 
-            var ctx = new XrmFakedContext();
-            ctx.SetProperty<FiscalYearSettings>(new FiscalYearSettings() { StartDate = new DateTime(thisYear, 1, 2), FiscalPeriodTemplate = FiscalYearSettings.Template.Annually });
+            
+            _context.SetProperty<FiscalYearSettings>(new FiscalYearSettings() { StartDate = new DateTime(thisYear, 1, 2), FiscalPeriodTemplate = FiscalYearSettings.Template.Annually });
             var fetchXml = $@"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1684,10 +1692,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear, 1, 2) };        // Second day of this year - should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear, 12, 31) };      // Last day of this year - should be returned
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear + 1, 1, 2) };      // Second day of next year - should not be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
 
@@ -1698,7 +1706,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_ThisMonth_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1718,10 +1726,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct5 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear, thisMonth, 1).AddDays(-1) };                // Last day of previous month - should not be returned
             var ct6 = new Contact() { Id = Guid.NewGuid(), Anniversary = today.AddYears(1) };                                               // One year in the future - should not be returned
             var ct7 = new Contact() { Id = Guid.NewGuid(), Anniversary = today.AddYears(1) };                                               // One year in the past - should not be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
 
@@ -1733,7 +1741,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_LastMonth_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1753,10 +1761,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct4 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear, thisMonth, 1).AddMonths(1) };               // First day of next month - should not be returned
             var ct5 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear, thisMonth, 1).AddMonths(-1) };              // First day of last month - should be returned
             var ct6 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear, thisMonth, 1).AddDays(-1) };                // Last day of last month - should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
 
@@ -1767,7 +1775,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NextMonth_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1789,10 +1797,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct6 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear, thisMonth, 1).AddDays(-1) };                // Last day of last month - should not be returned
             var ct7 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear, thisMonth, 1).AddMonths(-1) };              // First day of last month - should not be returned
 
-            ctx.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
 
@@ -1803,7 +1811,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_LastYear_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1822,10 +1830,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct5 = new Contact() { Id = Guid.NewGuid(), Anniversary = today.AddYears(1) };                   // One year in the future - should not be returned
             var ct6 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear - 1, 1, 1) };    // First day of last year - should be returned
             var ct7 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear - 1, 12, 31) };  // Last day of last year - should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
 
@@ -1837,7 +1845,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NextYear_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1856,10 +1864,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct5 = new Contact() { Id = Guid.NewGuid(), Anniversary = today.AddYears(-1) };                  // One year in the past - should not be returned
             var ct6 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear + 1, 1, 1) };    // First day of next year - should be returned
             var ct7 = new Contact() { Id = Guid.NewGuid(), Anniversary = new DateTime(thisYear + 1, 12, 31) };  // Last day of next year - should be returned
-            ctx.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3, ct4, ct5, ct6, ct7 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
 
@@ -1871,7 +1879,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_EqUserId_Translation()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='systemuser'>
                                         <filter type='and'>
@@ -1880,7 +1888,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1892,7 +1900,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_EqUserId_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='systemuser'>
                                         <filter type='and'>
@@ -1903,12 +1911,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var su1 = new SystemUser() { Id = Guid.NewGuid() }; //Should
             var su2 = new SystemUser() { Id = Guid.NewGuid() }; //Shouldnt
-            ctx.Initialize(new[] { su1, su2 });
+            _context.Initialize(new[] { su1, su2 });
 
-            var service = ctx.GetOrganizationService();
-            ctx.CallerId = su1.ToEntityReference();
+            
+            _context.CallerProperties.CallerId = su1.ToEntityReference();
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             var retrievedUser = collection.Entities[0].Id;
@@ -1918,7 +1926,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NeUserId_Translation()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='systemuser'>
                                         <filter type='and'>
@@ -1927,7 +1935,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1939,7 +1947,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NeUserId_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='systemuser'>
                                         <filter type='and'>
@@ -1950,12 +1958,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var su1 = new SystemUser() { Id = Guid.NewGuid() }; //Shouldnt
             var su2 = new SystemUser() { Id = Guid.NewGuid() }; //Should
-            ctx.Initialize(new[] { su1, su2 });
+            _context.Initialize(new[] { su1, su2 });
 
-            var service = ctx.GetOrganizationService();
-            ctx.CallerId = su1.ToEntityReference();
+            
+            _context.CallerProperties.CallerId = su1.ToEntityReference();
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             var retrievedUser = collection.Entities[0].Id;
@@ -1964,7 +1972,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Weeks_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1977,10 +1985,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var date = DateTime.Now;
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(7 * 2) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(7 * 4) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             var retrievedDateFirst = collection.Entities[0]["anniversary"] as DateTime?;
@@ -1991,7 +1999,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_Seven_Days_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
                                  <attribute name='fullname' />
@@ -2004,7 +2012,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2015,10 +2023,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(3) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(7) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(8) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2027,7 +2035,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_Week_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
                                  <attribute name='fullname' />
@@ -2040,7 +2048,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2068,10 +2076,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = getRandomDateOfWeek(lastWeek) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = getRandomDateOfWeek(weekOfYear) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2080,7 +2088,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_This_Week_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
                                  <attribute name='fullname' />
@@ -2093,7 +2101,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2121,10 +2129,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = getRandomDateOfWeek(weekOfYear) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = getRandomDateOfWeek(lastWeek) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2133,7 +2141,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_Week_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
                                  <attribute name='fullname' />
@@ -2146,7 +2154,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2174,10 +2182,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = getRandomDateOfWeek(nextWeek) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = getRandomDateOfWeek(weekOfYear) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2189,8 +2197,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_ContainValues_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version=""1.0"" output-format=""xml-platform"" mapping=""logical"" distinct=""false"">
                                <entity name=""contact"">
@@ -2204,7 +2212,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2218,7 +2226,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_ContainValues_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version=""1.0"" output-format=""xml-platform"" mapping=""logical"" distinct=""false"">
                                <entity name=""contact"">
                                  <attribute name=""firstname"" />
@@ -2233,10 +2241,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1) } }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(3) } }; //Shouldn't be returned
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             Assert.Equal(ct1.Id, collection.Entities[0].Id);
@@ -2245,8 +2253,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_DoesNotContainValues_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version=""1.0"" output-format=""xml-platform"" mapping=""logical"" distinct=""false"">
                                <entity name=""contact"">
@@ -2260,7 +2268,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2274,7 +2282,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_DoesNotContainValues_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var fetchXml = @"<fetch version=""1.0"" output-format=""xml-platform"" mapping=""logical"" distinct=""false"">
                                <entity name=""contact"">
                                  <attribute name=""firstname"" />
@@ -2289,10 +2297,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1) } }; //Shouldn't be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(3) } }; //Should be returned
-            ctx.Initialize(new[] { ct1, ct2 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             Assert.Equal(ct2.Id, collection.Entities[0].Id);
@@ -2304,7 +2312,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_EntityName_Attribute_Translation()
         {
-            var ctx = new XrmFakedContext();
+            
             var quote = new Quote { Id = Guid.NewGuid() };
 
             string fetchXml =
@@ -2319,7 +2327,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                     </entity>
                 </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2333,7 +2341,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_EntityName_Attribute_Execution()
         {
-            var ctx = new XrmFakedContext();
+            
             var quote = new Quote { Id = Guid.NewGuid() };
 
             string fetchXml =
@@ -2363,11 +2371,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 QuoteId = new EntityReference("quote", quote.Id)
             };
 
-            ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 product, quote, quoteProduct
             });
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _context.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(0, collection.Entities.Count);
         }
@@ -2403,7 +2411,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                               </entity>
                             </fetch>";
 
-            var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var result = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.True(result.Entities.Any());
         }
@@ -2439,7 +2447,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                               </entity>
                             </fetch>";
 
-            var result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var result = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.True(result.Entities.Any());
         }
@@ -2448,8 +2456,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Hours_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -2462,7 +2470,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2474,8 +2482,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Hours_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -2489,7 +2497,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2500,10 +2508,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddHours(-1) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddHours(1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddHours(-3) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2513,8 +2521,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Hours_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -2527,7 +2535,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2539,8 +2547,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Hours_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -2554,7 +2562,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2565,10 +2573,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddHours(1) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddHours(-1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddHours(3) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2578,8 +2586,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Days_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -2592,7 +2600,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2604,8 +2612,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Days_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -2619,7 +2627,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2630,10 +2638,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-1) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-3) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2643,8 +2651,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Days_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -2657,7 +2665,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2669,8 +2677,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Days_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -2684,7 +2692,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2695,10 +2703,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(1) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(3) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2708,8 +2716,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Weeks_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -2722,7 +2730,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2734,8 +2742,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Weeks_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -2749,7 +2757,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2760,10 +2768,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-7) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(7) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(-21) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2773,8 +2781,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Weeks_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -2787,7 +2795,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2799,8 +2807,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Months_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -2813,7 +2821,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2825,8 +2833,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Months_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -2840,7 +2848,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2851,10 +2859,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(-1) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(-3) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2864,8 +2872,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Months_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -2878,7 +2886,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2890,8 +2898,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Months_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -2905,7 +2913,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2916,10 +2924,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(1) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(-1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(3) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2929,8 +2937,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Years_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -2943,7 +2951,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2955,8 +2963,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Years_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -2970,7 +2978,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2981,10 +2989,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddYears(-1) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddYears(1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddYears(-3) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
@@ -2994,8 +3002,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Years_Translation()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -3008,7 +3016,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -3020,8 +3028,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Years_Execution()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                                <entity name='contact'>
@@ -3035,7 +3043,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -3046,10 +3054,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddYears(1) }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddYears(-1) }; //Shouldnt
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddYears(3) }; //Shouldnt
-            ctx.Initialize(new[] { ct1, ct2, ct3 });
-            var service = ctx.GetOrganizationService();
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+            
 
-            var collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             var retrievedUser = collection.Entities[0].Id;
