@@ -1,4 +1,6 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -10,6 +12,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 {
     public class AggregateTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        
+        public AggregateTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void FetchXml_Aggregate_Group_Count()
         {
@@ -20,15 +31,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new[] {
+            
+            _context.Initialize(new[] {
                 new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" },
                 new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "Jane" },
                 new Contact() { Id = Guid.NewGuid(), LastName = "Wood", FirstName = "Sam" },
                 new Contact() { Id = Guid.NewGuid(), LastName = "Grant", FirstName = "John" },
             });
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
 
@@ -55,15 +66,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             EntityReference parentId = new EntityReference("account", Guid.NewGuid());
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new[] {
+            
+            _context.Initialize(new[] {
                 new Account() { Id = Guid.NewGuid(), ParentAccountId=parentId },
                 new Account() { Id = Guid.NewGuid(), ParentAccountId=parentId },
                 new Account() { Id = Guid.NewGuid(), ParentAccountId=new EntityReference("account",Guid.NewGuid()) },
                 new Account() { Id = Guid.NewGuid()}
             });
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
 
@@ -80,8 +91,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                     <attribute name='lastname' alias='count' aggregate='countcolumn' distinct='true'/>
                                   </entity>
                             </fetch>";
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new[] {
+            
+            _context.Initialize(new[] {
                 new Contact() { Id = Guid.NewGuid(), LastName = "A" },
                 new Contact() { Id = Guid.NewGuid(), LastName = "A" },
                 new Contact() { Id = Guid.NewGuid(), LastName = "A" },
@@ -92,7 +103,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 new Contact() { Id = Guid.NewGuid(), LastName = "C" },
             });
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             var ent = collection.Entities[0];
@@ -108,15 +119,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                     <attribute name='numberofchildren' alias='sum' aggregate='sum'/>
                                   </entity>
                             </fetch>";
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new[] {
+            
+            _context.Initialize(new[] {
                 new Contact() { Id = Guid.NewGuid(), NumberOfChildren = 1 },
                 new Contact() { Id = Guid.NewGuid(), NumberOfChildren = 2 },
                 new Contact() { Id = Guid.NewGuid(),  }, /* attribute missing */
                 new Contact() { Id = Guid.NewGuid(), NumberOfChildren = null },
             });
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             var ent = collection.Entities[0];
@@ -132,15 +143,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                     <attribute name='priceperunit' alias='sum' aggregate='sum'/>
                                   </entity>
                             </fetch>";
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new[] {
+            
+            _context.Initialize(new[] {
                 new SalesOrderDetail() { Id = Guid.NewGuid(), PricePerUnit = new Money(100m) },
                 new SalesOrderDetail() { Id = Guid.NewGuid(), PricePerUnit = new Money(100m)},
                 new SalesOrderDetail() { Id = Guid.NewGuid(),  }, /* attribute missing */
                 new SalesOrderDetail() { Id = Guid.NewGuid(), PricePerUnit = null },
             });
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             var ent = collection.Entities[0];
@@ -167,10 +178,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(BirthdateContacts);
+            
+            _context.Initialize(BirthdateContacts);
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
             var byYear = collection.Entities.ToDictionary(x => x.GetAttributeValue<AliasedValue>("group.dob").Value as int?);
@@ -190,10 +201,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(BirthdateContacts);
+            
+            _context.Initialize(BirthdateContacts);
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
             var byMonth = collection.Entities.ToDictionary(x => x.GetAttributeValue<AliasedValue>("group.dob").Value as int?);
@@ -214,10 +225,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(BirthdateContacts);
+            
+            _context.Initialize(BirthdateContacts);
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
             var byQuarter = collection.Entities.ToDictionary(x => x.GetAttributeValue<AliasedValue>("group.dob").Value as int?);
@@ -237,10 +248,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(BirthdateContacts);
+            
+            _context.Initialize(BirthdateContacts);
 
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(2, collection.Entities.Count);
             var byDay = collection.Entities.ToDictionary(x => x.GetAttributeValue<AliasedValue>("group.dob").Value as int?);
@@ -261,9 +272,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(BirthdateContacts);
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            
+            _context.Initialize(BirthdateContacts);
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
             Assert.Equal(new int?[] { 1, 2, 5 }, collection.Entities.Select(x => x.GetAttributeValue<AliasedValue>("month")?.Value as int?));
@@ -280,9 +291,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(BirthdateContacts);
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            
+            _context.Initialize(BirthdateContacts);
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
             Assert.Equal(new int?[] { 5, 2, 1 }, collection.Entities.Select(x => x.GetAttributeValue<AliasedValue>("month")?.Value as int?));
@@ -299,9 +310,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(BirthdateContacts);
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            
+            _context.Initialize(BirthdateContacts);
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(3, collection.Entities.Count);
             Assert.Equal(new int?[] { 1, 1, 2 }, collection.Entities.Select(x => x.GetAttributeValue<AliasedValue>("count")?.Value as int?));
@@ -318,8 +329,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             Assert.Equal(0, collection.Entities.First().GetAttributeValue<AliasedValue>("count.contacts")?.Value);
@@ -336,8 +347,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             Assert.Equal(1, collection.Entities.First().Attributes.Count);
@@ -355,8 +366,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                             </fetch>";
 
-            var ctx = new XrmFakedContext();
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             Assert.Equal(1, collection.Entities.First().Attributes.Count);
@@ -367,7 +378,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         public void FetchXml_Aggregate_Min_Date()
         {
             XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -385,7 +396,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             e3["value"] = new DateTime(2011, 01, 03);
             initialEntities.Add(e3);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             FetchExpression query = new FetchExpression($@"
                 <fetch aggregate='true' >
@@ -395,7 +406,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 </fetch>
                 ");
 
-            EntityCollection result = service.RetrieveMultiple(query);
+            EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(1, result.Entities.Count);
             Assert.Equal(new DateTime(2011, 01, 01), result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value);
         }
@@ -404,7 +415,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         public void FetchXml_Aggregate_Min_Date_With_Nulls()
         {
             XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -422,7 +433,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             e3["value"] = new DateTime(2011, 01, 03);
             initialEntities.Add(e3);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             FetchExpression query = new FetchExpression($@"
                 <fetch aggregate='true' >
@@ -432,7 +443,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 </fetch>
                 ");
 
-            EntityCollection result = service.RetrieveMultiple(query);
+            EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(1, result.Entities.Count);
             Assert.Equal(new DateTime(2011, 01, 01), result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value);
         }
@@ -441,7 +452,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         public void FetchXml_Aggregate_Max_Date()
         {
             XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -459,7 +470,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             e3["value"] = new DateTime(2011, 01, 03);
             initialEntities.Add(e3);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             FetchExpression query = new FetchExpression($@"
                 <fetch aggregate='true' >
@@ -469,7 +480,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 </fetch>
                 ");
 
-            EntityCollection result = service.RetrieveMultiple(query);
+            EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(1, result.Entities.Count);
             Assert.Equal(new DateTime(2011, 01, 03), result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value);
         }
@@ -478,7 +489,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         public void FetchXml_Aggregate_Max_Date_With_Nulls()
         {
             XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -496,7 +507,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             e3["value"] = new DateTime(2011, 01, 03);
             initialEntities.Add(e3);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             FetchExpression query = new FetchExpression($@"
                 <fetch aggregate='true' >
@@ -506,7 +517,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 </fetch>
                 ");
 
-            EntityCollection result = service.RetrieveMultiple(query);
+            EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(1, result.Entities.Count);
             Assert.Equal(new DateTime(2011, 01, 03), result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value);
         }
@@ -515,7 +526,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         public void FetchXml_Aggregate_Min_With_Nulls()
         {
             XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -533,7 +544,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             e3["value"] = null;
             initialEntities.Add(e3);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             FetchExpression query = new FetchExpression($@"
                 <fetch aggregate='true' >
@@ -543,7 +554,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 </fetch>
                 ");
 
-            EntityCollection result = service.RetrieveMultiple(query);
+            EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(1, result.Entities.Count);
             Assert.Equal(1, result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value);
         }
@@ -552,7 +563,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         public void FetchXml_Aggregate_Max_With_Nulls()
         {
             XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -570,7 +581,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             e3["value"] = null;
             initialEntities.Add(e3);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             FetchExpression query = new FetchExpression($@"
                 <fetch aggregate='true' >
@@ -580,7 +591,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 </fetch>
                 ");
 
-            EntityCollection result = service.RetrieveMultiple(query);
+            EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(1, result.Entities.Count);
             Assert.Equal(-0.5m, result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value);
         }
@@ -589,7 +600,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         public void FetchXml_Aggregate_Avg_With_Nulls()
         {
             XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -607,7 +618,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             e3["value"] = null;
             initialEntities.Add(e3);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             FetchExpression query = new FetchExpression($@"
                 <fetch aggregate='true' >
@@ -617,7 +628,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 </fetch>
                 ");
 
-            EntityCollection result = service.RetrieveMultiple(query);
+            EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(1, result.Entities.Count);
             Assert.Equal(-1.5m, result.Entities.Single().GetAttributeValue<AliasedValue>("avgvalue").Value);
         }
@@ -625,15 +636,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Aggregate_Sum_With_Linked_Entity()
         {
-            var context = new XrmFakedContext();
+            
             var contact = new Contact() { Id = Guid.NewGuid() };
             var sale1 = new SalesOrder() { Id = Guid.NewGuid() };
             sale1.CustomerId = contact.ToEntityReference();
             sale1.TotalAmount = new Money(10m);
             sale1.DateFulfilled = new DateTime(2019, 1, 1);
-            context.Initialize(new Entity[] { contact, sale1 });
+            _context.Initialize(new Entity[] { contact, sale1 });
 
-            EntityCollection result = context.GetOrganizationService().RetrieveMultiple(new FetchExpression(@"
+            EntityCollection result = _service.RetrieveMultiple(new FetchExpression(@"
 <fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='true' aggregate='true'>
   <entity name='contact'>
 	<attribute name='contactid' groupby='true' alias='agg_contactid' />	
@@ -656,10 +667,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void Query_Should_Return_QuoteProduct_Counts()
         {
-            var context = new XrmFakedContext();
+            
             var quoteId = Guid.NewGuid();
 
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 new QuoteDetail()
                 {
@@ -670,7 +681,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 }
             });
 
-            var service = context.GetOrganizationService();
 
             string fetchXml =
                 $@"<fetch aggregate='true' >
@@ -682,7 +692,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 </entity>
             </fetch>";
 
-            EntityCollection collection = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            EntityCollection collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
         }
