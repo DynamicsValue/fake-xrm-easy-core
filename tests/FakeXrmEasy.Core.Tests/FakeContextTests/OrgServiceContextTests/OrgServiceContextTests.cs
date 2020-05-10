@@ -5,19 +5,26 @@ using System;
 using System.Linq;
 using Xunit;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
 {
     public class OrgServiceContextTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public OrgServiceContextTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         //   MS_ISSUE  Rpcrt4 related
         [Fact]
         public void When_calling_context_add_and_save_changes_entity_is_added_to_the_faked_context()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 ctx.AddObject(new Account() { Name = "Test account" });
                 ctx.SaveChanges();
@@ -37,10 +44,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
         [Fact]
         public void When_calling_context_add_and_save_changes_returns_correct_result()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 ctx.AddObject(new Account() { Name = "Test account" });
                 var result = ctx.SaveChanges();
@@ -60,8 +64,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
         [Fact]
         public void When_calling_context_add_addrelated_and_save_changes_entities_are_added_to_the_faked_context()
         {
-            var context = new XrmFakedContext();
-
             var relationship = new XrmFakedRelationship()
             {
                 IntersectEntity = "accountleads",
@@ -70,11 +72,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
                 Entity1LogicalName = "account",
                 Entity2LogicalName = "lead"
             };
-            context.AddRelationship("accountleads", relationship);
+            _context.AddRelationship("accountleads", relationship);
 
-            var service = context.GetOrganizationService();
-
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 var account = new Account() { Name = "Test account" };
                 ctx.AddObject(account);
