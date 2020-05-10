@@ -1,7 +1,8 @@
 ﻿using System;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Query;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.FakeMessageExecutors
 {
@@ -17,7 +18,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
             var req = request as FetchXmlToQueryExpressionRequest;
             var service = ctx.GetOrganizationService();
             FetchXmlToQueryExpressionResponse response = new FetchXmlToQueryExpressionResponse();
-            response["Query"] = XrmFakedContext.TranslateFetchXmlDocumentToQueryExpression(ctx, XrmFakedContext.ParseFetchXml(req.FetchXml)); ;
+            response["Query"] = req.FetchXml.ToQueryExpression(ctx);
             return response;
         }
 

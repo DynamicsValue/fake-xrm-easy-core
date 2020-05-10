@@ -6,11 +6,21 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.Issues
 {
     public class Issue125
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public Issue125()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void Reproduce_issue_125()
         {
@@ -45,8 +55,7 @@ namespace FakeXrmEasy.Tests.Issues
                 gbp_country = new EntityReference(gbp_globecountry.EntityLogicalName, Country.Id),
             };
 
-            var context = new XrmFakedContext();
-            context.AddRelationship("gbp_gbp_customaddress_contact_assosciation",
+            _context.AddRelationship("gbp_gbp_customaddress_contact_assosciation",
                 new XrmFakedRelationship()
                 {
                     IntersectEntity = "gbp_gbp_customaddress_contact",
@@ -56,12 +65,10 @@ namespace FakeXrmEasy.Tests.Issues
                     Entity2Attribute = "contactid"
                 });
 
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 contact, customerA
             });
-
-            var fakedService = context.GetOrganizationService();
 
             var request = new AssociateRequest()
             {
@@ -72,7 +79,7 @@ namespace FakeXrmEasy.Tests.Issues
                 },
                 Relationship = new Relationship("gbp_gbp_customaddress_contact_assosciation")
             };
-            fakedService.Execute(request);
+            _service.Execute(request);
 
             string fetchQuery = string.Format(@"<fetch distinct='false' mapping='logical' output-format='xml-platform' version='1.0' >
                           <entity name='gbp_customaddress' >
@@ -87,7 +94,7 @@ namespace FakeXrmEasy.Tests.Issues
                           </entity>
                         </fetch> ", contact.Id);
 
-            EntityCollection result = fakedService.RetrieveMultiple(new FetchExpression(fetchQuery));
+            EntityCollection result = _service.RetrieveMultiple(new FetchExpression(fetchQuery));
             Assert.Equal(1, result.Entities.Count);
         }
     }

@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
@@ -40,14 +41,14 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             else if (request.Query is FetchExpression)
             {
                 var fetchXml = (request.Query as FetchExpression).Query;
-                var xmlDoc = XrmFakedContext.ParseFetchXml(fetchXml);
-                qe = XrmFakedContext.TranslateFetchXmlDocumentToQueryExpression(context, xmlDoc);
+                XDocument xmlDoc = fetchXml.ToXmlDocument();
+                qe = fetchXml.ToQueryExpression(context);
                 entityName = qe.EntityName;
 
                 var linqQuery = qe.ToQueryable(context);
                 list = linqQuery.ToList();
 
-                if (xmlDoc.IsAggregateFetchXml())
+                if (xmlDoc.HasAggregations())
                 {
                     list = XrmFakedContext.ProcessAggregateFetchXml(context, xmlDoc, list);
                 }

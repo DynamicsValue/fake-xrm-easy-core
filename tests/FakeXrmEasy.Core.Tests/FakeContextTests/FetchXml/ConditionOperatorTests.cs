@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using Xunit;
 using FakeXrmEasy.Abstractions.Settings;
+using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 {
@@ -134,7 +135,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -158,7 +159,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -182,7 +183,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -206,7 +207,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -230,7 +231,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -254,7 +255,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -278,7 +279,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -302,7 +303,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -326,7 +327,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -350,7 +351,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -374,7 +375,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -398,7 +399,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -422,7 +423,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -449,7 +450,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -477,7 +478,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -506,7 +507,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -534,7 +535,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -560,7 +561,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -584,7 +585,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -612,7 +613,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
 
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -664,7 +665,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -690,7 +691,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -717,7 +718,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -756,7 +757,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -783,7 +784,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -821,7 +822,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -848,7 +849,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -886,7 +887,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -913,7 +914,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -951,7 +952,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -978,7 +979,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -1016,7 +1017,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1043,7 +1044,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -1082,7 +1083,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1166,7 +1167,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1218,7 +1219,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1267,7 +1268,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1467,7 +1468,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1557,7 +1558,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1879,7 +1880,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -1926,7 +1927,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2003,7 +2004,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2039,7 +2040,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2092,7 +2093,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2145,7 +2146,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2203,7 +2204,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2259,7 +2260,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2318,7 +2319,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                     </entity>
                 </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2461,7 +2462,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2488,7 +2489,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2526,7 +2527,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2553,7 +2554,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2591,7 +2592,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2618,7 +2619,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2656,7 +2657,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2683,7 +2684,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2721,7 +2722,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2748,7 +2749,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2786,7 +2787,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2812,7 +2813,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2839,7 +2840,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2877,7 +2878,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2904,7 +2905,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -2942,7 +2943,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -2969,7 +2970,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);
@@ -3007,7 +3008,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -3034,7 +3035,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                </entity>
                              </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Single(query.Criteria.Conditions);

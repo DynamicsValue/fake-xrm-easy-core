@@ -252,5 +252,7 @@ namespace FakeXrmEasy.Query
                 return qe.Criteria.TranslateFilterExpressionToExpression(qe, context, qe.EntityName, entity, false);
             }
         }
+
+        
     }
 }

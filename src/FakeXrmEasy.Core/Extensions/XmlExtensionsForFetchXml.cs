@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Xrm.Sdk;
 using System.Globalization;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Extensions.FetchXml
 {
@@ -43,7 +43,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
                 || "1".Equals(val, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public static bool IsAggregateFetchXml(this XDocument doc)
+        public static bool HasAggregations(this XDocument doc)
         {
             return doc.Root.IsAttributeTrue("aggregate");
         }
@@ -79,7 +79,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
                             && elem.GetAttribute("to") != null;
 
                 case "order":
-                    if (elem.Document.IsAggregateFetchXml())
+                    if (elem.Document.HasAggregations())
                     {
                         return elem.GetAttribute("alias") != null
                             && elem.GetAttribute("attribute") == null;
@@ -214,7 +214,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     .ToPageNumber();
         }
 
-        public static FilterExpression ToCriteria(this XDocument xlDoc, XrmFakedContext ctx)
+        public static FilterExpression ToCriteria(this XDocument xlDoc, IXrmFakedContext ctx)
         {
             return xlDoc.Elements()   //fetch
                     .Elements()     //entity
@@ -240,7 +240,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return null;
         }
 
-        public static LinkEntity ToLinkEntity(this XElement el, XrmFakedContext ctx)
+        public static LinkEntity ToLinkEntity(this XElement el, IXrmFakedContext ctx)
         {
             //Create this node
             var linkEntity = new LinkEntity();
@@ -292,7 +292,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return linkEntity;
         }
 
-        public static List<LinkEntity> ToLinkEntities(this XDocument xlDoc, XrmFakedContext ctx)
+        public static List<LinkEntity> ToLinkEntities(this XDocument xlDoc, IXrmFakedContext ctx)
         {
             return xlDoc.Elements()   //fetch
                     .Elements()     //entity
@@ -319,7 +319,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return orderByElements;
         }
 
-        public static FilterExpression ToFilterExpression(this XElement elem, XrmFakedContext ctx)
+        public static FilterExpression ToFilterExpression(this XElement elem, IXrmFakedContext ctx)
         {
             var filterExpression = new FilterExpression();
 
@@ -358,12 +358,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return filterExpression;
         }
 
-        public static object ToValue(this XElement elem, XrmFakedContext ctx, string sEntityName, string sAttributeName, ConditionOperator op)
+        public static object ToValue(this XElement elem, IXrmFakedContext ctx, string sEntityName, string sAttributeName, ConditionOperator op)
         {
             return GetConditionExpressionValueCast(elem.Value, ctx, sEntityName, sAttributeName, op);
         }
 
-        public static ConditionExpression ToConditionExpression(this XElement elem, XrmFakedContext ctx)
+        public static ConditionExpression ToConditionExpression(this XElement elem, IXrmFakedContext ctx)
         {
             var conditionExpression = new ConditionExpression();
 
@@ -777,9 +777,9 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return !OperatorsNotToConvertArray.Contains(conditionOperator);
         }
 
-        public static object GetConditionExpressionValueCast(string value, XrmFakedContext ctx, string sEntityName, string sAttributeName, ConditionOperator op)
+        public static object GetConditionExpressionValueCast(string value, IXrmFakedContext ctx, string sEntityName, string sAttributeName, ConditionOperator op)
         {
-            if (ctx.ProxyTypesAssembly != null)
+            if (ctx.ProxyTypesAssemblies.Count() > 0)
             {
                 //We have proxy types so get appropiate type value based on entity name and attribute type
                 var reflectedType = ctx.FindReflectedType(sEntityName);
@@ -846,6 +846,11 @@ namespace FakeXrmEasy.Extensions.FetchXml
 
             //Default value
             return value;
+        }
+
+        public static XElement RetrieveFetchXmlNode(this XDocument xlDoc, string sName)
+        {
+            return xlDoc.Descendants().Where(e => e.Name.LocalName.Equals(sName)).FirstOrDefault();
         }
     }
 }

@@ -14,14 +14,14 @@ namespace FakeXrmEasy
             // Validate that <all-attributes> is not present,
             // that all attributes have groupby or aggregate, and an alias,
             // and that there is exactly 1 groupby.
-            if (RetrieveFetchXmlNode(xmlDoc, "all-attributes") != null)
+            if (xmlDoc.RetrieveFetchXmlNode("all-attributes") != null)
             {
                 throw new Exception("Can't have <all-attributes /> present when using aggregate");
             }
 
             var ns = xmlDoc.Root.Name.Namespace;
 
-            var entityName = RetrieveFetchXmlNode(xmlDoc, "entity")?.GetAttribute("name")?.Value;
+            var entityName = xmlDoc.RetrieveFetchXmlNode("entity")?.GetAttribute("name")?.Value;
             if (string.IsNullOrEmpty(entityName))
             {
                 throw new Exception("Can't find entity name for aggregate query");

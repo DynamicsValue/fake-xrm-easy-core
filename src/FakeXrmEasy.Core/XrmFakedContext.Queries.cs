@@ -212,72 +212,10 @@ namespace FakeXrmEasy
         }      
 
 
-        protected static XElement RetrieveFetchXmlNode(XDocument xlDoc, string sName)
-        {
-            return xlDoc.Descendants().Where(e => e.Name.LocalName.Equals(sName)).FirstOrDefault();
-        }
 
-        public static XDocument ParseFetchXml(string fetchXml)
-        {
-            try
-            {
-                return XDocument.Parse(fetchXml);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("FetchXml must be a valid XML document: {0}", ex.ToString()));
-            }
-        }
 
-        public static QueryExpression TranslateFetchXmlToQueryExpression(XrmFakedContext context, string fetchXml)
-        {
-            return TranslateFetchXmlDocumentToQueryExpression(context, ParseFetchXml(fetchXml));
-        }
+        
 
-        public static QueryExpression TranslateFetchXmlDocumentToQueryExpression(XrmFakedContext context, XDocument xlDoc)
-        {
-            //Validate nodes
-            if (!xlDoc.Descendants().All(el => el.IsFetchXmlNodeValid()))
-                throw new Exception("At least some node is not valid");
-
-            //Root node
-            if (!xlDoc.Root.Name.LocalName.Equals("fetch"))
-            {
-                throw new Exception("Root node must be fetch");
-            }
-
-            var entityNode = RetrieveFetchXmlNode(xlDoc, "entity");
-            var query = new QueryExpression(entityNode.GetAttribute("name").Value);
-
-            query.ColumnSet = xlDoc.ToColumnSet();
-
-            // Ordering is done after grouping/aggregation
-            if (!xlDoc.IsAggregateFetchXml())
-            {
-                var orders = xlDoc.ToOrderExpressionList();
-                foreach (var order in orders)
-                {
-                    query.AddOrder(order.AttributeName, order.OrderType);
-                }
-            }
-
-            query.Distinct = xlDoc.IsDistincFetchXml();
-
-            query.Criteria = xlDoc.ToCriteria(context);
-
-            query.TopCount = xlDoc.ToTopCount();
-
-            query.PageInfo.Count = xlDoc.ToCount() ?? 0;
-            query.PageInfo.PageNumber = xlDoc.ToPageNumber() ?? 1;
-            query.PageInfo.ReturnTotalRecordCount = xlDoc.ToReturnTotalRecordCount();
-
-            var linkedEntities = xlDoc.ToLinkEntities(context);
-            foreach (var le in linkedEntities)
-            {
-                query.LinkEntities.Add(le);
-            }
-
-            return query;
-        }
+        
     }
 }

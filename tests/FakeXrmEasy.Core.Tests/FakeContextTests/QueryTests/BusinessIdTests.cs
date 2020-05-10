@@ -1,4 +1,7 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
+using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -11,11 +14,18 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QueryTests
 {
     public class EqualBusinessIdTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public EqualBusinessIdTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void FetchXml_Operator_EqualBusinessId_Translation()
         {
-            XrmFakedContext _context = new XrmFakedContext();
-
             string _fetchXml =
             @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                 <entity name='resource'>
@@ -27,7 +37,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QueryTests
                 </entity>
             </fetch>";
 
-            QueryExpression _query = XrmFakedContext.TranslateFetchXmlToQueryExpression(_context, _fetchXml);
+            QueryExpression _query = _fetchXml.ToQueryExpression(_context);
 
             Assert.True(_query != null);
             Assert.Single(_query.Criteria.Conditions);
@@ -38,8 +48,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QueryTests
         [Fact]
         public void FetchXml_Operator_EqualBusinessId_Execution()
         {
-            XrmFakedContext _context = new XrmFakedContext();
-
             string _fetchXml =
             @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                 <entity name='resource'>
@@ -61,9 +69,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QueryTests
                 new Resource() { Id = Guid.Parse(_resource2Id), BusinessUnitId = new EntityReference("resource", Guid.Parse(_business2Id)) }
             };
 
-            _context.BusinessUnitId = new EntityReference("businessunit", Guid.Parse(_business2Id));
-
-            IOrganizationService _service = _context.GetOrganizationService();
+            _context.CallerProperties.BusinessUnitId = new EntityReference("businessunit", Guid.Parse(_business2Id));
 
             _context.Initialize(_entities);
 

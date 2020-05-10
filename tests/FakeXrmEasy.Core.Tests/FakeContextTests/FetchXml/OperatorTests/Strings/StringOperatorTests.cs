@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 using Crm;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System.Reflection;
 using Xunit;
+using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 {
@@ -30,7 +28,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 
             var ct = new Contact();
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);
@@ -84,7 +82,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 
             var ct = new Contact();
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
 
             Assert.True(query.Criteria != null);
             Assert.Equal(1, query.Criteria.Conditions.Count);

@@ -1,4 +1,5 @@
 ﻿using Crm;
+using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Reflection;
@@ -21,7 +22,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            Assert.Throws<Exception>(() => XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml));
+            Assert.Throws<Exception>(() => fetchXml.ToQueryExpression(ctx));
         }
 
         [Fact]
@@ -39,7 +40,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<double>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(1.2345, query.Criteria.Conditions[0].Values[0]);
         }
@@ -59,7 +60,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<EntityReference>(query.Criteria.Conditions[0].Values[0]);
         }
 
@@ -78,7 +79,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<Guid>(query.Criteria.Conditions[0].Values[0]);
         }
 
@@ -97,7 +98,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<int>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(4, query.Criteria.Conditions[0].Values[0]);
         }
@@ -117,7 +118,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<bool>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(false, query.Criteria.Conditions[0].Values[0]);
 
@@ -130,7 +131,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query2 = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml2);
+            var query2 = fetchXml2.ToQueryExpression(ctx);
             Assert.IsType<bool>(query2.Criteria.Conditions[0].Values[0]);
             Assert.Equal(true, query2.Criteria.Conditions[0].Values[0]);
         }
@@ -150,7 +151,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var exception = Assert.Throws<Exception>(() => XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml));
+            var exception = Assert.Throws<Exception>(() => fetchXml.ToQueryExpression(ctx));
             Assert.Equal("When trying to parse value for entity account and attribute donotemail: Boolean value expected", exception.Message);
 
             var fetchXml2 = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -162,7 +163,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var exception2 = Assert.Throws<Exception>(() => XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml2));
+            var exception2 = Assert.Throws<Exception>(() => fetchXml2.ToQueryExpression(ctx));
             Assert.Equal("When trying to parse value for entity account and attribute donotemail: Boolean value expected", exception.Message);
         }
 
@@ -181,7 +182,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<string>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal("123", query.Criteria.Conditions[0].Values[0]);
         }
@@ -201,7 +202,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<OptionSetValue>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(2, (query.Criteria.Conditions[0].Values[0] as OptionSetValue).Value);
         }
@@ -221,7 +222,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<Money>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(2, (query.Criteria.Conditions[0].Values[0] as Money).Value);
         }
@@ -241,7 +242,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<DateTime>(query.Criteria.Conditions[0].Values[0]);
 
             var dtTime = query.Criteria.Conditions[0].Values[0] as DateTime?;
@@ -267,7 +268,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
               </entity>
             </fetch>";
 
-            var query = XrmFakedContext.TranslateFetchXmlToQueryExpression(ctx, fetchXml);
+            var query = fetchXml.ToQueryExpression(ctx);
             Assert.IsType<OptionSetValue>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(2, (query.Criteria.Conditions[0].Values[0] as OptionSetValue).Value);
         }
