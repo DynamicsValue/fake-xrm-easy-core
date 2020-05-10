@@ -1,4 +1,6 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -10,15 +12,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QueryTranslationTests
 {
     public class ProjectionTests
     {
-        private XrmFakedContext FakeContext;
-        private IOrganizationService Service;
-        private Account Account;
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        private readonly Account _account;
 
         public ProjectionTests()
         {
-            FakeContext = new XrmFakedContext();
-            Service = FakeContext.GetOrganizationService();
-            Account = new Account()
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+
+            _account = new Account()
             {
                 Id = Guid.NewGuid(),
                 Name = "Some name"
@@ -28,16 +31,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QueryTranslationTests
         [Fact]
         public void Should_return_primary_key_attribute_even_if_not_specified_in_column_set()
         {
-            FakeContext.Initialize(Account);
-            var account = Service.Retrieve(Account.EntityLogicalName, Account.Id, new ColumnSet(new string[] { "name" }));
+            _context.Initialize(_account);
+            var account = _service.Retrieve(Account.EntityLogicalName, _account.Id, new ColumnSet(new string[] { "name" }));
             Assert.True(account.Attributes.ContainsKey("accountid"));
         }
 
         [Fact]
         public void Should_return_primary_key_attribute_when_retrieving_using_all_columns()
         {
-            FakeContext.Initialize(Account);
-            var account = Service.Retrieve(Account.EntityLogicalName, Account.Id, new ColumnSet(true));
+            _context.Initialize(_account);
+            var account = _service.Retrieve(Account.EntityLogicalName, _account.Id, new ColumnSet(true));
             Assert.True(account.Attributes.ContainsKey("accountid"));
         }
     }
