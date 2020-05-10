@@ -27,5 +27,20 @@ namespace FakeXrmEasy.Query
         {
             return Expression.Call(input, typeof(DateTime).GetMethod("get_Date"));
         }
+
+        internal static Expression ToStringExpression<T>(this Expression e)
+        {
+            return Expression.Call(e, typeof(T).GetMethod("ToString", new Type[] { }));
+        }
+        internal static Expression ToCaseInsensitiveExpression(this Expression e)
+        {
+            return Expression.Call(e,
+                                typeof(string).GetMethod("ToLowerInvariant", new Type[] { }));
+        }
+
+        internal static Expression ToCompareToExpression<T>(this Expression left, Expression right)
+        {
+            return Expression.Call(left, typeof(T).GetMethod("CompareTo", new Type[] { typeof(string) }), new[] { right });
+        }
     }
 }

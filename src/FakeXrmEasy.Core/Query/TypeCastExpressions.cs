@@ -82,9 +82,9 @@ namespace FakeXrmEasy.Query
                 var getNameFromEntityReferenceExpr = Expression.Call(Expression.TypeAs(input, typeof(EntityReference)),
                     typeof(EntityReference).GetMethod("get_Name"));
 
-                return GetCaseInsensitiveExpression(Expression.Condition(Expression.TypeIs(input, typeof(EntityReference)),
+                return Expression.Condition(Expression.TypeIs(input, typeof(EntityReference)),
                     Expression.Convert(getNameFromEntityReferenceExpr, typeof(string)),
-                    Expression.Constant(string.Empty, typeof(string))));
+                    Expression.Constant(string.Empty, typeof(string))).ToCaseInsensitiveExpression();
             }
 
             var getIdFromEntityReferenceExpr = Expression.Call(Expression.TypeAs(input, typeof(EntityReference)),
@@ -142,13 +142,13 @@ namespace FakeXrmEasy.Query
 
         internal static Expression GetAppropiateCastExpressionBasedOnStringAndType(Expression input, object value, Type attributeType)
         {
-            var defaultStringExpression = GetCaseInsensitiveExpression(GetAppropiateCastExpressionDefault(input, value));
+            var defaultStringExpression = GetAppropiateCastExpressionDefault(input, value).ToCaseInsensitiveExpression();
 
             int iValue;
             if (attributeType.IsOptionSet() && int.TryParse(value.ToString(), out iValue))
             {
                 return Expression.Condition(Expression.TypeIs(input, typeof(OptionSetValue)),
-                    GetToStringExpression<Int32>(GetAppropiateCastExpressionBasedOnInt(input)),
+                    GetAppropiateCastExpressionBasedOnInt(input).ToStringExpression<Int32>(),
                     defaultStringExpression
                 );
             }
@@ -197,7 +197,7 @@ namespace FakeXrmEasy.Query
 
         internal static Expression GetAppropiateCastExpressionBasedOnString(Expression input, object value)
         {
-            var defaultStringExpression = GetCaseInsensitiveExpression(GetAppropiateCastExpressionDefault(input, value));
+            var defaultStringExpression = GetAppropiateCastExpressionDefault(input, value).ToCaseInsensitiveExpression();
 
             DateTime dtDateTimeConversion;
             if (DateTime.TryParse(value.ToString(), out dtDateTimeConversion))
@@ -209,7 +209,7 @@ namespace FakeXrmEasy.Query
             if (int.TryParse(value.ToString(), out iValue))
             {
                 return Expression.Condition(Expression.TypeIs(input, typeof(OptionSetValue)),
-                    GetToStringExpression<Int32>(GetAppropiateCastExpressionBasedOnInt(input)),
+                    GetAppropiateCastExpressionBasedOnInt(input).ToStringExpression<Int32>(),
                     defaultStringExpression
                 );
             }
@@ -217,15 +217,7 @@ namespace FakeXrmEasy.Query
             return defaultStringExpression;
         }
 
-        internal static Expression GetToStringExpression<T>(Expression e)
-        {
-            return Expression.Call(e, typeof(T).GetMethod("ToString", new Type[] { }));
-        }
-        internal static Expression GetCaseInsensitiveExpression(Expression e)
-        {
-            return Expression.Call(e,
-                                typeof(string).GetMethod("ToLowerInvariant", new Type[] { }));
-        }
+
 
         internal static Expression GetAppropiateTypedValue(object value)
         {
@@ -240,7 +232,7 @@ namespace FakeXrmEasy.Query
                 }
                 else
                 {
-                    return GetCaseInsensitiveExpression(Expression.Constant(value, typeof(string)));
+                    return Expression.Constant(value, typeof(string)).ToCaseInsensitiveExpression();
                 }
             }
             else if (value is EntityReference)
@@ -294,7 +286,7 @@ namespace FakeXrmEasy.Query
                 }
                 else
                 {
-                    return GetCaseInsensitiveExpression(Expression.Constant(value, typeof(string)));
+                    return Expression.Constant(value, typeof(string)).ToCaseInsensitiveExpression();
                 }
             }
             else if (value is EntityReference)

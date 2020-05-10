@@ -11,7 +11,7 @@ namespace FakeXrmEasy.Query
 {
     public static partial class ConditionExpressionExtensions
     {
-        internal static Expression TranslateConditionExpressionEqual(this TypedConditionExpression c, IXrmFakedContext context, Expression getAttributeValueExpr, Expression containsAttributeExpr)
+        internal static Expression ToEqualExpression(this TypedConditionExpression c, IXrmFakedContext context, Expression getAttributeValueExpr, Expression containsAttributeExpr)
         {
 
             BinaryExpression expOrValues = Expression.Or(Expression.Constant(false), Expression.Constant(false));

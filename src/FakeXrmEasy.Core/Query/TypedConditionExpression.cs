@@ -6,7 +6,7 @@ using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace FakeXrmEasy.Models
+namespace FakeXrmEasy.Query
 {
     /// <summary>
     /// A condition expression with a decorated type
