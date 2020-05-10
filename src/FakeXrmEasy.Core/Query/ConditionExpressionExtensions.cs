@@ -2,7 +2,6 @@ using FakeXrmEasy.Abstractions;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Microsoft.Xrm.Sdk.Query;
-using FakeXrmEasy.Models;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Extensions;
@@ -188,19 +187,19 @@ namespace FakeXrmEasy.Query
                     break;
 
                 case ConditionOperator.LessThan:
-                    operatorExpression = TranslateConditionExpressionLessThan(c, getNonBasicValueExpr, containsAttributeExpression);
+                    operatorExpression = c.ToLessThanExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.LessEqual:
-                    operatorExpression = TranslateConditionExpressionLessThanOrEqual(context, c, getNonBasicValueExpr, containsAttributeExpression);
+                    operatorExpression = c.ToLessThanOrEqualExpression(context, getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.In:
-                    operatorExpression = TranslateConditionExpressionIn(c, getNonBasicValueExpr, containsAttributeExpression);
+                    operatorExpression = c.ToInExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.NotIn:
-                    operatorExpression = Expression.Not(TranslateConditionExpressionIn(c, getNonBasicValueExpr, containsAttributeExpression));
+                    operatorExpression = Expression.Not(c.ToInExpression(getNonBasicValueExpr, containsAttributeExpression));
                     break;
 
                 case ConditionOperator.On:
@@ -222,13 +221,11 @@ namespace FakeXrmEasy.Query
                 case ConditionOperator.LastXWeeks:
                 case ConditionOperator.LastXMonths:
                 case ConditionOperator.LastXYears:
-                    operatorExpression = TranslateConditionExpressionLast(c, getNonBasicValueExpr, containsAttributeExpression);
+                    operatorExpression = c.ToLastXExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.OnOrBefore:
-                    operatorExpression = Expression.Or(
-                                c.ToEqualExpression(context, getNonBasicValueExpr, containsAttributeExpression),
-                                TranslateConditionExpressionLessThan(c, getNonBasicValueExpr, containsAttributeExpression));
+                    operatorExpression = c.ToLessThanOrEqualExpression(context, getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.Between:
@@ -236,7 +233,7 @@ namespace FakeXrmEasy.Query
                     {
                         throw new Exception("Between operator requires exactly 2 values.");
                     }
-                    operatorExpression = TranslateConditionExpressionBetween(c, getNonBasicValueExpr, containsAttributeExpression);
+                    operatorExpression = c.ToBetweenExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.NotBetween:
@@ -244,7 +241,7 @@ namespace FakeXrmEasy.Query
                     {
                         throw new Exception("Not-Between operator requires exactly 2 values.");
                     }
-                    operatorExpression = Expression.Not(TranslateConditionExpressionBetween(c, getNonBasicValueExpr, containsAttributeExpression));
+                    operatorExpression = Expression.Not(c.ToBetweenExpression(getNonBasicValueExpr, containsAttributeExpression));
                     break;
 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
                 case ConditionOperator.OlderThanXMinutes:
@@ -254,7 +251,7 @@ namespace FakeXrmEasy.Query
                 case ConditionOperator.OlderThanXYears:                  
 #endif
                 case ConditionOperator.OlderThanXMonths:
-                    operatorExpression = TranslateConditionExpressionOlderThan(c, getNonBasicValueExpr, containsAttributeExpression);
+                    operatorExpression = c.ToOlderThanExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.NextXHours:               
@@ -263,7 +260,7 @@ namespace FakeXrmEasy.Query
                 case ConditionOperator.NextXWeeks:                 
                 case ConditionOperator.NextXMonths:                    
                 case ConditionOperator.NextXYears:
-                    operatorExpression = TranslateConditionExpressionNext(c, getNonBasicValueExpr, containsAttributeExpression);
+                    operatorExpression = c.ToNextXExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
                 case ConditionOperator.ThisYear:
                 case ConditionOperator.LastYear:
@@ -275,15 +272,15 @@ namespace FakeXrmEasy.Query
                 case ConditionOperator.ThisWeek:
                 case ConditionOperator.NextWeek:
                 case ConditionOperator.InFiscalYear:
-                    operatorExpression = TranslateConditionExpressionBetweenDates(c, getNonBasicValueExpr, containsAttributeExpression, context);
+                    operatorExpression = c.ToBetweenDatesExpression(getNonBasicValueExpr, containsAttributeExpression, context);
                     break;
 #if FAKE_XRM_EASY_9
                 case ConditionOperator.ContainValues:
-                    operatorExpression = TranslateConditionExpressionContainValues(c, getNonBasicValueExpr, containsAttributeExpression);
+                    operatorExpression = c.ToContainsValuesExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.DoesNotContainValues:
-                    operatorExpression = Expression.Not(TranslateConditionExpressionContainValues(c, getNonBasicValueExpr, containsAttributeExpression));
+                    operatorExpression = Expression.Not(c.ToContainsValuesExpression(getNonBasicValueExpr, containsAttributeExpression));
                     break;
 #endif
 

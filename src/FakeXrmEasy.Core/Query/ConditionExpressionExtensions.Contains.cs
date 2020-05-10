@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using FakeXrmEasy.Models;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query

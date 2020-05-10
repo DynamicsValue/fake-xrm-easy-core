@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using Xunit;
+using FakeXrmEasy.Abstractions.Settings;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 {
@@ -1669,7 +1670,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var thisYear = today.Year;
 
             var ctx = new XrmFakedContext();
-            ctx.FiscalYearSettings = new FiscalYearSettings() { StartDate = new DateTime(thisYear, 1, 2), FiscalPeriodTemplate = FiscalYearSettings.Template.Annually };
+            ctx.SetProperty<FiscalYearSettings>(new FiscalYearSettings() { StartDate = new DateTime(thisYear, 1, 2), FiscalPeriodTemplate = FiscalYearSettings.Template.Annually });
             var fetchXml = $@"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />

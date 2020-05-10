@@ -73,7 +73,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
                         var relatedEntitiesQueryValue = (QueryExpression)relatedEntitiesQuery.Value;
                         QueryExpression retrieveRelatedEntitiesQuery = relatedEntitiesQueryValue.Clone();
 
-                        if (fakeRelationship.RelationshipType == XrmFakedRelationship.enmFakeRelationshipType.OneToMany)
+                        if (fakeRelationship.RelationshipType == XrmFakedRelationship.FakeRelationshipType.OneToMany)
                         {
                             var isFrom1to2 = relatedEntitiesQueryValue.EntityName == fakeRelationship.Entity1LogicalName
                                 || request.Target.LogicalName != fakeRelationship.Entity1LogicalName

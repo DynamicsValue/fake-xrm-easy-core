@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Extensions;
-using FakeXrmEasy.Models;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 

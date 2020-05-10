@@ -38,7 +38,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
         private static object GetRelationshipMetadata(XrmFakedRelationship fakeRelationShip)
         {
-            if (fakeRelationShip.RelationshipType == XrmFakedRelationship.enmFakeRelationshipType.ManyToMany)
+            if (fakeRelationShip.RelationshipType == XrmFakedRelationship.FakeRelationshipType.ManyToMany)
             {
                 var mtm = new Microsoft.Xrm.Sdk.Metadata.ManyToManyRelationshipMetadata();
                 mtm.Entity1LogicalName = fakeRelationShip.Entity1LogicalName;

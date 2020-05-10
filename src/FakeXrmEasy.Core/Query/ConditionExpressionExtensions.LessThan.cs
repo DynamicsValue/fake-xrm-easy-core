@@ -1,10 +1,7 @@
-using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.ServiceModel;
 using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Models;
-using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {

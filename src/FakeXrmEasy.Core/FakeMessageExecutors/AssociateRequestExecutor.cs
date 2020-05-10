@@ -39,7 +39,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
 
             foreach (var relatedEntityReference in associateRequest.RelatedEntities)
             {
-                if (fakeRelationShip.RelationshipType == XrmFakedRelationship.enmFakeRelationshipType.ManyToMany)
+                if (fakeRelationShip.RelationshipType == XrmFakedRelationship.FakeRelationshipType.ManyToMany)
                 {
                     var isFrom1to2 = associateRequest.Target.LogicalName == fakeRelationShip.Entity1LogicalName
                                          || relatedEntityReference.LogicalName != fakeRelationShip.Entity1LogicalName
