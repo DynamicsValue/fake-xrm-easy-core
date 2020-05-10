@@ -2383,9 +2383,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_EntityName_Attribute_Alias_Execution()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
-
             Entity e = new Entity("contact")
             {
                 Id = Guid.NewGuid(),
@@ -2398,7 +2395,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 ["contactid"] = e.ToEntityReference()
             };
 
-            context.Initialize(new Entity[] { e, e2 });
+            _context.Initialize(new Entity[] { e, e2 });
 
             var fetchXml = @"<fetch top='50' >
                               <entity name='account' >
@@ -2419,9 +2416,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_EntityName_Attribute_No_Alias_Execution()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
-
             Entity e = new Entity("contact")
             {
                 Id = Guid.NewGuid(),
@@ -2434,7 +2428,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 ["contactid"] = e.ToEntityReference()
             };
 
-            context.Initialize(new Entity[] { e, e2 });
+            _context.Initialize(new Entity[] { e, e2 });
 
             var fetchXml = @"<fetch top='50' >
                               <entity name='account' >
