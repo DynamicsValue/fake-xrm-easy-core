@@ -1,6 +1,7 @@
 
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Middleware.Crud;
+using FakeXrmEasy.Middleware.Messages;
 
 namespace FakeXrmEasy.Middleware
 {
@@ -9,10 +10,15 @@ namespace FakeXrmEasy.Middleware
         public static IXrmFakedContext New()
         {
             return MiddlewareBuilder
-                            .New()
-                            .AddCrud()   //Crud  setup 
-                            .UseCrud()   //Pipeline sequence
-                            .Build();
+                        .New()
+                        
+                        .AddCrud()   //Crud  setup 
+                        .AddMessages()
+
+                        .UseCrud()   //Pipeline sequence
+                        .UseMessages()
+
+                        .Build();
         }
     }
 }

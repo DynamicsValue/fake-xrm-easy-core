@@ -108,12 +108,6 @@ namespace FakeXrmEasy
             Data = new Dictionary<string, Dictionary<Guid, Entity>>();
             ExecutionMocks = new Dictionary<Type, ServiceRequestExecution>();
 
-            FakeMessageExecutors = Assembly.GetExecutingAssembly()
-                .GetTypes()
-                .Where(t => t.GetInterfaces().Contains(typeof(IFakeMessageExecutor)))
-                .Select(t => Activator.CreateInstance(t) as IFakeMessageExecutor)
-                .ToDictionary(t => t.GetResponsibleRequestType(), t => t);
-
             GenericFakeMessageExecutors = new Dictionary<string, IFakeMessageExecutor>();
 
             _relationships = new Dictionary<string, XrmFakedRelationship>();
@@ -369,9 +363,9 @@ namespace FakeXrmEasy
                 if (context.ExecutionMocks.ContainsKey(req.GetType()))
                     return context.ExecutionMocks[req.GetType()].Invoke(req);
 
-                if (context.FakeMessageExecutors.ContainsKey(req.GetType())
+                /*if (context.FakeMessageExecutors.ContainsKey(req.GetType())
                     && context.FakeMessageExecutors[req.GetType()].CanExecute(req))
-                    return context.FakeMessageExecutors[req.GetType()].Execute(req, context);
+                    return context.FakeMessageExecutors[req.GetType()].Execute(req, context);*/
 
                 if (req.GetType() == typeof(OrganizationRequest)
                     && context.GenericFakeMessageExecutors.ContainsKey(req.RequestName))

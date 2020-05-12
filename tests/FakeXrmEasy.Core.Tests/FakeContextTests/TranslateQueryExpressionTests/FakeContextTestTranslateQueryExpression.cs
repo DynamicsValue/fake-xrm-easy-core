@@ -829,7 +829,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void Should_Not_Fail_On_Conditions_In_Link_Entities_Multiple()
         {
-            (_ctx as XrmFakedContext).AddRelationship("new_invoicepaymentmethod_invoicedetail",
+            _ctx.AddRelationship("new_invoicepaymentmethod_invoicedetail",
                 new XrmFakedRelationship("new_invoicepaymentmethod_invoicedetail",
                             "invoicedetailid", "new_invoicepaymentmethodid",
                             "invoicedetail",

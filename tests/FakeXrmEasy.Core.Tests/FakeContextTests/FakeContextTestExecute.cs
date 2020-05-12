@@ -1,4 +1,6 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -9,6 +11,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests
 {
     public class FakeContextTestExecute
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        public FakeContextTestExecute()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_Executing_Assign_Request_New_Owner_Should_Be_Assigned()
         {
@@ -21,20 +31,17 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 OwnerId = oldOwner
             };
 
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
-            context.Initialize(new[] { account });
+            _context.Initialize(new[] { account });
 
             var assignRequest = new AssignRequest
             {
                 Target = account.ToEntityReference(),
                 Assignee = newOwner
             };
-            service.Execute(assignRequest);
+            _service.Execute(assignRequest);
 
             //retrieve account updated
-            var updatedAccount = context.CreateQuery<Account>().FirstOrDefault();
+            var updatedAccount = _context.CreateQuery<Account>().FirstOrDefault();
             Assert.Equal(newOwner.Id, updatedAccount.OwnerId.Id);
         }
     }
