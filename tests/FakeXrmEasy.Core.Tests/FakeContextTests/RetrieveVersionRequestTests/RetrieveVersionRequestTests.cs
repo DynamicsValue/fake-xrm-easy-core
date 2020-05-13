@@ -1,22 +1,27 @@
-﻿using FakeXrmEasy.FakeMessageExecutors;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.FakeMessageExecutors;
+using FakeXrmEasy.Middleware;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.Xrm.Sdk;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveVersionRequestTests
 {
     public class RetrieveVersionRequestTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        public RetrieveVersionRequestTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void AddsFakeVersionRequest()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
-            var fakeVersionExecutor = new RetrieveVersionRequestExecutor();
-            fakedContext.AddFakeMessageExecutor<RetrieveVersionRequest>(fakeVersionExecutor);
-
             var fakeVersionRequest = new RetrieveVersionRequest();
-            var result = (RetrieveVersionResponse)fakedService.Execute(fakeVersionRequest);
+            var result = (RetrieveVersionResponse)_service.Execute(fakeVersionRequest);
             var version = result.Version;
             var versionComponents = version.Split('.');
 

@@ -9,77 +9,62 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 using System.Collections.Generic;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveEntityRequestTests
 {
     public class RetrieveEntityRequestTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public RetrieveEntityRequestTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_calling_retrieve_entity_without_proxy_types_assembly_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-
-            var service = ctx.GetOrganizationService();
-            var executor = new RetrieveEntityRequestExecutor();
-            ctx.AddFakeMessageExecutor<RetrieveEntityRequest>(executor);
-
             var request = new RetrieveEntityRequest()
             {
                 LogicalName = Account.EntityLogicalName
             };
-            Assert.Throws<Exception>(() => service.Execute(request));
+            Assert.Throws<Exception>(() => _service.Execute(request));
         }
 
         [Fact]
         public void When_calling_retrieve_entity_with_a_null_or_empty_logicalname_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext()
-            {
-                ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account))
-            };
-
-            var service = ctx.GetOrganizationService();
-            var executor = new RetrieveEntityRequestExecutor();
-            ctx.AddFakeMessageExecutor<RetrieveEntityRequest>(executor);
-
             var request = new RetrieveEntityRequest()
             {
                 LogicalName = ""
             };
-            Assert.Throws<Exception>(() => service.Execute(request));
+            Assert.Throws<Exception>(() => _service.Execute(request));
         }
 
         [Fact]
         public void When_calling_retrieve_entity_without_a_fake_entity_metadata_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext()
-            {
-                ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account))
-            };
-
-            var service = ctx.GetOrganizationService();
-            var executor = new RetrieveEntityRequestExecutor();
-            ctx.AddFakeMessageExecutor<RetrieveEntityRequest>(executor);
-
             var request = new RetrieveEntityRequest()
             {
                 LogicalName = Account.EntityLogicalName
             };
-            Assert.Throws<Exception>(() => service.Execute(request));
+            Assert.Throws<Exception>(() => _service.Execute(request));
         }
 
         [Fact]
         public void When_calling_retrieve_entity_with_a_fake_entity_metadata_that_one_is_returned()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             var entityMetadata = new EntityMetadata()
             {
                 LogicalName = Account.EntityLogicalName,
                 IsCustomizable = new BooleanManagedProperty(true)
             };
-            ctx.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
             var request = new RetrieveEntityRequest()
             {
@@ -87,7 +72,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveEntityRequestTests
                 LogicalName = Account.EntityLogicalName
             };
 
-            var response = service.Execute(request);
+            var response = _service.Execute(request);
             Assert.IsType<RetrieveEntityResponse>(response);
             Assert.True((response as RetrieveEntityResponse).EntityMetadata.IsCustomizable.Value);
         }
@@ -95,9 +80,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveEntityRequestTests
         [Fact]
         public void When_calling_retrieve_entity_with_a_fake_attribute_definition_it_is_returned()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             var entityMetadata = new EntityMetadata()
             {
                 LogicalName = Account.EntityLogicalName,
@@ -110,7 +92,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveEntityRequestTests
             };
             stringMetadata.SetSealedPropertyValue("IsValidForCreate", new Nullable<bool>(true));
             entityMetadata.SetAttributeCollection(new List<AttributeMetadata>() { stringMetadata });
-            ctx.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
             var request = new RetrieveEntityRequest()
             {
@@ -118,7 +100,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveEntityRequestTests
                 LogicalName = Account.EntityLogicalName
             };
 
-            var response = service.Execute(request);
+            var response = _service.Execute(request);
             Assert.IsType<RetrieveEntityResponse>(response);
 
             var nameAttribute = (response as RetrieveEntityResponse).EntityMetadata.Attributes

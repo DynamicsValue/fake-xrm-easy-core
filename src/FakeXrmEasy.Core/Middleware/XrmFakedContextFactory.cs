@@ -12,10 +12,12 @@ namespace FakeXrmEasy.Middleware
             return MiddlewareBuilder
                         .New()
                         
-                        .AddCrud()   //Crud  setup 
-                        .AddMessages()
+                        // Add* -> Middleware configuration
+                        .AddCrud()   
+                        .AddFakeMessageExecutors()
 
-                        .UseCrud()   //Pipeline sequence
+                        // Use* -> Defines pipeline sequence
+                        .UseCrud() 
                         .UseMessages()
 
                         .Build();

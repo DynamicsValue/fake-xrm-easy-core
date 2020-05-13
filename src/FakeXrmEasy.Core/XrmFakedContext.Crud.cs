@@ -2,15 +2,14 @@
 using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Abstractions.Plugins.Enums;
 using Microsoft.Xrm.Sdk.Client;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 
 namespace FakeXrmEasy
 {
@@ -379,7 +378,12 @@ namespace FakeXrmEasy
                         entityReferenceCollection.Add(new EntityReference(relatedEntity.LogicalName, relatedId));
                     }
 
-                    if (FakeMessageExecutors.ContainsKey(typeof(AssociateRequest)))
+                    var messageExecutors = GetProperty<MessageExecutors>();
+                    if(messageExecutors == null) 
+                    {
+                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(AssociateRequest));
+                    }
+                    else 
                     {
                         var request = new AssociateRequest
                         {
@@ -387,11 +391,7 @@ namespace FakeXrmEasy
                             Relationship = relationship,
                             RelatedEntities = entityReferenceCollection
                         };
-                        FakeMessageExecutors[typeof(AssociateRequest)].Execute(request, this);
-                    }
-                    else
-                    {
-                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(AssociateRequest));
+                        _service.Execute(request);
                     }
                 }
             }

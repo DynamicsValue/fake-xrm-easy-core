@@ -4,14 +4,12 @@ using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Metadata;
 using FakeXrmEasy.Abstractions.Permissions;
 using FakeXrmEasy.Abstractions.Plugins;
-using FakeXrmEasy.FakeMessageExecutors;
 using FakeXrmEasy.Metadata;
 using FakeXrmEasy.Permissions;
 using FakeXrmEasy.Services;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,8 +73,6 @@ namespace FakeXrmEasy
         /// Probably should be replaced by FakeMessageExecutors, more generic, which can use custom interfaces rather than a single method / delegate
         /// </summary>
         private Dictionary<Type, ServiceRequestExecution> ExecutionMocks { get; set; }
-
-        private Dictionary<Type, IFakeMessageExecutor> FakeMessageExecutors { get; set; }
 
         private Dictionary<string, IFakeMessageExecutor> GenericFakeMessageExecutors { get; set; }
 
@@ -227,31 +223,6 @@ namespace FakeXrmEasy
             _proxyTypesAssemblies.Add(assembly);
         }
 
-        public void AddExecutionMock<T>(ServiceRequestExecution mock) where T : OrganizationRequest
-        {
-            if (!ExecutionMocks.ContainsKey(typeof(T)))
-                ExecutionMocks.Add(typeof(T), mock);
-            else
-                ExecutionMocks[typeof(T)] = mock;
-        }
-
-        public void RemoveExecutionMock<T>() where T : OrganizationRequest
-        {
-            ExecutionMocks.Remove(typeof(T));
-        }
-
-        public void AddFakeMessageExecutor<T>(IFakeMessageExecutor executor) where T : OrganizationRequest
-        {
-            if (!FakeMessageExecutors.ContainsKey(typeof(T)))
-                FakeMessageExecutors.Add(typeof(T), executor);
-            else
-                FakeMessageExecutors[typeof(T)] = executor;
-        }
-
-        public void RemoveFakeMessageExecutor<T>() where T : OrganizationRequest
-        {
-            FakeMessageExecutors.Remove(typeof(T));
-        }
 
         public void AddGenericFakeMessageExecutor(string message, IFakeMessageExecutor executor)
         {
@@ -342,8 +313,6 @@ namespace FakeXrmEasy
 
             //Fake / Intercept other requests
             FakeExecute(context, fakedService);
-            FakeAssociate(context, fakedService);
-            FakeDisassociate(context, fakedService);
             context._service = fakedService;
 
             return context._service;
@@ -363,10 +332,6 @@ namespace FakeXrmEasy
                 if (context.ExecutionMocks.ContainsKey(req.GetType()))
                     return context.ExecutionMocks[req.GetType()].Invoke(req);
 
-                /*if (context.FakeMessageExecutors.ContainsKey(req.GetType())
-                    && context.FakeMessageExecutors[req.GetType()].CanExecute(req))
-                    return context.FakeMessageExecutors[req.GetType()].Execute(req, context);*/
-
                 if (req.GetType() == typeof(OrganizationRequest)
                     && context.GenericFakeMessageExecutors.ContainsKey(req.RequestName))
                     return context.GenericFakeMessageExecutors[req.RequestName].Execute(req, context);
@@ -380,45 +345,9 @@ namespace FakeXrmEasy
                 .ReturnsLazily((OrganizationRequest req) => response);
         }
 
-        public static void FakeAssociate(XrmFakedContext context, IOrganizationService fakedService)
-        {
-            A.CallTo(() => fakedService.Associate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
-                .Invokes((string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection entityCollection) =>
-                {
-                    if (context.FakeMessageExecutors.ContainsKey(typeof(AssociateRequest)))
-                    {
-                        var request = new AssociateRequest()
-                        {
-                            Target = new EntityReference() { Id = entityId, LogicalName = entityName },
-                            Relationship = relationship,
-                            RelatedEntities = entityCollection
-                        };
-                        context.FakeMessageExecutors[typeof(AssociateRequest)].Execute(request, context);
-                    }
-                    else
-                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(AssociateRequest));
-                });
-        }
+        
 
-        public static void FakeDisassociate(XrmFakedContext context, IOrganizationService fakedService)
-        {
-            A.CallTo(() => fakedService.Disassociate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
-                .Invokes((string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection entityCollection) =>
-                {
-                    if (context.FakeMessageExecutors.ContainsKey(typeof(DisassociateRequest)))
-                    {
-                        var request = new DisassociateRequest()
-                        {
-                            Target = new EntityReference() { Id = entityId, LogicalName = entityName },
-                            Relationship = relationship,
-                            RelatedEntities = entityCollection
-                        };
-                        context.FakeMessageExecutors[typeof(DisassociateRequest)].Execute(request, context);
-                    }
-                    else
-                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(DisassociateRequest));
-                });
-        }
+        
 
         
 

@@ -1,5 +1,7 @@
 ﻿using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Middleware;
+using FakeXrmEasy.Middleware.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -10,27 +12,36 @@ namespace FakeXrmEasy.Tests.FakeContextTests
 {
     public class FakeContextMockTests
     {
+        private IXrmFakedContext _context;
+        private IOrganizationService _service;
+        public FakeContextMockTests()
+        {
+        }
+
         [Fact]
         public void Should_Execute_Mock_For_OrganizationRequests()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            _context = MiddlewareBuilder
+                        .New()
+                        .AddFakeMessageExecutors()
+                        .AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock)
+                        .UseMessages()
+                        .Build();
 
-            var e = new Entity("Contact") { Id = Guid.NewGuid() };
-            context.Initialize(new[] { e });
-            context.AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock);
+            _service = _context.GetOrganizationService();  
 
+             var e = new Entity("Contact") { Id = Guid.NewGuid() };          
+            _context.Initialize(new[] { e });
+            
             var request = new RetrieveEntityRequest
             {
                 LogicalName = "Contact",
                 EntityFilters = EntityFilters.All,
                 RetrieveAsIfPublished = false
             };
-            var response = (RetrieveEntityResponse)service.Execute(request);
+            var response = (RetrieveEntityResponse)_service.Execute(request);
 
             Assert.Equal("Successful", response.ResponseName);
-            var ex = Record.Exception(() => context.RemoveExecutionMock<RetrieveEntityRequest>());
-            Assert.Null(ex);
         }
 
         public OrganizationResponse RetrieveEntityMock(OrganizationRequest req)
@@ -46,13 +57,18 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void Should_Override_Execution_Mock()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            _context = MiddlewareBuilder
+                        .New()
+                        .AddFakeMessageExecutors()
+                        .AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock)
+                        .AddExecutionMock<RetrieveEntityRequest>(AnotherRetrieveEntityMock)
+                        .UseMessages()
+                        .Build();
+
+            _service = _context.GetOrganizationService();
 
             var e = new Entity("Contact") { Id = Guid.NewGuid() };
-            context.Initialize(new[] { e });
-            context.AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock);
-            context.AddExecutionMock<RetrieveEntityRequest>(AnotherRetrieveEntityMock);
+            _context.Initialize(new[] { e });
 
             var request = new RetrieveEntityRequest
             {
@@ -60,22 +76,25 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 EntityFilters = EntityFilters.All,
                 RetrieveAsIfPublished = false
             };
-            var response = (RetrieveEntityResponse)service.Execute(request);
+            var response = (RetrieveEntityResponse)_service.Execute(request);
 
             Assert.Equal("Another", response.ResponseName);
-            var ex = Record.Exception(() => context.RemoveExecutionMock<RetrieveEntityRequest>());
-            Assert.Null(ex);
         }
 
         [Fact]
         public void Should_Override_FakeMessageExecutor()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            _context = MiddlewareBuilder
+                        .New()
+                        .AddFakeMessageExecutors()
+                        .AddFakeMessageExecutor(new FakeRetrieveEntityRequestExecutor())
+                        .UseMessages()
+                        .Build();
+
+            _service = _context.GetOrganizationService();
 
             var e = new Entity("Contact") { Id = Guid.NewGuid() };
-            context.Initialize(new[] { e });
-            context.AddFakeMessageExecutor<RetrieveEntityRequest>(new FakeRetrieveEntityRequestExecutor());
+            _context.Initialize(new[] { e });
 
             var request = new RetrieveEntityRequest
             {
@@ -83,11 +102,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 EntityFilters = EntityFilters.All,
                 RetrieveAsIfPublished = false
             };
-            var response = (RetrieveEntityResponse)service.Execute(request);
+            var response = (RetrieveEntityResponse)_service.Execute(request);
 
             Assert.Equal("Successful", response.ResponseName);
-            var ex = Record.Exception(() => context.RemoveFakeMessageExecutor<RetrieveEntityRequest>());
-            Assert.Null(ex);
         }
 
         protected class FakeRetrieveEntityRequestExecutor : IFakeMessageExecutor
