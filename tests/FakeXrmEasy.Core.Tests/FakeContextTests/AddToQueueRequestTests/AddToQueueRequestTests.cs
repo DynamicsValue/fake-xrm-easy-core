@@ -1,5 +1,7 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.FakeMessageExecutors;
+using FakeXrmEasy.Middleware;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -11,6 +13,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
 {
     public class AddToQueueRequestTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public AddToQueueRequestTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
         {
@@ -22,8 +33,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
         [Fact]
         public void When_a_request_is_called_New_Queueitem_Is_Created()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var email = new Entity
             {
@@ -37,7 +48,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
                 Id = Guid.NewGuid(),
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 queue, email
             });
@@ -50,9 +61,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
                 Target = email.ToEntityReference(),
             };
 
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
 
-            var queueItem = context.Data[Crm.QueueItem.EntityLogicalName].Values.Single();
+            var queueItem = _context.CreateQuery(Crm.QueueItem.EntityLogicalName).Single();
 
             Assert.Equal(queue.ToEntityReference(), queueItem.GetAttributeValue<EntityReference>("queueid"));
             Assert.Equal(email.ToEntityReference(), queueItem.GetAttributeValue<EntityReference>("objectid"));
@@ -61,8 +72,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
         [Fact]
         public void When_Queue_Item_Properties_Are_Passed_They_Are_Set_On_Create()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
             var workedBy = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid());
 
             var email = new Entity
@@ -77,7 +88,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
                 Id = Guid.NewGuid(),
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 queue, email
             });
@@ -94,9 +105,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
                 }
             };
 
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
 
-            var queueItem = context.Data[Crm.QueueItem.EntityLogicalName].Values.Single();
+            var queueItem = _context.CreateQuery(Crm.QueueItem.EntityLogicalName).Single();
 
             Assert.Equal(queue.ToEntityReference(), queueItem.GetAttributeValue<EntityReference>("queueid"));
             Assert.Equal(email.ToEntityReference(), queueItem.GetAttributeValue<EntityReference>("objectid"));
@@ -106,8 +117,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
         [Fact]
         public void When_A_Queue_Item_Already_Exists_Use_Existing()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
             var workedBy = new EntityReference(SystemUser.EntityLogicalName, Guid.NewGuid());
 
             var email = new Entity
@@ -129,7 +140,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
                 ObjectId = email.ToEntityReference()
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 queue, email
             });
@@ -146,11 +157,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
                 }
             };
 
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
 
-            Assert.Equal(1, context.Data[Crm.QueueItem.EntityLogicalName].Values.Count);
+            Assert.Equal(1, _context.CreateQuery(Crm.QueueItem.EntityLogicalName).Count());
 
-            queueItem = context.Data[Crm.QueueItem.EntityLogicalName].Values.Single().ToEntity<QueueItem>();
+            queueItem = _context.CreateQuery(Crm.QueueItem.EntityLogicalName).Single().ToEntity<QueueItem>();
 
             Assert.Equal(queue.ToEntityReference(), queueItem.GetAttributeValue<EntityReference>("queueid"));
             Assert.Equal(email.ToEntityReference(), queueItem.GetAttributeValue<EntityReference>("objectid"));

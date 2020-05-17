@@ -11,17 +11,25 @@ using System.Linq;
 using Microsoft.Crm.Sdk.Messages;
 using Crm;
 using System.ServiceModel;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
 {
     public class Tests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public Tests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_a_member_is_added_to_a_non_existing_team_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             AddMembersTeamRequest addMembersTeamRequest = new AddMembersTeamRequest
             {
                 MemberIds = new[]
@@ -32,14 +40,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
             };
 
             // Execute the request.
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(addMembersTeamRequest));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(addMembersTeamRequest));
         }
 
         [Fact]
         public void When_a_request_is_called_with_an_empty_teamid_parameter_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             AddMembersTeamRequest addMembersTeamRequest = new AddMembersTeamRequest
             {
@@ -51,14 +59,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
             };
 
             // Execute the request.
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(addMembersTeamRequest));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(addMembersTeamRequest));
         }
 
         [Fact]
         public void When_a_request_is_called_with_a_null_memberid_parameter_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             AddMembersTeamRequest addMembersTeamRequest = new AddMembersTeamRequest
             {
@@ -67,14 +75,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
             };
 
             // Execute the request.
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(addMembersTeamRequest));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(addMembersTeamRequest));
         }
 
         [Fact]
         public void When_a_request_is_called_with_an_empty_memberid_parameter_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             AddMembersTeamRequest addMembersTeamRequest = new AddMembersTeamRequest
             {
@@ -86,14 +94,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
             };
 
             // Execute the request.
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(addMembersTeamRequest));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(addMembersTeamRequest));
         }
 
         [Fact]
         public void When_a_non_existing_member_is_added_to_an_existing_list_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var team = new Team
             {
@@ -101,7 +109,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
                 Name = "Some team"
             };
 
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 team
             });
@@ -115,14 +123,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
                 TeamId = team.ToEntityReference().Id
             };
 
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(addMembersTeamRequest));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(addMembersTeamRequest));
         }
 
         [Fact]
         public void When_a_member_is_added_to_an_existing_list_member_is_added_successfully()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var team = new Team
             {
@@ -135,7 +143,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
                 Id = Guid.NewGuid()
             };
 
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 team,
                 systemuser
@@ -150,9 +158,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
                 TeamId = team.ToEntityReference().Id
             };
 
-            service.Execute(addMembersTeamRequest);
+            _service.Execute(addMembersTeamRequest);
 
-            using (var context = new XrmServiceContext(service))
+            using (var context = new XrmServiceContext(_service))
             {
                 var member = context.CreateQuery<TeamMembership>().FirstOrDefault(tm => tm.TeamId == team.Id && tm.SystemUserId == systemuser.Id);
 

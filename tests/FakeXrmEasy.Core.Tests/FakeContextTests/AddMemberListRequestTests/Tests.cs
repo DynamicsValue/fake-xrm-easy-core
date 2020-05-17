@@ -1,4 +1,6 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -11,6 +13,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
 {
     public class Tests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
         public enum ListCreatedFromCode
         {
             Account = 1,
@@ -18,53 +22,59 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
             Lead = 4
         }
 
+        public Tests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_a_member_is_added_to_a_non_existing_list_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             AddMemberListRequest marketingList = new AddMemberListRequest(); // Set the properties of the request object.
             marketingList.EntityId = Guid.NewGuid();
             marketingList.ListId = Guid.NewGuid();
 
             // Execute the request.
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(marketingList));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(marketingList));
         }
 
         [Fact]
         public void When_a_request_is_called_with_an_empty_listid_parameter_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             AddMemberListRequest marketingList = new AddMemberListRequest(); // Set the properties of the request object.
             marketingList.EntityId = Guid.NewGuid();
             marketingList.ListId = Guid.Empty;
 
             // Execute the request.
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(marketingList));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(marketingList));
         }
 
         [Fact]
         public void When_a_request_is_called_with_an_empty_entityid_parameter_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             AddMemberListRequest marketingList = new AddMemberListRequest(); // Set the properties of the request object.
             marketingList.EntityId = Guid.Empty;
             marketingList.ListId = Guid.NewGuid();
 
             // Execute the request.
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(marketingList));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(marketingList));
         }
 
         [Fact]
         public void When_a_member_is_added_to_an_existing_list_without_membercode_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var list = new Crm.List()
             {
@@ -72,7 +82,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
                 ListName = "Some list"
             };
 
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list
             });
@@ -81,14 +91,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
             marketingList.EntityId = Guid.NewGuid();
             marketingList.ListId = list.ToEntityReference().Id;
 
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(marketingList));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(marketingList));
         }
 
         [Fact]
         public void When_a_non_existing_member_is_added_to_an_existing_list_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var list = new Crm.List()
             {
@@ -97,7 +107,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
                 CreatedFromCode = new OptionSetValue((int)ListCreatedFromCode.Account)
             };
 
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list
             });
@@ -106,14 +116,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
             request.EntityId = Guid.NewGuid();
             request.ListId = list.ToEntityReference().Id;
 
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Execute(request));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Execute(request));
         }
 
         [Fact]
         public void When_a_member_is_added_to_an_existing_list_member_is_added_successfully_account()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var list = new Crm.List()
             {
@@ -126,7 +136,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
             {
                 Id = Guid.NewGuid()
             };
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list, account
             });
@@ -135,9 +145,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
             request.EntityId = account.Id;
             request.ListId = list.ToEntityReference().Id;
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            using (var context = new XrmServiceContext(service))
+            using (var context = new XrmServiceContext(_service))
             {
                 var member = (from lm in context.CreateQuery<ListMember>()
                               join l in context.CreateQuery<Crm.List>() on lm.ListId.Id equals l.ListId.Value
@@ -154,8 +164,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
         [Fact]
         public void When_a_member_is_added_to_an_existing_list_member_is_added_successfully_contact()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var list = new Crm.List()
             {
@@ -168,7 +178,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
             {
                 Id = Guid.NewGuid()
             };
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list, contact
             });
@@ -177,9 +187,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
             request.EntityId = contact.Id;
             request.ListId = list.ToEntityReference().Id;
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            using (var context = new XrmServiceContext(service))
+            using (var context = new XrmServiceContext(_service))
             {
                 var member = (from lm in context.CreateQuery<ListMember>()
                               join l in context.CreateQuery<Crm.List>() on lm.ListId.Id equals l.ListId.Value
@@ -196,8 +206,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
         [Fact]
         public void When_a_member_is_added_to_an_existing_list_member_is_added_successfully_lead()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var list = new Crm.List()
             {
@@ -210,7 +220,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
             {
                 Id = Guid.NewGuid()
             };
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list, lead
             });
@@ -219,9 +229,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
             request.EntityId = lead.Id;
             request.ListId = list.ToEntityReference().Id;
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            using (var context = new XrmServiceContext(service))
+            using (var context = new XrmServiceContext(_service))
             {
                 var member = (from lm in context.CreateQuery<ListMember>()
                               join l in context.CreateQuery<Crm.List>() on lm.ListId.Id equals l.ListId.Value
