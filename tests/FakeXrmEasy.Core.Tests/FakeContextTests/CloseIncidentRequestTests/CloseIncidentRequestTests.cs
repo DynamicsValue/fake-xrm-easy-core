@@ -1,4 +1,6 @@
-﻿using FakeXrmEasy.FakeMessageExecutors;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.FakeMessageExecutors;
+using FakeXrmEasy.Middleware;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -13,18 +15,25 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseIncidentRequestTests
     {
         private const int StatusProblemSolved = 5;
 
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        
+        public CloseIncidentRequestTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_a_request_is_called_Incident_Is_Resolved()
         {
-            var context = new XrmFakedContext();
-
             var incident = new Entity
             {
                 LogicalName = Crm.Incident.EntityLogicalName,
                 Id = Guid.NewGuid()
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 incident
             });
@@ -44,9 +53,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseIncidentRequestTests
                 Status = new OptionSetValue(StatusProblemSolved)
             };
 
-            executor.Execute(closeIncidentRequest, context);
+            executor.Execute(closeIncidentRequest, _context);
 
-            var retrievedIncident = context.Data[Crm.Incident.EntityLogicalName].Values.Single();
+            var retrievedIncident = _context.CreateQuery(Crm.Incident.EntityLogicalName).Single();
 
             Assert.Equal(StatusProblemSolved, retrievedIncident.GetAttributeValue<OptionSetValue>("statuscode").Value);
             Assert.Equal((int)Crm.IncidentState.Resolved, retrievedIncident.GetAttributeValue<OptionSetValue>("statecode").Value);
@@ -55,8 +64,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseIncidentRequestTests
         [Fact]
         public void When_a_request_with_invalid_incidentid_is_called_exception_is_raised()
         {
-            var context = new XrmFakedContext();
-            context.Initialize(new Entity(Crm.Incident.EntityLogicalName) { Id = Guid.NewGuid() });
+            
+            _context.Initialize(new Entity(Crm.Incident.EntityLogicalName) { Id = Guid.NewGuid() });
             var executor = new CloseIncidentRequestExecutor();
 
             Entity incidentResolution = new Entity
@@ -72,13 +81,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseIncidentRequestTests
                 Status = new OptionSetValue(StatusProblemSolved)
             };
 
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(closeIncidentRequest, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(closeIncidentRequest, _context));
         }
 
         [Fact]
         public void When_a_request_without_incident_resolution_is_called_exception_is_raised()
         {
-            var context = new XrmFakedContext();
+            
 
             var incident = new Entity
             {
@@ -86,7 +95,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseIncidentRequestTests
                 Id = Guid.NewGuid()
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 incident
             });
@@ -99,13 +108,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseIncidentRequestTests
                 Status = new OptionSetValue(StatusProblemSolved)
             };
 
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(closeIncidentRequest, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(closeIncidentRequest, _context));
         }
 
         [Fact]
         public void When_a_request_without_status_is_called_exception_is_raised()
         {
-            var context = new XrmFakedContext();
+            
 
             var incident = new Entity
             {
@@ -113,7 +122,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseIncidentRequestTests
                 Id = Guid.NewGuid()
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 incident
             });
@@ -133,7 +142,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseIncidentRequestTests
                 Status = null
             };
 
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(closeIncidentRequest, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(closeIncidentRequest, _context));
         }
 
         [Fact]

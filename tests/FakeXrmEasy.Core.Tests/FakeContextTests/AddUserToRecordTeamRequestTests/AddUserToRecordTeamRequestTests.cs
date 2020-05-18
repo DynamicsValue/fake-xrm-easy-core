@@ -7,11 +7,22 @@ using System.Linq;
 using Crm;
 using Xunit;
 using FakeXrmEasy.Abstractions.Permissions;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AddUserToRecordTeamRequestTests
 {
     public class AddUserToRecordTeamRequestTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public AddUserToRecordTeamRequestTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
         {
@@ -23,7 +34,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddUserToRecordTeamRequestTests
         [Fact]
         public void When_a_request_is_called_User_Is_Added_To_Record_Team()
         {
-            var context = new XrmFakedContext();
 
             var teamTemplate = new TeamTemplate
             {
@@ -41,7 +51,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddUserToRecordTeamRequestTests
                 Id = Guid.NewGuid()
             };
 
-            context.Initialize(new Entity[]
+            _context.Initialize(new Entity[]
             {
                 teamTemplate, user, account
             });
@@ -55,19 +65,19 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddUserToRecordTeamRequestTests
                 TeamTemplateId = teamTemplate.Id
             };
 
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
 
-            var team = context.CreateQuery<Team>().FirstOrDefault(p => p.TeamTemplateId.Id == teamTemplate.Id);
+            var team = _context.CreateQuery<Team>().FirstOrDefault(p => p.TeamTemplateId.Id == teamTemplate.Id);
             Assert.NotNull(team);
 
-            var teamMembership = context.CreateQuery<TeamMembership>().FirstOrDefault(p => p.SystemUserId == user.Id && p.TeamId == team.Id);
+            var teamMembership = _context.CreateQuery<TeamMembership>().FirstOrDefault(p => p.SystemUserId == user.Id && p.TeamId == team.Id);
             Assert.NotNull(teamMembership);
 
-            var poa = context.CreateQuery("principalobjectaccess").FirstOrDefault(p => (Guid)p["objectid"] == account.Id && 
+            var poa = _context.CreateQuery("principalobjectaccess").FirstOrDefault(p => (Guid)p["objectid"] == account.Id && 
                                                                                        (Guid)p["principalid"] == team.Id);
             Assert.NotNull(poa);
 
-            var response = context.GetProperty<IAccessRightsRepository>().RetrievePrincipalAccess(account.ToEntityReference(),
+            var response = _context.GetProperty<IAccessRightsRepository>().RetrievePrincipalAccess(account.ToEntityReference(),
                 user.ToEntityReference());
             Assert.Equal((AccessRights)teamTemplate.DefaultAccessRightsMask, response.AccessRights);
 

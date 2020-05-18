@@ -1,5 +1,7 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.FakeMessageExecutors.CustomExecutors;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Linq;
@@ -9,12 +11,18 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CustomRequestTests.NavigateToNextEn
 {
     public class NavigateToNextEntityRequestTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public NavigateToNextEntityRequestTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void Test_if_Entity_moved_to_next_stage_in_workflow()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             // Entities
 
             // Process ( Workflow )
@@ -52,7 +60,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CustomRequestTests.NavigateToNextEn
             };
             nextStage.ProcessId = workflow.ToEntityReference();
 
-            context.Initialize(new Entity[] { workflow, contract, opp, currentStage, nextStage });
+            _context.Initialize(new Entity[] { workflow, contract, opp, currentStage, nextStage });
 
             // Build Request
 
@@ -71,10 +79,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CustomRequestTests.NavigateToNextEn
 
             // Execute
 
-            var response = service.Execute(request);
+            var response = _service.Execute(request);
             var traversedPath = response.Results[NavigateToNextEntityOrganizationRequestExecutor.ParameterTraversedPath];
 
-            var oppAfterSet = (from o in context.CreateQuery("opportunity")
+            var oppAfterSet = (from o in _context.CreateQuery("opportunity")
                                where o.Id == opp.Id
                                select o).First();
 

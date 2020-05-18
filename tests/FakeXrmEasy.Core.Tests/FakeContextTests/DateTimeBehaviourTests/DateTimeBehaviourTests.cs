@@ -1,7 +1,9 @@
 ﻿#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
 
 using Crm;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Metadata;
+using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -13,10 +15,19 @@ namespace FakeXrmEasy.Tests.FakeContextTests
 {
     public class DateTimeBehaviourTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public DateTimeBehaviourTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_RetrieveMultiple_with_DateTime_Field_Behaviour_set_to_DateOnly_result_is_Time_Part_is_Zero()
         {
-            var ctx = new XrmFakedContext
+            var _context = new XrmFakedContext
             {
                 DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
                 {
@@ -29,7 +40,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             };
 
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 new Contact
                 {
@@ -39,14 +50,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             });
 
-            var service = ctx.GetOrganizationService();
+            
 
             var query = new QueryExpression(Contact.EntityLogicalName)
             {
                 ColumnSet = new ColumnSet("createdon", "birthdate")
             };
 
-            var entity = service.RetrieveMultiple(query).Entities.Cast<Contact>().First();
+            var entity = _service.RetrieveMultiple(query).Entities.Cast<Contact>().First();
 
             Assert.Equal(new DateTime(2017, 1, 1, 1, 0, 0, DateTimeKind.Utc), entity.CreatedOn);
             Assert.Equal(new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc), entity.BirthDate);
@@ -55,9 +66,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_RetrieveMultiple_with_DateTime_Field_Behaviour_set_to_UserLocal_result_is_Time_Part_is_Kept()
         {
-            var ctx = new XrmFakedContext
-            {
-                DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
+            _context.DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
                 {
                     {
                         "contact", new Dictionary<string, DateTimeAttributeBehavior>
@@ -65,10 +74,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                             { "birthdate", DateTimeAttributeBehavior.UserLocal }
                         }
                     }
-                }
-            };
+                };
 
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 new Contact
                 {
@@ -78,14 +86,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             });
 
-            var service = ctx.GetOrganizationService();
-
             var query = new QueryExpression(Contact.EntityLogicalName)
             {
                 ColumnSet = new ColumnSet("createdon", "birthdate")
             };
 
-            var entity = service.RetrieveMultiple(query).Entities.Cast<Contact>().First();
+            var entity = _service.RetrieveMultiple(query).Entities.Cast<Contact>().First();
 
             Assert.Equal(new DateTime(2017, 1, 1, 1, 0, 0, DateTimeKind.Utc), entity.CreatedOn);
             Assert.Equal(new DateTime(2000, 1, 1, 23, 0, 0, DateTimeKind.Utc), entity.BirthDate);
@@ -94,7 +100,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_Retrieve_with_DateTime_Field_Behaviour_set_to_DateOnly_result_is_Time_Part_is_Zero()
         {
-            var ctx = new XrmFakedContext
+            var _context = new XrmFakedContext
             {
                 DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
                 {
@@ -109,7 +115,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
 
             var id = Guid.NewGuid();
 
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 new Contact
                 {
@@ -119,9 +125,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             });
 
-            var service = ctx.GetOrganizationService();
+            
 
-            var entity = service.Retrieve("contact", id, new ColumnSet("createdon", "birthdate")).ToEntity<Contact>();
+            var entity = _service.Retrieve("contact", id, new ColumnSet("createdon", "birthdate")).ToEntity<Contact>();
 
             Assert.Equal(new DateTime(2017, 1, 1, 1, 0, 0, DateTimeKind.Utc), entity.CreatedOn);
             Assert.Equal(new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc), entity.BirthDate);
@@ -130,7 +136,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_Retrieve_with_DateTime_Field_Behaviour_set_to_UserLocal_result_is_Time_Part_is_Kept()
         {
-            var ctx = new XrmFakedContext
+            var _context = new XrmFakedContext
             {
                 DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
                 {
@@ -145,7 +151,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
 
             var id = Guid.NewGuid();
 
-            ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 new Contact
                 {
@@ -155,9 +161,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             });
 
-            var service = ctx.GetOrganizationService();
+            
 
-            var entity = service.Retrieve("contact", id, new ColumnSet("createdon", "birthdate")).ToEntity<Contact>();
+            var entity = _service.Retrieve("contact", id, new ColumnSet("createdon", "birthdate")).ToEntity<Contact>();
 
             Assert.Equal(new DateTime(2017, 1, 1, 1, 0, 0, DateTimeKind.Utc), entity.CreatedOn);
             Assert.Equal(new DateTime(2000, 1, 1, 23, 0, 0, DateTimeKind.Utc), entity.BirthDate);

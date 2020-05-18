@@ -1,4 +1,6 @@
-﻿using FakeXrmEasy.FakeMessageExecutors;
+﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.FakeMessageExecutors;
+using FakeXrmEasy.Middleware;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -10,6 +12,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseQuoteRequestTests
 {
     public class CloseQuoteRequestTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public CloseQuoteRequestTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
         {
@@ -21,8 +32,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseQuoteRequestTests
         [Fact]
         public void Should_Change_Status_When_Closing()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
 
             var quote = new Entity
             {
@@ -34,7 +43,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseQuoteRequestTests
                 }
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 quote
             });
@@ -53,9 +62,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.CloseQuoteRequestTests
                 Status = new OptionSetValue(1)
             };
 
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
 
-            quote = service.Retrieve("quote", quote.Id, new ColumnSet(true));
+            quote = _service.Retrieve("quote", quote.Id, new ColumnSet(true));
 
             Assert.Equal(new OptionSetValue(1), quote.GetAttributeValue<OptionSetValue>("statuscode"));
         }

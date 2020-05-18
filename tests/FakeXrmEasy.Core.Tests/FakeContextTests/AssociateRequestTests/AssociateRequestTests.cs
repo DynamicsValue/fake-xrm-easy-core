@@ -7,11 +7,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
 {
     public class AssociateRequestTests
     {
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+
+        public AssociateRequestTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
         {
@@ -23,31 +33,31 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
         [Fact]
         public void When_execute_is_called_with_a_null_request_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new AssociateRequestExecutor();
             AssociateRequest req = null;
-            Assert.Throws<Exception>(() => executor.Execute(req, context));
+            Assert.Throws<Exception>(() => executor.Execute(req, _context));
         }
 
         [Fact]
         public void When_execute_is_called_with_a_null_target_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new AssociateRequestExecutor();
             var req = new AssociateRequest() { Target = null, Relationship = new Relationship("fakeRelationship") };
-            context.AddRelationship("fakeRelationship", new XrmFakedRelationship());
-            Assert.Throws<Exception>(() => executor.Execute(req, context));
+            _context.AddRelationship("fakeRelationship", new XrmFakedRelationship());
+            Assert.Throws<Exception>(() => executor.Execute(req, _context));
         }
 
         [Fact]
         public void When_execute_is_called_with_reversed_target_and_Related()
         {
-            var context = new XrmFakedContext();
+            
 
             var userId = Guid.NewGuid();
             var teamId = Guid.NewGuid();
             var user2Id = Guid.NewGuid();
-            context.Initialize(new List<Entity> {
+            _context.Initialize(new List<Entity> {
                 new SystemUser
                 {
                     Id = userId
@@ -62,7 +72,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
                 }
             });
 
-            context.AddRelationship("teammembership", new XrmFakedRelationship()
+            _context.AddRelationship("teammembership", new XrmFakedRelationship()
             {
                 RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany,
                 IntersectEntity = "teammembership",
@@ -72,7 +82,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
                 Entity2LogicalName = "team"
             });
 
-            var orgSvc = context.GetOrganizationService();
+            var orgSvc = _context.GetOrganizationService();
             orgSvc.Associate("team", teamId, new Relationship("teammembership"),
                 new EntityReferenceCollection(new List<EntityReference> { new EntityReference("systemuser", userId) }));
 
@@ -98,10 +108,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
         [Fact]
         public void When_execute_is_called_with_a_non_existing_target_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new AssociateRequestExecutor();
 
-            context.AddRelationship("fakeRelationship",
+            _context.AddRelationship("fakeRelationship",
                 new XrmFakedRelationship()
                 {
                     IntersectEntity = "account_contact_intersect",
@@ -113,7 +123,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
 
             var contact = new Entity("contact") { Id = Guid.NewGuid() };
             var account = new Entity("account") { Id = Guid.NewGuid() };
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 account
             });
@@ -126,16 +136,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
                 },
                 Relationship = new Relationship("fakeRelationship")
             };
-            Assert.Throws<Exception>(() => executor.Execute(req, context));
+            Assert.Throws<Exception>(() => executor.Execute(req, _context));
         }
 
         [Fact]
         public void When_execute_is_called_with_a_non_existing_reference_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new AssociateRequestExecutor();
 
-            context.AddRelationship("fakeRelationship",
+            _context.AddRelationship("fakeRelationship",
                 new XrmFakedRelationship()
                 {
                     IntersectEntity = "account_contact_intersect",
@@ -147,7 +157,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
 
             var contact = new Entity("contact") { Id = Guid.NewGuid() };
             var account = new Entity("account") { Id = Guid.NewGuid() };
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 contact
             });
@@ -160,7 +170,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
                 },
                 Relationship = new Relationship("fakeRelationship")
             };
-            Assert.Throws<Exception>(() => executor.Execute(req, context));
+            Assert.Throws<Exception>(() => executor.Execute(req, _context));
         }
     }
 }

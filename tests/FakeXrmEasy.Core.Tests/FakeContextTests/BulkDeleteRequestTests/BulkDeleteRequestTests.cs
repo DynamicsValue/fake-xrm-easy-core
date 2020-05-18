@@ -9,11 +9,23 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System.Linq;
 using Xunit;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.BulkDeleteRequestTests
 {
     public class BulkDeleteRequestTests
     {
+
+        private readonly IXrmFakedContext _context;
+        private readonly IOrganizationService _service;
+        
+        public BulkDeleteRequestTests()
+        {
+            _context = XrmFakedContextFactory.New();
+            _service = _context.GetOrganizationService();
+        }
+
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
         {
@@ -25,32 +37,31 @@ namespace FakeXrmEasy.Tests.FakeContextTests.BulkDeleteRequestTests
         [Fact]
         public void When_execute_is_called_with_a_null_jobname_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
             var executor = new BulkDeleteRequestExecutor();
             BulkDeleteRequest req = new BulkDeleteRequest
             {
                 JobName = null
             };
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, _context));
         }
 
         [Fact]
         public void When_execute_is_called_with_a_null_queryset_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new BulkDeleteRequestExecutor();
             BulkDeleteRequest req = new BulkDeleteRequest
             {
                 JobName = "Dummy Job",
                 QuerySet = null
             };
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, _context));
         }
 
         [Fact]
         public void When_execute_is_called_with_a_null_ccrecipients_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new BulkDeleteRequestExecutor();
             BulkDeleteRequest req = new BulkDeleteRequest
             {
@@ -61,13 +72,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.BulkDeleteRequestTests
                 },
                 CCRecipients = null
             };
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, _context));
         }
 
         [Fact]
         public void When_execute_is_called_with_a_null_torecipients_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new BulkDeleteRequestExecutor();
             BulkDeleteRequest req = new BulkDeleteRequest
             {
@@ -83,15 +94,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.BulkDeleteRequestTests
                 },
                 ToRecipients = null
             };
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, _context));
         }
 
         [Fact]
         public void Check_if_contacts_have_been_deleted_after_sending_request()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetOrganizationService();
+            
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            var service = _context.GetOrganizationService();
 
             // initialize data
             var parentAccountId = Guid.NewGuid();
@@ -121,7 +132,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.BulkDeleteRequestTests
                 ParentCustomerId = new EntityReference(Account.EntityLogicalName, Guid.NewGuid())
             };
 
-            context.Initialize(new[] { contactA, contactB, contactC });
+            _context.Initialize(new[] { contactA, contactB, contactC });
 
             var query = new QueryExpression
             {
@@ -153,13 +164,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.BulkDeleteRequestTests
             var response = (BulkDeleteResponse)service.Execute(request);
 
             // validate
-            var deletedContacts = (from c in context.CreateQuery<Contact>()
+            var deletedContacts = (from c in _context.CreateQuery<Contact>()
                                    where Equals(c.ParentCustomerId, new EntityReference(Account.EntityLogicalName, parentAccountId))
                                    select c);
-            var allContacts = (from c in context.CreateQuery<Contact>()
+            var allContacts = (from c in _context.CreateQuery<Contact>()
                                select c);
 
-            var asyncOperation = (from a in context.CreateQuery<AsyncOperation>()
+            var asyncOperation = (from a in _context.CreateQuery<AsyncOperation>()
                                   where a.AsyncOperationId == response.JobId
                                   select a);
 
