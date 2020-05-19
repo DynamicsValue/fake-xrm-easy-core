@@ -11,7 +11,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
 {
-    public class PickFromQueueRequestTests
+    public class PickFromQueueRequestTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
@@ -24,9 +24,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
         [Fact]
         public void When_a_request_is_called_worker_is_set()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var email = new Entity
             {
                 LogicalName = Crm.Email.EntityLogicalName,
@@ -56,7 +53,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
                 }
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 queue, email, user, queueItem
             });
@@ -70,10 +67,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
             };
 
             var before = DateTime.Now.Ticks;
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
             var after = DateTime.Now.Ticks;
 
-            var queueItemUpdated = service.Retrieve(Crm.QueueItem.EntityLogicalName, queueItem.Id, new ColumnSet(true));
+            var queueItemUpdated = _service.Retrieve(Crm.QueueItem.EntityLogicalName, queueItem.Id, new ColumnSet(true));
 
             Assert.Equal(user.ToEntityReference(), queueItemUpdated.GetAttributeValue<EntityReference>("workerid"));
             Assert.True(before <= queueItemUpdated.GetAttributeValue<DateTime>("workeridmodifiedon").Ticks);
@@ -83,8 +80,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
         [Fact]
         public void When_a_request_is_called_with_removal_queueitem_is_deleted()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var email = new Entity
             {
@@ -115,7 +112,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
                 }
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 queue, email, user, queueItem
             });
@@ -129,16 +126,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
                 RemoveQueueItem = true
             };
 
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
 
-            Assert.Empty(context.Data[Crm.QueueItem.EntityLogicalName]);
+            Assert.Empty(_context.CreateQuery(Crm.QueueItem.EntityLogicalName));
         }
 
         [Fact]
         public void When_a_request_is_for_non_existing_woker_an_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var queue = new Entity
             {
@@ -157,7 +154,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
                 }
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 queue, queueItem
             });
@@ -170,14 +167,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
                 WorkerId = Guid.NewGuid(),
             };
 
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, _context));
         }
 
         [Fact]
         public void When_a_request_is_for_non_existing_queueitem_an_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var user = new Entity
             {
@@ -185,7 +182,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
                 Id = Guid.NewGuid(),
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 user
             });
@@ -198,7 +195,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PickFromQueueRequestTests
                 WorkerId = user.Id,
             };
 
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, _context));
         }
     }
 }

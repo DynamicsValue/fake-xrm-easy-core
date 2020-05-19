@@ -8,7 +8,7 @@ using Microsoft.Crm.Sdk.Messages;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
 {
-    public class ModifyAccessRequestTests
+    public class ModifyAccessRequestTests: FakeXrmEasyTests
     {
         /// <summary>
         /// Test that if permissions already exist that they can be modified
@@ -16,8 +16,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
         [Fact]
         public void Test_That_Existing_Permissions_Can_Be_Modified()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
             List<Entity> initialEntities = new List<Entity>();
 
             Entity contact = new Entity("contact");
@@ -28,7 +26,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
             user.Id = Guid.NewGuid();
             initialEntities.Add(user);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             GrantAccessRequest grantRequest = new GrantAccessRequest()
             {
@@ -36,14 +34,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
                 PrincipalAccess = new PrincipalAccess() { Principal = user.ToEntityReference(), AccessMask = AccessRights.ReadAccess }
             };
 
-            service.Execute(grantRequest);
+            _service.Execute(grantRequest);
 
             RetrieveSharedPrincipalsAndAccessRequest getPermissions = new RetrieveSharedPrincipalsAndAccessRequest()
             {
                 Target = contact.ToEntityReference(),
             };
 
-            var permissionsResponse = (RetrieveSharedPrincipalsAndAccessResponse)service.Execute(getPermissions);
+            var permissionsResponse = (RetrieveSharedPrincipalsAndAccessResponse)_service.Execute(getPermissions);
 
             // Make sure things are correct before I start changing things
             Assert.Equal(user.Id, permissionsResponse.PrincipalAccesses[0].Principal.Id);
@@ -55,9 +53,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
                 PrincipalAccess = new PrincipalAccess() { Principal = user.ToEntityReference(), AccessMask = AccessRights.ReadAccess | AccessRights.DeleteAccess }
             };
 
-            service.Execute(modifyRequest);
+            _service.Execute(modifyRequest);
 
-            permissionsResponse = (RetrieveSharedPrincipalsAndAccessResponse)service.Execute(getPermissions);
+            permissionsResponse = (RetrieveSharedPrincipalsAndAccessResponse)_service.Execute(getPermissions);
 
             // Check permissions
             Assert.Equal(user.Id, permissionsResponse.PrincipalAccesses[0].Principal.Id);
@@ -70,8 +68,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
         [Fact]
         public void Test_If_Permissions_Missing_Permissions_Are_Added()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            
+            
             List<Entity> initialEntities = new List<Entity>();
 
             Entity contact = new Entity("contact");
@@ -82,7 +80,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
             user.Id = Guid.NewGuid();
             initialEntities.Add(user);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             ModifyAccessRequest modifyRequest = new ModifyAccessRequest()
             {
@@ -90,7 +88,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
                 PrincipalAccess = new PrincipalAccess() { Principal = user.ToEntityReference(), AccessMask = AccessRights.ReadAccess | AccessRights.DeleteAccess }
             };
 
-            service.Execute(modifyRequest);
+            _service.Execute(modifyRequest);
 
 
             RetrieveSharedPrincipalsAndAccessRequest getPermissions = new RetrieveSharedPrincipalsAndAccessRequest()
@@ -98,7 +96,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
                 Target = contact.ToEntityReference(),
             };
 
-            var permissionsResponse = (RetrieveSharedPrincipalsAndAccessResponse)service.Execute(getPermissions);
+            var permissionsResponse = (RetrieveSharedPrincipalsAndAccessResponse)_service.Execute(getPermissions);
 
             // Check permissions
             Assert.Equal(user.Id, permissionsResponse.PrincipalAccesses[0].Principal.Id);

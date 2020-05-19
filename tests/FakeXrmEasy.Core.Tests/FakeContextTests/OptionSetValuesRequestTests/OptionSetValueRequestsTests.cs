@@ -8,49 +8,40 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.OptionSetValuesRequestTests
 {
-    public class OptionSetValueRequestsTests
+    public class OptionSetValueRequestsTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_calling_insert_option_set_value_without_label_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             var req = new InsertOptionValueRequest()
             {
                 Label = new Label("", 0)
             };
 
-            Assert.Throws<Exception>(() => service.Execute(req));
+            Assert.Throws<Exception>(() => _service.Execute(req));
         }
 
         [Fact]
         public void When_calling_insert_option_set_value_without_optionsetname_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             var req = new InsertOptionValueRequest()
             {
                 Label = new Label("Yeah! This is a fake label!", 0)
             };
 
-            Assert.Throws<Exception>(() => service.Execute(req));
+            Assert.Throws<Exception>(() => _service.Execute(req));
         }
 
         [Fact]
         public void When_calling_insert_option_set_value_without_entityname_or_attributename_exception_is_thrown()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             var req = new InsertOptionValueRequest()
             {
                 EntityLogicalName = "Not empty",
                 Label = new Label("Yeah! This is a fake label!", 0)
             };
 
-            Assert.Throws<Exception>(() => service.Execute(req));
+            Assert.Throws<Exception>(() => _service.Execute(req));
 
             req = new InsertOptionValueRequest()
             {
@@ -58,25 +49,22 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OptionSetValuesRequestTests
                 Label = new Label("Yeah! This is a fake label!", 0)
             };
 
-            Assert.Throws<Exception>(() => service.Execute(req));
+            Assert.Throws<Exception>(() => _service.Execute(req));
         }
 
         [Fact]
         public void When_calling_insert_option_set_value_for_global_optionset_optionmetadata_contains_it()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             var req = new InsertOptionValueRequest()
             {
                 OptionSetName = "GlobalOptionSet",
                 Label = new Label("Yeah! This is a fake label!", 0)
             };
 
-            service.Execute(req);
+            _service.Execute(req);
 
             //Check the optionsetmetadata was updated
-            var optionSetMetadata = ctx.GetProperty<IOptionSetMetadataRepository>().GetByName("GlobalOptionSet");
+            var optionSetMetadata = _context.GetProperty<IOptionSetMetadataRepository>().GetByName("GlobalOptionSet");
             Assert.NotNull(optionSetMetadata);
 
             var option = optionSetMetadata.Options.FirstOrDefault();
@@ -87,9 +75,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OptionSetValuesRequestTests
         [Fact]
         public void When_calling_insert_option_set_value_for_local_optionset_optionmetadata_contains_it()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             var req = new InsertOptionValueRequest()
             {
                 EntityLogicalName = Account.EntityLogicalName,
@@ -97,11 +82,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OptionSetValuesRequestTests
                 Label = new Label("Yeah! This is a fake label!", 0)
             };
 
-            service.Execute(req);
+            _service.Execute(req);
 
             //Check the optionsetmetadata was updated
             var key = string.Format("{0}#{1}", req.EntityLogicalName, req.AttributeLogicalName);
-            var optionSetMetadata = ctx.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
+            var optionSetMetadata = _context.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
 
             Assert.NotNull(optionSetMetadata);
 

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 {
-    public class OrderByTests
+    public class OrderByTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_ordering_by_money_fields_expected_result_is_returned()
@@ -30,14 +30,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_somefield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = results.Entities[0]["new_somefield"] as Money;
 
@@ -64,14 +64,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_somefield", OrderType.Descending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = results.Entities[0]["new_somefield"] as Money;
 
@@ -90,7 +90,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contact1.Attributes["new_somefield"] = new EntityReference()
             {
                 Id = Guid.NewGuid(),
-                Name = "Jordi"
+                Name = "Jordi",
+                LogicalName = "contact"
             };
 
             Entity contact2 = new Entity("contact");
@@ -100,20 +101,21 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contact2.Attributes["new_somefield"] = new EntityReference()
             {
                 Id = Guid.NewGuid(),
-                Name = "Skuba"
+                Name = "Skuba",
+                LogicalName = "contact"
             };
 
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_somefield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = results.Entities[0]["new_somefield"] as EntityReference;
 
@@ -132,7 +134,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contact1.Attributes["new_somefield"] = new EntityReference()
             {
                 Id = Guid.NewGuid(),
-                Name = "Jordi"
+                Name = "Jordi",
+                LogicalName = "contact"
             };
 
             Entity contact2 = new Entity("contact");
@@ -142,20 +145,21 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contact2.Attributes["new_somefield"] = new EntityReference()
             {
                 Id = Guid.NewGuid(),
-                Name = "Skuba"
+                Name = "Skuba",
+                LogicalName = "contact"
             };
 
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_somefield", OrderType.Descending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = results.Entities[0]["new_somefield"] as EntityReference;
 
@@ -180,14 +184,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_optionsetfield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = results.Entities[0]["new_optionsetfield"] as OptionSetValue;
 
@@ -212,14 +216,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_orderbyfield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = (int)results.Entities[0]["new_orderbyfield"];
 
@@ -245,14 +249,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_orderbyfield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = (DateTime)results.Entities[0]["new_orderbyfield"];
 
@@ -282,14 +286,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_orderbyfield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = (Guid)results.Entities[0]["new_orderbyfield"];
 
@@ -314,14 +318,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_orderbyfield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = (decimal)results.Entities[0]["new_orderbyfield"];
 
@@ -346,14 +350,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_orderbyfield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = (double)results.Entities[0]["new_orderbyfield"];
 
@@ -378,14 +382,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_orderbyfield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = (float)results.Entities[0]["new_orderbyfield"];
 
@@ -410,14 +414,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             contactList.Add(contact2);
             contactList.Add(contact1);
 
-            var context = new XrmFakedContext();
-            context.Initialize(contactList);
-            var service = context.GetOrganizationService();
+            
+            _context.Initialize(contactList);
+            
 
             QueryExpression qry = new QueryExpression("contact");
             qry.ColumnSet = new ColumnSet(true);
             qry.AddOrder("new_orderbyfield", OrderType.Ascending);
-            var results = service.RetrieveMultiple(qry);
+            var results = _service.RetrieveMultiple(qry);
 
             var firstResultValue = (bool)results.Entities[0]["new_orderbyfield"];
 
@@ -427,8 +431,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_ordering_by_2_columns_simultaneously_right_result_is_returned_asc_desc()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var account11 = new Account() { Id = Guid.NewGuid(), Name = "11", ImportSequenceNumber = 1, NumberOfEmployees = 1 };
             var account12 = new Account() { Id = Guid.NewGuid(), Name = "12", ImportSequenceNumber = 1, NumberOfEmployees = 2 };
@@ -441,7 +445,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
                 account12, account22, account21, account32, account11, account31
             };
 
-            ctx.Initialize(initialAccs);
+            _context.Initialize(initialAccs);
 
             QueryExpression query = new QueryExpression()
             {
@@ -454,7 +458,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
                 }
             };
 
-            EntityCollection ec = service.RetrieveMultiple(query);
+            EntityCollection ec = _service.RetrieveMultiple(query);
             var names = ec.Entities.Select(e => e.ToEntity<Account>().Name).ToList();
 
             Assert.True(names[0].Equals("12"), "Test 12 failed");
@@ -468,8 +472,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_ordering_by_2_columns_simultaneously_right_result_is_returned_asc_asc()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var account11 = new Account() { Id = Guid.NewGuid(), Name = "11", ImportSequenceNumber = 1, NumberOfEmployees = 1 };
             var account12 = new Account() { Id = Guid.NewGuid(), Name = "12", ImportSequenceNumber = 1, NumberOfEmployees = 2 };
@@ -482,7 +486,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
                 account12, account22, account21, account32, account11, account31
             };
 
-            ctx.Initialize(initialAccs);
+            _context.Initialize(initialAccs);
 
             QueryExpression query = new QueryExpression()
             {
@@ -495,7 +499,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
                 }
             };
 
-            EntityCollection ec = service.RetrieveMultiple(query);
+            EntityCollection ec = _service.RetrieveMultiple(query);
             var names = ec.Entities.Select(e => e.ToEntity<Account>().Name).ToList();
 
             Assert.True(names[0].Equals("11"));
@@ -509,8 +513,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_ordering_by_2_columns_simultaneously_right_result_is_returned_desc_desc()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var account11 = new Account() { Id = Guid.NewGuid(), Name = "11", ImportSequenceNumber = 1, NumberOfEmployees = 1 };
             var account12 = new Account() { Id = Guid.NewGuid(), Name = "12", ImportSequenceNumber = 1, NumberOfEmployees = 2 };
@@ -523,7 +527,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
                 account12, account22, account21, account32, account11, account31
             };
 
-            ctx.Initialize(initialAccs);
+            _context.Initialize(initialAccs);
 
             QueryExpression query = new QueryExpression()
             {
@@ -536,7 +540,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
                 }
             };
 
-            EntityCollection ec = service.RetrieveMultiple(query);
+            EntityCollection ec = _service.RetrieveMultiple(query);
             var names = ec.Entities.Select(e => e.ToEntity<Account>().Name).ToList();
 
             Assert.True(names[0].Equals("32"));
@@ -550,8 +554,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_ordering_by_2_columns_simultaneously_right_result_is_returned_desc_asc()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var account11 = new Account() { Id = Guid.NewGuid(), Name = "11", ImportSequenceNumber = 1, NumberOfEmployees = 1 };
             var account12 = new Account() { Id = Guid.NewGuid(), Name = "12", ImportSequenceNumber = 1, NumberOfEmployees = 2 };
@@ -564,7 +568,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
                 account12, account22, account21, account32, account11, account31
             };
 
-            ctx.Initialize(initialAccs);
+            _context.Initialize(initialAccs);
 
             QueryExpression query = new QueryExpression()
             {
@@ -577,7 +581,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
                 }
             };
 
-            EntityCollection ec = service.RetrieveMultiple(query);
+            EntityCollection ec = _service.RetrieveMultiple(query);
             var names = ec.Entities.Select(e => e.ToEntity<Account>().Name).ToList();
 
             Assert.True(names[0].Equals("31"));
@@ -591,8 +595,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_ordering_column_is_not_in_column_set_ordering_is_still_correct()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
+            
+            IOrganizationService _service = _context.GetOrganizationService();
             List<Entity> initialEntities = new List<Entity>();
 
             Entity secondEntity = new Entity("entity");
@@ -607,13 +611,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             firstEntity["text"] = "first";
             initialEntities.Add(firstEntity);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             QueryExpression query = new QueryExpression("entity");
             query.ColumnSet = new ColumnSet("text");
             query.AddOrder("int", OrderType.Ascending);
 
-            EntityCollection result = service.RetrieveMultiple(query);
+            EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(firstEntity.Id, result.Entities[0].Id);
             Assert.Equal(secondEntity.Id, result.Entities[1].Id);
         }
@@ -621,8 +625,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_ordering_an_entity_reference_column_with_null_names_order_is_correct()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
             List<Entity> initialEntities = new List<Entity>();
 
             var erNull = new EntityReference("account", Guid.NewGuid());
@@ -657,13 +661,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             anotherNullEntity["lookup"] = erAnotherNull;
             initialEntities.Add(anotherNullEntity);
 
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             QueryExpression query = new QueryExpression("entity");
             query.ColumnSet = new ColumnSet("text");
             query.AddOrder("lookup", OrderType.Ascending);
 
-            EntityCollection result = service.RetrieveMultiple(query);
+            EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(nullEntity.Id, result.Entities[0].Id);
             Assert.Equal(anotherNullEntity.Id, result.Entities[1].Id);
             Assert.Equal(firstEntity.Id, result.Entities[2].Id);

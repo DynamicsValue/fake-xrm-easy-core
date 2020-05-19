@@ -8,20 +8,16 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.SetStateRequestTests
 {
-    public class SetStateRequestTests
+    public class SetStateRequestTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_set_state_request_is_called_an_entity_is_updated()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetOrganizationService();
-
             var c = new Contact()
             {
                 Id = Guid.NewGuid()
             };
-            context.Initialize(new[] { c });
+            _context.Initialize(new[] { c });
 
             var request = new SetStateRequest
             {
@@ -30,10 +26,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.SetStateRequestTests
                 Status = new OptionSetValue(6969),
             };
 
-            var response = service.Execute(request);
+            var response = _service.Execute(request);
 
             //Retrieve record after update
-            var contact = (from con in context.CreateQuery<Contact>()
+            var contact = (from con in _context.CreateQuery<Contact>()
                            where con.Id == c.Id
                            select con).FirstOrDefault();
 
@@ -44,18 +40,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.SetStateRequestTests
         [Fact]
         public void Should_set_a_statecode_by_default_when_an_entity_record_is_added_to_the_context()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetOrganizationService();
-
             var c = new Contact()
             {
                 Id = Guid.NewGuid()
             };
-            context.Initialize(new[] { c });
+            _context.Initialize(new[] { c });
 
             //Retrieve record after update
-            var contact = (from con in context.CreateQuery<Contact>()
+            var contact = (from con in _context.CreateQuery<Contact>()
                            where con.Id == c.Id
                            select con).FirstOrDefault();
 
@@ -65,10 +57,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.SetStateRequestTests
         [Fact]
         public void Should_not_override_a_statecode_already_initialized()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetOrganizationService();
-
             var c = new Contact()
             {
                 Id = Guid.NewGuid(),
@@ -76,10 +64,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.SetStateRequestTests
 
             c["statecode"] = new OptionSetValue(69); //As the StateCode is read only in the early bound entity, this is the only way of updating it
 
-            context.Initialize(new[] { c });
+            _context.Initialize(new[] { c });
 
             //Retrieve record after update
-            var contact = (from con in context.CreateQuery<Contact>()
+            var contact = (from con in _context.CreateQuery<Contact>()
                            where con.Id == c.Id
                            select con).FirstOrDefault();
 

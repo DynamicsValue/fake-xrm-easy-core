@@ -9,20 +9,18 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
 {
-    public class QualifyLeadTests
+    public class QualifyLeadTests: FakeXrmEasyTests
     {
         [Fact]
         public void Check_if_Account_was_created_after_sending_request()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetFakedOrganizationService();
-
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            
             var lead = new Lead()
             {
                 Id = Guid.NewGuid()
             };
-            context.Initialize(new[] { lead });
+            _context.Initialize(new[] { lead });
 
             var request = new QualifyLeadRequest()
             {
@@ -33,9 +31,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
                 Status = new OptionSetValue((int)LeadState.Qualified)
             };
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            var account = (from acc in context.CreateQuery<Account>()
+            var account = (from acc in _context.CreateQuery<Account>()
                            where acc.OriginatingLeadId.Id == lead.Id
                            select acc).First();
 
@@ -44,16 +42,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
 
         [Fact]
         public void Check_if_Contact_was_created_after_sending_request()
-        {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetFakedOrganizationService();
-
+        {          
             var lead = new Lead()
             {
                 Id = Guid.NewGuid()
             };
-            context.Initialize(new[] { lead });
+            _context.Initialize(new[] { lead });
 
             var request = new QualifyLeadRequest()
             {
@@ -64,9 +58,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
                 Status = new OptionSetValue((int)LeadState.Qualified)
             };
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            var contact = (from con in context.CreateQuery<Contact>()
+            var contact = (from con in _context.CreateQuery<Contact>()
                            where con.OriginatingLeadId.Id == lead.Id
                            select con).First();
 
@@ -76,15 +70,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
         [Fact]
         public void Check_if_Opportunity_was_created_after_sending_request()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetFakedOrganizationService();
-
             var lead = new Lead()
             {
                 Id = Guid.NewGuid()
             };
-            context.Initialize(new[] { lead });
+            _context.Initialize(new[] { lead });
 
             var request = new QualifyLeadRequest()
             {
@@ -95,9 +85,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
                 Status = new OptionSetValue((int)LeadState.Qualified)
             };
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            var opportunity = (from opp in context.CreateQuery<Opportunity>()
+            var opportunity = (from opp in _context.CreateQuery<Opportunity>()
                                where opp.OriginatingLeadId.Id == lead.Id
                                select opp).First();
 
@@ -107,9 +97,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
         [Fact]
         public void Check_if_Account_was_associated_with_Opportunity()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetFakedOrganizationService();
 
             var account = new Account()
             {
@@ -119,7 +106,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
             {
                 Id = Guid.NewGuid()
             };
-            context.Initialize(new List<Entity>() { account, lead });
+            _context.Initialize(new List<Entity>() { account, lead });
 
             var request = new QualifyLeadRequest()
             {
@@ -131,9 +118,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
                 OpportunityCustomerId = account.ToEntityReference()
             };
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            var opportunity = (from opp in context.CreateQuery<Opportunity>()
+            var opportunity = (from opp in _context.CreateQuery<Opportunity>()
                                where opp.OriginatingLeadId.Id == lead.Id
                                select opp).First();
 
@@ -143,14 +130,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
         [Fact]
         public void Status_of_qualified_Lead_should_be_qualified()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var lead = new Lead()
             {
                 Id = Guid.NewGuid()
             };
-            context.Initialize(new List<Entity>() { lead });
+            _context.Initialize(new List<Entity>() { lead });
 
             var request = new QualifyLeadRequest()
             {
@@ -161,9 +145,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
                 Status = new OptionSetValue((int)LeadState.Qualified)
             };
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            var qualifiedLead = (from l in context.CreateQuery<Lead>()
+            var qualifiedLead = (from l in _context.CreateQuery<Lead>()
                                where l.Id == lead.Id
                                select l).Single();
 

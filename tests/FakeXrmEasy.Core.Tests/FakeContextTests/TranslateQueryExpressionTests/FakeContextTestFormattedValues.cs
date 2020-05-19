@@ -9,23 +9,20 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 {
-    public class FormattedValuesTests
+    public class FormattedValuesTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_an_optionset_is_retrieved_where_its_value_is_an_enum_formatted_value_doesnt_contain_key_if_value_was_null()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var account = new Account() { Id = Guid.NewGuid() };
             account["statecode"] = null;
 
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 account
             });
 
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 var a = (from acc in ctx.CreateQuery<Account>()
                          select acc).FirstOrDefault();
@@ -38,18 +35,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_an_optionset_is_retrieved_where_its_value_is_an_enum_formatted_value_is_returned()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var account = new Account() { Id = Guid.NewGuid() };
             account["statecode"] = AccountState.Active;
 
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 account
             });
 
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 var a = (from acc in ctx.CreateQuery<Account>()
                          select acc).FirstOrDefault();
@@ -63,9 +57,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_an_entity_is_returned_formatted_values_are_also_cloned()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var account = new Account() { Id = Guid.NewGuid() };
             account["statecode"] = new OptionSetValue(0);
 
@@ -73,12 +64,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             formattedValues.Add("statecode", "Active");
             account.Inject("FormattedValues", formattedValues);
 
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 account
             });
 
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 var a = (from acc in ctx.CreateQuery<Account>()
                          select acc).FirstOrDefault();
@@ -92,9 +83,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_an_entity_is_returned_with_specific_columns_formatted_values_are_also_cloned()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var account = new Account() { Id = Guid.NewGuid() };
             account["statecode"] = AccountState.Active;
 
@@ -103,12 +91,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 
             account.Inject("FormattedValues", formattedValues);
 
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 account
             });
 
-            var a = service.Retrieve("account", account.Id, new ColumnSet("statecode"));
+            var a = _service.Retrieve("account", account.Id, new ColumnSet("statecode"));
 
             Assert.True(a.FormattedValues != null);
             Assert.True(a.FormattedValues.Contains("statecode"));
@@ -118,8 +106,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_an_entity_is_returned_with_link_entity_and_specific_columns_formatted_values_are_also_cloned()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var contact = new Contact() { Id = Guid.NewGuid() };
             contact["statecode"] = new OptionSetValue((int) ContactState.Inactive);
@@ -140,7 +128,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 
             account.Inject("FormattedValues", accountFormattedValues);
 
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 account,
                 contact
@@ -151,7 +139,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var linkedContact = query.AddLink("contact", "primarycontactid", "contactid");
             linkedContact.Columns.AddColumns("statecode");
 
-            var a = service.RetrieveMultiple(query).Entities.FirstOrDefault();
+            var a = _service.RetrieveMultiple(query).Entities.FirstOrDefault();
 
             Assert.True(a.FormattedValues != null);
             Assert.True(a.FormattedValues.Contains("contact1.statecode"));
@@ -161,8 +149,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_an_entity_is_returned_with_link_entity_and_specific_columns_formatted_values_are_also_cloned2()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var contact = new Contact() { Id = Guid.NewGuid() };
             contact["statecode"] = ContactState.Inactive;
@@ -183,7 +171,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 
             account.Inject("FormattedValues", accountFormattedValues);
 
-            context.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 account,
                 contact
@@ -194,7 +182,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var linkedContact = query.AddLink("contact", "primarycontactid", "contactid");
             linkedContact.Columns.AddColumns("statecode");
 
-            var a = service.RetrieveMultiple(query).Entities.FirstOrDefault();
+            var a = _service.RetrieveMultiple(query).Entities.FirstOrDefault();
 
             Assert.True(a.FormattedValues != null);
             Assert.True(a.FormattedValues.Contains("contact1.statecode"));

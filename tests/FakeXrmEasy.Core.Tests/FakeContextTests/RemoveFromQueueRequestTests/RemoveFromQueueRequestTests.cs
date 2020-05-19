@@ -11,7 +11,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RemoveFromQueueRequestTests
 {
-    public class RemoveFromQueueRequestTests
+    public class RemoveFromQueueRequestTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
@@ -24,15 +24,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RemoveFromQueueRequestTests
         [Fact]
         public void When_a_request_is_called_Queueitem_Is_Removed()
         {
-            var context = new XrmFakedContext();
-
             var queueItem = new Entity
             {
                 LogicalName = Crm.QueueItem.EntityLogicalName,
                 Id = Guid.NewGuid()
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 queueItem
             });
@@ -44,21 +42,21 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RemoveFromQueueRequestTests
                 QueueItemId = queueItem.Id
             };
 
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
 
-            var retrievedQueueItem = context.Data[Crm.QueueItem.EntityLogicalName].Values;
+            var retrievedQueueItemQuery = _context.CreateQuery(Crm.QueueItem.EntityLogicalName);
 
-            Assert.True(!retrievedQueueItem.Any());
+            Assert.True(!retrievedQueueItemQuery.Any());
         }
 
         [Fact]
         public void When_a_request_without_QueueItem_is_called_exception_is_raised()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new RemoveFromQueueRequestExecutor();
             var req = new RemoveFromQueueRequest();
 
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, context));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, _context));
         }
     }
 }

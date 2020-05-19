@@ -6,14 +6,11 @@ using System;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveAttributeRequestTests
 {
-    public class RetrieveAttributeTests
+    public class RetrieveAttributeTests: FakeXrmEasyTests
     {
         [Fact]
-        public static void When_retrieve_attribute_request_is_called_correctly_attribute_is_returned()
+        public void When_retrieve_attribute_request_is_called_correctly_attribute_is_returned()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             var entityMetadata = new EntityMetadata()
             {
                 LogicalName = "account"
@@ -25,7 +22,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveAttributeRequestTests
             };
             entityMetadata.SetAttributeCollection(new[] { nameAttribute });
 
-            ctx.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
             RetrieveAttributeRequest req = new RetrieveAttributeRequest()
             {
@@ -33,38 +30,32 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveAttributeRequestTests
                 LogicalName = "name"
             };
 
-            var response = service.Execute(req) as RetrieveAttributeResponse;
+            var response = _service.Execute(req) as RetrieveAttributeResponse;
             Assert.NotNull(response.AttributeMetadata);
             Assert.Equal(AttributeRequiredLevel.ApplicationRequired, response.AttributeMetadata.RequiredLevel.Value);
             Assert.Equal("name", response.AttributeMetadata.LogicalName);
         }
 
         [Fact]
-        public static void When_retrieve_attribute_request_is_without_entity_logical_name_exception_is_raised()
+        public void When_retrieve_attribute_request_is_without_entity_logical_name_exception_is_raised()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             RetrieveAttributeRequest req = new RetrieveAttributeRequest()
             {
                 EntityLogicalName = null,
                 LogicalName = "name"
             };
 
-            Assert.Throws<Exception>(() => service.Execute(req));
+            Assert.Throws<Exception>(() => _service.Execute(req));
         }
 
         [Fact]
-        public static void When_retrieve_attribute_request_is_without_logical_name_exception_is_raised()
+        public void When_retrieve_attribute_request_is_without_logical_name_exception_is_raised()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
-
             var entityMetadata = new EntityMetadata()
             {
                 LogicalName = "account"
             };
-            ctx.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
             RetrieveAttributeRequest req = new RetrieveAttributeRequest()
             {
@@ -72,14 +63,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveAttributeRequestTests
                 LogicalName = null
             };
 
-            Assert.Throws<Exception>(() => service.Execute(req));
+            Assert.Throws<Exception>(() => _service.Execute(req));
         }
 
         [Fact]
-        public static void When_retrieve_attribute_request_is_without_being_initialised_exception_is_raised()
+        public void When_retrieve_attribute_request_is_without_being_initialised_exception_is_raised()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             RetrieveAttributeRequest req = new RetrieveAttributeRequest()
             {
@@ -87,20 +78,20 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveAttributeRequestTests
                 LogicalName = "name"
             };
 
-            Assert.Throws<Exception>(() => service.Execute(req));
+            Assert.Throws<Exception>(() => _service.Execute(req));
         }
 
         [Fact]
-        public static void When_retrieve_attribute_request_is_initialised_but_attribute_doesnt_exists_exception_is_raised()
+        public void When_retrieve_attribute_request_is_initialised_but_attribute_doesnt_exists_exception_is_raised()
         {
-            var ctx = new XrmFakedContext();
-            var service = ctx.GetOrganizationService();
+            
+            
 
             var entityMetadata = new EntityMetadata()
             {
                 LogicalName = "account"
             };
-            ctx.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
             RetrieveAttributeRequest req = new RetrieveAttributeRequest()
             {
@@ -108,7 +99,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveAttributeRequestTests
                 LogicalName = "name"
             };
 
-            Assert.Throws<Exception>(() => service.Execute(req));
+            Assert.Throws<Exception>(() => _service.Execute(req));
         }
 
 

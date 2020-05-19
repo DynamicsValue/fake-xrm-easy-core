@@ -10,7 +10,7 @@ using FakeXrmEasy.Abstractions.Permissions;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RemoveUserFromRecordTeamRequestTests
 {
-    public class RemoveUserFromRecordTeamRequestTests
+    public class RemoveUserFromRecordTeamRequestTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
@@ -23,8 +23,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RemoveUserFromRecordTeamRequestTest
         [Fact]
         public void When_a_request_is_called_User_Is_Removed_From_Record_Team()
         {
-            var context = new XrmFakedContext();
-
             var teamTemplate = new TeamTemplate
             {
                 Id = Guid.NewGuid(),
@@ -54,7 +52,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RemoveUserFromRecordTeamRequestTest
                 Id = Guid.NewGuid()
             };
 
-            context.Initialize(new Entity[]
+            _context.Initialize(new Entity[]
             {
                 teamTemplate, team, teamMembership, user, account
             });
@@ -68,18 +66,18 @@ namespace FakeXrmEasy.Tests.FakeContextTests.RemoveUserFromRecordTeamRequestTest
                 TeamTemplateId = teamTemplate.Id
             };
 
-            context.GetProperty<IAccessRightsRepository>().GrantAccessTo(account.ToEntityReference(), new PrincipalAccess
+            _context.GetProperty<IAccessRightsRepository>().GrantAccessTo(account.ToEntityReference(), new PrincipalAccess
             {
                 Principal = user.ToEntityReference(),
                 AccessMask = AccessRights.ReadAccess
             });
 
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
 
-            var retrievedTeamMembership = context.CreateQuery<TeamMembership>().FirstOrDefault(p => p.SystemUserId == user.Id && p.TeamId == team.Id);
+            var retrievedTeamMembership = _context.CreateQuery<TeamMembership>().FirstOrDefault(p => p.SystemUserId == user.Id && p.TeamId == team.Id);
             Assert.Null(retrievedTeamMembership);
 
-            var response = context.GetProperty<IAccessRightsRepository>().RetrievePrincipalAccess(account.ToEntityReference(),
+            var response = _context.GetProperty<IAccessRightsRepository>().RetrievePrincipalAccess(account.ToEntityReference(),
                 user.ToEntityReference());
             Assert.Equal(AccessRights.None, response.AccessRights);
 

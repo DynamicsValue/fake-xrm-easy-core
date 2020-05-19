@@ -7,21 +7,20 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
 {
-    public class PermissionsTests
+    public class PermissionsTests: FakeXrmEasyTests
     {
         [Fact]
         public void Entity_Granted_Access_Has_Access()
         {
-            var context = new XrmFakedContext();
+            
             var contact = new Contact { Id = Guid.NewGuid() };
             var user = new SystemUser { Id = Guid.NewGuid() };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact, user
             });
 
-            var service = context.GetOrganizationService();
 
             GrantAccessRequest gar = new GrantAccessRequest
             {
@@ -32,7 +31,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact.ToEntityReference()
             };
-            service.Execute(gar);
+            _service.Execute(gar);
 
             RetrievePrincipalAccessRequest rpar = new RetrievePrincipalAccessRequest
             {
@@ -40,7 +39,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user.ToEntityReference()
             };
 
-            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -55,16 +54,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
         [Fact]
         public void Entity_Granted_Multiple_Access_Has_Access()
         {
-            var context = new XrmFakedContext();
+            
             var contact = new Contact { Id = Guid.NewGuid() };
             var user = new SystemUser { Id = Guid.NewGuid() };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact, user
             });
 
-            var service = context.GetOrganizationService();
+            
 
             GrantAccessRequest gar = new GrantAccessRequest
             {
@@ -75,7 +74,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact.ToEntityReference()
             };
-            service.Execute(gar);
+            _service.Execute(gar);
 
             RetrievePrincipalAccessRequest rpar = new RetrievePrincipalAccessRequest
             {
@@ -83,7 +82,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user.ToEntityReference()
             };
 
-            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -98,17 +97,17 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
         [Fact]
         public void Multiple_Entities_No_Confusion()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Contact { Id = Guid.NewGuid() };
             var contact2 = new Contact { Id = Guid.NewGuid() };
             var user = new SystemUser { Id = Guid.NewGuid() };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact1, contact2, user
             });
 
-            var service = context.GetOrganizationService();
+            
 
             GrantAccessRequest gar = new GrantAccessRequest
             {
@@ -119,7 +118,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact1.ToEntityReference()
             };
-            service.Execute(gar);
+            _service.Execute(gar);
 
             gar = new GrantAccessRequest
             {
@@ -130,7 +129,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact2.ToEntityReference()
             };
-            service.Execute(gar);
+            _service.Execute(gar);
 
             RetrievePrincipalAccessRequest rpar = new RetrievePrincipalAccessRequest
             {
@@ -138,7 +137,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user.ToEntityReference()
             };
 
-            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -153,16 +152,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
         [Fact]
         public void Entity_Not_Granted_Access_Does_Not_Have_Access()
         {
-            var context = new XrmFakedContext();
+            
             var contact = new Contact { Id = Guid.NewGuid() };
             var user = new SystemUser { Id = Guid.NewGuid() };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact, user
             });
 
-            var service = context.GetOrganizationService();
+            
 
             RetrievePrincipalAccessRequest rpar = new RetrievePrincipalAccessRequest
             {
@@ -170,23 +169,23 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user.ToEntityReference()
             };
 
-            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.Equal(AccessRights.None, rpaResp.AccessRights);
         }
 
         [Fact]
         public void Entity_Revoked_Access_Does_Not_Have_Access()
         {
-            var context = new XrmFakedContext();
+            
             var contact = new Contact { Id = Guid.NewGuid() };
             var user = new SystemUser { Id = Guid.NewGuid() };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact, user
             });
 
-            var service = context.GetOrganizationService();
+            
 
             GrantAccessRequest gar = new GrantAccessRequest
             {
@@ -197,7 +196,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact.ToEntityReference()
             };
-            service.Execute(gar);
+            _service.Execute(gar);
 
             RetrievePrincipalAccessRequest rpar = new RetrievePrincipalAccessRequest
             {
@@ -205,7 +204,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user.ToEntityReference()
             };
 
-            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -222,31 +221,31 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Revokee = user.ToEntityReference()
             };
 
-            service.Execute(rar);
+            _service.Execute(rar);
             rpar = new RetrievePrincipalAccessRequest
             {
                 Target = contact.ToEntityReference(),
                 Principal = user.ToEntityReference()
             };
 
-            rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.Equal(AccessRights.None, rpaResp.AccessRights);
         }
 
         [Fact]
         public void Entity_Revoked_Access_Does_Not_Have_Access_Multiple_Users()
         {
-            var context = new XrmFakedContext();
+            
             var contact = new Contact { Id = Guid.NewGuid() };
             var user1 = new SystemUser { Id = Guid.NewGuid() };
             var user2 = new SystemUser { Id = Guid.NewGuid() };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact, user1, user2
             });
 
-            var service = context.GetOrganizationService();
+            
 
             GrantAccessRequest gar = new GrantAccessRequest
             {
@@ -257,7 +256,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact.ToEntityReference()
             };
-            service.Execute(gar);
+            _service.Execute(gar);
 
             gar = new GrantAccessRequest
             {
@@ -268,7 +267,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact.ToEntityReference()
             };
-            service.Execute(gar);
+            _service.Execute(gar);
 
             RetrievePrincipalAccessRequest rpar = new RetrievePrincipalAccessRequest
             {
@@ -276,7 +275,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user1.ToEntityReference()
             };
 
-            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -293,7 +292,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user2.ToEntityReference()
             };
 
-            rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -310,14 +309,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Revokee = user1.ToEntityReference()
             };
 
-            service.Execute(rar);
+            _service.Execute(rar);
             rpar = new RetrievePrincipalAccessRequest
             {
                 Target = contact.ToEntityReference(),
                 Principal = user1.ToEntityReference()
             };
 
-            rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.Equal(AccessRights.None, rpaResp.AccessRights);
 
             rpar = new RetrievePrincipalAccessRequest
@@ -326,7 +325,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user2.ToEntityReference()
             };
 
-            rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -341,19 +340,19 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
         [Fact]
         public void Multiple_Entities_With_Multiple_Users()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Contact { Id = Guid.NewGuid() };
             var contact2 = new Contact { Id = Guid.NewGuid() };
             var user1 = new SystemUser { Id = Guid.NewGuid() };
             var user2 = new SystemUser { Id = Guid.NewGuid() };
             var user3 = new SystemUser { Id = Guid.NewGuid() };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact1, user1, contact2, user2, user3
             });
 
-            var service = context.GetOrganizationService();
+            
 
             GrantAccessRequest gar1 = new GrantAccessRequest
             {
@@ -364,7 +363,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact1.ToEntityReference()
             };
-            service.Execute(gar1);
+            _service.Execute(gar1);
 
             GrantAccessRequest gar2 = new GrantAccessRequest
             {
@@ -375,7 +374,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact2.ToEntityReference()
             };
-            service.Execute(gar2);
+            _service.Execute(gar2);
 
             GrantAccessRequest gar3 = new GrantAccessRequest
             {
@@ -386,7 +385,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact1.ToEntityReference()
             };
-            service.Execute(gar3);
+            _service.Execute(gar3);
 
             GrantAccessRequest gar4 = new GrantAccessRequest
             {
@@ -397,7 +396,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact2.ToEntityReference()
             };
-            service.Execute(gar4);
+            _service.Execute(gar4);
 
             RetrievePrincipalAccessRequest rpar = new RetrievePrincipalAccessRequest
             {
@@ -405,7 +404,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user1.ToEntityReference()
             };
 
-            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            RetrievePrincipalAccessResponse rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -422,7 +421,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user1.ToEntityReference()
             };
 
-            rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -439,7 +438,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user2.ToEntityReference()
             };
 
-            rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -456,7 +455,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user2.ToEntityReference()
             };
 
-            rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.NotEqual(AccessRights.None, rpaResp.AccessRights);
             Assert.True(rpaResp.AccessRights.HasFlag(AccessRights.ReadAccess));
             Assert.False(rpaResp.AccessRights.HasFlag(AccessRights.AppendAccess));
@@ -473,7 +472,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user3.ToEntityReference()
             };
 
-            rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.Equal(AccessRights.None, rpaResp.AccessRights);
 
             rpar = new RetrievePrincipalAccessRequest
@@ -482,26 +481,26 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 Principal = user3.ToEntityReference()
             };
 
-            rpaResp = (RetrievePrincipalAccessResponse)service.Execute(rpar);
+            rpaResp = (RetrievePrincipalAccessResponse)_service.Execute(rpar);
             Assert.Equal(AccessRights.None, rpaResp.AccessRights);
         }
 
         [Fact]
         public void RetrieveSharedPrincipalsAndAccess_Test()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Contact { Id = Guid.NewGuid() };
             var contact2 = new Contact { Id = Guid.NewGuid() };
             var user1 = new SystemUser { Id = Guid.NewGuid() };
             var user2 = new SystemUser { Id = Guid.NewGuid() };
             var user3 = new SystemUser { Id = Guid.NewGuid() };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact1, user1, contact2, user2, user3
             });
 
-            var service = context.GetOrganizationService();
+            
 
             GrantAccessRequest gar1 = new GrantAccessRequest
             {
@@ -512,7 +511,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact1.ToEntityReference()
             };
-            service.Execute(gar1);
+            _service.Execute(gar1);
 
             GrantAccessRequest gar2 = new GrantAccessRequest
             {
@@ -523,7 +522,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact2.ToEntityReference()
             };
-            service.Execute(gar2);
+            _service.Execute(gar2);
 
             GrantAccessRequest gar3 = new GrantAccessRequest
             {
@@ -534,7 +533,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact1.ToEntityReference()
             };
-            service.Execute(gar3);
+            _service.Execute(gar3);
 
             GrantAccessRequest gar4 = new GrantAccessRequest
             {
@@ -545,13 +544,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact2.ToEntityReference()
             };
-            service.Execute(gar4);
+            _service.Execute(gar4);
 
             RetrieveSharedPrincipalsAndAccessRequest req = new RetrieveSharedPrincipalsAndAccessRequest
             {
                 Target = contact1.ToEntityReference()
             };
-            RetrieveSharedPrincipalsAndAccessResponse resp = (RetrieveSharedPrincipalsAndAccessResponse)service.Execute(req);
+            RetrieveSharedPrincipalsAndAccessResponse resp = (RetrieveSharedPrincipalsAndAccessResponse)_service.Execute(req);
 
             foreach (PrincipalAccess pa in resp.PrincipalAccesses)
             {
@@ -589,7 +588,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
             {
                 Target = contact2.ToEntityReference()
             };
-            resp = (RetrieveSharedPrincipalsAndAccessResponse)service.Execute(req);
+            resp = (RetrieveSharedPrincipalsAndAccessResponse)_service.Execute(req);
 
             foreach (PrincipalAccess pa in resp.PrincipalAccesses)
             {
@@ -627,16 +626,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
         [Fact]
         public void Principal_Granted_Access_Multiple_Times_Only_Appears_Once()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Contact { Id = Guid.NewGuid() };
             var user1 = new SystemUser { Id = Guid.NewGuid() };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact1, user1
             });
 
-            var service = context.GetOrganizationService();
+            
 
             GrantAccessRequest gar1 = new GrantAccessRequest
             {
@@ -647,7 +646,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact1.ToEntityReference()
             };
-            service.Execute(gar1);
+            _service.Execute(gar1);
 
             GrantAccessRequest gar2 = new GrantAccessRequest
             {
@@ -658,13 +657,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
                 },
                 Target = contact1.ToEntityReference()
             };
-            service.Execute(gar2);
+            _service.Execute(gar2);
 
             RetrieveSharedPrincipalsAndAccessRequest req = new RetrieveSharedPrincipalsAndAccessRequest
             {
                 Target = contact1.ToEntityReference()
             };
-            RetrieveSharedPrincipalsAndAccessResponse resp = (RetrieveSharedPrincipalsAndAccessResponse)service.Execute(req);
+            RetrieveSharedPrincipalsAndAccessResponse resp = (RetrieveSharedPrincipalsAndAccessResponse)_service.Execute(req);
 
             Assert.Equal(1, resp.PrincipalAccesses.Length);
         }

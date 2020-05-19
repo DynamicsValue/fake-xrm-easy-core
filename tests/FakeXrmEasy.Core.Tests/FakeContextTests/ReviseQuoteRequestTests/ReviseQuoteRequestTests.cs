@@ -9,7 +9,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.ReviseQuoteRequestTests
 {
-    public class ReviseQuoteRequestTests
+    public class ReviseQuoteRequestTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
@@ -23,9 +23,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ReviseQuoteRequestTests
         [Fact]
         public void Should_Create_New_Quote_With_Lines_When_Revisioning()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
+            
             var quote = new Entity
             {
                 LogicalName = "quote",
@@ -48,7 +46,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ReviseQuoteRequestTests
                 }
             };
 
-            context.Initialize(new[]
+            _context.Initialize(new[]
             {
                 quote, quoteDetail
             });
@@ -61,9 +59,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ReviseQuoteRequestTests
                 QuoteId = quote.Id
             };
 
-            executor.Execute(req, context);
+            executor.Execute(req, _context);
 
-            quote = service.RetrieveMultiple(new QueryExpression("quote")
+            quote = _service.RetrieveMultiple(new QueryExpression("quote")
             {
                 ColumnSet = new ColumnSet(true),
                 Criteria = new FilterExpression(LogicalOperator.And)
@@ -78,7 +76,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ReviseQuoteRequestTests
             Assert.NotNull(quote);
             Assert.Equal("Adventure Quote", quote.GetAttributeValue<string>("name"));
 
-            var quoteLines = service.RetrieveMultiple(new QueryExpression("quotedetail")
+            var quoteLines = _service.RetrieveMultiple(new QueryExpression("quotedetail")
             {
                 ColumnSet = new ColumnSet(true),
                 Criteria = new FilterExpression(LogicalOperator.And)

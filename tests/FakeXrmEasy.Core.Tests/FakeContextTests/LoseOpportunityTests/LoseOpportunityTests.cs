@@ -8,20 +8,18 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.LoseOpportunityTests
 {
-    public class LoseOpportunityTests
+    public class LoseOpportunityTests: FakeXrmEasyTests
     {
         [Fact]
         public void Check_if_Opportunity_status_is_Lose_after_set()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetFakedOrganizationService();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var opportunity = new Opportunity()
             {
                 Id = Guid.NewGuid()
             };
-            context.Initialize(new[] { opportunity });
+            _context.Initialize(new[] { opportunity });
 
             var request = new LoseOpportunityRequest()
             {
@@ -32,9 +30,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LoseOpportunityTests
                 Status = new OptionSetValue((int)OpportunityState.Lost)
             };
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            var opp = (from op in context.CreateQuery<Opportunity>()
+            var opp = (from op in _context.CreateQuery<Opportunity>()
                        where op.Id == opportunity.Id
                        select op).FirstOrDefault();
 

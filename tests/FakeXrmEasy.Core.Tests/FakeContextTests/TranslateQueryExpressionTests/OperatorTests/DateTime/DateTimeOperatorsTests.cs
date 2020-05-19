@@ -9,12 +9,11 @@ using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.OperatorTests.DateTimes
 {
-    public class DateTimeOperatorsTests
+    public class DateTimeOperatorsTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_executing_a_query_expression_with_on_operator_time_part_is_ignored()
         {
-            var context = new XrmFakedContext();
             var contact1 = new Entity("contact") {
                 Id = Guid.NewGuid(),
                 ["anniversary"] = new DateTime(2017, 07, 28, 10, 10, 10)
@@ -28,7 +27,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
                 ["anniversary"] = new DateTime(2017, 07, 29, 0, 0, 0)  //Not included
             };
 
-            context.Initialize(new List<Entity>() { contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.ColumnSet = new ColumnSet(true);
@@ -36,7 +35,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.On, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = qe.ToQueryable(context).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 2);
             Assert.True(result[0].Id == contact1.Id);
@@ -46,7 +45,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
         [Fact]
         public void When_executing_a_query_expression_with_on_or_after_operator_time_part_is_ignored()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact")
             {
                 Id = Guid.NewGuid(),
@@ -68,7 +67,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
                 ["anniversary"] = new DateTime(2017, 07, 27, 0, 0, 0)  //Not included
             };
 
-            context.Initialize(new List<Entity>() { contact1, contact2, contact3, contact4 });
+            _context.Initialize(new List<Entity>() { contact1, contact2, contact3, contact4 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.ColumnSet = new ColumnSet(true);
@@ -76,7 +75,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.OnOrAfter, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = qe.ToQueryable(context).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 3);
             Assert.True(result[0].Id == contact1.Id);
@@ -86,7 +85,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
         [Fact]
         public void When_executing_a_query_expression_with_on_or_before_operator_time_part_is_ignored()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact")
             {
                 Id = Guid.NewGuid(),
@@ -108,7 +107,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
                 ["anniversary"] = new DateTime(2017, 07, 27, 0, 0, 0)  
             };
 
-            context.Initialize(new List<Entity>() { contact1, contact2, contact3, contact4 });
+            _context.Initialize(new List<Entity>() { contact1, contact2, contact3, contact4 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.ColumnSet = new ColumnSet(true);
@@ -116,7 +115,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.OnOrBefore, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = qe.ToQueryable(context).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 3);
             Assert.True(result[0].Id == contact1.Id);
@@ -127,7 +126,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
         [Fact]
         public void When_executing_a_query_expression_with_today_operator_time_part_is_ignored()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact")
             {
                 Id = Guid.NewGuid(),
@@ -139,7 +138,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
                 ["anniversary"] = DateTime.Today.AddDays(1).AddSeconds(3)
             };
 
-            context.Initialize(new List<Entity>() { contact1, contact2 });
+            _context.Initialize(new List<Entity>() { contact1, contact2 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.ColumnSet = new ColumnSet(true);
@@ -147,7 +146,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.Today, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = qe.ToQueryable(context).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 1);
             Assert.True(result[0].Id == contact1.Id);
@@ -156,7 +155,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
         [Fact]
         public void When_executing_a_query_expression_with_yesterday_operator_time_part_is_ignored()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact")
             {
                 Id = Guid.NewGuid(),
@@ -168,7 +167,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
                 ["anniversary"] = DateTime.Today.AddDays(-1).AddSeconds(3)
             };
 
-            context.Initialize(new List<Entity>() { contact1, contact2 });
+            _context.Initialize(new List<Entity>() { contact1, contact2 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.ColumnSet = new ColumnSet(true);
@@ -176,7 +175,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.Yesterday, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = qe.ToQueryable(context).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 1);
             Assert.True(result[0].Id == contact2.Id);
@@ -185,7 +184,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
         [Fact]
         public void When_executing_a_query_expression_with_tomorrow_operator_time_part_is_ignored()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact")
             {
                 Id = Guid.NewGuid(),
@@ -197,7 +196,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
                 ["anniversary"] = DateTime.Today.AddDays(1).AddSeconds(3)
             };
 
-            context.Initialize(new List<Entity>() { contact1, contact2 });
+            _context.Initialize(new List<Entity>() { contact1, contact2 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.ColumnSet = new ColumnSet(true);
@@ -205,7 +204,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
             var condition = new ConditionExpression("anniversary", ConditionOperator.Tomorrow, new DateTime(2017, 07, 28, 0, 0, 0));
             qe.Criteria.AddCondition(condition);
 
-            var result = qe.ToQueryable(context).ToList();
+            var result = qe.ToQueryable(_context).ToList();
 
             Assert.True(result.Count() == 1);
             Assert.True(result[0].Id == contact2.Id);
@@ -214,7 +213,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
         [Fact]
         public void When_executing_a_query_expression_with_older_than_x_months_and_null_right_result_is_returned()
         {
-            var ctx = new XrmFakedContext();
             var contact1 = new Contact
             {
                 Id = Guid.NewGuid()
@@ -244,8 +242,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
                     </fetch>";
 
             
-            ctx.Initialize(new[] { contact1, contact2, contact3 });
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            _context.Initialize(new[] { contact1, contact2, contact3 });
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
             Assert.Equal(contact2.Id, collection.Entities[0].Id);
