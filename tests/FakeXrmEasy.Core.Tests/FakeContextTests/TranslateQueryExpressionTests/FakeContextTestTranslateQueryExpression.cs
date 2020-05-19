@@ -13,30 +13,20 @@ using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeContextTestTranslateQueryExpression
+    public class FakeContextTestTranslateQueryExpression: FakeXrmEasyTests
     {
-        private readonly IXrmFakedContext _ctx;
-        private readonly IOrganizationService _service;
-        
-        public FakeContextTestTranslateQueryExpression()
-        {
-            _ctx = XrmFakedContextFactory.New();
-            _service = _ctx.GetOrganizationService();
-        }
-
         [Fact]
         public void When_translating_a_null_query_expression_the_linq_query_is_also_null()
         {
-            var context = new XrmFakedContext();
             QueryExpression qe = null;
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
             Assert.True(result == null);
         }
 
         [Fact]
         public void When_translating_a_query_from_a_non_existing_entity_an_empty_list_is_returned_when_using_dynamic_entities()
         {
-            var context = new XrmFakedContext();
+            
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
@@ -47,16 +37,16 @@ namespace FakeXrmEasy.Tests
                 new Entity("contact") { Id = guid3 }
             }.AsQueryable();
 
-            context.Initialize(data);
+            _context.Initialize(data);
             var qe = new QueryExpression() { EntityName = "nonexistingentityname" };
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
             Assert.Equal(0, result.Count());
         }
 
         [Fact]
         public void When_executing_a_query_expression_with_a_simple_join_right_result_is_returned()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2";
 
@@ -66,7 +56,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -82,7 +72,7 @@ namespace FakeXrmEasy.Tests
             );
             qe.ColumnSet = new ColumnSet(new string[] { "fullname", "parentcustomerid" });
 
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
 
             Assert.True(result.Count() == 2); //2 Contacts related to the same account
             var firstContact = result.FirstOrDefault();
@@ -101,7 +91,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_with_a_left_join_all_left_hand_side_elements_are_returned()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3";
@@ -114,7 +104,7 @@ namespace FakeXrmEasy.Tests
 
             //Contact3 doesnt have a parent customer, but must be returned anyway (left outer)
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -130,7 +120,7 @@ namespace FakeXrmEasy.Tests
             );
             qe.ColumnSet = new ColumnSet(new string[] { "fullname", "parentcustomerid" });
 
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
 
             Assert.True(result.Count() == 3); //2 Contacts related to the same account + 1 contact without parent account
             var firstContact = result.FirstOrDefault();
@@ -143,7 +133,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_join_with_orphans_these_are_not_returned()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3";
@@ -156,7 +146,7 @@ namespace FakeXrmEasy.Tests
 
             //Contact3 doesnt have a parent customer, but must be returned anyway (left outer)
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -172,7 +162,7 @@ namespace FakeXrmEasy.Tests
             );
             qe.ColumnSet = new ColumnSet(new string[] { "fullname", "parentcustomerid" });
 
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -185,7 +175,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_only_the_selected_columns_in_the_columnset_are_returned()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -196,7 +186,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -214,7 +204,7 @@ namespace FakeXrmEasy.Tests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "fullname", "parentcustomerid" });
 
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -227,7 +217,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_with_an_attribute_in_columnset_that_doesnt_exists_no_value_is_returned_with_dynamic_entities()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
 
             var account = new Entity("account") { Id = Guid.NewGuid() };
@@ -235,14 +225,14 @@ namespace FakeXrmEasy.Tests
 
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
 
-            context.Initialize(new List<Entity>() { account, contact1 });
+            _context.Initialize(new List<Entity>() { account, contact1 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
 
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "this attribute doesnt exists!" });
 
-            var list = qe.ToQueryable(context).ToList();
+            var list = qe.ToQueryable(_context).ToList();
 
             Assert.False(list[0].Attributes.ContainsKey("this attribute doesnt exists!"));
         }
@@ -250,7 +240,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_with_an_attribute_in_columnset_that_doesnt_exists_exception_is_raised_with_early_bound_entities()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Contact() { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
 
             var account = new Account() { Id = Guid.NewGuid() };
@@ -258,21 +248,21 @@ namespace FakeXrmEasy.Tests
 
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
 
-            context.Initialize(new List<Entity>() { account, contact1 });
+            _context.Initialize(new List<Entity>() { account, contact1 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
 
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "this attribute doesnt exists!" });
 
-            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(context).ToList());
+            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(_context).ToList());
             Assert.Equal(exception.Detail.ErrorCode, (int)ErrorCodes.QueryBuilderNoAttribute);
         }
 
         [Fact]
         public void When_executing_a_query_expression_with_an_attribute_in_columnset_in_a_linked_entity_that_doesnt_exists_descriptive_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Contact() { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Contact() { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Contact() { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -283,7 +273,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -301,14 +291,14 @@ namespace FakeXrmEasy.Tests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "this attribute doesnt exists!" });
 
-            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(context).ToList());
+            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(_context).ToList());
             Assert.Equal(exception.Detail.ErrorCode, (int)ErrorCodes.QueryBuilderNoAttribute);
         }
 
         [Fact]
         public void When_executing_a_query_expression_with_all_attributes_all_of_them_are_returned()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -319,7 +309,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -336,7 +326,7 @@ namespace FakeXrmEasy.Tests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(true);
 
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -352,7 +342,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_without_columnset_no_attributes_are_returned()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -363,7 +353,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -379,7 +369,7 @@ namespace FakeXrmEasy.Tests
             );
 
             qe.ColumnSet = new ColumnSet(false);
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -392,7 +382,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_with_a_columnset_in_a_linkedentity_attribute_is_returned_with_a_prefix()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -403,7 +393,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -418,7 +408,7 @@ namespace FakeXrmEasy.Tests
                 }
             );
 
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -437,7 +427,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_executing_a_query_expression_with_a_columnset_in_a_linkedentity_attribute_is_returned_with_an_alias()
         {
-            var context = new XrmFakedContext();
+            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -448,7 +438,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -464,7 +454,7 @@ namespace FakeXrmEasy.Tests
                 }
             );
 
-            var result = qe.ToQueryable(context);
+            var result = qe.ToQueryable(_context);
 
             Assert.True(result.Count() == 2);
             var firstContact = result.FirstOrDefault();
@@ -495,7 +485,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            _ctx.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -542,7 +532,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            _ctx.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -589,7 +579,7 @@ namespace FakeXrmEasy.Tests
             contact1["parentcustomerid"] = account.ToEntityReference(); //Both contacts are related to the same account
             contact2["parentcustomerid"] = account.ToEntityReference();
 
-            _ctx.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
+            _context.Initialize(new List<Entity>() { account, contact1, contact2, contact3 });
 
             var qe = new QueryExpression() { EntityName = "contact" };
             qe.LinkEntities.Add(
@@ -654,7 +644,7 @@ namespace FakeXrmEasy.Tests
             opi_entity.Attributes.Add("statecode", new OptionSetValue(0));
 
             //create these objects in crm
-            _ctx.Initialize(new List<Entity>() { invoice_entity, pmr_entity, op_entity, opi_entity });
+            _context.Initialize(new List<Entity>() { invoice_entity, pmr_entity, op_entity, opi_entity });
 
             QueryExpression query = new QueryExpression("new_onlinepaymentitem");
             query.Criteria.AddCondition("new_onlinepaymentid", ConditionOperator.Equal, op_entity.Id);
@@ -710,7 +700,7 @@ namespace FakeXrmEasy.Tests
             };
 
             // initialise
-            _ctx.Initialize(new[] { contact, child, pet });
+            _context.Initialize(new[] { contact, child, pet });
 
             var query2 = new QueryExpression("contact");
             var link2 = query2.AddLink("child", "contactid", "contactid", JoinOperator.Inner);
@@ -726,7 +716,7 @@ namespace FakeXrmEasy.Tests
             var role = new Role() { Id = Guid.NewGuid() };
             var parentRole = new Role() { Id = Guid.NewGuid() };
 
-            _ctx.Initialize(new[] { role, parentRole });
+            _context.Initialize(new[] { role, parentRole });
 
             using (var ctx = new XrmServiceContext(_service))
             {
@@ -741,15 +731,12 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_querying_early_bound_entities_unexisting_attribute_raises_exception_when_selected()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var role = new Role() { Id = Guid.NewGuid() };
             var parentRole = new Role() { Id = Guid.NewGuid() };
 
-            context.Initialize(new[] { role, parentRole });
+            _context.Initialize(new[] { role, parentRole });
 
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 var qe = new QueryExpression() { EntityName = "role" };
                 qe.LinkEntities.Add(
@@ -764,22 +751,22 @@ namespace FakeXrmEasy.Tests
                     }
                 );
 
-                Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(context).ToList());
+                Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(_context).ToList());
             }
         }
 
         [Fact]
         public void When_querying_early_bound_entities_unexisting_attribute_raises_exception_when_linked_to()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var role = new Role() { Id = Guid.NewGuid() };
             var parentRole = new Role() { Id = Guid.NewGuid() };
 
-            context.Initialize(new[] { role, parentRole });
+            _context.Initialize(new[] { role, parentRole });
 
-            using (var ctx = new XrmServiceContext(service))
+            using (var ctx = new XrmServiceContext(_service))
             {
                 var qe = new QueryExpression() { EntityName = "role" };
                 qe.LinkEntities.Add(
@@ -794,16 +781,16 @@ namespace FakeXrmEasy.Tests
                     }
                 );
 
-                Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(context).ToList());
+                Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(_context).ToList());
             }
         }
 
         [Fact]
         public void When_retrieve_multiple_is_invoked_with_a_service_created_entity_that_entity_is_returned_with_logical_name()
         {
-            var context = new XrmFakedContext();
+            
 
-            var service = context.GetOrganizationService();
+            
 
             Entity account1 = new Entity("account");
             account1.Id = Guid.NewGuid();
@@ -813,12 +800,12 @@ namespace FakeXrmEasy.Tests
             account2.Id = Guid.NewGuid();
             account2.Attributes.Add("name", "Account2");
 
-            service.Create(account1);
-            service.Create(account2);
+            _service.Create(account1);
+            _service.Create(account2);
 
             QueryExpression query = new QueryExpression { EntityName = "account", ColumnSet = new ColumnSet(true) };
 
-            var result = service.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
 
             foreach (var item in result.Entities)
             {
@@ -829,7 +816,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void Should_Not_Fail_On_Conditions_In_Link_Entities_Multiple()
         {
-            _ctx.AddRelationship("new_invoicepaymentmethod_invoicedetail",
+            _context.AddRelationship("new_invoicepaymentmethod_invoicedetail",
                 new XrmFakedRelationship("new_invoicepaymentmethod_invoicedetail",
                             "invoicedetailid", "new_invoicepaymentmethodid",
                             "invoicedetail",

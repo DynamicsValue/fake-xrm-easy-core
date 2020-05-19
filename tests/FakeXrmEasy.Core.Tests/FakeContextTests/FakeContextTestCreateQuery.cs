@@ -9,26 +9,23 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeContextTestCreateQuery
+    public class FakeContextTestCreateQuery: FakeXrmEasyTests
     {
         [Fact]
         public void After_querying_the_context_with_an_invalid_entity_name_exception_is_thrown()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-
-            var service = context.GetOrganizationService();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var guid = Guid.NewGuid();
             var data = new List<Entity>() {
                 new Contact() { Id = guid }
             }.AsQueryable();
 
-            context.Initialize(data);
+            _context.Initialize(data);
 
             Assert.Throws<Exception>(() =>
             {
-                var query = (from c in context.CreateQuery("    ")
+                var query = (from c in _context.CreateQuery("    ")
                              select c);
             });
         }
@@ -36,20 +33,18 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void After_adding_a_contact_the_create_query_returns_it()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-
-            var service = context.GetOrganizationService();
+            
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var guid = Guid.NewGuid();
             var data = new List<Entity>() {
                 new Contact() { Id = guid }
             }.AsQueryable();
 
-            context.Initialize(data);
+            _context.Initialize(data);
 
             //Find the contact
-            var contact = (from c in context.CreateQuery<Contact>()
+            var contact = (from c in _context.CreateQuery<Contact>()
                            where c.ContactId == guid
                            select c).FirstOrDefault();
 
@@ -60,13 +55,11 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void Querying_an_early_bound_entity_not_present_in_the_context_should_return_no_records()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-
-            var service = context.GetOrganizationService();
+            
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             //Find the contact
-            var contact = (from c in context.CreateQuery<Contact>()
+            var contact = (from c in _context.CreateQuery<Contact>()
                            select c).ToList();
 
             Assert.Equal(contact.Count, 0);
@@ -75,12 +68,9 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void Querying_a_dynamic_entity_not_present_in_the_context_should_return_no_records()
         {
-            var context = new XrmFakedContext();
-
-            var service = context.GetOrganizationService();
-
+            
             //Find the contact
-            var contact = (from c in context.CreateQuery("contact")
+            var contact = (from c in _context.CreateQuery("contact")
                            select c).ToList();
 
             Assert.Equal(contact.Count, 0);
@@ -89,12 +79,9 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void Querying_a_dynamic_using_type_should_use_the_entity_entity_logical_name_attribute()
         {
-            var context = new XrmFakedContext();
-
-            var service = context.GetOrganizationService();
-
+            
             //Find the contact
-            var contact = (from c in context.CreateQuery("contact")
+            var contact = (from c in _context.CreateQuery("contact")
                            select c).ToList();
 
             Assert.Equal(contact.Count, 0);
@@ -103,7 +90,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_Querying_Using_LinQ_Results_Should_Appear()
         {
-            var context = new XrmFakedContext();
+            
 
             var account = new Account
             {
@@ -119,9 +106,9 @@ namespace FakeXrmEasy.Tests
                 }
             };
 
-            context.Initialize(new Entity[] { account, contact });
+            _context.Initialize(new Entity[] { account, contact });
 
-            var contactResult = context.CreateQuery<Contact>().SingleOrDefault(con => con.Id == contact.Id);
+            var contactResult = _context.CreateQuery<Contact>().SingleOrDefault(con => con.Id == contact.Id);
             Assert.NotNull(contactResult);
         }
     }

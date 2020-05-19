@@ -10,6 +10,7 @@ using System.ServiceModel;
 using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk.Client;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions.Integrity;
 
 namespace FakeXrmEasy
 {
@@ -17,8 +18,6 @@ namespace FakeXrmEasy
     {
         protected const int EntityActiveStateCode = 0;
         protected const int EntityInactiveStateCode = 1;
-
-        public bool ValidateReferences { get; set; }
 
         #region CRUD
         public Guid GetRecordUniqueId(EntityReference record, bool validate = true)
@@ -116,6 +115,8 @@ namespace FakeXrmEasy
                     //ExecutePipelineStage("Update", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
                 }
 
+                var integrityOptions = GetProperty<IIntegrityOptions>();
+
                 // Add as many attributes to the entity as the ones received (this will keep existing ones)
                 var cachedEntity = Data[e.LogicalName][e.Id];
                 foreach (var sAttributeName in e.Attributes.Keys.ToList())
@@ -131,7 +132,7 @@ namespace FakeXrmEasy
                     }
                     else
                     {
-                        if (attribute is EntityReference && ValidateReferences)
+                        if (attribute is EntityReference && integrityOptions.ValidateEntityReferences)
                         {
                             var target = (EntityReference)e[sAttributeName];
                             attribute = ResolveEntityReference(target);
@@ -288,7 +289,10 @@ namespace FakeXrmEasy
             if (CallerId == null)
             {
                 CallerId = new EntityReference("systemuser", Guid.NewGuid()); // Create a new instance by default
-                if (ValidateReferences)
+
+                var integrityOptions = GetProperty<IIntegrityOptions>();
+
+                if (integrityOptions.ValidateEntityReferences)
                 {
                     if (!Data.ContainsKey("systemuser"))
                     {
@@ -430,6 +434,8 @@ namespace FakeXrmEasy
 
             ValidateEntity(e); //Entity must have a logical name and an Id
 
+            var integrityOptions = GetProperty<IIntegrityOptions>();
+
             foreach (var sAttributeName in e.Attributes.Keys.ToList())
             {
                 var attribute = e[sAttributeName];
@@ -437,7 +443,7 @@ namespace FakeXrmEasy
                 {
                     e[sAttributeName] = ConvertToUtc((DateTime)e[sAttributeName]);
                 }
-                if (attribute is EntityReference && ValidateReferences)
+                if (attribute is EntityReference && integrityOptions.ValidateEntityReferences)
                 {
                     var target = (EntityReference)e[sAttributeName];
                     e[sAttributeName] = ResolveEntityReference(target);

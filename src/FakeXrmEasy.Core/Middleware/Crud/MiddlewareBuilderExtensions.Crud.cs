@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using FakeItEasy;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Abstractions.Integrity;
+using FakeXrmEasy.Integrity;
 using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Middleware.Crud.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
@@ -36,11 +38,24 @@ namespace FakeXrmEasy.Middleware.Crud
                 #endif
 
                 context.SetProperty(crudMessageExecutors);
+                context.SetProperty<IIntegrityOptions>(new IntegrityOptions() {  ValidateEntityReferences = false });
                 AddFakeCreate(context, service);
                 AddFakeRetrieve(context, service);
                 AddFakeRetrieveMultiple(context, service);
                 AddFakeUpdate(context,service);
                 AddFakeDelete(context,service);
+            });
+
+            return builder;
+        }
+
+        public static IMiddlewareBuilder AddCrud(this IMiddlewareBuilder builder, IIntegrityOptions integrityOptions) 
+        {
+            builder.AddCrud();
+
+            //Add now integrity options
+            builder.Add(context => {
+                context.SetProperty(integrityOptions);
             });
 
             return builder;
