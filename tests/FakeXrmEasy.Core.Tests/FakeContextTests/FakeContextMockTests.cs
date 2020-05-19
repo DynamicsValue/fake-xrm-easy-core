@@ -23,7 +23,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         {
             _context = MiddlewareBuilder
                         .New()
-                        .AddFakeMessageExecutors()
                         .AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock)
                         .UseMessages()
                         .Build();
@@ -59,7 +58,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         {
             _context = MiddlewareBuilder
                         .New()
-                        .AddFakeMessageExecutors()
                         .AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock)
                         .AddExecutionMock<RetrieveEntityRequest>(AnotherRetrieveEntityMock)
                         .UseMessages()

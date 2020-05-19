@@ -7,7 +7,7 @@ using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
-    public class XrmFakedRelationshipTests
+    public class XrmFakedRelationshipTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_creating_relationship_with_first_constructor_properties_are_set_correctly()
@@ -37,9 +37,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void Self_referential_relationships_can_be_created()
         {
-            var context = new XrmFakedContext();
-
-
             var exampleMetadata = new EntityMetadata()
             {
                 LogicalName = "test_entity"
@@ -58,9 +55,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             };
             exampleMetadata.SetAttributeCollection(new AttributeMetadata[] { idAttribute, nameAttribute });
 
-            context.InitializeMetadata(new[] { exampleMetadata });
+            _context.InitializeMetadata(new[] { exampleMetadata });
 
-            context.AddRelationship("test_entity_entity", new XrmFakedRelationship
+            _context.AddRelationship("test_entity_entity", new XrmFakedRelationship
             {
                 IntersectEntity = "test_entity_entity",
                 Entity1LogicalName = exampleMetadata.LogicalName,
@@ -82,14 +79,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 [nameAttribute.LogicalName] = "Second Record"
             };
 
-            context.Initialize(new[] { record1, record2 });
+            _context.Initialize(new[] { record1, record2 });
 
 
-            var service = context.GetOrganizationService();
+            
 
             var relationship = new Relationship("test_entity_entity");
 
-            var ex = Record.Exception(() => service.Associate(
+            var ex = Record.Exception(() => _service.Associate(
                 exampleMetadata.LogicalName,
                 record1.Id,
                 relationship,
@@ -104,9 +101,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void Relationships_between_two_different_entities_can_be_created()
         {
-            var context = new XrmFakedContext();
-
-
             var exampleMetadata = new EntityMetadata()
             {
                 LogicalName = "test_entity",
@@ -144,9 +138,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             };
             otherMetadata.SetAttributeCollection(new AttributeMetadata[] { otherIdAttribute, otherNameAttribute });
 
-            context.InitializeMetadata(new[] { exampleMetadata });
+            _context.InitializeMetadata(new[] { exampleMetadata });
 
-            context.AddRelationship("test_entity_other", new XrmFakedRelationship
+            _context.AddRelationship("test_entity_other", new XrmFakedRelationship
             {
                 IntersectEntity = "test_entity_other",
                 Entity1LogicalName = exampleMetadata.LogicalName,
@@ -168,13 +162,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 [nameAttribute.LogicalName] = "Second Record"
             };
 
-            context.Initialize(new[] { record1, record2 });
-
-            var service = context.GetOrganizationService();
+            _context.Initialize(new[] { record1, record2 });
 
             var relationship = new Relationship("test_entity_other");
 
-            var ex = Record.Exception(() => service.Associate(
+            var ex = Record.Exception(() => _service.Associate(
                    exampleMetadata.LogicalName,
                    record1.Id,
                    relationship,

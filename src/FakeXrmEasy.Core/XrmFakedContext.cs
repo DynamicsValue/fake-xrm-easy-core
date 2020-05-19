@@ -130,6 +130,11 @@ namespace FakeXrmEasy
 
         }
 
+        public bool HasProperty<T>()
+        {
+            return _properties.ContainsKey(typeof(T).FullName);
+        }
+        
         public T GetProperty<T>() 
         {
             if(!_properties.ContainsKey(typeof(T).FullName)) 

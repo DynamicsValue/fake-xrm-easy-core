@@ -27,9 +27,6 @@ namespace FakeXrmEasy.Middleware.Messages
                 var messageExecutors = new MessageExecutors(fakeMessageExecutorsDictionary);
                 context.SetProperty(messageExecutors);
 
-                var executionMocks = new ExecutionMocks();
-                context.SetProperty(executionMocks);
-
                 AddFakeAssociate(context, service);
                 AddFakeDisassociate(context, service);
             });
@@ -55,7 +52,11 @@ namespace FakeXrmEasy.Middleware.Messages
         public static IMiddlewareBuilder AddExecutionMock<T>(this IMiddlewareBuilder builder, OrganizationRequestExecution mock) where T : OrganizationRequest
         {
             builder.Add(context => {
+                if(!context.HasProperty<ExecutionMocks>())
+                    context.SetProperty<ExecutionMocks>(new ExecutionMocks());
+
                 var executionMocks = context.GetProperty<ExecutionMocks>();
+
                 if (!executionMocks.ContainsKey(typeof(T)))
                     executionMocks.Add(typeof(T), mock);
                 else
@@ -102,26 +103,37 @@ namespace FakeXrmEasy.Middleware.Messages
 
         private static bool CanHandleRequest(IXrmFakedContext context, OrganizationRequest request) 
         {
-            var executionMocks = context.GetProperty<ExecutionMocks>();
-            if(executionMocks.ContainsKey(request.GetType()))
+            if(context.HasProperty<ExecutionMocks>()) 
             {
-                return true;
+                var executionMocks = context.GetProperty<ExecutionMocks>();
+                if(executionMocks.ContainsKey(request.GetType()))
+                {
+                    return true;
+                }
             }
-
-            var messageExecutors = context.GetProperty<MessageExecutors>();
-            return messageExecutors.ContainsKey(request.GetType());
+            
+            if(context.HasProperty<MessageExecutors>())
+            {
+                var messageExecutors = context.GetProperty<MessageExecutors>();
+                return messageExecutors.ContainsKey(request.GetType());
+            }
+            
+            return false;
         }
 
         private static OrganizationResponse ProcessRequest(IXrmFakedContext context, OrganizationRequest request) 
         {
-            var executionMocks = context.GetProperty<ExecutionMocks>();
-            if(executionMocks.ContainsKey(request.GetType()))
+            if(context.HasProperty<ExecutionMocks>()) 
             {
-                return executionMocks[request.GetType()].Invoke(request);
+                var executionMocks = context.GetProperty<ExecutionMocks>();
+                if(executionMocks.ContainsKey(request.GetType()))
+                {
+                    return executionMocks[request.GetType()].Invoke(request);
+                }
             }
 
             var messageExecutors = context.GetProperty<MessageExecutors>();
-            return messageExecutors[request.GetType()].Execute(request, context);
+            return messageExecutors[request.GetType()].Execute(request, context);            
         }
         
 

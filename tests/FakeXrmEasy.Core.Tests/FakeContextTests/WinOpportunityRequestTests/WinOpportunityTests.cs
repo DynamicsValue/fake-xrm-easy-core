@@ -8,20 +8,18 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.WinOpportunityRequestTests
 {
-    public class WinOpportunityTests
+    public class WinOpportunityTests: FakeXrmEasyTests
     {
         [Fact]
         public void Check_if_Opportunity_status_is_Win_after_set()
         {
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            var service = context.GetFakedOrganizationService();
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var opportunity = new Opportunity()
             {
                 Id = Guid.NewGuid()
             };
-            context.Initialize(new[] { opportunity });
+            _context.Initialize(new[] { opportunity });
 
             var request = new WinOpportunityRequest()
             {
@@ -32,9 +30,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.WinOpportunityRequestTests
                 Status = new OptionSetValue((int)OpportunityState.Won)
             };
 
-            service.Execute(request);
+            _service.Execute(request);
 
-            var opp = (from op in context.CreateQuery<Opportunity>()
+            var opp = (from op in _context.CreateQuery<Opportunity>()
                        where op.Id == opportunity.Id
                        select op).FirstOrDefault();
 

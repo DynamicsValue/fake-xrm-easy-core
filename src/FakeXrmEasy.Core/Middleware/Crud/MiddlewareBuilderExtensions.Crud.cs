@@ -38,7 +38,6 @@ namespace FakeXrmEasy.Middleware.Crud
                 #endif
 
                 context.SetProperty(crudMessageExecutors);
-                context.SetProperty<IIntegrityOptions>(new IntegrityOptions() {  ValidateEntityReferences = false });
                 AddFakeCreate(context, service);
                 AddFakeRetrieve(context, service);
                 AddFakeRetrieveMultiple(context, service);
