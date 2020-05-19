@@ -55,7 +55,7 @@ namespace FakeXrmEasy.FakeMessageExecutors
                 Value = req.Value,
                 Label = req.Label
             });
-            optionSetMetadataRepository.Set(key, new OptionSetMetadata());
+            optionSetMetadataRepository.Set(key, optionSetMetadata);
 
             if (!string.IsNullOrEmpty(req.EntityLogicalName))
             {

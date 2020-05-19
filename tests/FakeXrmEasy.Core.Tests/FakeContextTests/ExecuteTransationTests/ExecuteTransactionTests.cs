@@ -3,15 +3,12 @@
 using FakeXrmEasy.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteTransationTests
 {
-    public class ExecuteTransactionTests
+    public class ExecuteTransactionTests: FakeXrmEasyTests
     {
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
@@ -24,7 +21,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteTransationTests
         [Fact]
         public void When_execute_is_called_all_requests_are_executed()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new ExecuteTransactionExecutor();
             var req = new ExecuteTransactionRequest()
             {
@@ -36,8 +33,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteTransationTests
                 }
             };
 
-            var response = executor.Execute(req, context) as ExecuteTransactionResponse;
-            var contacts = context.CreateQuery("contact").ToList();
+            var response = executor.Execute(req, _context) as ExecuteTransactionResponse;
+            var contacts = _context.CreateQuery("contact").ToList();
             Assert.Equal(0, response.Responses.Count);
             Assert.Equal(3, contacts.Count);
         }
@@ -45,7 +42,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteTransationTests
         [Fact]
         public void When_execute_is_called_all_requests_are_executed_with_responses()
         {
-            var context = new XrmFakedContext();
+            
             var executor = new ExecuteTransactionExecutor();
             var req = new ExecuteTransactionRequest()
             {
@@ -58,8 +55,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteTransationTests
                 }
             };
 
-            var response = executor.Execute(req, context) as ExecuteTransactionResponse;
-            var contacts = context.CreateQuery("contact").ToList();
+            var response = executor.Execute(req, _context) as ExecuteTransactionResponse;
+            var contacts = _context.CreateQuery("contact").ToList();
             Assert.Equal(3, response.Responses.Count);
             Assert.Equal(3, contacts.Count);
         }

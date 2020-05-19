@@ -9,7 +9,7 @@ using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.InsertStatusValueRequestTests
 {
-    public class InsertStatusValueRequestTests
+    public class InsertStatusValueRequestTests: FakeXrmEasyTests
     {
         [Fact]
         public void Should_update_entity_metadata_with_status()
@@ -18,7 +18,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertStatusValueRequestTests
             var attributeName = "statuscode";
             var value = 1;
             var statecode = 1;
-            var ctx = new XrmFakedContext();
 
             var entityMetadata = new EntityMetadata()
             {
@@ -27,7 +26,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertStatusValueRequestTests
             StatusAttributeMetadata enumAttribute = new StatusAttributeMetadata() {LogicalName = attributeName};
             entityMetadata.SetAttributeCollection(new List<AttributeMetadata>() {enumAttribute});
 
-            ctx.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
             var req = new InsertStatusValueRequest()
             {
@@ -37,12 +36,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertStatusValueRequestTests
                 Value = value,
                 StateCode = statecode
             };
-
-            var service = ctx.GetOrganizationService();
-            service.Execute(req);
+            _service.Execute(req);
 
             //Check the status metadata was updated
-            var storedStatusAttributeMetadata = ctx.GetProperty<IStatusAttributeMetadataRepository>().GetByAttributeName(Contact.EntityLogicalName, attributeName);
+            var storedStatusAttributeMetadata = _context.GetProperty<IStatusAttributeMetadataRepository>().GetByAttributeName(Contact.EntityLogicalName, attributeName);
             Assert.NotNull(storedStatusAttributeMetadata);
 
             var option = storedStatusAttributeMetadata.OptionSet.Options.FirstOrDefault();            
@@ -56,7 +53,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertStatusValueRequestTests
                 RetrieveAsIfPublished = true
             };
 
-            RetrieveAttributeResponse attResponse = (RetrieveAttributeResponse) service.Execute(attReq);
+            RetrieveAttributeResponse attResponse = (RetrieveAttributeResponse) _service.Execute(attReq);
 
             StatusAttributeMetadata statusAttributeMetadata = (StatusAttributeMetadata) attResponse.AttributeMetadata;                   
 

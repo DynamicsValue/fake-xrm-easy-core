@@ -5,20 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.DisassociateRequestTests
 {
-    public class DisassociateRequestTests
+    public class DisassociateRequestTests: FakeXrmEasyTests
     {
+
         [Fact]
         public void When_execute_is_called_with_reverse_param_order()
         {
-            var context = new XrmFakedContext();
 
             var userId = Guid.NewGuid();
             var teamId = Guid.NewGuid();
             var user2Id = Guid.NewGuid();
-            context.Initialize(new List<Entity> {
+            _context.Initialize(new List<Entity> {
                 new SystemUser
                 {
                     Id = userId
@@ -57,7 +58,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.DisassociateRequestTests
                 }
             });
 
-            context.AddRelationship("teammembership", new XrmFakedRelationship()
+            _context.AddRelationship("teammembership", new XrmFakedRelationship()
             {
                 RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany,
                 IntersectEntity = "teammembership",
@@ -67,11 +68,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.DisassociateRequestTests
                 Entity2LogicalName = "team"
             });
 
-            var orgSvc = context.GetOrganizationService();
-            orgSvc.Disassociate("team", teamId, new Relationship("teammembership"),
+            _service.Disassociate("team", teamId, new Relationship("teammembership"),
                 new EntityReferenceCollection(new List<EntityReference> { new EntityReference("systemuser", userId), new EntityReference("systemuser", user2Id) }));
 
-            using (Crm.XrmServiceContext ctx = new XrmServiceContext(orgSvc))
+            using (Crm.XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var correctAssociation1 = (from tu in ctx.TeamMembershipSet
                                            where tu.TeamId == teamId
@@ -102,13 +102,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.DisassociateRequestTests
         [Fact]
         public void When_execute_is_called_with_same_as_relationnship_param_order()
         {
-            var context = new XrmFakedContext();
+            
 
             var user2Id = Guid.NewGuid();
             var userId = Guid.NewGuid();
             var teamId = Guid.NewGuid();
             var team2Id = Guid.NewGuid();
-            context.Initialize(new List<Entity> {
+            _context.Initialize(new List<Entity> {
                 new SystemUser
                 {
                     Id = userId
@@ -151,7 +151,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.DisassociateRequestTests
                 }
             });
 
-            context.AddRelationship("teammembership", new XrmFakedRelationship()
+            _context.AddRelationship("teammembership", new XrmFakedRelationship()
             {
                 RelationshipType = XrmFakedRelationship.FakeRelationshipType.ManyToMany,
                 IntersectEntity = "teammembership",
@@ -161,11 +161,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.DisassociateRequestTests
                 Entity2LogicalName = "team"
             });
 
-            var orgSvc = context.GetOrganizationService();
-            orgSvc.Disassociate("systmuser", userId, new Relationship("teammembership"),
+            
+            _service.Disassociate("systmuser", userId, new Relationship("teammembership"),
                 new EntityReferenceCollection(new List<EntityReference> { new EntityReference("team", teamId), new EntityReference("team", team2Id) }));
 
-            using (Crm.XrmServiceContext ctx = new XrmServiceContext(orgSvc))
+            using (Crm.XrmServiceContext ctx = new XrmServiceContext(_service))
             {
                 var correctAssociation1 = (from tu in ctx.TeamMembershipSet
                                            where tu.TeamId == teamId

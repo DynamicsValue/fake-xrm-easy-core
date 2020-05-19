@@ -13,12 +13,12 @@ using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeXrmEasyTests
+    public class FakeContextCoreTests
     {
         private readonly IXrmFakedContext _context;
         private readonly IOrganizationService _service;
 
-        public FakeXrmEasyTests()
+        public FakeContextCoreTests()
         {
             _context = XrmFakedContextFactory.New();
             _service = _context.GetOrganizationService();

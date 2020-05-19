@@ -9,15 +9,11 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
 {
-    public class ExecuteMultipleRequestTests
+    public class ExecuteMultipleRequestTests: FakeXrmEasyTests
     {
         [Fact]
-        public static void Should_Execute_Subsequent_Requests()
+        public void Should_Execute_Subsequent_Requests()
         {
-            var context = new XrmFakedContext();
-
-            var service = context.GetOrganizationService();
-
             var account1 = new Account
             {
                 Id = Guid.NewGuid(),
@@ -50,22 +46,18 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
                 }
             };
 
-            var response = service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
+            var response = _service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
 
             Assert.False(response.IsFaulted);
             Assert.NotEmpty(response.Responses);
 
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account2.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account2.Id, new ColumnSet(true)));
         }
 
         [Fact]
-        public static void Should_Execute_Subsequent_Requests_In_Order()
+        public void Should_Execute_Subsequent_Requests_In_Order()
         {
-            var context = new XrmFakedContext();
-
-            var service = context.GetOrganizationService();
-
             var account1 = new Account
             {
                 Id = Guid.NewGuid(),
@@ -116,14 +108,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
                 }
             };
 
-            var response = service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
+            var response = _service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
 
             Assert.False(response.IsFaulted);
             Assert.NotEmpty(response.Responses);
 
-            var acc1 = service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)).ToEntity<Account>();
+            var acc1 = _service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)).ToEntity<Account>();
             Assert.NotNull(acc1);
-            var acc2 = (service.Retrieve(Account.EntityLogicalName, account2.Id, new ColumnSet(true))).ToEntity<Account>();
+            var acc2 = (_service.Retrieve(Account.EntityLogicalName, account2.Id, new ColumnSet(true))).ToEntity<Account>();
             Assert.NotNull(acc2);
 
             Assert.Equal("Acc1 - Updated", acc1.Name);
@@ -131,11 +123,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
         }
 
         [Fact]
-        public static void Should_Not_Return_Responses_If_Not_Told_To_Do_So_And_No_Faults_Occur()
+        public void Should_Not_Return_Responses_If_Not_Told_To_Do_So_And_No_Faults_Occur()
         {
-            var context = new XrmFakedContext();
+            
 
-            var service = context.GetOrganizationService();
+            
 
             var account1 = new Account
             {
@@ -169,21 +161,21 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
                 }
             };
 
-            var response = service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
+            var response = _service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
 
             Assert.False(response.IsFaulted);
             Assert.Empty(response.Responses);
 
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account2.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account2.Id, new ColumnSet(true)));
         }
 
         [Fact]
-        public static void Should_Return_Error_Responses_Only_If_Faults_Occur_And_Return_Is_False()
+        public void Should_Return_Error_Responses_Only_If_Faults_Occur_And_Return_Is_False()
         {
-            var context = new XrmFakedContext();
+            
 
-            var service = context.GetOrganizationService();
+            
 
             var account1 = new Account
             {
@@ -217,21 +209,21 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
                 }
             };
 
-            var response = service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
+            var response = _service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
 
             Assert.True(response.IsFaulted);
             Assert.NotEmpty(response.Responses);
             Assert.Equal(1, response.Responses.Count);
 
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
         }
 
         [Fact]
-        public static void Should_Return_All_Responses_If_Told_To_Do_So()
+        public void Should_Return_All_Responses_If_Told_To_Do_So()
         {
-            var context = new XrmFakedContext();
+            
 
-            var service = context.GetOrganizationService();
+            
 
             var account1 = new Account
             {
@@ -265,7 +257,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
                 }
             };
 
-            var response = service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
+            var response = _service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
 
             Assert.False(response.IsFaulted);
             Assert.NotEmpty(response.Responses);
@@ -273,16 +265,16 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
             Assert.True(response.Responses[0].Response is CreateResponse);
             Assert.True(response.Responses[1].Response is CreateResponse);
 
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account2.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account2.Id, new ColumnSet(true)));
         }
 
         [Fact]
-        public static void Should_Continue_On_Error_If_Told_To_Do_So()
+        public void Should_Continue_On_Error_If_Told_To_Do_So()
         {
-            var context = new XrmFakedContext();
+            
 
-            var service = context.GetOrganizationService();
+            
 
             var account1 = new Account
             {
@@ -328,24 +320,20 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
                 }
             };
 
-            var response = service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
+            var response = _service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
 
             Assert.True(response.IsFaulted);
             Assert.NotEmpty(response.Responses);
 
             Assert.True(response.Responses.Any(resp => resp.Fault != null));
 
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account3.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account3.Id, new ColumnSet(true)));
         }
 
         [Fact]
-        public static void Should_Not_Continue_On_Error_If_Not_Told_To_Do_So()
+        public void Should_Not_Continue_On_Error_If_Not_Told_To_Do_So()
         {
-            var context = new XrmFakedContext();
-
-            var service = context.GetOrganizationService();
-
             var account1 = new Account
             {
                 Id = Guid.NewGuid(),
@@ -390,15 +378,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
                 }
             };
 
-            var response = service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
+            var response = _service.Execute(executeMultipleRequest) as ExecuteMultipleResponse;
 
             Assert.True(response.IsFaulted);
             Assert.NotEmpty(response.Responses);
 
             Assert.True(response.Responses.Any(resp => resp.Fault != null));
 
-            Assert.NotNull(service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
-            Assert.Throws<FaultException<OrganizationServiceFault>>(() => service.Retrieve(Account.EntityLogicalName, account3.Id, new ColumnSet(true)));
+            Assert.NotNull(_service.Retrieve(Account.EntityLogicalName, account1.Id, new ColumnSet(true)));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Retrieve(Account.EntityLogicalName, account3.Id, new ColumnSet(true)));
         }
     }
 }

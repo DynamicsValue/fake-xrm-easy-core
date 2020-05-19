@@ -66,7 +66,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_RetrieveMultiple_with_DateTime_Field_Behaviour_set_to_UserLocal_result_is_Time_Part_is_Kept()
         {
-            _context.DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
+            (_context as XrmFakedContext).DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
                 {
                     {
                         "contact", new Dictionary<string, DateTimeAttributeBehavior>

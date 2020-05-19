@@ -13,14 +13,14 @@ using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
 {
-    public class InsertOptionValueRequestTests
+    public class InsertOptionValueRequestTests: FakeXrmEasyTests
     {
         [Fact]
         public void Should_also_update_entity_metadata_when_not_using_global_option_set()
         {
             var label = "dummy label";
             var attributeName = "statuscode";
-            var ctx = new XrmFakedContext();
+            
 
             var entityMetadata = new EntityMetadata()
             {
@@ -30,7 +30,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
             StatusAttributeMetadata enumAttribute = new StatusAttributeMetadata() { LogicalName = attributeName };
             entityMetadata.SetAttributeCollection(new List<AttributeMetadata>() { enumAttribute });
 
-            ctx.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
             var req = new InsertOptionValueRequest()
             {
@@ -39,12 +39,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
                 Label = new Label(label, 0)
             };
 
-            var service = ctx.GetOrganizationService();
-            service.Execute(req);
+            _service.Execute(req);
 
             //Check the optionsetmetadata was updated
             var key = $"{Contact.EntityLogicalName}#{attributeName}";
-            var optionSetMetadata = ctx.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
+            var optionSetMetadata = _context.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
             Assert.NotNull(optionSetMetadata);
 
             var option = optionSetMetadata.Options.FirstOrDefault();
@@ -58,7 +57,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
                 RetrieveAsIfPublished = true
             };
 
-            RetrieveAttributeResponse attResponse = (RetrieveAttributeResponse)service.Execute(attReq);
+            RetrieveAttributeResponse attResponse = (RetrieveAttributeResponse)_service.Execute(attReq);
 
             StatusAttributeMetadata statusAttributeMetadata = (StatusAttributeMetadata)attResponse.AttributeMetadata;
             Assert.NotNull(statusAttributeMetadata.OptionSet);
@@ -71,7 +70,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
         {
             var label = "fake";
             var attributeName = "statuscode";
-            var ctx = new XrmFakedContext();
+            
 
             LocalizedLabel localizedLabel1 = new LocalizedLabel(label, 10);
             LocalizedLabel localizedLabel2 = new LocalizedLabel("falso", 10);
@@ -85,7 +84,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
             StatusAttributeMetadata enumAttribute = new StatusAttributeMetadata() { LogicalName = attributeName };
             entityMetadata.SetAttributeCollection(new List<AttributeMetadata>() { enumAttribute });
 
-            ctx.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
             var req = new InsertOptionValueRequest()
             {
@@ -94,12 +93,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
                 Label = new Label(localizedLabel1, localizedLabels)
             };
 
-            var service = ctx.GetOrganizationService();
-            service.Execute(req);
+            
+            _service.Execute(req);
 
             //Check the optionsetmetadata was updated
             var key = $"{Contact.EntityLogicalName}#{attributeName}";
-            var optionSetMetadata = ctx.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
+            var optionSetMetadata = _context.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
 
             Assert.NotNull(optionSetMetadata);
 
@@ -114,7 +113,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
                 RetrieveAsIfPublished = true
             };
 
-            RetrieveAttributeResponse attResponse = (RetrieveAttributeResponse)service.Execute(attReq);
+            RetrieveAttributeResponse attResponse = (RetrieveAttributeResponse)_service.Execute(attReq);
 
             StatusAttributeMetadata statusAttributeMetadata = (StatusAttributeMetadata)attResponse.AttributeMetadata;
             Assert.NotNull(statusAttributeMetadata.OptionSet);

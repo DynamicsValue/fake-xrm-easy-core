@@ -11,7 +11,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
 {
-    public class ExecuteFetchRequestTests
+    public class ExecuteFetchRequestTests: FakeXrmEasyTests
     {
         [Fact]
         public void Test_Conversion_DateTime_ToXml()
@@ -40,11 +40,10 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
         [Fact]
         public void Test_Conversion_EntityReference_ToXml()
         {
-            var fake = new XrmFakedContext();
-            fake.ProxyTypesAssembly = typeof(Crm.Contact).Assembly;
+            _context.EnableProxyTypes(typeof(Crm.Contact).Assembly);
             var executor = new ExecuteFetchRequestExecutor();
             var contactGuid = Guid.NewGuid();
-            var element = executor.AttributeValueToFetchResult(new KeyValuePair<string, object>("new_contact", new EntityReference("contact", contactGuid) { Name = "John Doe" }), null, fake);
+            var element = executor.AttributeValueToFetchResult(new KeyValuePair<string, object>("new_contact", new EntityReference("contact", contactGuid) { Name = "John Doe" }), null, _context);
             Assert.NotNull(element);
             Assert.Equal(@"<new_contact dsc=""0"" yomi=""John Doe"" name=""John Doe"" type=""2"">" + contactGuid.ToString().ToUpper() + "</new_contact>", element.ToString());
         }
@@ -52,12 +51,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
         [Fact]
         public void Test_Conversion_OptionSetValue_ToXml()
         {
-            var fake = new XrmFakedContext();
-            fake.ProxyTypesAssembly = typeof(Crm.Contact).Assembly;
+            _context.EnableProxyTypes(typeof(Crm.Contact).Assembly);
             var executor = new ExecuteFetchRequestExecutor();
             var formattedValues = new FormattedValueCollection();
             formattedValues.Add("new_contact", "Test");
-            var element = executor.AttributeValueToFetchResult(new KeyValuePair<string, object>("new_contact", new OptionSetValue(1)), formattedValues, fake);
+            var element = executor.AttributeValueToFetchResult(new KeyValuePair<string, object>("new_contact", new OptionSetValue(1)), formattedValues, _context);
             Assert.NotNull(element);
             Assert.Equal(@"<new_contact name=""Test"" formattedvalue=""1"">1</new_contact>", element.ToString());
         }
@@ -66,14 +64,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
         [Fact]
         public void Test_Conversion_OptionSetValueCollection_ToXml()
         {
-            var fake = new XrmFakedContext();
-            fake.ProxyTypesAssembly = typeof(Crm.Contact).Assembly;
+            _context.EnableProxyTypes(typeof(Crm.Contact).Assembly);
             var executor = new ExecuteFetchRequestExecutor();
             var formattedValues = new FormattedValueCollection();
             var element = executor.AttributeValueToFetchResult(
                 new KeyValuePair<string, object>("new_multiselectattribute", new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) }),
                 formattedValues,
-                fake);
+                _context);
             Assert.NotNull(element);
             Assert.Equal(@"<new_multiselectattribute name=""[-1,1,2,-1]"">[-1,1,2,-1]</new_multiselectattribute>", element.ToString());
         }
@@ -84,8 +81,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
         {
             //This will test a query expression is generated and executed
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new List<Entity>()
+            
+            _context.Initialize(new List<Entity>()
             {
                 new Contact() {
                     Id = Guid.NewGuid(),
@@ -122,9 +119,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
                                   </entity>
                             </fetch>";
 
-            var service = ctx.GetOrganizationService();
+            
 
-            var response = service.Execute(new ExecuteFetchRequest { FetchXml = fetchXml }) as ExecuteFetchResponse;
+            var response = _service.Execute(new ExecuteFetchRequest { FetchXml = fetchXml }) as ExecuteFetchResponse;
 
             Assert.NotEmpty(response.FetchXmlResult);
             XDocument resXml = XDocument.Parse(response.FetchXmlResult);
@@ -147,7 +144,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
         {
             //This will test a query expression is generated and executed
 
-            var ctx = new XrmFakedContext();
+            
 
             //Arrange
             var contactList = new List<Entity>();
@@ -155,7 +152,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
             {
                 contactList.Add(new Contact() { Id = Guid.NewGuid() });
             }
-            ctx.Initialize(contactList);
+            _context.Initialize(contactList);
 
             //Act
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' count='7'>
@@ -166,9 +163,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
                                   </entity>
                             </fetch>";
 
-            var service = ctx.GetOrganizationService();
+            
 
-            var response = service.Execute(new ExecuteFetchRequest { FetchXml = fetchXml }) as ExecuteFetchResponse;
+            var response = _service.Execute(new ExecuteFetchRequest { FetchXml = fetchXml }) as ExecuteFetchResponse;
 
             Assert.NotEmpty(response.FetchXmlResult);
             XDocument resXml = XDocument.Parse(response.FetchXmlResult);
@@ -184,7 +181,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
         {
             //This will test a query expression is generated and executed
 
-            var ctx = new XrmFakedContext();
+            
 
             //Arrange
             var contactList = new List<Entity>();
@@ -192,7 +189,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
             {
                 contactList.Add(new Contact() { Id = Guid.NewGuid() });
             }
-            ctx.Initialize(contactList);
+            _context.Initialize(contactList);
 
             //Act
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' count='7' {0}>
@@ -203,9 +200,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
                                   </entity>
                             </fetch>";
 
-            var service = ctx.GetOrganizationService();
+            
 
-            var response = service.Execute(new ExecuteFetchRequest { FetchXml = string.Format(fetchXml, String.Empty) }) as ExecuteFetchResponse;
+            var response = _service.Execute(new ExecuteFetchRequest { FetchXml = string.Format(fetchXml, String.Empty) }) as ExecuteFetchResponse;
 
             Assert.NotEmpty(response.FetchXmlResult);
             XDocument resXml = XDocument.Parse(response.FetchXmlResult);
@@ -218,7 +215,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
             var pageCookie = resXml.Element("resultset").Attribute("paging-cookie");
             var pagingXml = "page=\"2\" " + pageCookie.ToString();
 
-            var response2 = service.Execute(new ExecuteFetchRequest { FetchXml = string.Format(fetchXml, pagingXml) }) as ExecuteFetchResponse;
+            var response2 = _service.Execute(new ExecuteFetchRequest { FetchXml = string.Format(fetchXml, pagingXml) }) as ExecuteFetchResponse;
             Assert.NotEmpty(response2.FetchXmlResult);
             resXml = XDocument.Parse(response2.FetchXmlResult);
             Assert.NotNull(resXml);
@@ -230,7 +227,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
             pageCookie = resXml.Element("resultset").Attribute("paging-cookie");
             pagingXml = "page=\"3\" " + pageCookie;
 
-            var response3 = service.Execute(new ExecuteFetchRequest { FetchXml = string.Format(fetchXml, pagingXml) }) as ExecuteFetchResponse;
+            var response3 = _service.Execute(new ExecuteFetchRequest { FetchXml = string.Format(fetchXml, pagingXml) }) as ExecuteFetchResponse;
             Assert.NotEmpty(response3.FetchXmlResult);
             resXml = XDocument.Parse(response3.FetchXmlResult);
             Assert.NotNull(resXml);
@@ -244,8 +241,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
         [Fact]
         public void When_querying_fetchxml_with_linked_entities_with_left_outer_join_right_result_is_returned()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
+            
+            
 
             var contact = new Contact()
             {
@@ -256,7 +253,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
             var account = new Account() { Id = Guid.NewGuid(), PrimaryContactId = contact.ToEntityReference() };
             var account2 = new Account() { Id = Guid.NewGuid(), PrimaryContactId = null };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 contact, account, account2
             });
@@ -279,7 +276,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
                     </fetch>
                 ";
 
-            var response = service.Execute(new ExecuteFetchRequest { FetchXml = fetchXml }) as ExecuteFetchResponse;
+            var response = _service.Execute(new ExecuteFetchRequest { FetchXml = fetchXml }) as ExecuteFetchResponse;
 
             Assert.NotEmpty(response.FetchXmlResult);
             XDocument resXml = XDocument.Parse(response.FetchXmlResult);
@@ -296,9 +293,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
         [Fact]
         public void When_querying_fetchxml_with_multiple_linked_entities_with_the_same_entity_right_result_is_returned()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var user1 = new SystemUser
             {
                 Id = Guid.NewGuid(),
@@ -326,7 +320,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
                 ["modifiedby"] = user3.ToEntityReference()
             };
 
-            context.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 user1,
                 user2,
@@ -350,7 +344,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
                       </entity>
                     </fetch>";
 
-            var response = service.Execute(new ExecuteFetchRequest { FetchXml = fetchXml }) as ExecuteFetchResponse;
+            var response = _service.Execute(new ExecuteFetchRequest { FetchXml = fetchXml }) as ExecuteFetchResponse;
 
             Assert.NotNull(response);
             Assert.NotEmpty(response.FetchXmlResult);
