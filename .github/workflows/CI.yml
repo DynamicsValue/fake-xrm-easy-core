@@ -33,6 +33,12 @@ jobs:
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
+    - name: Pack
+      run: pwsh ./pack.ps1 -versionSuffix "ci.${{ github.head_ref }}${{ github.run_number }}"
+      env: 
+        NUGET_USERNAME: DynamicsValue
+        NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
+
     - name: Quality Gate
       uses: DynamicsValue/dotnet-sonarscanner@v2.2
       with:
@@ -52,8 +58,8 @@ jobs:
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
     
-    - name: Pack & Push
-      run: pwsh ./push.ps1 -packageSource "github" -versionSuffix "ci.${{ github.head_ref }}${{ github.run_number }}"
+    - name: Push
+      run: pwsh ./push.ps1 -packageSource "github"
       env: 
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

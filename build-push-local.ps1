@@ -1,4 +1,5 @@
 
-./build.ps1 
-./push.ps1 -packageSource "local-packages" -versionSuffix "zlocal"
+./build.ps1
+./pack.ps1 -versionSuffix "zlocal"
+./push.ps1 -packageSource "local-packages"
 
