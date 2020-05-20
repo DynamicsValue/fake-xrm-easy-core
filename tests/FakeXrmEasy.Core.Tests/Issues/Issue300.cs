@@ -7,7 +7,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue300
+    public class Issue300: FakeXrmEasyTests
     {
         [Fact]
         public void Should_Create_Account_With_Local_DateTime_And_Retrieve_Utc()
@@ -20,11 +20,9 @@ namespace FakeXrmEasy.Tests.Issues
                 LastUsedInCampaign = dateTimeNow
             };
 
-            var context = new XrmFakedContext();
+            _service.Create(account);
 
-            context.GetOrganizationService().Create(account);
-
-            var retrievedAccount = context.CreateQuery<Account>().SingleOrDefault(p => p.Id == account.Id);
+            var retrievedAccount = _context.CreateQuery<Account>().SingleOrDefault(p => p.Id == account.Id);
 
             Assert.NotNull(retrievedAccount);
             Assert.True(retrievedAccount.LastUsedInCampaign.HasValue);
@@ -42,11 +40,9 @@ namespace FakeXrmEasy.Tests.Issues
                 LastUsedInCampaign = dateTimeNow
             };
 
-            var context = new XrmFakedContext();
+            _context.Initialize(new List<Entity> { account });
 
-            context.Initialize(new List<Entity> { account });
-
-            var retrievedAccount = context.CreateQuery<Account>().SingleOrDefault(p => p.Id == account.Id);
+            var retrievedAccount = _context.CreateQuery<Account>().SingleOrDefault(p => p.Id == account.Id);
 
             Assert.NotNull(retrievedAccount);
             Assert.True(retrievedAccount.LastUsedInCampaign.HasValue);
@@ -64,14 +60,12 @@ namespace FakeXrmEasy.Tests.Issues
                 LastUsedInCampaign = dateTimeNow
             };
 
-            var context = new XrmFakedContext();
-            var orgService = context.GetOrganizationService();
-            orgService.Create(account);
+            _service.Create(account);
 
             account.LastUsedInCampaign = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
-            orgService.Update(account);
+            _service.Update(account);
 
-            var retrievedAccount = context.CreateQuery<Account>().SingleOrDefault(p => p.Id == account.Id);
+            var retrievedAccount = _context.CreateQuery<Account>().SingleOrDefault(p => p.Id == account.Id);
 
             Assert.NotNull(retrievedAccount);
             Assert.True(retrievedAccount.LastUsedInCampaign.HasValue);

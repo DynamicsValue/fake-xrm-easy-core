@@ -6,7 +6,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class TestCRMHandlingOfNullsAndMissingFields
+    public class TestCRMHandlingOfNullsAndMissingFields: FakeXrmEasyTests
     {
         [Fact]
         public void TestRetrieveWithNull()
@@ -15,17 +15,14 @@ namespace FakeXrmEasy.Tests.Issues
             testEntity["field"] = null;
             testEntity.Id = Guid.NewGuid();
 
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
-
-            context.Initialize(
+            _context.Initialize(
                 new List<Entity>()
                 {
                     testEntity
                 }
             );
 
-            Entity e = service.Retrieve("testentity", testEntity.Id, new ColumnSet("field"));
+            Entity e = _service.Retrieve("testentity", testEntity.Id, new ColumnSet("field"));
             Assert.False(e.Contains("field"));
         }
 
@@ -36,10 +33,7 @@ namespace FakeXrmEasy.Tests.Issues
             testEntity["field"] = null;
             testEntity.Id = Guid.NewGuid();
 
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
-
-            context.Initialize(
+            _context.Initialize(
                 new List<Entity>()
                 {
                     testEntity
@@ -48,7 +42,7 @@ namespace FakeXrmEasy.Tests.Issues
 
             QueryExpression contactQuery = new QueryExpression("testentity");
             contactQuery.ColumnSet = new ColumnSet("field");
-            EntityCollection result = service.RetrieveMultiple(contactQuery);
+            EntityCollection result = _service.RetrieveMultiple(contactQuery);
             Assert.False(result.Entities[0].Contains("field"));
         }
 
@@ -58,17 +52,14 @@ namespace FakeXrmEasy.Tests.Issues
             Entity testEntity = new Entity("testentity");
             testEntity.Id = Guid.NewGuid();
 
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
-
-            context.Initialize(
+            _context.Initialize(
                 new List<Entity>()
                 {
                     testEntity
                 }
             );
 
-            Entity e = service.Retrieve("testentity", testEntity.Id, new ColumnSet("field"));
+            Entity e = _service.Retrieve("testentity", testEntity.Id, new ColumnSet("field"));
             Assert.False(e.Contains("field"));
         }
 
@@ -78,10 +69,7 @@ namespace FakeXrmEasy.Tests.Issues
             Entity testEntity = new Entity("testentity");
             testEntity.Id = Guid.NewGuid();
 
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
-
-            context.Initialize(
+            _context.Initialize(
                 new List<Entity>()
                 {
                     testEntity
@@ -90,7 +78,7 @@ namespace FakeXrmEasy.Tests.Issues
 
             QueryExpression contactQuery = new QueryExpression("testentity");
             contactQuery.ColumnSet = new ColumnSet("field");
-            EntityCollection result = service.RetrieveMultiple(contactQuery);
+            EntityCollection result = _service.RetrieveMultiple(contactQuery);
             Assert.False(result.Entities[0].Contains("field"));
         }
 
@@ -111,10 +99,7 @@ namespace FakeXrmEasy.Tests.Issues
             childEntity.Id = Guid.NewGuid();
             initialEntities.Add(childEntity);
 
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = context.GetOrganizationService();
-
-            context.Initialize(initialEntities);
+            _context.Initialize(initialEntities);
 
             QueryExpression query = new QueryExpression("child");
             LinkEntity link = new LinkEntity("child", "parent", "parent", "parentid", JoinOperator.Inner);
@@ -122,7 +107,7 @@ namespace FakeXrmEasy.Tests.Issues
             link.Columns = new ColumnSet("field");
             query.LinkEntities.Add(link);
 
-            Entity result = service.RetrieveMultiple(query).Entities[0];
+            Entity result = _service.RetrieveMultiple(query).Entities[0];
 
             Assert.False(result.Contains("parententity.field"));
         }

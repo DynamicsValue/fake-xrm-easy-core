@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue328
+    public class Issue328: FakeXrmEasyTests
     {
         [Fact]
         public void DistinctBug()
@@ -41,15 +41,13 @@ namespace FakeXrmEasy.Tests.Issues
                 ColumnSet = new ColumnSet("distinct_value_field"),
             };
 
-            var context = new XrmFakedContext();
-            context.Initialize(new List<Entity> { a1, a2 });
-            var service = context.GetOrganizationService();
+            _context.Initialize(new List<Entity> { a1, a2 });
 
-            var nonDistinctResult = service.RetrieveMultiple(queryNonDistinct);
+            var nonDistinctResult = _service.RetrieveMultiple(queryNonDistinct);
             nonDistinctResult.Entities.ToList().ForEach(e => Debug.WriteLine($"Id: {e.Id} distinct_value_field: {e.GetAttributeValue<string>("distinct_value_field")}"));
             Assert.Equal(2, nonDistinctResult.Entities.Count);
 
-            var distinctResult = service.RetrieveMultiple(queryDistinct);
+            var distinctResult = _service.RetrieveMultiple(queryDistinct);
             distinctResult.Entities.ToList().ForEach(e => Debug.WriteLine($"Id: {e.Id} distinct_value_field: {e.GetAttributeValue<string>("distinct_value_field")}"));
             Assert.Equal(1, distinctResult.Entities.Count);
         }

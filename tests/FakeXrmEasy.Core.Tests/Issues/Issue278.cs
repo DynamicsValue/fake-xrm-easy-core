@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk.Metadata;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 using Xunit;
 using FakeXrmEasy.Extensions;
@@ -14,7 +12,7 @@ using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue278
+    public class Issue278: FakeXrmEasyTests
     {
         [Fact]
         public void Reproduce_issue_278()
@@ -22,10 +20,7 @@ namespace FakeXrmEasy.Tests.Issues
             string attributeName = "statuscode";
             string label = "A faked label";
 
-            XrmFakedContext fakedContext = new XrmFakedContext
-            {
-                ProxyTypesAssembly = (Assembly.GetAssembly(typeof(Contact)))
-            };
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var entityMetadata = new EntityMetadata()
             {
@@ -43,16 +38,14 @@ namespace FakeXrmEasy.Tests.Issues
                 Label = new Label(label, 0)
             };
 
-            fakedContext.InitializeMetadata(entityMetadata);
+            _context.InitializeMetadata(entityMetadata);
 
-            var fakedService = fakedContext.GetOrganizationService();
-            fakedService.Execute(req);
-
+            _service.Execute(req);
 
             //Check the optionsetmetadata was updated
             var key = string.Format("{0}#{1}", Contact.EntityLogicalName, attributeName);
 
-            var optionSetMetadata = fakedContext.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
+            var optionSetMetadata = _context.GetProperty<IOptionSetMetadataRepository>().GetByName(key);
             Assert.NotNull(optionSetMetadata);
 
             var option = optionSetMetadata.Options.FirstOrDefault();
@@ -65,7 +58,7 @@ namespace FakeXrmEasy.Tests.Issues
             attReq.LogicalName = "statuscode";
             attReq.RetrieveAsIfPublished = true;
 
-            RetrieveAttributeResponse attResponse = (RetrieveAttributeResponse)fakedService.Execute(attReq);
+            RetrieveAttributeResponse attResponse = (RetrieveAttributeResponse)_service.Execute(attReq);
 
             // Cast as StatusAttributeMetadata
             StatusAttributeMetadata statusAttributeMetadata = (StatusAttributeMetadata)attResponse.AttributeMetadata;

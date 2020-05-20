@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using Crm;
-using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue165
+    public class Issue165: FakeXrmEasyTests
     {
         [Fact]
         public void TestMultipleUnaliasedJoins()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var account = new Entity("account")
             {
                 Id = Guid.NewGuid(),
@@ -35,7 +30,7 @@ namespace FakeXrmEasy.Tests.Issues
                 ["otherparent"] = secondAccount.ToEntityReference()
             };
 
-            context.Initialize(new List<Entity>() { account, secondAccount, contact });
+            _context.Initialize(new List<Entity>() { account, secondAccount, contact });
 
             QueryExpression query = new QueryExpression("contact");
 
@@ -51,7 +46,7 @@ namespace FakeXrmEasy.Tests.Issues
             };
             query.LinkEntities.Add(secondLink);
 
-            var result = service.RetrieveMultiple(query);
+            var result = _service.RetrieveMultiple(query);
             Entity resultingEntity = result.Entities[0];
             Assert.Equal(2, resultingEntity.Attributes.Count);
             Assert.Equal("Test", ((AliasedValue)resultingEntity["account1.firstname"]).Value);

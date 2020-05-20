@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace FakeXrmEasy.Tests
+namespace FakeXrmEasy.Tests.Issues
 {
     public class Issue180
     {

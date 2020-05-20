@@ -5,7 +5,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue191
+    public class Issue191: FakeXrmEasyTests
     {
         [Fact]
         public void Testing_191()
@@ -34,10 +34,8 @@ namespace FakeXrmEasy.Tests.Issues
             };
 
             // initialise
-            var context = new XrmFakedContext();
-            context.Initialize(new[] { contact, child, pet });
-            var service = context.GetOrganizationService();
-
+            _context.Initialize(new[] { contact, child, pet });
+            
             // join contact and child and pet
             var query2 = new QueryExpression("contact");
 
@@ -63,10 +61,10 @@ namespace FakeXrmEasy.Tests.Issues
             };
             link2.LinkEntities.Add(link22);
 
-            var count2 = service.RetrieveMultiple(query2).Entities.Count;
+            var count2 = _service.RetrieveMultiple(query2).Entities.Count;
             Console.WriteLine(count2); // returns 1 record
 
-            var results = service.RetrieveMultiple(query2);
+            var results = _service.RetrieveMultiple(query2);
             Assert.Equal(true, results.Entities[0].Attributes.ContainsKey("child1.contactid"));
             Assert.Equal(true, results.Entities[0].Attributes.ContainsKey("pet1.childid")); //test fails unless link22 is Inner join
         }

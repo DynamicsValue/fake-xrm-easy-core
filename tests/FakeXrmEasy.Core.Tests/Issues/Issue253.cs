@@ -11,14 +11,11 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue253
+    public class Issue253: FakeXrmEasyTests
     {
         [Fact]
         public void Test_Fetch_Less_Than_Operator_With_String_Late_Bound()
         {
-            var fakedContext = new XrmFakedContext();
-            var fakedService = fakedContext.GetOrganizationService();
-
             Entity college = new Entity()
             {
                 Id = Guid.NewGuid(),
@@ -26,7 +23,7 @@ namespace FakeXrmEasy.Tests.Issues
                 Attributes = { { "bsp_name", "Brasenose" } }
             };
 
-            fakedContext.Initialize(new List<Entity>() { college });
+            _context.Initialize(new List<Entity>() { college });
 
             string FetchXml = @"<fetch mapping='logical'> 
                     <entity name='bsp_college'>
@@ -37,7 +34,7 @@ namespace FakeXrmEasy.Tests.Issues
                     </entity>
                     </fetch>";
 
-            EntityCollection ec = fakedService.RetrieveMultiple(new FetchExpression(FetchXml));
+            EntityCollection ec = _service.RetrieveMultiple(new FetchExpression(FetchXml));
 
             Assert.Equal(ec.Entities.Count, 1);
         }
@@ -45,15 +42,12 @@ namespace FakeXrmEasy.Tests.Issues
         [Fact]
         public void Test_Fetch_Less_Than_Operator_With_String_Early_Bound()
         {
-            var fakedContext = new XrmFakedContext() { ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account)) };
-            var fakedService = fakedContext.GetOrganizationService();
-
             Entity account = new Account() {
                 Id = Guid.NewGuid(),
                 Name = "Bob"
             };
 
-            fakedContext.Initialize(new List<Entity>() { account });
+            _context.Initialize(new List<Entity>() { account });
 
             string FetchXml = @"<fetch mapping='logical'> 
                         <entity name='account'>
@@ -64,7 +58,7 @@ namespace FakeXrmEasy.Tests.Issues
                         </entity>
                         </fetch>";
 
-            EntityCollection ec = fakedService.RetrieveMultiple(new FetchExpression(FetchXml));
+            EntityCollection ec = _service.RetrieveMultiple(new FetchExpression(FetchXml));
 
             Assert.Equal(ec.Entities.Count, 1);
         }

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue226
+    public class Issue226: FakeXrmEasyTests
     {
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Months_WithoutDateAttribute_Execution()
@@ -36,9 +36,8 @@ namespace FakeXrmEasy.Tests.Issues
                         </entity>
                     </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new[] { contact1, contact2 });
-            var collection = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            _context.Initialize(new[] { contact1, contact2 });
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Equal(1, collection.Entities.Count);
         }

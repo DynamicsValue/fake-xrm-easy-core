@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue156
+    public class Issue156: FakeXrmEasyTests
     {
         [Fact]
         public void When_I_run_connection_fetchXml_it_should_return_all_matching_record1id()
@@ -43,10 +43,10 @@ namespace FakeXrmEasy.Tests.Issues
             conn.Attributes.Add("statecode", new OptionSetValue(0));
 
             // Create Faked Context
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Connection));
-            //ctx.ProxyTypesAssembly = Assembly.GetExecutingAssembly();
-            ctx.Initialize(new List<Entity>() { contact, otherContact, conRole, conn });
+            
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Connection)));
+
+            _context.Initialize(new List<Entity>() { contact, otherContact, conRole, conn });
 
             // Fetch Xml
             string fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -70,7 +70,7 @@ namespace FakeXrmEasy.Tests.Issues
             fetchXml = string.Format(fetchXml, contact.Id);
 
             // Act
-            EntityCollection getConnectionListResults = ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            EntityCollection getConnectionListResults = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             // Assert
             Assert.True(getConnectionListResults.Entities.Count > 0);

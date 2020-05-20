@@ -10,7 +10,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue256
+    public class Issue256: FakeXrmEasyTests
     {
         [Fact]
         public void TestSetup_LeftOuterJoinWithConditions()
@@ -50,8 +50,7 @@ namespace FakeXrmEasy.Tests.Issues
                 ColumnSet = new ColumnSet(true),
             };
 
-            var context = new XrmFakedContext();
-            context.Initialize(new List<Entity> { contactWithAccountFive, accountFive, contactWithAccountTen, accountTen });
+            _context.Initialize(new List<Entity> { contactWithAccountFive, accountFive, contactWithAccountTen, accountTen });
 
             // Link in the accounts
             var accountLink = new LinkEntity
@@ -72,7 +71,7 @@ namespace FakeXrmEasy.Tests.Issues
             query.LinkEntities.Add(accountLink);
 
             
-            var outerJoinContacts = context.GetOrganizationService().RetrieveMultiple(query);
+            var outerJoinContacts = _service.RetrieveMultiple(query);
 
             // Should return our 2 contacts as it was an outer join. Instead it only returns the one contact with account 5.
             Assert.Equal(2, outerJoinContacts.Entities.Count);
@@ -81,7 +80,7 @@ namespace FakeXrmEasy.Tests.Issues
             query.Criteria.AddCondition(new ConditionExpression("Account", "accountid", ConditionOperator.Null));
 
 
-            var outerJoinContactsWithAccountIdNull = context.GetOrganizationService().RetrieveMultiple(query);
+            var outerJoinContactsWithAccountIdNull = _service.RetrieveMultiple(query);
 
             // Should return our 1 contact who was not linked with account 5, instead it returns nothing
             Assert.Equal(1, outerJoinContactsWithAccountIdNull.Entities.Count);

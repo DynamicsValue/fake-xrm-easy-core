@@ -8,14 +8,11 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue312
+    public class Issue312: FakeXrmEasyTests
     {
         [Fact]
         public void Reproduce_issue_312()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetOrganizationService();
-
             var accountId = Guid.NewGuid();
 
             Account account = new Account();
@@ -35,9 +32,9 @@ namespace FakeXrmEasy.Tests.Issues
             contact2.JobTitle = "Tester2";
 
 
-            service.Create(account);
-            service.Create(contact);
-            service.Create(contact2);
+            _service.Create(account);
+            _service.Create(contact);
+            _service.Create(contact2);
 
 
             string fetchXml = $@"
@@ -78,12 +75,12 @@ namespace FakeXrmEasy.Tests.Issues
             </entity>
         </fetch>";
 
-            EntityCollection result2 = service.RetrieveMultiple(new FetchExpression(fetchXml2));
+            EntityCollection result2 = _service.RetrieveMultiple(new FetchExpression(fetchXml2));
             Assert.Equal(1, result2.Entities.Count);
             Assert.Equal(2, result2.Entities[0].Attributes.Count);
             Assert.Equal("Test Account", result2.Entities[0].Attributes["name"].ToString());
 
-            EntityCollection result = service.RetrieveMultiple(new FetchExpression(fetchXml));
+            EntityCollection result = _service.RetrieveMultiple(new FetchExpression(fetchXml));
             Assert.Equal(1, result.Entities.Count);
             Assert.Equal(3, result.Entities[0].Attributes.Count);
             Assert.Equal("Test Account", result.Entities[0].Attributes["name"].ToString());
