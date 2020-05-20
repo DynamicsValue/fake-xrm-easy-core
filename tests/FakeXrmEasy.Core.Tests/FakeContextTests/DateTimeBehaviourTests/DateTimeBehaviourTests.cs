@@ -1,45 +1,36 @@
 ﻿#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
 
 using Crm;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Metadata;
-using FakeXrmEasy.Middleware;
+//using FakeXrmEasy.Metadata;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Metadata;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
-    public class DateTimeBehaviourTests
+    public class DateTimeBehaviourTests: FakeXrmEasyTests
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
-        public DateTimeBehaviourTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
 
         [Fact]
         public void When_RetrieveMultiple_with_DateTime_Field_Behaviour_set_to_DateOnly_result_is_Time_Part_is_Zero()
         {
-            var _context = new XrmFakedContext
+            var contactMetadata = new EntityMetadata() { LogicalName = Contact.EntityLogicalName };
+
+            var birthDateMetadata = new DateTimeAttributeMetadata()
             {
-                DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
-                {
-                    {
-                        "contact", new Dictionary<string, DateTimeAttributeBehavior>
-                        {
-                            { "birthdate", DateTimeAttributeBehavior.DateOnly }
-                        }
-                    }
-                }
+                LogicalName = "birthdate",
+                DateTimeBehavior =  DateTimeBehavior.DateOnly
             };
 
+            contactMetadata.SetAttribute(birthDateMetadata);
+
+            _context.InitializeMetadata(contactMetadata);
             _context.Initialize(new List<Entity>
             {
                 new Contact
@@ -49,8 +40,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                     BirthDate = new DateTime(2000, 1, 1, 23, 0, 0, DateTimeKind.Utc)
                 }
             });
-
-            
 
             var query = new QueryExpression(Contact.EntityLogicalName)
             {
@@ -66,15 +55,17 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_RetrieveMultiple_with_DateTime_Field_Behaviour_set_to_UserLocal_result_is_Time_Part_is_Kept()
         {
-            (_context as XrmFakedContext).DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
-                {
-                    {
-                        "contact", new Dictionary<string, DateTimeAttributeBehavior>
-                        {
-                            { "birthdate", DateTimeAttributeBehavior.UserLocal }
-                        }
-                    }
-                };
+            var contactMetadata = new EntityMetadata() { LogicalName = Contact.EntityLogicalName };
+
+            var birthDateMetadata = new DateTimeAttributeMetadata()
+            {
+                LogicalName = "birthdate",
+                DateTimeBehavior =  DateTimeBehavior.UserLocal
+            };
+
+            contactMetadata.SetAttribute(birthDateMetadata);
+
+            _context.InitializeMetadata(contactMetadata);
 
             _context.Initialize(new List<Entity>
             {
@@ -100,18 +91,17 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_Retrieve_with_DateTime_Field_Behaviour_set_to_DateOnly_result_is_Time_Part_is_Zero()
         {
-            var _context = new XrmFakedContext
+            var contactMetadata = new EntityMetadata() { LogicalName = Contact.EntityLogicalName };
+
+            var birthDateMetadata = new DateTimeAttributeMetadata()
             {
-                DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
-                {
-                    {
-                        "contact", new Dictionary<string, DateTimeAttributeBehavior>
-                        {
-                            { "birthdate", DateTimeAttributeBehavior.DateOnly }
-                        }
-                    }
-                }
+                LogicalName = "birthdate",
+                DateTimeBehavior =  DateTimeBehavior.DateOnly
             };
+
+            contactMetadata.SetAttribute(birthDateMetadata);
+
+            _context.InitializeMetadata(contactMetadata);
 
             var id = Guid.NewGuid();
 
@@ -125,8 +115,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                 }
             });
 
-            
-
             var entity = _service.Retrieve("contact", id, new ColumnSet("createdon", "birthdate")).ToEntity<Contact>();
 
             Assert.Equal(new DateTime(2017, 1, 1, 1, 0, 0, DateTimeKind.Utc), entity.CreatedOn);
@@ -136,18 +124,17 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         [Fact]
         public void When_Retrieve_with_DateTime_Field_Behaviour_set_to_UserLocal_result_is_Time_Part_is_Kept()
         {
-            var _context = new XrmFakedContext
+            var contactMetadata = new EntityMetadata() { LogicalName = Contact.EntityLogicalName };
+
+            var birthDateMetadata = new DateTimeAttributeMetadata()
             {
-                DateBehaviour = new Dictionary<string, Dictionary<string, DateTimeAttributeBehavior>>
-                {
-                    {
-                        "contact", new Dictionary<string, DateTimeAttributeBehavior>
-                        {
-                            { "birthdate", DateTimeAttributeBehavior.UserLocal }
-                        }
-                    }
-                }
+                LogicalName = "birthdate",
+                DateTimeBehavior =  DateTimeBehavior.UserLocal
             };
+
+            contactMetadata.SetAttribute(birthDateMetadata);
+
+            _context.InitializeMetadata(contactMetadata);
 
             var id = Guid.NewGuid();
 

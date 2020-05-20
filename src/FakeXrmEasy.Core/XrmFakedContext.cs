@@ -115,7 +115,6 @@ namespace FakeXrmEasy
             SetProperty<IStatusAttributeMetadataRepository>(new StatusAttributeMetadataRepository());
 
             SystemTimeZone = TimeZoneInfo.Local;
-            DateBehaviour = DefaultDateBehaviour();
 
             EntityMetadata = new Dictionary<string, EntityMetadata>();
 

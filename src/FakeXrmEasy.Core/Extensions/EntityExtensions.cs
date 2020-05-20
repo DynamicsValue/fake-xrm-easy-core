@@ -1,5 +1,4 @@
-﻿using FakeXrmEasy.Metadata;
-using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
@@ -42,28 +41,30 @@ namespace FakeXrmEasy.Extensions
             return; //Do nothing... DateBehavior wasn't available for versions <= 2013
 #else
 
-            if (context.DateBehaviour.Count == 0 || e.LogicalName == null || !context.DateBehaviour.ContainsKey(e.LogicalName))
+            var entityMetadata = context.GetEntityMetadataByName(e.LogicalName);
+
+            if (e.LogicalName == null || entityMetadata == null)
             {
                 return;
             }
 
-            var entityDateBehaviours = context.DateBehaviour[e.LogicalName];
-            foreach (var attribute in entityDateBehaviours.Keys)
+            var dateTimeAttributes = entityMetadata.Attributes
+                        .Where(a => a is DateTimeAttributeMetadata)
+                        .Select(a => a as DateTimeAttributeMetadata)
+                        .ToList();
+
+            foreach (var attribute in dateTimeAttributes)
             {
-                if (!e.Attributes.ContainsKey(attribute))
+                if (!e.Attributes.ContainsKey(attribute.LogicalName))
                 {
                     continue;
                 }
 
-                switch (entityDateBehaviours[attribute])
+                if(attribute.DateTimeBehavior == DateTimeBehavior.DateOnly)
                 {
-                    case DateTimeAttributeBehavior.DateOnly:
-                        var currentValue = (DateTime)e[attribute];
-                        e[attribute] = new DateTime(currentValue.Year, currentValue.Month, currentValue.Day, 0, 0, 0, DateTimeKind.Utc);
-                        break;
-
-                    default:
-                        break;
+                    var currentValue = (DateTime)e[attribute.LogicalName];
+                    e[attribute.LogicalName] = new DateTime(currentValue.Year, currentValue.Month, currentValue.Day, 0, 0, 0, DateTimeKind.Utc);
+                    break;
                 }
             }
 #endif
