@@ -43,12 +43,12 @@ namespace FakeXrmEasy.Extensions
 
             var entityMetadata = context.GetEntityMetadataByName(e.LogicalName);
 
-            if (e.LogicalName == null || entityMetadata == null)
+            if (e.LogicalName == null || entityMetadata == null || entityMetadata?.Attributes == null)
             {
                 return;
             }
 
-            var dateTimeAttributes = entityMetadata.Attributes
+            var dateTimeAttributes = entityMetadata?.Attributes
                         .Where(a => a is DateTimeAttributeMetadata)
                         .Select(a => a as DateTimeAttributeMetadata)
                         .ToList();
