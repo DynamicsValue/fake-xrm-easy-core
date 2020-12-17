@@ -168,10 +168,12 @@ namespace FakeXrmEasy.Query
             return input; // return directly
         }
 
+#if FAKE_XRM_EASY_9
         internal static Expression GetAppropiateCastExpressionBasedOnOptionSetValueCollection(Expression input)
         {
             return Expression.Call(typeof(OptionSetValueCollectionExtensions).GetMethod("ConvertToHashSetOfInt"), input, Expression.Constant(true));
         }
+#endif
 
         internal static Expression GetAppropiateCastExpressionDefault(Expression input, object value)
         {

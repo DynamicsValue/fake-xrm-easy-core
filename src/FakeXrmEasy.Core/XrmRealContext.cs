@@ -10,9 +10,15 @@ using System.Linq;
 
 using System.IO.Compression;
 using System.Runtime.Serialization;
-using Microsoft.Powerplatform.Cds.Client;
+
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins;
+
+#if FAKE_XRM_EASY_NETCORE
+using Microsoft.Powerplatform.Cds.Client;
+#else
+using Microsoft.Xrm.Tooling.Connector;
+#endif
 
 namespace FakeXrmEasy
 {
@@ -92,7 +98,11 @@ namespace FakeXrmEasy
             }
 
             // Connect to the CRM web service using a connection string.
+#if FAKE_XRM_EASY_NETCORE
             var client = new CdsServiceClient(connectionString);
+#else
+            var client = new CrmServiceClient(connectionString);
+#endif
             return client;
         }
 

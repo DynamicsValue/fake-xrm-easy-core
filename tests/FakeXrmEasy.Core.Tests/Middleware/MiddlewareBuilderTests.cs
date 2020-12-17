@@ -35,8 +35,8 @@ namespace FakeXrmEasy.Tests.Middleware
         public void Should_be_able_to_add_a_new_mock_when_calling_add() 
         {
             var builder = MiddlewareBuilder.New();
-            builder.Add(context => {
-                var fakeService = context.GetOrganizationService();
+            builder.Add(ctx => {
+                var fakeService = ctx.GetOrganizationService();
                 A.CallTo(() => fakeService.Create(A<Entity>.Ignored))
                     .ReturnsLazily(() => {
                         return Guid.NewGuid();
@@ -55,7 +55,7 @@ namespace FakeXrmEasy.Tests.Middleware
         {
             var builder = MiddlewareBuilder.New();
             Func<OrganizationRequestDelegate, OrganizationRequestDelegate> middleware = next => {
-                return (IXrmFakedContext context, OrganizationRequest request) => {
+                return (IXrmFakedContext ctx, OrganizationRequest request) => {
                     return new OrganizationResponse() 
                     {
                         ResponseName = "DummyResponse"
@@ -76,7 +76,7 @@ namespace FakeXrmEasy.Tests.Middleware
         {
             var builder = MiddlewareBuilder.New();
             Func<OrganizationRequestDelegate, OrganizationRequestDelegate> middleware = next => {
-                return (IXrmFakedContext context, OrganizationRequest request) => {
+                return (IXrmFakedContext ctx, OrganizationRequest request) => {
                     if(request.RequestName.Equals("DummyRequest")) 
                     {
                         return new OrganizationResponse() 
@@ -86,7 +86,7 @@ namespace FakeXrmEasy.Tests.Middleware
                     }
                     else
                     {
-                        return next.Invoke(context, request);
+                        return next.Invoke(ctx, request);
                     }
                     
                 };
