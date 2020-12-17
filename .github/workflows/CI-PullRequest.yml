@@ -34,7 +34,7 @@ jobs:
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
     - name: Quality Gate
-      uses: DynamicsValue/dotnet-sonarscanner@v2.2
+      uses: DynamicsValue/dotnet-sonarscanner@v2.3
       with:
         buildCommand: dotnet build . --configuration Debug
         testCommand: dotnet test . --configuration Debug --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
