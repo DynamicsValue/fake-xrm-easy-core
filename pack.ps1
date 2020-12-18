@@ -1,5 +1,6 @@
 param (
-    [string]$versionSuffix = ""
+    [string]$versionSuffix = "",
+    [string]$targetFrameworks = "netcoreapp3.1"
  )
 
 $project = "FakeXrmEasy.Core"
@@ -21,10 +22,10 @@ Get-ChildItem -Path $tempNupkgFolder -Include *.nupkg -File -Recurse | ForEach-O
 Write-Host "Packing assembly..."
 if($versionSuffix -eq "") 
 {
-    dotnet pack -o $tempNupkgFolder src/$project/$project.csproj
+    dotnet pack -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder src/$project/$project.csproj
 }
 else {
-    dotnet pack -o $tempNupkgFolder src/$project/$project.csproj --version-suffix $versionSuffix
+    dotnet pack -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder src/$project/$project.csproj --version-suffix $versionSuffix
 }
 if(!($LASTEXITCODE -eq 0)) {
     throw "Error when packing the assembly"

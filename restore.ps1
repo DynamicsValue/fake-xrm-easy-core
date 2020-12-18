@@ -1,3 +1,7 @@
+param (
+    [string]$targetFrameworks = "netcoreapp3.1"
+ )
+
 $localPackageRestoreFolder = './packages'
 Write-Host "Checking if local packages folder '$($localPackageRestoreFolder)' exists..."
 
@@ -12,7 +16,7 @@ Write-Host "Deleting previous installed packages in '$($localPackageRestoreFolde
 Remove-Item -Recurse -Force $localPackageRestoreFolder
 
 Write-Host "Restoring packages..."
-dotnet restore 
+dotnet restore -p:TargetFrameworks=$targetFrameworks
 if(!($LASTEXITCODE -eq 0)) {
     throw "Error restoring packages"
 }
