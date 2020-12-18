@@ -37,7 +37,7 @@ jobs:
       uses: DynamicsValue/dotnet-sonarscanner@v2.3
       with:
         buildCommand: dotnet restore . /p:CoreOnly=True && echo restore completed && dotnet build . --configuration Debug --framework netcoreapp3.1 --no-restore /p:CoreOnly=True && echo build completed
-        testCommand: dotnet test . --configuration Debug --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
+        testCommand: dotnet test . /p:CoreOnly=True --configuration Debug --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
         projectName: fake-xrm-easy-core
         sonarOrganisation: dynamicsvalue
