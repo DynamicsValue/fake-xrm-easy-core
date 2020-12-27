@@ -129,6 +129,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             _service = _context.GetOrganizationService();
         }
 
+        private DateTime GetFirstDayOfWeek(DateTime date)
+        {
+            var dayOfWeekDelta = (int) date.DayOfWeek - (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+            var delta = (7 - dayOfWeekDelta) % 7;
+            return date.AddDays(- delta);
+        }
+
         [Fact]
         public void FetchXml_Operator_Eq()
         {
@@ -2055,19 +2062,19 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             Assert.Equal("anniversary", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.LastWeek, query.Criteria.Conditions[0].Operator);
 
-            var date = DateTime.Now.Date.AddDays(-7);
+            var date = DateTime.UtcNow.Date.AddDays(-7);
 
             var firstDayOfWeek = (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
             var dayOfWeek = (int)date.DayOfWeek;
-            var firstDayOfLastWeek = date.AddDays(-(dayOfWeek - firstDayOfWeek));
+            var firstDayOfLastWeek = GetFirstDayOfWeek(date);
             var lastDayOfLastWeek = firstDayOfLastWeek.AddDays(6);
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = firstDayOfLastWeek }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = lastDayOfLastWeek }; //Should be returned
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = firstDayOfLastWeek.AddDays(-1) }; //Should NOT be returned
-        
-            _context.Initialize(new[] { ct1, ct2, ct3 });
+            var ct4 = new Contact() { Id = Guid.NewGuid(), Anniversary = lastDayOfLastWeek.AddDays(1) }; //Should NOT be returned
+            _context.Initialize(new[] { ct1, ct2, ct3, ct4 });
             
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
@@ -2100,18 +2107,26 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             Assert.Equal("anniversary", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.ThisWeek, query.Criteria.Conditions[0].Operator);
 
-            var date = DateTime.Now.Date;
+            var date = DateTime.UtcNow.Date;
 
             var firstDayOfWeek = (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
+            Console.WriteLine($"First day of week={firstDayOfWeek}");
+
             var dayOfWeek = (int)date.DayOfWeek;
-            var firstDayOfThisWeek = date.AddDays(-(dayOfWeek - firstDayOfWeek));
+            Console.WriteLine($"Day of week={dayOfWeek}");
+
+            var firstDayOfThisWeek = GetFirstDayOfWeek(date);
+            Console.WriteLine($"First day of this week={firstDayOfThisWeek}");
+            
             var lastDayOfThisWeek = firstDayOfThisWeek.AddDays(6);
+            Console.WriteLine($"last day of this week={lastDayOfThisWeek}");
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = firstDayOfThisWeek }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = lastDayOfThisWeek }; //Should be returned
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = firstDayOfThisWeek.AddDays(-1) }; //Shouldnt
-            _context.Initialize(new[] { ct1, ct2, ct3 });
+            var ct4 = new Contact() { Id = Guid.NewGuid(), Anniversary = lastDayOfThisWeek.AddDays(1) }; //Shouldnt
+            _context.Initialize(new[] { ct1, ct2, ct3, ct4 });
             
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
@@ -2144,26 +2159,29 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             Assert.Equal("anniversary", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.NextWeek, query.Criteria.Conditions[0].Operator);
 
-            var date = DateTime.Now.Date;
+            var date = DateTime.UtcNow.Date;
 
             var firstDayOfWeek = (int) CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
             var nextWeekDate = date.AddDays(7);
             var nextWeeksDayOfWeek = (int)date.DayOfWeek;
-            var firstDayOfNextWeek = nextWeekDate.AddDays(- (nextWeeksDayOfWeek - firstDayOfWeek));
+            var firstDayOfNextWeek = GetFirstDayOfWeek(nextWeekDate);
             var lastDayOfNextWeek = firstDayOfNextWeek.AddDays(6);
 
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = firstDayOfNextWeek }; //Should be returned
-            var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = date }; //Shouldnt
-            _context.Initialize(new[] { ct1, ct2 });
+            var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = lastDayOfNextWeek };  //Should be returned
+            var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = firstDayOfNextWeek.AddDays(-1) }; //Should NOT be returned
+            var ct4 = new Contact() { Id = Guid.NewGuid(), Anniversary = lastDayOfNextWeek.AddDays(1) };  //Should NOT be returned
+
+            _context.Initialize(new[] { ct1, ct2, ct3, ct4 });
             
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Single(collection.Entities);
-            var retrievedUser = collection.Entities[0].Id;
-            Assert.Equal(retrievedUser, ct1.Id);
+            Assert.Equal(2, collection.Entities.Count);
+            Assert.Equal(ct1.Id, collection.Entities[0].Id);
+            Assert.Equal(ct2.Id, collection.Entities[1].Id);
         }
 
 
