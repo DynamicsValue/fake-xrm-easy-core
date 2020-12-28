@@ -2110,7 +2110,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = firstDayOfThisWeek }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = lastDayOfThisWeek }; //Should be returned
-            var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddDays(8) }; //Shouldnt
+            var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = firstDayOfThisWeek.AddDays(-1) }; //Shouldnt
             _context.Initialize(new[] { ct1, ct2, ct3 });
             
 
