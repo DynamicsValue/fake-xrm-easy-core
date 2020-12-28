@@ -5,38 +5,44 @@
     <TargetFrameworks Condition="'$(CoreOnly)' == 'True'">netcoreapp3.1</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
+
+    <Configurations>Debug;Release;FAKE_XRM_EASY_9;FAKE_XRM_EASY_365</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
-    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
-    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2013</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_2013</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2015'">
-    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2015</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_2015</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2016'">
-    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_2016</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_2016</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_365'">
-    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_365</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_365</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_9'">
-    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_9</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_9'">
+    <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <DefineConstants>DEBUG;TRACE;NETCOREAPP3_1;FAKE_XRM_EASY_NETCORE;FAKE_XRM_EASY_9</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETCOREAPP3_1;FAKE_XRM_EASY_NETCORE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
@@ -45,8 +51,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
-    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.29" />
-    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.1.0.64" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.4" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.0.0.5" />
   </ItemGroup>
   
   <ItemGroup>
