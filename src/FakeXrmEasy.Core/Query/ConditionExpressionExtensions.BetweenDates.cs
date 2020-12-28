@@ -55,16 +55,16 @@ namespace FakeXrmEasy.Query
                     toDate = new DateTime(thisYear, thisMonth, 1).AddMonths(2).AddDays(-1);
                     break;
                 case ConditionOperator.ThisWeek:
-                    fromDate = today.ToFirstDayOfDeltaWeek();
-                    toDate = today.ToLastDayOfDeltaWeek().AddDays(1);
+                    fromDate = today.ToFirstDayOfWeek();
+                    toDate = fromDate?.AddDays(6);
                     break;
                 case ConditionOperator.LastWeek:
-                    fromDate = today.ToFirstDayOfDeltaWeek(-1);
-                    toDate = today.ToLastDayOfDeltaWeek(-1).AddDays(1);
+                    fromDate = today.AddDays(-7).ToFirstDayOfWeek();
+                    toDate = fromDate?.AddDays(6);
                     break;
                 case ConditionOperator.NextWeek:
-                    fromDate = today.ToFirstDayOfDeltaWeek(1);
-                    toDate = today.ToLastDayOfDeltaWeek(1).AddDays(1);
+                    fromDate = today.AddDays(7).ToFirstDayOfWeek();
+                    toDate = fromDate?.AddDays(6);
                     break;
                 case ConditionOperator.InFiscalYear:
                     var fiscalYear = (int)c.Values[0];

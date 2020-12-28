@@ -22,6 +22,13 @@ namespace FakeXrmEasy.Extensions
         public static DateTime ToFirstDayOfDeltaWeek(this DateTime dateTime, Int32 deltaWeek = 0)
             => dateTime.ToDayOfDeltaWeek(deltaWeek, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek);
 
+        public static DateTime ToFirstDayOfWeek(this DateTime dateTime)
+        { 
+            var dayOfWeekDelta = (int)dateTime.DayOfWeek - (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+            var delta = (7 - dayOfWeekDelta) % 7;
+            return dateTime.AddDays(- delta);
+        }
+
         public static DateTime ToFirstDayOfMonth(this DateTime dateTime, Int32 month)
             => dateTime.AddDays(1 - dateTime.Day).AddMonths(month - dateTime.Month);
 

@@ -2062,7 +2062,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             Assert.Equal("anniversary", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.LastWeek, query.Criteria.Conditions[0].Operator);
 
-            var date = DateTime.UtcNow.Date.AddDays(-7);
+            var today = DateTime.Today;
+            var date = today.AddDays(-7);
 
             var firstDayOfWeek = (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
@@ -2107,7 +2108,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             Assert.Equal("anniversary", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.ThisWeek, query.Criteria.Conditions[0].Operator);
 
-            var date = DateTime.UtcNow.Date;
+            var today = DateTime.Today;
+            var date = today;
 
             var firstDayOfWeek = (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
@@ -2159,7 +2161,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             Assert.Equal("anniversary", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.NextWeek, query.Criteria.Conditions[0].Operator);
 
-            var date = DateTime.UtcNow.Date;
+            var today = DateTime.Today;
+            var date = today;
 
             var firstDayOfWeek = (int) CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
