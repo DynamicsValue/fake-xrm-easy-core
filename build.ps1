@@ -14,10 +14,10 @@ if(!($packagesFolderExists))
 }
 if($targetFramework -eq "all")
 {
-    dotnet restore
+    dotnet restore /p:Configuration=$configuration
 }
 else {
-    dotnet restore -p:TargetFrameworks=$targetFramework
+    dotnet restore /p:Configuration=$configuration -p:TargetFrameworks=$targetFramework
 }
 if(!($LASTEXITCODE -eq 0)) {
     throw "Error restoring packages"

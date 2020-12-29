@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false 
       matrix: 
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
     
     runs-on: ${{matrix.os}} 
 
@@ -41,8 +41,12 @@ jobs:
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
   
-  build-net462:
-   
+  build-windows:
+    strategy:
+      fail-fast: false 
+      matrix: 
+        configuration: ['FAKE_XRM_EASY_9', 'FAKE_XRM_EASY_365', 'FAKE_XRM_EASY_2016','FAKE_XRM_EASY_2015','FAKE_XRM_EASY_2013','FAKE_XRM_EASY']
+
     runs-on: windows-latest
 
     steps:
@@ -60,7 +64,7 @@ jobs:
       run: dotnet nuget enable source github
       
     - name: Build
-      run: pwsh ./build.ps1 -targetFramework 'net462'
+      run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFramework 'all'
       env: 
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
@@ -103,7 +107,7 @@ jobs:
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
   pack-push:
-    needs:  [build-netcore, build-net462, sonar]
+    needs:  [build-netcore, build-windows, sonar]
     runs-on: windows-latest
 
     steps:
