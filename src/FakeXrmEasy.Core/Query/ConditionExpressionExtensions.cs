@@ -32,6 +32,7 @@ namespace FakeXrmEasy.Query
                 if (context.ProxyTypesAssemblies.Count() > 0)
                 {
 
+#if FAKE_XRM_EASY_2013 || FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
                     if (c.EntityName != null)
                         cEntityName = qe.GetEntityNameFromAlias(c.EntityName);
                     else
@@ -43,6 +44,16 @@ namespace FakeXrmEasy.Query
                             sAttributeName = c.AttributeName.Split('.')[1];
                         }
                     }
+
+#else
+                    //CRM 2011
+                    if (c.AttributeName.IndexOf(".") >= 0)
+                    {
+                        var alias = c.AttributeName.Split('.')[0];
+                        cEntityName = qe.GetEntityNameFromAlias(alias);
+                        sAttributeName = c.AttributeName.Split('.')[1];
+                    }
+#endif
 
                     var earlyBoundType = context.FindReflectedType(cEntityName);
                     if (earlyBoundType != null)
