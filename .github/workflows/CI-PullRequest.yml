@@ -93,7 +93,7 @@ jobs:
         buildCommand: dotnet build . --configuration FAKE_XRM_EASY_9 --framework netcoreapp3.1
         testCommand: dotnet test . --configuration FAKE_XRM_EASY_9 --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
-        projectName: fake-xrm-easy-abstractions
+        projectName: fake-xrm-easy-core
         sonarOrganisation: dynamicsvalue
         beginArguments: >
             /d:sonar.verbose="true"
