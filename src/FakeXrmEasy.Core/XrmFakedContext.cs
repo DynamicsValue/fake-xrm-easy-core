@@ -63,8 +63,10 @@ namespace FakeXrmEasy
         /// Sets the user to assign the CreatedBy and ModifiedBy properties when entities are added to the context.
         /// All requests will be executed on behalf of this user
         /// </summary>
+        [Obsolete("Please use CallerProperties instead")]
         public EntityReference CallerId { get; set; }
 
+        [Obsolete("Please use CallerProperties instead")]
         public EntityReference BusinessUnitId { get; set; }
 
         public delegate OrganizationResponse ServiceRequestExecution(OrganizationRequest req);
@@ -91,9 +93,12 @@ namespace FakeXrmEasy
         public ICallerProperties CallerProperties { get; set; }
 
         private readonly Dictionary<string, object> _properties;
+        private readonly IXrmFakedTracingService _fakeTracingService;
 
         public XrmFakedContext()
         {
+            _fakeTracingService = new XrmFakedTracingService();
+
             _properties = new Dictionary<string, object>();
 
             CallerProperties = new CallerProperties();
@@ -168,9 +173,14 @@ namespace FakeXrmEasy
             return fakedServiceFactory;
         }
 
-        public IXrmFakedTracingService GetFakeTracingService() 
+        public ITracingService GetTracingService()
         {
-            return PluginContextProperties.TracingService;
+            return _fakeTracingService;
+        }
+
+        public IXrmFakedTracingService GetFakedTracingService() 
+        {
+            return _fakeTracingService;
         }
 
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using FakeXrmEasy.Abstractions.Plugins;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy
 {
