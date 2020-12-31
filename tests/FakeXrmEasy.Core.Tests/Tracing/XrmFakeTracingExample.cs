@@ -1,1 +1,0 @@
-﻿//Moved to fake-xrm-easy-plugins repo / XrmFakedPluginContextPropertiesTests.cs
