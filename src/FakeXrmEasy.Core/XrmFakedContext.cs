@@ -173,12 +173,7 @@ namespace FakeXrmEasy
             return fakedServiceFactory;
         }
 
-        public ITracingService GetTracingService()
-        {
-            return _fakeTracingService;
-        }
-
-        public IXrmFakedTracingService GetFakedTracingService() 
+        public IXrmFakedTracingService GetTracingService()
         {
             return _fakeTracingService;
         }
