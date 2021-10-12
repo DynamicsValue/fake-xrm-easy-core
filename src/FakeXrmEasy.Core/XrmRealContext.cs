@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins;
+using FakeXrmEasy.Abstractions.Enums;
 
 #if FAKE_XRM_EASY_NETCORE
 using Microsoft.Powerplatform.Cds.Client;
@@ -31,6 +32,7 @@ namespace FakeXrmEasy
     /// </summary>
     public class XrmRealContext : IXrmRealContext
     {
+        public FakeXrmEasyLicense? LicenseContext { get; set; }
         public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
         protected IOrganizationService _service;
 

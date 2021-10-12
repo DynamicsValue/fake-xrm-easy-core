@@ -1,5 +1,6 @@
 
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
@@ -21,7 +22,7 @@ namespace FakeXrmEasy.Middleware
                         .UseCrud() 
                         .UseMessages()
 
-
+                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
                         .Build();
         }
 
@@ -38,7 +39,7 @@ namespace FakeXrmEasy.Middleware
                         .UseCrud() 
                         .UseMessages()
 
-
+                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
                         .Build();
         }
     }

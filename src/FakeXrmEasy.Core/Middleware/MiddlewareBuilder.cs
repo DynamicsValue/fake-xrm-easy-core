@@ -7,6 +7,8 @@ using System.Linq;
 using Microsoft.Xrm.Sdk;
 using FakeItEasy;
 using FakeXrmEasy.Abstractions.Integrity;
+using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Middleware
 {
@@ -45,6 +47,11 @@ namespace FakeXrmEasy.Middleware
 
         public IXrmFakedContext Build() 
         {
+            if(_context.LicenseContext == null)
+            {
+                throw new LicenseException("Please, you need to choose a FakeXrmEasy license. More info at https://github.com/DynamicsValue/licence-agreements/blob/main/FakeXrmEasy/LICENSE.md");
+            }
+
             OrganizationRequestDelegate app = (context, request) => {
                 
                 //return default PullRequestException at the end of the pipeline
@@ -64,6 +71,10 @@ namespace FakeXrmEasy.Middleware
             return _context;
         }
 
-        
+        public IMiddlewareBuilder SetLicense(FakeXrmEasyLicense license)
+        {
+            _context.LicenseContext = license;
+            return this;
+        }
     }
 }

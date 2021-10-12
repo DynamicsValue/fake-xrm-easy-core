@@ -14,7 +14,7 @@
     <Company>Dynamics Value</Company>
     <Title>FakeXrmEasy Core</Title>
     <PackageDescription>FakeXrmEasy is the open source test automation framework for .net core and the Power Platform. This is the core package containing a configurable middleware, crud operators, and query translation between FetchXml, QueryExpression, CRM LINQ, and QueryByAttribute.</PackageDescription>
-    <Copyright>(c) 2014 Jordi Montaña</Copyright>
+    <Copyright>(c) 2021 Dynamics Value</Copyright>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>FakeXrmEasyLogo_128x128.png</PackageIcon>

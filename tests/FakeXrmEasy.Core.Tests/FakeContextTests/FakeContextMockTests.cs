@@ -1,4 +1,5 @@
 ﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Messages;
@@ -25,6 +26,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                         .New()
                         .AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock)
                         .UseMessages()
+                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
                         .Build();
 
             _service = _context.GetOrganizationService();  
@@ -61,6 +63,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                         .AddExecutionMock<RetrieveEntityRequest>(RetrieveEntityMock)
                         .AddExecutionMock<RetrieveEntityRequest>(AnotherRetrieveEntityMock)
                         .UseMessages()
+                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
                         .Build();
 
             _service = _context.GetOrganizationService();
@@ -87,6 +90,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                         .AddFakeMessageExecutors()
                         .AddFakeMessageExecutor(new FakeRetrieveEntityRequestExecutor())
                         .UseMessages()
+                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
                         .Build();
 
             _service = _context.GetOrganizationService();

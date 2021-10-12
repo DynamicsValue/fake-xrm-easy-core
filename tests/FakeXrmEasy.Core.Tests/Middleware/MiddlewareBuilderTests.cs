@@ -6,6 +6,8 @@ using System;
 using Crm;
 using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Tests.Middleware
 {
@@ -22,7 +24,7 @@ namespace FakeXrmEasy.Tests.Middleware
         public void Should_build_a_default_pull_request_exception_pipeline_if_no_other_delegates_are_added() 
         {
             var builder = MiddlewareBuilder.New();
-            var ctx = builder.Build();
+            var ctx = builder.SetLicense(FakeXrmEasyLicense.RPL_1_5).Build();
             Assert.IsType<XrmFakedContext>(ctx);
 
             var dummyRequest = new OrganizationRequest("DummyRequest");
@@ -43,7 +45,7 @@ namespace FakeXrmEasy.Tests.Middleware
                     });
             });
 
-            var context = builder.Build();
+            var context = builder.SetLicense(FakeXrmEasyLicense.RPL_1_5).Build();
             var service = context.GetOrganizationService();
 
             var guid = service.Create(new Account());
@@ -64,7 +66,7 @@ namespace FakeXrmEasy.Tests.Middleware
             };
             builder.Use(middleware);
 
-            var context = builder.Build();
+            var context = builder.SetLicense(FakeXrmEasyLicense.RPL_1_5).Build();
             var service = context.GetOrganizationService();
 
             var response = service.Execute(new OrganizationRequest());
@@ -93,13 +95,31 @@ namespace FakeXrmEasy.Tests.Middleware
             };
             builder.Use(middleware);
 
-            var context = builder.Build();
+            var context = builder.SetLicense(FakeXrmEasyLicense.RPL_1_5).Build();
             var service = context.GetOrganizationService();
 
             var response = service.Execute(new OrganizationRequest("DummyRequest"));
             Assert.Equal("DummyResponse", response.ResponseName);
 
             Assert.Throws<PullRequestException>(() => service.Execute(new OrganizationRequest("UnknownRequest")));
+        }
+
+
+        [Fact]
+        public void Should_set_licence_and_pass_it_to_the_context()
+        {
+            var ctx = MiddlewareBuilder
+                            .New()
+                            .SetLicense(FakeXrmEasyLicense.RPL_1_5)
+                            .Build();
+
+            Assert.Equal(FakeXrmEasyLicense.RPL_1_5, ctx.LicenseContext);
+        }
+
+        [Fact]
+        public void Should_throw_exception_when_building_without_a_license()
+        {
+            Assert.Throws<LicenseException>(() => MiddlewareBuilder.New().Build());
         }
     }
 }

@@ -11,11 +11,14 @@ using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk.Client;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Integrity;
+using FakeXrmEasy.Abstractions.Enums;
 
 namespace FakeXrmEasy
 {
     public partial class XrmFakedContext : IXrmFakedContext
     {
+        public FakeXrmEasyLicense? LicenseContext { get; set; }
+
         protected const int EntityActiveStateCode = 0;
         protected const int EntityInactiveStateCode = 1;
 
