@@ -1,4 +1,5 @@
-﻿using Crm;
+﻿
+using Crm;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
