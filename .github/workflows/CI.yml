@@ -105,7 +105,6 @@ jobs:
             /d:sonar.sourceEncoding=UTF-8
             /d:sonar.scm.provider=git
             /d:sonar.scm.forceReloadAll=true
-            /d:sonar.projectVersion=0.0.1
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
