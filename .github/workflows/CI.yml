@@ -90,7 +90,7 @@ jobs:
     - name: Quality Gate
       uses: DynamicsValue/dotnet-sonarscanner@v2.4
       with:
-        restoreCommand: dotnet restore . --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1
+        restoreCommand: dotnet restore . /p:Configuration='FAKE_XRM_EASY_9' -p:TargetFrameworks='netcoreapp3.1'
         buildCommand: dotnet build . --no-incremental --no-restore --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1
         testCommand: dotnet test . --no-restore --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
