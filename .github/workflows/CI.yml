@@ -100,7 +100,6 @@ jobs:
             /d:sonar.qualitygate.wait="true"
             /d:sonar.cs.opencover.reportsPaths='"coverage/**/coverage.opencover.xml"'
             /d:sonar.coverage.exclusions='"tests/**/**"'
-            /d:sonar.sources=src
             /d:sonar.tests=tests
             /d:sonar.sourceEncoding=UTF-8
             /d:sonar.scm.provider=git
