@@ -12,6 +12,7 @@ using Crm;
 using FakeXrmEasy.Extensions;
 using System.Collections.Generic;
 
+
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
     public class ValidateReferencesTests: FakeXrmEasyTestsBase
