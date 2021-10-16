@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.OptionSetValuesRequestTests
 {
-    public class OptionSetValueRequestsTests: FakeXrmEasyTests
+    public class OptionSetValueRequestsTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_calling_insert_option_set_value_without_label_exception_is_thrown()

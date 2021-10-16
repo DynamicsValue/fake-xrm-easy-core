@@ -7,20 +7,14 @@ using System.Linq;
 using Crm;
 using Xunit;
 using FakeXrmEasy.Abstractions.Permissions;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AddUserToRecordTeamRequestTests
 {
-    public class AddUserToRecordTeamRequestTests
+    public class AddUserToRecordTeamRequestTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
         public AddUserToRecordTeamRequestTests()
         {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
+
         }
 
         [Fact]

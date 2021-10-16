@@ -1,6 +1,4 @@
-﻿using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.FakeMessageExecutors;
-using FakeXrmEasy.Middleware;
+﻿using FakeXrmEasy.FakeMessageExecutors;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -11,17 +9,13 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.CloseIncidentRequestTests
 {
-    public class CloseIncidentRequestTests
+    public class CloseIncidentRequestTests : FakeXrmEasyTestsBase
     {
         private const int StatusProblemSolved = 5;
-
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
         
         public CloseIncidentRequestTests()
         {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
+
         }
 
         [Fact]

@@ -7,9 +7,17 @@ using FakeXrmEasy.Middleware.Messages;
 
 namespace FakeXrmEasy.Middleware
 {
+    /// <summary>
+    /// XrmFakedContextFactory contains helper methods to setup the middleware in a number of different scenarios
+    /// </summary>
     public class XrmFakedContextFactory
     {
-        public static IXrmFakedContext New()
+        /// <summary>
+        /// Used to create a IXrmFakedContext with default middleware settings
+        /// </summary>
+        /// <param name="license">The license to use</param>
+        /// <returns></returns>
+        public static IXrmFakedContext New(FakeXrmEasyLicense license)
         {
             return MiddlewareBuilder
                         .New()
@@ -22,11 +30,17 @@ namespace FakeXrmEasy.Middleware
                         .UseCrud() 
                         .UseMessages()
 
-                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
+                        .SetLicense(license)
                         .Build();
         }
 
-        public static IXrmFakedContext New(IIntegrityOptions integrityOptions)
+        /// <summary>
+        /// Used to create a IXrmFakedContext with specific integrity options
+        /// </summary>
+        /// <param name="license">The license to use</param>
+        /// <param name="integrityOptions">The integrity options</param>
+        /// <returns></returns>
+        public static IXrmFakedContext New(FakeXrmEasyLicense license, IIntegrityOptions integrityOptions)
         {
             return MiddlewareBuilder
                         .New()
@@ -39,7 +53,7 @@ namespace FakeXrmEasy.Middleware
                         .UseCrud() 
                         .UseMessages()
 
-                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
+                        .SetLicense(license)
                         .Build();
         }
     }

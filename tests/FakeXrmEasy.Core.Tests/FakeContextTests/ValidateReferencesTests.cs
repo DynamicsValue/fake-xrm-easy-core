@@ -1,26 +1,27 @@
-﻿using Crm;
-using FakeXrmEasy.Abstractions;
+﻿using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Integrity;
-using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
-using System.Collections.Generic;
 using System.ServiceModel;
 using Xunit;
+using FakeXrmEasy.Abstractions.Enums;
+using Crm;
+using FakeXrmEasy.Extensions;
+using System.Collections.Generic;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
-    public class ValidateReferencesTests: FakeXrmEasyTests
+    public class ValidateReferencesTests: FakeXrmEasyTestsBase
     {
         protected readonly IXrmFakedContext _contextWithIntegrity;
         protected readonly IOrganizationService _serviceWithIntegrity;
         
         public ValidateReferencesTests(): base()
         {
-            _contextWithIntegrity = XrmFakedContextFactory.New(new IntegrityOptions());
+            _contextWithIntegrity = XrmFakedContextFactory.New(FakeXrmEasyLicense.RPL_1_5, new IntegrityOptions());
             _serviceWithIntegrity = _contextWithIntegrity.GetOrganizationService();
         }
 

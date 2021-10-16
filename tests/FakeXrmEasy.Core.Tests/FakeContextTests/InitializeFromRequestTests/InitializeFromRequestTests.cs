@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.InitializeFromRequestTests
 {
-    public class InitializeFromRequestTests: FakeXrmEasyTests
+    public class InitializeFromRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_Calling_InitializeFromRequest_Should_Return_InitializeFromResponse()

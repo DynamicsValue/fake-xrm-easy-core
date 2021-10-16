@@ -1,14 +1,10 @@
-﻿using Crm;
-using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Xrm.Sdk;
-using System;
-using System.Linq;
+﻿using Microsoft.Crm.Sdk.Messages;
 using System.Reflection;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXmlToQueryExpressionRequestTests
 {
-    public class FetchXmlToQueryExpressionRequestTests: FakeXrmEasyTests
+    public class FetchXmlToQueryExpressionRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Should_convert_fetchxml_query_into_queryexpression()

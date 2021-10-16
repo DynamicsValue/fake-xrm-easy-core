@@ -1,26 +1,16 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.QueryTranslationTests
 {
-    public class ProjectionTests
+    public class ProjectionTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
         private readonly Account _account;
 
         public ProjectionTests()
         {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-
             _account = new Account()
             {
                 Id = Guid.NewGuid(),

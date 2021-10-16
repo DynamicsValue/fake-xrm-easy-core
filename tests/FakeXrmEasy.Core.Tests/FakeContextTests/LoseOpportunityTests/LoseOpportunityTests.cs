@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.LoseOpportunityTests
 {
-    public class LoseOpportunityTests: FakeXrmEasyTests
+    public class LoseOpportunityTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Check_if_Opportunity_status_is_Lose_after_set()

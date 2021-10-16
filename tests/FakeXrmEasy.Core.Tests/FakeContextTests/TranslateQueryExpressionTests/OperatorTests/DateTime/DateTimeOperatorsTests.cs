@@ -9,7 +9,7 @@ using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.OperatorTests.DateTimes
 {
-    public class DateTimeOperatorsTests: FakeXrmEasyTests
+    public class DateTimeOperatorsTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_executing_a_query_expression_with_on_operator_time_part_is_ignored()

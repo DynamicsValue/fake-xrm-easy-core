@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 {
-    public class OrderByTests: FakeXrmEasyTests
+    public class OrderByTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_ordering_by_money_fields_expected_result_is_returned()

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue300: FakeXrmEasyTests
+    public class Issue300: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Should_Create_Account_With_Local_DateTime_And_Retrieve_Utc()

@@ -1,28 +1,15 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.QueryTests
 {
-    public class EqualBusinessIdTests
+    public class EqualBusinessIdTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
-        public EqualBusinessIdTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void FetchXml_Operator_EqualBusinessId_Translation()
         {

@@ -1,5 +1,4 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -8,21 +7,11 @@ using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using Xunit;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeXrmEasyTestRetrieve
+    public class FakeXrmEasyTestRetrieve : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _ctx;
-        private readonly IOrganizationService _service;
-
-        public FakeXrmEasyTestRetrieve() 
-        {
-             _ctx = XrmFakedContextFactory.New();
-             _service = _ctx.GetOrganizationService();
-        }
-
         [Fact]
         public void When_retrieve_is_invoked_with_an_empty_logical_name_an_exception_is_thrown()
         {
@@ -39,7 +28,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_retrieve_is_invoked_with_an_empty_guid_an_exception_is_thrown()
         {
-            _ctx.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
 
             var ex = Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Retrieve("account", Guid.Empty, new ColumnSet(true)));
             Assert.Equal("account With Id = 00000000-0000-0000-0000-000000000000 Does Not Exist", ex.Message);
@@ -68,7 +57,7 @@ namespace FakeXrmEasy.Tests
                 new Entity("account") { Id = guid }
             }.AsQueryable();
 
-            _ctx.Initialize(data);
+            _context.Initialize(data);
 
             var ex = Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Retrieve("account", Guid.NewGuid(), new ColumnSet()));
             Assert.Equal<uint>((uint)0x80040217, (uint)ex.Detail.ErrorCode);
@@ -83,7 +72,7 @@ namespace FakeXrmEasy.Tests
                 new Entity("account") { Id = guid }
             }.AsQueryable();
 
-            _ctx.Initialize(data);
+            _context.Initialize(data);
             var result = _service.Retrieve("account", guid, new ColumnSet());
             Assert.Equal(result.Id, data.FirstOrDefault().Id);
         }
@@ -97,7 +86,7 @@ namespace FakeXrmEasy.Tests
                 new Entity("account") { Id = guid }
             }.AsQueryable();
 
-            _ctx.Initialize(data);
+            _context.Initialize(data);
 
             var result = _service.Retrieve("account", guid, new ColumnSet(true));
             Assert.Equal(result.Id, data.FirstOrDefault().Id);
@@ -114,7 +103,7 @@ namespace FakeXrmEasy.Tests
             entity["createdon"] = DateTime.UtcNow;
 
             var data = new List<Entity>() { entity }.AsQueryable();
-            _ctx.Initialize(data);
+            _context.Initialize(data);
 
             var result = _service.Retrieve("account", guid, new ColumnSet(new string[] { "name" }));
             Assert.Equal(result.Id, data.FirstOrDefault().Id);
@@ -125,7 +114,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_retrieve_is_invoked_with_an_existing_entity_and_proxy_types_the_returned_entity_must_be_of_the_appropiate_subclass()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             //Initialize the context with a single entity
             var guid = Guid.NewGuid();
@@ -133,7 +122,7 @@ namespace FakeXrmEasy.Tests
             account.Name = "Test account";
 
             var data = new List<Entity>() { account }.AsQueryable();
-            _ctx.Initialize(data);
+            _context.Initialize(data);
 
             var result = _service.Retrieve("account", guid, new ColumnSet(new string[] { "name" }));
 
@@ -143,7 +132,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_retrieving_entity_that_does_not_exist_with_proxy_types_entity_name_should_be_known()
         {
-            _ctx.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
             Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Retrieve("account", Guid.NewGuid(), new ColumnSet(true)));
         }
 

@@ -9,7 +9,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteMultipleRequestTests
 {
-    public class ExecuteMultipleRequestTests: FakeXrmEasyTests
+    public class ExecuteMultipleRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Should_Execute_Subsequent_Requests()

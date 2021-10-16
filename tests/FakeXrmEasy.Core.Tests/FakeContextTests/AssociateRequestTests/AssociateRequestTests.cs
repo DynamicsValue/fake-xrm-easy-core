@@ -7,19 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AssociateRequestTests
 {
-    public class AssociateRequestTests
+    public class AssociateRequestTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
 
         public AssociateRequestTests()
         {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
         }
 
         [Fact]

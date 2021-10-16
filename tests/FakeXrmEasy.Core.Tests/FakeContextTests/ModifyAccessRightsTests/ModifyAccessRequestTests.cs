@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using FakeXrmEasy;
 using Microsoft.Xrm.Sdk;
 using Xunit;
 using Microsoft.Crm.Sdk.Messages;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.ModifyAccessRightsTests
 {
-    public class ModifyAccessRequestTests: FakeXrmEasyTests
+    public class ModifyAccessRequestTests: FakeXrmEasyTestsBase
     {
         /// <summary>
         /// Test that if permissions already exist that they can be modified

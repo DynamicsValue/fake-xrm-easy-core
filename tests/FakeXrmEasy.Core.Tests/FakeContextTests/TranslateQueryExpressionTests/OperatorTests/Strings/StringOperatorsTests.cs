@@ -9,7 +9,7 @@ using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.OperatorTests.Strings
 {
-    public class StringOperatorsTests: FakeXrmEasyTests
+    public class StringOperatorsTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_executing_a_query_expression_begins_with_operator_is_case_insensitive()

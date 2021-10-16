@@ -1,8 +1,6 @@
 ﻿using Crm;
 using FakeItEasy;
-using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Extensions;
-using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
@@ -14,16 +12,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
 {
-    public class MetadataInferenceTests
+    public class MetadataInferenceTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public MetadataInferenceTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void When_using_proxy_types_assembly_the_entity_metadata_is_inferred_from_the_proxy_types_assembly()
         {

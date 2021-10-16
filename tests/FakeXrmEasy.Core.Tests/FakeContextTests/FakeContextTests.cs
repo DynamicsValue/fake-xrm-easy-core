@@ -8,22 +8,11 @@ using System.Linq;
 using System.Threading;
 using Crm;
 using System.Reflection;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeContextCoreTests
+    public class FakeContextCoreTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
-        public FakeContextCoreTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void When_a_fake_context_is_created_the_data_is_initialized()
         {

@@ -1,7 +1,5 @@
 ﻿using Crm;
 using FakeItEasy;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -16,17 +14,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
     /// Test suite to check that all the different CRM types in the SDK are supported:
     /// https://msdn.microsoft.com/en-us/library/gg328507%28v=crm.6%29.aspx
     /// </summary>
-    public class EqualityWithDifferentDataTypesTests
+    public class EqualityWithDifferentDataTypesTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        
-        public EqualityWithDifferentDataTypesTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void When_executing_a_linq_query_with_equals_between_2_strings_result_is_returned()
         {

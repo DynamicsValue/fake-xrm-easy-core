@@ -1,7 +1,5 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.FakeMessageExecutors.CustomExecutors;
-using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Linq;
@@ -9,17 +7,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.CustomRequestTests.NavigateToNextEntityRequestTests
 {
-    public class NavigateToNextEntityRequestTests
+    public class NavigateToNextEntityRequestTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
-        public NavigateToNextEntityRequestTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void Test_if_Entity_moved_to_next_stage_in_workflow()
         {

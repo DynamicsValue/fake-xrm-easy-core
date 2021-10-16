@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using Crm;
 using Microsoft.Xrm.Sdk;
@@ -8,7 +6,7 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue312: FakeXrmEasyTests
+    public class Issue312: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Reproduce_issue_312()

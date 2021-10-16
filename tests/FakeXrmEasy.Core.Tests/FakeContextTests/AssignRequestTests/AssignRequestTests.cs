@@ -7,20 +7,14 @@ using Microsoft.Xrm.Sdk.Messages;
 using System.ServiceModel;
 using Xunit;
 using Crm;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AssignRequestTests
 {
-    public class AssignRequestTests
+    public class AssignRequestTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
         public AssignRequestTests()
         {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
+
         }
 
         [Fact]

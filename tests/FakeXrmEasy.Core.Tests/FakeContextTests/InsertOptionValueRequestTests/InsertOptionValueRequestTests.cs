@@ -13,7 +13,7 @@ using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.InsertOptionValueRequestTests
 {
-    public class InsertOptionValueRequestTests: FakeXrmEasyTests
+    public class InsertOptionValueRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Should_also_update_entity_metadata_when_not_using_global_option_set()

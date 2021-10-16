@@ -7,7 +7,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.PermissionsTests
 {
-    public class PermissionsTests: FakeXrmEasyTests
+    public class PermissionsTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Entity_Granted_Access_Has_Access()

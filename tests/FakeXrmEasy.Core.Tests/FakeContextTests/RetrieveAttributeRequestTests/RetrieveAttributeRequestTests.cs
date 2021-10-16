@@ -6,7 +6,7 @@ using System;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveAttributeRequestTests
 {
-    public class RetrieveAttributeTests: FakeXrmEasyTests
+    public class RetrieveAttributeTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_retrieve_attribute_request_is_called_correctly_attribute_is_returned()

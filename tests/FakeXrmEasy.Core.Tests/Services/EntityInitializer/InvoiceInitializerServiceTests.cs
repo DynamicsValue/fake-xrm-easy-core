@@ -4,21 +4,11 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using FakeXrmEasy.Services;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.Services.EntityInitializer
 {
-    public class InvoiceInitializerServiceTests
+    public class InvoiceInitializerServiceTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public InvoiceInitializerServiceTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void TestPopulateFields()
         {

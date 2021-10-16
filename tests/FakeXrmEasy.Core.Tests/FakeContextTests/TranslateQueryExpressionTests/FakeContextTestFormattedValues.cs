@@ -9,7 +9,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 {
-    public class FormattedValuesTests: FakeXrmEasyTests
+    public class FormattedValuesTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_an_optionset_is_retrieved_where_its_value_is_an_enum_formatted_value_doesnt_contain_key_if_value_was_null()

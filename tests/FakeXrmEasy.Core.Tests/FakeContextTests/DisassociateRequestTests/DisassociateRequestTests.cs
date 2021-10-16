@@ -5,11 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.DisassociateRequestTests
 {
-    public class DisassociateRequestTests: FakeXrmEasyTests
+    public class DisassociateRequestTests: FakeXrmEasyTestsBase
     {
 
         [Fact]

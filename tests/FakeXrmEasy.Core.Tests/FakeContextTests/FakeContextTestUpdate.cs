@@ -1,8 +1,6 @@
 ﻿using Crm;
 using FakeItEasy;
-using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Extensions;
-using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -16,16 +14,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeContextTestUpdate
+    public class FakeContextTestUpdate : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _ctx;
-        private readonly IOrganizationService _service;
-        public FakeContextTestUpdate() 
-        {
-            _ctx = XrmFakedContextFactory.New();
-            _service = _ctx.GetOrganizationService();
-        }
-
         [Fact]
         public void When_a_null_entity_is_updated_an_exception_is_thrown()
         {
@@ -36,7 +26,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_an_entity_is_updated_with_an_empty_guid_an_exception_is_thrown()
         {
-            _ctx.Initialize(new Entity("account") { Id = Guid.NewGuid() });
+            _context.Initialize(new Entity("account") { Id = Guid.NewGuid() });
 
             var e = new Entity("account") { Id = Guid.Empty };
 
@@ -58,7 +48,7 @@ namespace FakeXrmEasy.Tests
         {
             var entity = new Account { Id = Guid.NewGuid() };
             entity.DoNotEMail = true;
-            _ctx.Initialize(entity);
+            _context.Initialize(entity);
 
             var update = new Account() { Id = entity.Id };
             update.DoNotEMail = null;
@@ -84,14 +74,14 @@ namespace FakeXrmEasy.Tests
             e["name"] = "Before update";
             var guid = _service.Create(e);
 
-            Assert.Equal("Before update", _ctx.CreateQuery("account").FirstOrDefault()["name"]);
+            Assert.Equal("Before update", _context.CreateQuery("account").FirstOrDefault()["name"]);
 
             //now update the name
             e = new Entity("account") { Id = guid };
             e["name"] = "After update";
             _service.Update(e);
 
-            Assert.Equal("After update", _ctx.CreateQuery("account").FirstOrDefault()["name"]);
+            Assert.Equal("After update", _context.CreateQuery("account").FirstOrDefault()["name"]);
         }
 
 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
@@ -106,21 +96,21 @@ namespace FakeXrmEasy.Tests
                  {
                  alternateKeyMetadata
                  });
-            _ctx.InitializeMetadata(accountMetadata);
+            _context.InitializeMetadata(accountMetadata);
 
             var e = new Entity("account");
             e["AccountNumber"] = 9000;
             e["name"] = "Before update";
             var guid = _service.Create(e);
 
-            Assert.Equal("Before update", _ctx.CreateQuery("account").FirstOrDefault()["name"]);
+            Assert.Equal("Before update", _context.CreateQuery("account").FirstOrDefault()["name"]);
 
             //now update the name
             e = new Entity("account", "AccountNumber", 9000);
             e["name"] = "After update";
             _service.Update(e);
 
-             Assert.Equal("After update", _ctx.CreateQuery("account").FirstOrDefault()["name"]);
+             Assert.Equal("After update", _context.CreateQuery("account").FirstOrDefault()["name"]);
         }
 #endif
 
@@ -132,14 +122,14 @@ namespace FakeXrmEasy.Tests
             e["new_multiselectattribute"] = new OptionSetValueCollection() { new OptionSetValue(1) };
             var guid = _service.Create(e);
 
-            Assert.Equal(new OptionSetValueCollection() { new OptionSetValue(1) }, _ctx.CreateQuery("contact").FirstOrDefault()["new_multiselectattribute"]);
+            Assert.Equal(new OptionSetValueCollection() { new OptionSetValue(1) }, _context.CreateQuery("contact").FirstOrDefault()["new_multiselectattribute"]);
 
             //now update the name
             e = new Entity("contact") { Id = guid };
             e["new_multiselectattribute"] = new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) };
             _service.Update(e);
 
-            Assert.Equal(new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } , _ctx.CreateQuery("contact").FirstOrDefault()["new_multiselectattribute"]);
+            Assert.Equal(new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } , _context.CreateQuery("contact").FirstOrDefault()["new_multiselectattribute"]);
         }
 #endif
 
@@ -153,7 +143,7 @@ namespace FakeXrmEasy.Tests
                 new Entity("account") { Id = guid }
             }.AsQueryable();
 
-            _ctx.Initialize(data);
+            _context.Initialize(data);
 
             var update = new Entity("account") { Id = nonExistingGuid };
             var ex = Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.Update(update));
@@ -164,10 +154,10 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_updating_an_entity_an_unchanged_attribute_remains_the_same()
         {
-            _ctx.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
 
             var existingAccount = new Account() { Id = Guid.NewGuid(), Name = "Super Great Customer", AccountNumber = "69" };
-            _ctx.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 existingAccount
             });
@@ -180,19 +170,19 @@ namespace FakeXrmEasy.Tests
             _service.Update(accountToUpdate);
 
             //Make sure existing entity still maintains AccountNumber property
-            var account = _ctx.CreateQuery<Account>().FirstOrDefault();
+            var account = _context.CreateQuery<Account>().FirstOrDefault();
             Assert.Equal(account.AccountNumber, "69");
         }
 
         [Fact]
         public void When_updating_an_entity_only_one_entity_is_updated()
         {
-            _ctx.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
 
             var existingAccount = new Account() { Id = Guid.NewGuid(), Name = "Super Great Customer", AccountNumber = "69" };
             var otherExistingAccount = new Account() { Id = Guid.NewGuid(), Name = "Devil Customer", AccountNumber = "666" };
 
-            _ctx.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 existingAccount, otherExistingAccount
             });
@@ -205,18 +195,18 @@ namespace FakeXrmEasy.Tests
             _service.Update(accountToUpdate);
 
             //Make other account wasn't updated
-            var account = _ctx.CreateQuery<Account>().Where(e => e.Id == otherExistingAccount.Id).FirstOrDefault();
+            var account = _context.CreateQuery<Account>().Where(e => e.Id == otherExistingAccount.Id).FirstOrDefault();
             Assert.Equal(account.Name, "Devil Customer");
         }
 
         [Fact]
         public void When_updating_an_entity_using_organization_context_changes_should_be_saved()
         {
-            _ctx.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
 
             var existingAccount = new Account() { Id = Guid.NewGuid(), Name = "Super Great Customer", AccountNumber = "69" };
 
-            _ctx.Initialize(new List<Entity>()
+            _context.Initialize(new List<Entity>()
             {
                 existingAccount
             });
@@ -231,14 +221,14 @@ namespace FakeXrmEasy.Tests
             }
 
             //Make other account wasn't updated
-            var account = _ctx.CreateQuery<Account>().Where(e => e.Id == existingAccount.Id).FirstOrDefault();
+            var account = _context.CreateQuery<Account>().Where(e => e.Id == existingAccount.Id).FirstOrDefault();
             Assert.Equal(account.Name, "Super Great Customer Name Updated!");
         }
 
         [Fact]
         public void When_updating_a_not_existing_entity_using_organization_context_exception_should_be_thrown()
         {
-            _ctx.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
 
             var existingAccount = new Account() { Id = Guid.NewGuid(), Name = "Super Great Customer", AccountNumber = "69" };
 
@@ -257,7 +247,7 @@ namespace FakeXrmEasy.Tests
         {
             var entityId = Guid.NewGuid();
 
-            _ctx.Initialize(new[] {
+            _context.Initialize(new[] {
                 new Entity ("account")
                 {
                     Id = entityId,
@@ -282,7 +272,7 @@ namespace FakeXrmEasy.Tests
         {
             var entityId = Guid.NewGuid();
 
-            _ctx.Initialize(new[] {
+            _context.Initialize(new[] {
                 new Account()
                 {
                     Id = entityId,
@@ -307,7 +297,7 @@ namespace FakeXrmEasy.Tests
         {
             var entityId = Guid.NewGuid();
 
-            _ctx.Initialize(new[] {
+            _context.Initialize(new[] {
                 new Account
                 {
                     Id = entityId,
@@ -342,7 +332,7 @@ namespace FakeXrmEasy.Tests
         {
             var entityId = Guid.NewGuid();
 
-            _ctx.Initialize(new[] {
+            _context.Initialize(new[] {
                 new Account()
                 {
                     Id = entityId,
@@ -361,7 +351,7 @@ namespace FakeXrmEasy.Tests
             };
 
             _service.Update(accountToUpdate);
-            var updatedAccount = _ctx.CreateQuery<Account>().FirstOrDefault();
+            var updatedAccount = _context.CreateQuery<Account>().FirstOrDefault();
             Assert.Equal(1, (int)updatedAccount.StateCode.Value);
         }
 
@@ -374,14 +364,14 @@ namespace FakeXrmEasy.Tests
             var user = new Entity() { LogicalName = "systemuser", Id = Guid.NewGuid() };
             user["fullname"] = "Fake XrmEasy";
 
-            _ctx.InitializeMetadata(userMetadata);
-            _ctx.Initialize(user);
+            _context.InitializeMetadata(userMetadata);
+            _context.Initialize(user);
 
-            (_ctx as XrmFakedContext).CallerId = user.ToEntityReference();
+            (_context as XrmFakedContext).CallerId = user.ToEntityReference();
 
             var account = new Entity() { LogicalName = "account" };
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
             var accountId = service.Create(account);
 
             user["fullname"] = "Good Job";

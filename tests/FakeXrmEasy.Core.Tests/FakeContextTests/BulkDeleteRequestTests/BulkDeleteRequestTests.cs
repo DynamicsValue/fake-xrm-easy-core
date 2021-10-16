@@ -9,21 +9,15 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System.Linq;
 using Xunit;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.BulkDeleteRequestTests
 {
-    public class BulkDeleteRequestTests
+    public class BulkDeleteRequestTests : FakeXrmEasyTestsBase
     {
 
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        
         public BulkDeleteRequestTests()
         {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
+
         }
 
         [Fact]

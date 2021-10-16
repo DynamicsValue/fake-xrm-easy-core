@@ -1,6 +1,4 @@
-﻿using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.FakeMessageExecutors;
-using FakeXrmEasy.Middleware;
+﻿using FakeXrmEasy.FakeMessageExecutors;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -10,17 +8,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.CloseQuoteRequestTests
 {
-    public class CloseQuoteRequestTests
+    public class CloseQuoteRequestTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
-        public CloseQuoteRequestTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()
         {

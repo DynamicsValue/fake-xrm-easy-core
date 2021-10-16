@@ -5,7 +5,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue191: FakeXrmEasyTests
+    public class Issue191: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Testing_191()

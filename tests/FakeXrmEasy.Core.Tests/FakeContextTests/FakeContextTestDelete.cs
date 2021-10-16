@@ -1,7 +1,5 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Extensions;
-using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Messages;
@@ -15,16 +13,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeXrmEasyTestDelete
+    public class FakeXrmEasyTestDelete : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public FakeXrmEasyTestDelete()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void When_delete_is_invoked_with_an_empty_logical_name_an_exception_is_thrown()
         {

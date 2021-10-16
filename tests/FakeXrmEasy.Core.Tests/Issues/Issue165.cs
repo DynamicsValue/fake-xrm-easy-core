@@ -6,7 +6,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue165: FakeXrmEasyTests
+    public class Issue165: FakeXrmEasyTestsBase
     {
         [Fact]
         public void TestMultipleUnaliasedJoins()

@@ -1,7 +1,5 @@
 ﻿using Crm;
 using FakeItEasy;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -14,24 +12,17 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeContextTestLinqQueries
+    public class FakeContextTestLinqQueries : FakeXrmEasyTestsBase
     {
-        protected IXrmFakedContext _ctx;
-        
-        public FakeContextTestLinqQueries()
-        {
-            _ctx = XrmFakedContextFactory.New();
-        }
-
         [Fact]
         public void When_doing_a_crm_linq_query_a_retrievemultiple_with_a_queryexpression_is_called()
         {
             var guid = Guid.NewGuid();
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid, FirstName = "Jordi" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -48,12 +39,12 @@ namespace FakeXrmEasy.Tests
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = "Jordi" },
                 new Contact() { Id = guid2, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -79,12 +70,12 @@ namespace FakeXrmEasy.Tests
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = "Jordi" },
                 new Contact() { Id = guid2, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -106,17 +97,17 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_and_proxy_types_projection_must_be_applied_after_where_clause()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = "Jordi", LastName = "Montana" },
                 new Contact() { Id = guid2, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -138,12 +129,12 @@ namespace FakeXrmEasy.Tests
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = "Jordi" },
                 new Contact() { Id = guid2, FirstName = null }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -170,13 +161,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = "Jordi 1" },
                 new Contact() { Id = guid2, FirstName = "Jordi 2" },
                 new Contact() { Id = guid3, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -197,13 +188,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = "Jordi 1" },
                 new Contact() { Id = guid2, FirstName = "Jordi 2" },
                 new Contact() { Id = guid3, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -224,13 +215,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = "Jordi 1" },
                 new Contact() { Id = guid2, FirstName = "Jordi 2" },
                 new Contact() { Id = guid3, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -250,13 +241,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = "Jordi Garcia" },
                 new Contact() { Id = guid2, FirstName = "Javi Garcia" },
                 new Contact() { Id = guid3, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -277,13 +268,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = "Jordi Garcia" },
                 new Contact() { Id = guid2, FirstName = "Javi Garcia" },
                 new Contact() { Id = guid3, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -303,13 +294,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = null },
                 new Contact() { Id = guid2 }, //FirstName attribute omitted
                 new Contact() { Id = guid3, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -330,13 +321,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, FirstName = null },
                 new Contact() { Id = guid2 }, //FirstName attribute omitted
                 new Contact() { Id = guid3, FirstName = "Other" }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -356,12 +347,12 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, NumberOfChildren = 3 },
                 new Contact() { Id = guid2, NumberOfChildren = 1 }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -381,13 +372,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, NumberOfChildren = 3 },
                 new Contact() { Id = guid2, NumberOfChildren = 1 },
                 new Contact() { Id = guid3, NumberOfChildren = 2 }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -408,13 +399,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, NumberOfChildren = 3 },
                 new Contact() { Id = guid2, NumberOfChildren = 1 },
                 new Contact() { Id = guid3, NumberOfChildren = 2 }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -435,13 +426,13 @@ namespace FakeXrmEasy.Tests
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = guid1, NumberOfChildren = 3 },
                 new Contact() { Id = guid2, NumberOfChildren = 1 },
                 new Contact() { Id = guid3, NumberOfChildren = 2 }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -456,18 +447,18 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_entity_reference_in_where_filter_record_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Account() { Id = accountId },
                 new Contact() { Id = contactId,
                                 ParentCustomerId = new EntityReference(Account.EntityLogicalName, accountId) },
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -482,12 +473,12 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_entity_reference_with_nulls_in_where_filter_record_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Account() { Id = accountId },
                 new Contact() { Id = contactId,
                                 ParentCustomerId = new EntityReference(Account.EntityLogicalName, accountId) },
@@ -495,7 +486,7 @@ namespace FakeXrmEasy.Tests
                                 ParentCustomerId = null }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -510,18 +501,18 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_entity_reference_with_nulls_against_nulls_in_where_filter_record_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Account() { Id = accountId },
                 new Contact() { Id = Guid.NewGuid(),
                                 ParentCustomerId = null }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -536,15 +527,15 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_optionset_in_where_filter_record_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = contactId, StatusCode = new OptionSetValue(1) },
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -559,16 +550,16 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_optionset_with_nulls_in_where_filter_record_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = contactId, StatusCode = new OptionSetValue(1) },
                 new Contact() { Id = Guid.NewGuid(), StatusCode = null },
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -583,16 +574,16 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_optionset_with_nulls_against_nulls_in_where_filter_record_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = contactId, StatusCode = new OptionSetValue(1) },
                 new Contact() { Id = Guid.NewGuid(), StatusCode = null },
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -608,15 +599,15 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_optionsetvaluecollection_in_where_filter_exception_is_thrown()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = contactId, new_MultiSelectAttribute = new OptionSetValueCollection(new[] { new OptionSetValue(1) }) },
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -631,16 +622,16 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_optionsetvaluecollection_with_nulls_against_nulls_in_where_filter_record_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Contact() { Id = contactId, new_MultiSelectAttribute = new OptionSetValueCollection(new[] { new OptionSetValue(1) }) },
                 new Contact() { Id = Guid.NewGuid(), new_MultiSelectAttribute = null },
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -656,12 +647,12 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_innerjoin_right_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Account() { Id = accountId },
                 new Contact() { Id = contactId,
                                 ParentCustomerId = new EntityReference(Account.EntityLogicalName, accountId) },
@@ -669,7 +660,7 @@ namespace FakeXrmEasy.Tests
                                 ParentCustomerId = null }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -684,7 +675,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_intersect_entity_and_joins_right_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var user = new SystemUser() { Id = Guid.NewGuid() };
             var systemRole = new SystemUserRoles() { Id = Guid.NewGuid() };
@@ -693,11 +684,11 @@ namespace FakeXrmEasy.Tests
             systemRole["systemuserid"] = user.ToEntityReference();
             systemRole["roleid"] = role.ToEntityReference();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 user, systemRole, role
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -713,7 +704,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_aliases_with_uppercase_chars_right_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact = new Contact() { Id = Guid.NewGuid(), FirstName = "Chuck" };
             var parentAccount = new Account()
@@ -727,11 +718,11 @@ namespace FakeXrmEasy.Tests
                 ParentAccountId = parentAccount.ToEntityReference()
             };
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 contact, parentAccount, account
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -751,7 +742,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_and_selecting_an_entire_object_all_attributes_are_returned()
         {
-           _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+           _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact = new Contact() { Id = Guid.NewGuid(), FirstName = "Chuck" };
             var parentAccount = new Account()
@@ -765,11 +756,11 @@ namespace FakeXrmEasy.Tests
                 ParentAccountId = parentAccount.ToEntityReference()
             };
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 contact, parentAccount, account
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -789,7 +780,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_and_selecting_an_entire_object_and_a_subset_of_the_attributes_all_attributes_are_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact = new Contact() { Id = Guid.NewGuid(), FirstName = "Chuck" };
             var parentAccount = new Account()
@@ -803,11 +794,11 @@ namespace FakeXrmEasy.Tests
                 ParentAccountId = parentAccount.ToEntityReference()
             };
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 contact, parentAccount, account
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -828,7 +819,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_and_selecting_an_entire_object_between_joins_all_attributes_are_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact = new Contact() { Id = Guid.NewGuid(), FirstName = "Chuck" };
             var parentAccount = new Account()
@@ -845,11 +836,11 @@ namespace FakeXrmEasy.Tests
                 ParentAccountId = parentAccount.ToEntityReference(),
             };
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 contact, parentAccount, account
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -870,7 +861,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_and_selecting_an_entire_object_between_joins_all_attributes_are_returned_2()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact = new Contact() { Id = Guid.NewGuid(), FirstName = "Chuck" };
             var parentAccount = new Account()
@@ -888,11 +879,11 @@ namespace FakeXrmEasy.Tests
                 ParentAccountId = parentAccount.ToEntityReference(),
             };
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 contact, parentAccount, account
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -914,7 +905,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_and_selecting_an_entire_object_plus_some_attributes_of_the_same_object_between_joins_all_attributes_are_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contact = new Contact() { Id = Guid.NewGuid(), FirstName = "Chuck" };
             var parentAccount = new Account()
@@ -931,11 +922,11 @@ namespace FakeXrmEasy.Tests
                 ParentAccountId = parentAccount.ToEntityReference(),
             };
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 contact, parentAccount, account
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -956,7 +947,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_intersect_entity_and_joins_and_where_clauses_right_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var user = new SystemUser() { Id = Guid.NewGuid(), FirstName = "Jordi" };
             var systemRole = new SystemUserRoles() { Id = Guid.NewGuid() };
@@ -972,12 +963,12 @@ namespace FakeXrmEasy.Tests
             anotherSystemRole["systemuserid"] = anotherUser.ToEntityReference();
             anotherSystemRole["roleid"] = anotherRole.ToEntityReference();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 user, systemRole, role,
                 anotherUser, anotherSystemRole, anotherRole
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -995,7 +986,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_intersect_entity_and_2_levels_of_joins_and_where_clauses_right_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var parentRole = new Role() { Id = Guid.NewGuid(), Name = "System Administrator" };
             var role = new Role() { Id = Guid.NewGuid(), Name = "Sys Admin" };
@@ -1006,11 +997,11 @@ namespace FakeXrmEasy.Tests
             systemRole["systemuserid"] = user.ToEntityReference();
             systemRole["roleid"] = role.ToEntityReference();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 user, systemRole, role, parentRole
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -1029,7 +1020,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_intersect_entity_and_2_levels_of_joins_the_order_of_where_clauses_is_irrelevant_between_linked_entities()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var parentRole = new Role() { Id = Guid.NewGuid(), Name = "System Administrator" };
             var role = new Role() { Id = Guid.NewGuid(), Name = "Sys Admin" };
@@ -1040,11 +1031,11 @@ namespace FakeXrmEasy.Tests
             systemRole["systemuserid"] = user.ToEntityReference();
             systemRole["roleid"] = role.ToEntityReference();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 user, systemRole, role, parentRole
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -1077,7 +1068,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_an_intersect_entity_and_2_levels_of_joins_the_order_of_where_clauses_is_irrelevant_between_main_and_linked_entity()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var account = new Account() { Id = Guid.NewGuid(), Name = "Barcelona" };
             var contact1 = new Contact()
@@ -1093,11 +1084,11 @@ namespace FakeXrmEasy.Tests
                 AccountRoleCode = new OptionSetValue(1)
             };
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 account, contact1, contact2
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -1127,12 +1118,12 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_a_leftjoin_right_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Account() { Id = accountId },
                 new Contact() { Id = contactId,
                                 ParentCustomerId = new EntityReference(Account.EntityLogicalName, accountId) },
@@ -1140,7 +1131,7 @@ namespace FakeXrmEasy.Tests
                                 ParentCustomerId = null }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -1156,12 +1147,12 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_a_leftjoin_with_a_where_expression_right_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
 
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Account() { Id = accountId },
                 new Contact() { Id = contactId, ParentCustomerId = new EntityReference(Account.EntityLogicalName, accountId),
                                                 NumberOfChildren = 2},
@@ -1169,7 +1160,7 @@ namespace FakeXrmEasy.Tests
                 new Contact() { Id = Guid.NewGuid(), ParentCustomerId = null, NumberOfChildren = 3 }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -1186,7 +1177,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_a_2_innerjoins_right_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
@@ -1195,7 +1186,7 @@ namespace FakeXrmEasy.Tests
             var lead = new Lead() { Id = Guid.NewGuid() };
 
             //Contact is related to first account, but because first account is not related to itself then the query must return 0 records
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 lead,
                 new Account() { Id = accountId , Name = "Testing" },
                 new Account() { Id = accountId2,
@@ -1204,7 +1195,7 @@ namespace FakeXrmEasy.Tests
                 new Contact() { Id = contactId, NumberOfChildren = 2, OriginatingLeadId = lead.ToEntityReference()}
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -1227,18 +1218,18 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_a_an_and_filter_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var taskId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
 
             //Contact is related to first account, but because first account is not related to itself then the query must return 0 records
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Task() { Id = taskId, StatusCode = new OptionSetValue(2) }, //Completed
                 new Task() { Id = Guid.NewGuid() }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -1253,20 +1244,20 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_with_2_and_filters_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var taskId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
             var euroId = Guid.NewGuid();
 
             //Contact is related to first account, but because first account is not related to itself then the query must return 0 records
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Task() { Id = taskId, StatusCode = new OptionSetValue(1),
                                           TransactionCurrencyId = new EntityReference(TransactionCurrency.EntityLogicalName, euroId) },
                 new Task() { Id = Guid.NewGuid()  }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -1282,14 +1273,14 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_doing_a_crm_linq_query_that_produces_a_filter_expression_plus_condition_expression_at_same_level_result_is_returned()
         {
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var taskId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
             var euroId = Guid.NewGuid();
 
             //Contact is related to first account, but because first account is not related to itself then the query must return 0 records
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Task() { Id = taskId, StatusCode = new OptionSetValue(1),
                                           TransactionCurrencyId = new EntityReference(TransactionCurrency.EntityLogicalName, euroId) },
                 new Task() { Id = Guid.NewGuid(), StatusCode = new OptionSetValue(2),
@@ -1298,7 +1289,7 @@ namespace FakeXrmEasy.Tests
                 new Task() { Id = Guid.NewGuid()  }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {
@@ -1319,14 +1310,14 @@ namespace FakeXrmEasy.Tests
         public void When_doing_a_join_with_filter_then_can_filter_by_the_joined_entity_attributes()
         {
             //REVIEW: Different implementations of the ConditionExpression class in Microsoft.Xrm.Sdk (which has EntityName property for versions >= 2013)
-            _ctx.EnableProxyTypes(Assembly.GetExecutingAssembly());
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             var contactId = Guid.NewGuid();
             var accountId = Guid.NewGuid();
             var accountId2 = Guid.NewGuid();
 
             //Contact is related to first account, but because first account is not related to itself then the query must return 0 records
-            _ctx.Initialize(new List<Entity>() {
+            _context.Initialize(new List<Entity>() {
                 new Account() { Id = accountId, Name="Account1" },
                 new Account() { Id = accountId2, Name = "Account2" },
                 new Contact() { Id = contactId, ParentCustomerId = new EntityReference(Account.EntityLogicalName, accountId),
@@ -1334,7 +1325,7 @@ namespace FakeXrmEasy.Tests
                 new Contact() {Id = Guid.NewGuid(), ParentCustomerId =  new EntityReference(Account.EntityLogicalName, accountId2) }
             });
 
-            var service = _ctx.GetOrganizationService();
+            var service = _context.GetOrganizationService();
 
             using (XrmServiceContext ctx = new XrmServiceContext(service))
             {

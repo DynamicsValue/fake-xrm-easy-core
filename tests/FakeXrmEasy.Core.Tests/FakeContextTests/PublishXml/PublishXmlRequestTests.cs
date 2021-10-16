@@ -4,7 +4,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.PublishXml
 {
-    public class PublishXmlRequestTests: FakeXrmEasyTests
+    public class PublishXmlRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_calling_publish_xml_exception_is_raised_if_parameter_xml_is_blank()

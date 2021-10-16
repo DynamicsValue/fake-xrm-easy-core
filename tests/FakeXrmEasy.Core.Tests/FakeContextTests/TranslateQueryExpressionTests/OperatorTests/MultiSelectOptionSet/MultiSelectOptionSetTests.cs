@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.OperatorTests.MultiSelectOptionSet
 {
-    public class MultiSelectOptionSetTests: FakeXrmEasyTests
+    public class MultiSelectOptionSetTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_executing_a_query_expression_equal_operator_returns_exact_matches_for_int_right_hand_side()

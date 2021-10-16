@@ -12,7 +12,7 @@ using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue278: FakeXrmEasyTests
+    public class Issue278: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Reproduce_issue_278()

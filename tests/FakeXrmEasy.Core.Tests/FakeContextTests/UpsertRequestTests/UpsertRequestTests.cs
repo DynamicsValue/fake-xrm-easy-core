@@ -1,8 +1,5 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Extensions;
-using FakeXrmEasy.Middleware;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
@@ -13,16 +10,8 @@ using Xunit;
 namespace FakeXrmEasy.Tests.FakeContextTests.UpsertRequestTests
 {
 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
-    public class UpsertRequestTests
+    public class UpsertRequestTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public UpsertRequestTests() 
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void Upsert_Creates_Record_When_It_Does_Not_Exist()
         {

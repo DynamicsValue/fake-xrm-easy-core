@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.WinOpportunityRequestTests
 {
-    public class WinOpportunityTests: FakeXrmEasyTests
+    public class WinOpportunityTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Check_if_Opportunity_status_is_Win_after_set()

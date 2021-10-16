@@ -1,6 +1,4 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -11,7 +9,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 {
-    public class ConditionExpressionTests: FakeXrmEasyTests
+    public class ConditionExpressionTests: FakeXrmEasyTestsBase
     {
 
         [Fact]

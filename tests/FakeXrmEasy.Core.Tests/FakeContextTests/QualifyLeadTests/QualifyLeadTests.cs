@@ -9,7 +9,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.QualifyLeadTests
 {
-    public class QualifyLeadTests: FakeXrmEasyTests
+    public class QualifyLeadTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Check_if_Account_was_created_after_sending_request()

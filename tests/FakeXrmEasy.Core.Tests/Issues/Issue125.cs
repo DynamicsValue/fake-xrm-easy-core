@@ -6,21 +6,11 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue125
+    public class Issue125 : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
-        public Issue125()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void Reproduce_issue_125()
         {

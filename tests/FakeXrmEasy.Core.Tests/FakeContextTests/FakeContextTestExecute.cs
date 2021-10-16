@@ -1,6 +1,4 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -9,16 +7,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
-    public class FakeContextTestExecute
+    public class FakeContextTestExecute : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public FakeContextTestExecute()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void When_Executing_Assign_Request_New_Owner_Should_Be_Assigned()
         {

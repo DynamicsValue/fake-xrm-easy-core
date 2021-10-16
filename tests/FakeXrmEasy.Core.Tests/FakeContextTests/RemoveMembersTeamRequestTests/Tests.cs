@@ -3,9 +3,6 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-#if FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
-using Xunit.Sdk;
-#endif
 
 using System.Linq;
 using Microsoft.Crm.Sdk.Messages;
@@ -14,7 +11,7 @@ using System.ServiceModel;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RemoveMembersTeamRequestTests
 {
-    public class Tests: FakeXrmEasyTests
+    public class Tests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_a_member_is_added_to_a_non_existing_team_exception_is_thrown()

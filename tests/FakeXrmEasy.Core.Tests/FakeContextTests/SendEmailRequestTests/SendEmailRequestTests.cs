@@ -7,7 +7,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.SendEmailRequestTests
 {
-    public class SendEmailRequestTests: FakeXrmEasyTests
+    public class SendEmailRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_SendEmailRequest_call_statecode_is_Completed_and_statuscode_is_Sent()

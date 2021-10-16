@@ -4,13 +4,12 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue256: FakeXrmEasyTests
+    public class Issue256: FakeXrmEasyTestsBase
     {
         [Fact]
         public void TestSetup_LeftOuterJoinWithConditions()

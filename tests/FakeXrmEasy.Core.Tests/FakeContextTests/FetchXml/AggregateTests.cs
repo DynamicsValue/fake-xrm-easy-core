@@ -1,6 +1,4 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -10,17 +8,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 {
-    public class AggregateTests
+    public class AggregateTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        
-        public AggregateTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void FetchXml_Aggregate_Group_Count()
         {

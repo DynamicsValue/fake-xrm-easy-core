@@ -5,21 +5,11 @@ using System;
 using System.Linq;
 using Xunit;
 using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
 {
-    public class OrgServiceContextTests
+    public class OrgServiceContextTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
-        public OrgServiceContextTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         //   MS_ISSUE  Rpcrt4 related
         [Fact]
         public void When_calling_context_add_and_save_changes_entity_is_added_to_the_faked_context()

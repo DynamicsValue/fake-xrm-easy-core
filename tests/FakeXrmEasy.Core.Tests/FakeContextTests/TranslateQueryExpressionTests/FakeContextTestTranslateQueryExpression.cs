@@ -8,12 +8,11 @@ using System.Linq;
 using System.ServiceModel;  //TypedEntities generated code for testing
 using Xunit;
 using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeContextTestTranslateQueryExpression: FakeXrmEasyTests
+    public class FakeContextTestTranslateQueryExpression: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_translating_a_null_query_expression_the_linq_query_is_also_null()

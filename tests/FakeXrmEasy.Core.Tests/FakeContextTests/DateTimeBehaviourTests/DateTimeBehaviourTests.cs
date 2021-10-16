@@ -1,7 +1,6 @@
 ﻿#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
 
 using Crm;
-//using FakeXrmEasy.Metadata;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
@@ -10,11 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using FakeXrmEasy.Extensions;
-using FakeXrmEasy.Metadata;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
-    public class DateTimeBehaviourTests: FakeXrmEasyTests
+    public class DateTimeBehaviourTests: FakeXrmEasyTestsBase
     {
 
         [Fact]

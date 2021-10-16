@@ -4,14 +4,13 @@ using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.ExecuteFetchRequestTests
 {
-    public class ExecuteFetchRequestTests: FakeXrmEasyTests
+    public class ExecuteFetchRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Test_Conversion_DateTime_ToXml()

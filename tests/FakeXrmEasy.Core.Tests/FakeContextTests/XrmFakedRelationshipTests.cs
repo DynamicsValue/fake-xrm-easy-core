@@ -7,7 +7,7 @@ using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
-    public class XrmFakedRelationshipTests: FakeXrmEasyTests
+    public class XrmFakedRelationshipTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_creating_relationship_with_first_constructor_properties_are_set_correctly()

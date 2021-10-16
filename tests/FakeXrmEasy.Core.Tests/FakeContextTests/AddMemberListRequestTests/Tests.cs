@@ -1,6 +1,4 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using System;
@@ -11,10 +9,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
 {
-    public class Tests
+    public class Tests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
         public enum ListCreatedFromCode
         {
             Account = 1,
@@ -24,16 +20,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddMemberListRequestTests
 
         public Tests()
         {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
         }
 
         [Fact]
         public void When_a_member_is_added_to_a_non_existing_list_exception_is_thrown()
         {
-            
-            
-
             AddMemberListRequest marketingList = new AddMemberListRequest(); // Set the properties of the request object.
             marketingList.EntityId = Guid.NewGuid();
             marketingList.ListId = Guid.NewGuid();

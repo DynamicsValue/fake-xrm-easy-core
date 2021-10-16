@@ -9,8 +9,6 @@ using System.Reflection;
 using Xunit;
 using FakeXrmEasy.Abstractions.Settings;
 using FakeXrmEasy.Query;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 {
@@ -119,16 +117,8 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
      
      */
     /// </summary>
-    public class ConditionOperatorTests
+    public class ConditionOperatorTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public ConditionOperatorTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         private DateTime GetFirstDayOfWeek(DateTime date)
         {
             var dayOfWeekDelta = (int) date.DayOfWeek - (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;

@@ -1,5 +1,4 @@
 ﻿using Crm;
-using FakeXrmEasy.FakeMessageExecutors;
 using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -9,21 +8,14 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 using System.Collections.Generic;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveEntityRequestTests
 {
-    public class RetrieveEntityRequestTests
+    public class RetrieveEntityRequestTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
         public RetrieveEntityRequestTests()
         {
-            _context = XrmFakedContextFactory.New();
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
-            _service = _context.GetOrganizationService();
         }
 
         [Fact]

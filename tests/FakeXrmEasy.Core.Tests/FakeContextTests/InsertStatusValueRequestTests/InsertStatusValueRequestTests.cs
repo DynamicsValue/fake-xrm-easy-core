@@ -9,7 +9,7 @@ using FakeXrmEasy.Abstractions.Metadata;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.InsertStatusValueRequestTests
 {
-    public class InsertStatusValueRequestTests: FakeXrmEasyTests
+    public class InsertStatusValueRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Should_update_entity_metadata_with_status()

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class TestCRMHandlingOfNullsAndMissingFields: FakeXrmEasyTests
+    public class TestCRMHandlingOfNullsAndMissingFields: FakeXrmEasyTestsBase
     {
         [Fact]
         public void TestRetrieveWithNull()

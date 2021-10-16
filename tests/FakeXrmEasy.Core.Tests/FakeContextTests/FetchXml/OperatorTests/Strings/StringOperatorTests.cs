@@ -5,22 +5,11 @@ using Microsoft.Xrm.Sdk.Query;
 using System.Reflection;
 using Xunit;
 using FakeXrmEasy.Query;
-using FakeXrmEasy.Abstractions;
-using Microsoft.Xrm.Sdk;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 {
-    public class StringOperatorTests
+    public class StringOperatorTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public StringOperatorTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void FetchXml_Operator_Lt_Translation()
         {

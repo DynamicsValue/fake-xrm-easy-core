@@ -4,7 +4,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests 
 { 
-    public class XrmFakedTracingServiceTests : FakeXrmEasyTests
+    public class XrmFakedTracingServiceTests : FakeXrmEasyTestsBase
     {
         [Fact]
         public void The_TracingService_Should_Be_Retrievable_Without_Calling_Execute_Before()

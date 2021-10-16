@@ -1,6 +1,4 @@
-﻿using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
-using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
@@ -8,16 +6,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests
 {
-    public class TestDefaultEntityInitializer
+    public class TestDefaultEntityInitializer : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public TestDefaultEntityInitializer()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void TestWithUnpopulatedValues()
         {

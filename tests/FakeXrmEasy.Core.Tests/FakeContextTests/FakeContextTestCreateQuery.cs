@@ -9,7 +9,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeContextTestCreateQuery: FakeXrmEasyTests
+    public class FakeContextTestCreateQuery: FakeXrmEasyTestsBase
     {
         [Fact]
         public void After_querying_the_context_with_an_invalid_entity_name_exception_is_thrown()

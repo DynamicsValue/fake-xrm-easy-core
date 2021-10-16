@@ -5,21 +5,11 @@ using System.Collections.Generic;
 using Xunit;
 using FakeItEasy;
 using FakeXrmEasy.Services;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.Services.EntityInitializer
 {
-    public class InvoiceDetailInitializerServiceTests
+    public class InvoiceDetailInitializerServiceTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public InvoiceDetailInitializerServiceTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void When_using_default_entity_initialization_level_invoice_detail_init_service_is_not_called()
         {

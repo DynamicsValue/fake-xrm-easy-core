@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
 {
-    public class FilterExpressionTests: FakeXrmEasyTests
+    public class FilterExpressionTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_executing_a_query_expression_with_2_filters_combined_with_an_or_filter_right_result_is_returned()

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue328: FakeXrmEasyTests
+    public class Issue328: FakeXrmEasyTestsBase
     {
         [Fact]
         public void DistinctBug()

@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue156: FakeXrmEasyTests
+    public class Issue156: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_I_run_connection_fetchXml_it_should_return_all_matching_record1id()

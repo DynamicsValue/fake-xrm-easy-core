@@ -1,7 +1,5 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.FakeMessageExecutors;
-using FakeXrmEasy.Middleware;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -11,15 +9,11 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AddToQueueRequestTests
 {
-    public class AddToQueueRequestTests
+    public class AddToQueueRequestTests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
         public AddToQueueRequestTests()
         {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
+
         }
 
         [Fact]

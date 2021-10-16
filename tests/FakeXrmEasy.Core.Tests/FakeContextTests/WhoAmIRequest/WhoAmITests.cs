@@ -5,7 +5,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.WhoAmIRequestTests
 {
-    public class WhoAmITests: FakeXrmEasyTests
+    public class WhoAmITests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_a_who_am_i_request_is_invoked_the_caller_id_is_returned()

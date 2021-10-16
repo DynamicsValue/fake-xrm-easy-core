@@ -11,7 +11,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue253: FakeXrmEasyTests
+    public class Issue253: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Test_Fetch_Less_Than_Operator_With_String_Late_Bound()

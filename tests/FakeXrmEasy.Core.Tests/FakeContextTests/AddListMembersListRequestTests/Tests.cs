@@ -4,19 +4,16 @@ using System.Collections.Generic;
 using Xunit;
 
 #if FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
-using Xunit.Sdk;
 #endif
 
 using System.Linq;
 using Microsoft.Crm.Sdk.Messages;
 using Crm;
 using System.ServiceModel;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
 {
-    public class Tests
+    public class Tests : FakeXrmEasyTestsBase
     {
         public enum ListCreatedFromCode
         {
@@ -25,12 +22,9 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
             Lead = 4
         }
 
-        private readonly IXrmFakedContext _ctx;
-        private readonly IOrganizationService _service;
+
         public Tests()
         {
-            _ctx = XrmFakedContextFactory.New();
-            _service = _ctx.GetOrganizationService();
         }
 
         [Fact]
@@ -96,7 +90,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
                 ListName = "Some list"
             };
 
-            _ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list
             });
@@ -125,7 +119,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
                 CreatedFromCode = new OptionSetValue((int)ListCreatedFromCode.Account)
             };
 
-            _ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list
             });
@@ -164,7 +158,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
                 Id = Guid.NewGuid()
             };
 
-            _ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list,
                 account,
@@ -200,7 +194,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
             {
                 Id = Guid.NewGuid()
             };
-            _ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list,
                 account
@@ -247,7 +241,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
             {
                 Id = Guid.NewGuid()
             };
-            _ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list,
                 contact
@@ -292,7 +286,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.AddListMembersListRequestTests
             {
                 Id = Guid.NewGuid()
             };
-            _ctx.Initialize(new List<Entity>
+            _context.Initialize(new List<Entity>
             {
                 list,
                 lead

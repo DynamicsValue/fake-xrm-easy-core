@@ -10,7 +10,7 @@ using FakeXrmEasy.Abstractions.Permissions;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.RemoveUserFromRecordTeamRequestTests
 {
-    public class RemoveUserFromRecordTeamRequestTests: FakeXrmEasyTests
+    public class RemoveUserFromRecordTeamRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()

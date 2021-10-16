@@ -7,7 +7,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.Issues
 {
-    public class Issue226: FakeXrmEasyTests
+    public class Issue226: FakeXrmEasyTestsBase
     {
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Months_WithoutDateAttribute_Execution()

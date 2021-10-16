@@ -8,20 +8,11 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
-    public class QueryLinkEntityTests
-    {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        public QueryLinkEntityTests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-        
+    public class QueryLinkEntityTests : FakeXrmEasyTestsBase
+    {       
         [Fact]
         public void Should_Find_Faked_N_To_N_Records()
         {

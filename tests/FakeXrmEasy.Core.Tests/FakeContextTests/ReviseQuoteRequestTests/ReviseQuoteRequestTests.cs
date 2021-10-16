@@ -9,7 +9,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.ReviseQuoteRequestTests
 {
-    public class ReviseQuoteRequestTests: FakeXrmEasyTests
+    public class ReviseQuoteRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_can_execute_is_called_with_an_invalid_request_result_is_false()

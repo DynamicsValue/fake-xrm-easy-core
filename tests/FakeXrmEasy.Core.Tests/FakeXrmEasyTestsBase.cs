@@ -1,17 +1,18 @@
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Tests
 {
-    public class FakeXrmEasyTests
+    public class FakeXrmEasyTestsBase
     {
         protected readonly IXrmFakedContext _context;
         protected readonly IOrganizationService _service;
         
-        protected FakeXrmEasyTests()
+        protected FakeXrmEasyTestsBase()
         {
-            _context = XrmFakedContextFactory.New();
+            _context = XrmFakedContextFactory.New(FakeXrmEasyLicense.RPL_1_5);
             _service = _context.GetOrganizationService();
         }
     }

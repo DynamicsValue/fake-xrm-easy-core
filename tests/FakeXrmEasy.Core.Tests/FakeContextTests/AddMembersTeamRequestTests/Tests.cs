@@ -2,31 +2,15 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
-
-#if FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
-using Xunit.Sdk;
-#endif
-
 using System.Linq;
 using Microsoft.Crm.Sdk.Messages;
 using Crm;
 using System.ServiceModel;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.AddMembersTeamRequestTests
 {
-    public class Tests
+    public class Tests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-
-        public Tests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void When_a_member_is_added_to_a_non_existing_team_exception_is_thrown()
         {

@@ -1,6 +1,4 @@
 ﻿using Crm;
-using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -11,17 +9,8 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.QueryLookupTests
 {
-    public class Tests
+    public class Tests : FakeXrmEasyTestsBase
     {
-        private readonly IXrmFakedContext _context;
-        private readonly IOrganizationService _service;
-        
-        public Tests()
-        {
-            _context = XrmFakedContextFactory.New();
-            _service = _context.GetOrganizationService();
-        }
-
         [Fact]
         public void When_a_query_on_lookup_is_executed_with_a_guid_right_result_is_returned()
         {

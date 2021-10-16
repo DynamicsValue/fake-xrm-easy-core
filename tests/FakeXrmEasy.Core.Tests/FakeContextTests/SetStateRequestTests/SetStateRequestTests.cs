@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.SetStateRequestTests
 {
-    public class SetStateRequestTests: FakeXrmEasyTests
+    public class SetStateRequestTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_set_state_request_is_called_an_entity_is_updated()
