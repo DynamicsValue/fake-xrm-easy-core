@@ -1,73 +1,40 @@
-﻿Fake Xrm Easy: TDD for Dynamics CRM and Dynamics 365 (or now Common Data Service for Apps) made simple
-=================================================================================
+﻿
+# FakeXrmEasy: The Test Automation Framework for the Power Platform / Dataverse
 
-|Build|Code Quality|
-|-----|------------|
-|![.NET Core](https://github.com/DynamicsValue/fake-xrm-easy-core/workflows/CI/badge.svg)|[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DynamicsValue_fake-xrm-easy-core&metric=alert_status&token=275c67c8b62adac17e4e9a0ae210c77703d671d1)](https://sonarcloud.io/dashboard?id=DynamicsValue_fake-xrm-easy-core)||
-
-<b>Streamline unit testing</b> in Dynamics CRM by faking the `IOrganizationService` to work with an in-memory context.
-
-<b>Drive your development</b> by unit testing any plugin, code activity, or 3rd party app using the `OrganizationService` easier and faster than ever before.
-
-<b>Note: To keep up to date with client-side unit testing version of this framework, please [have a look at this repo](http://github.com/jordimontana82/fake-xrm-easy-js) and samples in this other [sample code repo](http://github.com/jordimontana82/fake-xrm-easy-js-samples) </b>
+## FakeXrmEasy.Core
+--------------------------------------------------
+This repo contains the source code for the FakeXrmEasy.Core package.
 
 
-|Version|Package Name|NuGet|
-|-----------|------|-----|
-|Dynamics v9 (>= 9.x)|FakeXrmEasy.9|[![Nuget](https://buildstats.info/nuget/fakexrmeasy.9?v=1.55.0)](https://www.nuget.org/packages/fakexrmeasy.9)|
-|Dynamics 365 (8.2.x)|FakeXrmEasy.365|[![Nuget](https://buildstats.info/nuget/fakexrmeasy.365?v=1.55.0)](https://www.nuget.org/packages/fakexrmeasy.365)|
-|Dynamics CRM 2016 ( >= 8.0 && <= 8.1)|FakeXrmEasy.2016|[![Nuget](https://buildstats.info/nuget/fakexrmeasy.2016?v=1.55.0)](https://www.nuget.org/packages/fakexrmeasy.2016)|
-|Dynamics CRM 2015 (7.x)|FakeXrmEasy.2015|[![Nuget](https://buildstats.info/nuget/fakexrmeasy.2015?v=1.55.0)](https://www.nuget.org/packages/fakexrmeasy.2015)|
-|Dynamics CRM 2013 (6.x)|FakeXrmEasy.2013|[![Nuget](https://buildstats.info/nuget/fakexrmeasy.2013?v=1.55.0)](https://www.nuget.org/packages/fakexrmeasy.2013)|
-|Dynamics CRM 2011 (5.x)|FakeXrmEasy|[![Nuget](https://buildstats.info/nuget/fakexrmeasy?v=1.55.0)](https://www.nuget.org/packages/fakexrmeasy)|
+|Build|Quality Gate|Coverage|Security|Maintainability|Reliability|
+|-----| ---------- | ------ | ------ | ------------- | --------- |
+|![Build](https://github.com/DynamicsValue/fake-xrm-easy-core/workflows/CI/badge.svg)|[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DynamicsValue_fake-xrm-easy-core&metric=alert_status&token=275c67c8b62adac17e4e9a0ae210c77703d671d1)](https://sonarcloud.io/dashboard?id=DynamicsValue_fake-xrm-easy-core)|[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DynamicsValue_fake-xrm-easy-core&metric=coverage&token=275c67c8b62adac17e4e9a0ae210c77703d671d1)](https://sonarcloud.io/dashboard?id=DynamicsValue_fake-xrm-easy-core)|[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DynamicsValue_fake-xrm-easy-core&metric=security_rating&token=275c67c8b62adac17e4e9a0ae210c77703d671d1)](https://sonarcloud.io/dashboard?id=DynamicsValue_fake-xrm-easy-core)|[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DynamicsValue_fake-xrm-easy-core&metric=sqale_rating&token=275c67c8b62adac17e4e9a0ae210c77703d671d1)](https://sonarcloud.io/dashboard?id=DynamicsValue_fake-xrm-easy-core)|[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DynamicsValue_fake-xrm-easy-core&metric=reliability_rating&token=275c67c8b62adac17e4e9a0ae210c77703d671d1)](https://sonarcloud.io/dashboard?id=DynamicsValue_fake-xrm-easy-core)|
 
-Supports Dynamics CRM 2011, 2013, 2015, 2016, and Dynamics 365 (8.x and 9.x). <b>NOTE:</b> With the release of Dynamics 365 v9 we are changing the naming convention for new packages to match the major version.
+## Why should my company use FakeXrmEasy? 
+--------------------------------------------------
 
-## Semantic Versioning
+Please see main [FakeXrmEasy's Why section on README file](https://github.com/DynamicsValue/fake-xrm-easy#readme).
+ 
 
-The NuGet packages use semantic versioning like this:
+## Installing
+-----------------------------------------------
 
-    x.y.z  => Major.Minor.Patch
-       
-x: stands for the major version. The package is very stable so that's why the major version didn't change yet.
+Please see main [FakeXrmEasy's Installing section on README file](https://github.com/DynamicsValue/fake-xrm-easy#readme).
 
-y: minor version. Any minor updates add new functionality without breaking changes. An example of these would be a new operator or a new fake message executor.
-
-z: patch. Any update to this number means new bug fixes for the existing functionality. A new minor version might also include bug fixes too.
+## Building
+----------------------------------------------------------
+Please see main [FakeXrmEasy's Bulding section on README file](https://github.com/DynamicsValue/fake-xrm-easy#readme).
 
 ## Contributing
+------------------------
 
-Please consider the below guidelines for contributing to the project:
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [our CLA here](https://github.com/DynamicsValue/licence-agreements/blob/main/FakeXrmEasy/CLA.md).
 
-* Priority: Given the overwhelming number of issues and pull requests, we'll review Pull Requests first, then any outstanding issues. We encourage you to resolve / extend issues by yourselves, as a community, and we'll prioritise those first because we know (as mantainers) the effort it takes. 
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA. 
 
-    Please do [fork](https://github.com/jordimontana82/fake-xrm-easy/fork) the project and submit a [pull request](https://github.com/jordimontana82/fake-xrm-easy/pulls)
-    
-    We'll thank you forever and ever. 
+## License
+-------------------
 
-    If you don't know how to resolve something or are not familiar with pull requests, don't worry, raise the issue anyway. Those will be revised next.
+Please see [LICENSE.txt](https://github.com/DynamicsValue/fake-xrm-easy/blob/master/LICENSE.txt).
 
-* When raising an issue:
-
-    * <u>**Please provide a sample unit test**</u> to reproduce any issues detected where possible. This will speed up the resolution.
-    * Attach all generated early bound typed entities required (if you're using early bound).
-
-* **If you're using the framework, please do [Star](https://github.com/jordimontana82/fake-xrm-easy/star) the project**, it'll give more visibility to the wider community to keep extending and improving it.
-
-## Donate 
-
-*  If you're a business / company who delivers solutions on top of the Power Platform, you can help make OSS sustainable while getting more visibility by becoming a sponsor. Please [reach out to me](https://github.com/jordimontana82) for sponsorship enquiries.
-
-## Roadmap
-
-*  TODO:  Add support for date operators. See `ConditionOperator` implementation status [here](https://github.com/jordimontana82/fake-xrm-easy/blob/master/FakeXrmEasy.Tests.Shared/FakeContextTests/FetchXml/ConditionOperatorTests.cs#L19-L110). Feel free to add missing ones!
-*  TODO: Implement remaining CRM messages. To know which ones have been implemented so far, see `FakeMessageExecutor` implementation status [here](https://github.com/jordimontana82/fake-xrm-easy/tree/master/FakeXrmEasy.Shared/FakeMessageExecutors).
-*  TODO: Increase test coverage.
-*  **NEW!** I'm planning a 2.x version, this version will contain all the major improvements I always thought of adding but that will introduce considerable breaking changes. If you want to join a private preview list, let me know.
-
-
-
-## Tests disappeared?
-
-Try deleting anything under the VS test explorer cache: `%Temp%\VisualStudioTestExplorerExtensions`
-
+License questions? Please see our [License FAQ](https://github.com/DynamicsValue/licence-agreements/blob/main/FakeXrmEasy/FAQ.md).
