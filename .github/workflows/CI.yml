@@ -64,7 +64,7 @@ jobs:
       run: dotnet nuget enable source github
       
     - name: Build
-      run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFramework 'all'
+      run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFrameworks 'all'
       env: 
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
@@ -88,11 +88,10 @@ jobs:
       run: dotnet nuget enable source github 
 
     - name: Quality Gate
-      uses: DynamicsValue/dotnet-sonarscanner@v2.4
+      uses: DynamicsValue/dotnet-sonarscanner@v2.3
       with:
-        restoreCommand: dotnet restore . /p:Configuration='FAKE_XRM_EASY_9' -p:TargetFrameworks='netcoreapp3.1'
-        buildCommand: dotnet build . --no-incremental --no-restore --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1
-        testCommand: dotnet test . --no-restore --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
+        buildCommand: dotnet build . --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1
+        testCommand: dotnet test . --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
         projectName: fake-xrm-easy-core
         sonarOrganisation: dynamicsvalue
@@ -101,9 +100,6 @@ jobs:
             /d:sonar.qualitygate.wait="true"
             /d:sonar.cs.opencover.reportsPaths='"coverage/**/coverage.opencover.xml"'
             /d:sonar.coverage.exclusions='"tests/**/**"'
-            /d:sonar.sourceEncoding=UTF-8
-            /d:sonar.scm.provider=git
-            /d:sonar.scm.forceReloadAll=true
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
@@ -129,19 +125,32 @@ jobs:
         run: dotnet nuget enable source github 
 
       - name: Build
-        run: pwsh ./build.ps1 -targetFramework 'all'
+        run: pwsh ./build.ps1 -targetFrameworks 'all'
         env: 
           NUGET_USERNAME: DynamicsValue
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
-      - name: Pack
-        run: pwsh ./pack.ps1 -targetFrameworks 'all' -versionSuffix "ci.${{ github.head_ref }}${{ github.run_number }}"
+      - name: Pack Src
+        run: pwsh ./pack-src.ps1 -targetFrameworks 'all' -versionSuffix "ci.${{ github.head_ref }}${{ github.run_number }}"
         env: 
           NUGET_USERNAME: DynamicsValue
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
-      - name: Push
-        run: nuget.exe push .\nupkgs\*.nupkg -Source ${{ env.source-url }}
+      - name: Push Src
+        run: nuget.exe push .\nupkgs\FakeXrmEasy.Core.*.nupkg -Source ${{ env.source-url }}
+        env: 
+          NUGET_USERNAME: DynamicsValue
+          NUGET_AUTH_TOKEN: ${{ github.token }}
+          NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pack Tests
+        run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "ci.${{ github.head_ref }}${{ github.run_number }}"
+        env: 
+          NUGET_USERNAME: DynamicsValue
+          NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+      - name: Push Tests
+        run: nuget.exe push .\nupkgs\FakeXrmEasy.CoreTests.*.nupkg -Source ${{ env.source-url }}
         env: 
           NUGET_USERNAME: DynamicsValue
           NUGET_AUTH_TOKEN: ${{ github.token }}

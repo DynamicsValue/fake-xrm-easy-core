@@ -1,67 +1,73 @@
 param (
     [string]$versionSuffix = "",
     [string]$targetFrameworks = "netcoreapp3.1",
-    [string]$configuration = "FAKE_XRM_EASY_9"
+    [string]$configuration = "FAKE_XRM_EASY_9",
+    [string]$projectName = "FakeXrmEasy.Core",
+    [string]$projectPath = "src/FakeXrmEasy.Core",
+    [string]$packageIdPrefix = "FakeXrmEasy.Core",
+    [string]$packTests = ""
  )
 
-Write-Host "Packing configuration $($configuration)..."
+Write-Host "Packing configuration for project '$($projectName)' with '$($configuration)' and targetFramework '$($targetFrameworks)' at '$($projectPath)', packTests='$($packTests)'..." -ForegroundColor Yellow
 
-$project = "FakeXrmEasy.Core"
-$packageId = $project;
+$packageId = $packageIdPrefix;
 
 if($configuration -eq "FAKE_XRM_EASY_9")
 {
-  $packageId = $('"' + $project + '.v9"')
+  $packageId = $('"' + $packageIdPrefix + '.v9"')
 }
 elseif($configuration -eq "FAKE_XRM_EASY_365")
 {
-  $packageId = $('"' + $project + '.v365"')
+  $packageId = $('"' + $packageIdPrefix + '.v365"')
 }
 elseif($configuration -eq "FAKE_XRM_EASY_2016")
 {
-  $packageId = $('"' + $project + '.v2016"')
+  $packageId = $('"' + $packageIdPrefix + '.v2016"')
 }
 elseif($configuration -eq "FAKE_XRM_EASY_2015")
 {
-  $packageId = $('"' + $project + '.v2015"')
+  $packageId = $('"' + $packageIdPrefix + '.v2015"')
 }
 elseif($configuration -eq "FAKE_XRM_EASY_2013")
 {
-  $packageId = $('"' + $project + '.v2013"')
+  $packageId = $('"' + $packageIdPrefix + '.v2013"')
 }
 else 
 {
-  $packageId = $('"' + $project + '.v2011"')
+  $packageId = $('"' + $packageIdPrefix + '.v2011"')
   Write-Host $packageId
 }
-
-Write-Host "Running with versionSuffix '$($versionSuffix)'..."
-
 $tempNupkgFolder = './nupkgs'
+
+Write-Host "Building..."
+
+./build.ps1 -targetFrameworks $targetFrameworks -configuration $configuration -packTests $packTests
 
 Write-Host "Packing assembly for targetFrameworks $($targetFrameworks)..."
 if($targetFrameworks -eq "all")
 {
     if($versionSuffix -eq "") 
     {
-        dotnet pack --configuration $configuration /p:PackageId=$packageId -o $tempNupkgFolder src/$project/$project.csproj
+        dotnet pack --no-build --no-restore --configuration $configuration -p:PackageID=$packageId -p:PackTests=$packTests -o $tempNupkgFolder $projectPath/$projectName.csproj
     }
     else {
-        dotnet pack --configuration $configuration /p:PackageId=$packageId -o $tempNupkgFolder src/$project/$project.csproj --version-suffix $versionSuffix
+        dotnet pack --no-build --no-restore --configuration $configuration -p:PackageID=$packageId -p:PackTests=$packTests -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
     }
 }
 else 
 {
     if($versionSuffix -eq "") 
     {
-        dotnet pack --configuration $configuration /p:PackageId=$packageId -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder src/$project/$project.csproj
+        dotnet pack --no-build --no-restore --configuration $configuration -p:PackageID=$packageId -p:PackTests=$packTests -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj
     }
     else {
-        dotnet pack --configuration $configuration /p:PackageId=$packageId -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder src/$project/$project.csproj --version-suffix $versionSuffix
+        dotnet pack --no-build --no-restore --configuration $configuration -p:PackageID=$packageId -p:PackTests=$packTests -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
     }
 }
+
+
 if(!($LASTEXITCODE -eq 0)) {
-    throw "Error when packing the assembly"
+    throw "Error when packing the assembly for package $($packageIdPrefix) and configuration $($configuration)"
 }
 
 Write-Host $("Pack $($packageId) Succeeded :)") -ForegroundColor Green

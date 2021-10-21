@@ -1,26 +1,32 @@
 param (
-    [string]$packageSource = "local-packages"
+    [string]$packageSource = "local-packages",
+    [string]$packagePrefix = "FakeXrmEasy.Abstractions"
  )
 
-$project = "FakeXrmEasy.Core"
-
-Write-Host "Running with packageSource '$($packageSource)' ..."
+Write-Host "Running with packageSource '$($packageSource)'..."
 
 $dirSeparator = [IO.Path]::DirectorySeparatorChar
 
-$tempNupkgFolder = ".$($dirSeparator)nupkgs$($dirSeparator)*.nupkg"
-
-$localPackagesFolder = '../' + $packageSource
+# Using this glob pattern because of this: https://github.com/dotnet/docs/issues/7146
+$tempNupkgFolder = "nupkgs$($dirSeparator)**$($dirSeparator)*.nupkg"
 
 if($packageSource -eq "local-packages") {
-    $localPackagesFolder = '../' + $packageSource
+    $localPackagesFolder = '../local-packages'
     Write-Host "Deleting previous pushed version '$($localPackagesFolder)'..."
-    $projectFilePattern = $project + ".*"
+    $projectFilePattern = $packagePrefix + ".*"
     Get-ChildItem -Path $localPackagesFolder -Include $projectFilePattern -File -Recurse | ForEach-Object { $_.Delete()}
 }
 
-Write-Host "Pushing '$($project)' to source '$($packageSource)'..."
-dotnet nuget push $tempNupkgFolder -s $packageSource
+Write-Host "Pushing '$($packagePrefix)' to source '$($packageSource)' from '$($tempNupkgFolder)'..."
+
+if($packageSource -eq "local-packages") {
+    dotnet nuget push $tempNupkgFolder -s $packageSource
+}
+else 
+{
+    dotnet nuget push $tempNupkgFolder --skip-duplicate --no-symbols --api-key [System.Environment]::GetEnvironmentVariable('NUGET_TOKEN') -s $packageSource
+}
+
 if(!($LASTEXITCODE -eq 0)) {
     throw "Error pushing NuGet package"
 }
