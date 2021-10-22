@@ -9,7 +9,20 @@
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">net452</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY'">net452</TargetFrameworks>
 
-    <IsPackable>false</IsPackable>
+    <IsPackable>true</IsPackable>
+
+    <PackageId>FakeXrmEasy.CoreTests</PackageId>
+    <VersionPrefix>2.0.1</VersionPrefix>
+    <Authors>Jordi Montaña</Authors>
+    <Company>Dynamics Value S.L.</Company>
+    <Title>Internal Unit test suite for FakeXrmEasy.Core package</Title>
+    <PackageDescription>FakeXrmEasy is the open source test automation framework for .net core and the Power Platform / Dataverse. This is an internal package for regression testing purposes.</PackageDescription>
+    <Copyright>(c) 2021 DynamicsValue S.L.</Copyright>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>FakeXrmEasyLogo_128x128.png</PackageIcon>
+    <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform</PackageTags>
+    <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-abstractions</RepositoryUrl>
 
     <Configurations>Debug;FAKE_XRM_EASY_9;FAKE_XRM_EASY_365;FAKE_XRM_EASY_2016;FAKE_XRM_EASY_2015;FAKE_XRM_EASY_2013;FAKE_XRM_EASY</Configurations>
   </PropertyGroup>
