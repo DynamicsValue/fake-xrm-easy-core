@@ -22,7 +22,7 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>FakeXrmEasyLogo_128x128.png</PackageIcon>
     <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform</PackageTags>
-    <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-abstractions</RepositoryUrl>
+    <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-core</RepositoryUrl>
 
     <Configurations>Debug;FAKE_XRM_EASY_9;FAKE_XRM_EASY_365;FAKE_XRM_EASY_2016;FAKE_XRM_EASY_2015;FAKE_XRM_EASY_2013;FAKE_XRM_EASY</Configurations>
   </PropertyGroup>
@@ -31,7 +31,7 @@
     <None Include="../../LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
     <None Include="../../FakeXrmEasyLogo_128x128.png" Pack="true" PackagePath="/" />
   </ItemGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9</DefineConstants>
   </PropertyGroup>
