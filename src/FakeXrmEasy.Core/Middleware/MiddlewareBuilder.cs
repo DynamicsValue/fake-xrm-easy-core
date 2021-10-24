@@ -19,11 +19,22 @@ namespace FakeXrmEasy.Middleware
         internal IXrmFakedContext _context;
         internal MiddlewareBuilder() 
         {
-            _context = new XrmFakedContext();
+            _context = new XrmFakedContext(this);
+        }
+        internal MiddlewareBuilder(XrmFakedContext existingContext) 
+        {
+            _context = existingContext;
         }
         public static IMiddlewareBuilder New() 
         {
             var builder = new MiddlewareBuilder();
+            builder.AddDefaults();
+            return builder;
+        }
+
+        internal static IMiddlewareBuilder New(XrmFakedContext context) 
+        {
+            var builder = new MiddlewareBuilder(context);
             builder.AddDefaults();
             return builder;
         }

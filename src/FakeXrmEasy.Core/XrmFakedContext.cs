@@ -2,9 +2,13 @@
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Metadata;
+using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Abstractions.Permissions;
 using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.Metadata;
+using FakeXrmEasy.Middleware;
+using FakeXrmEasy.Middleware.Crud;
+using FakeXrmEasy.Middleware.Messages;
 using FakeXrmEasy.Permissions;
 using FakeXrmEasy.Services;
 using Microsoft.Xrm.Sdk;
@@ -24,6 +28,7 @@ namespace FakeXrmEasy
     /// </summary>
     public partial class XrmFakedContext : IXrmFakedContext
     {
+        internal IMiddlewareBuilder _builder;
         protected internal IOrganizationService _service;
 
         public IXrmFakedPluginContextProperties PluginContextProperties { get; set; }
@@ -95,14 +100,36 @@ namespace FakeXrmEasy
         private readonly Dictionary<string, object> _properties;
         private readonly IXrmFakedTracingService _fakeTracingService;
 
+        [Obsolete("The default parameterless constructor is deprecated. Please use MiddlewareBuilder to build a custom XrmFakedContext")]
         public XrmFakedContext()
         {
+            _builder = MiddlewareBuilder
+                        .New(this)
+       
+                        // Add* -> Middleware configuration
+                        .AddCrud()   
+                        .AddFakeMessageExecutors()
+
+                        // Use* -> Defines pipeline sequence
+                        .UseCrud() 
+                        .UseMessages();
+
+            if(LicenseContext != null)
+            {
+                _builder = _builder.SetLicense(LicenseContext.Value);
+            }
+                        
+            _builder.Build();
+
             _fakeTracingService = new XrmFakedTracingService();
-
             _properties = new Dictionary<string, object>();
+            Init();
+        }
 
-            CallerProperties = new CallerProperties();
+        private void Init()
+        {
             
+            CallerProperties = new CallerProperties();
             MaxRetrieveCount = 5000;
 
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
@@ -130,8 +157,14 @@ namespace FakeXrmEasy
             _proxyTypesAssemblies = new List<Assembly>();
 
             GetOrganizationService();
+        }
 
-
+        internal XrmFakedContext(IMiddlewareBuilder middlewareBuilder) 
+        {
+            _builder = middlewareBuilder;
+            _fakeTracingService = new XrmFakedTracingService();
+            _properties = new Dictionary<string, object>();
+            Init();
         }
 
         public bool HasProperty<T>()
@@ -232,6 +265,18 @@ namespace FakeXrmEasy
             _proxyTypesAssemblies.Add(assembly);
         }
 
+
+        [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors")]
+        public void AddFakeMessageExecutor<T>(IFakeMessageExecutor executor) where T : OrganizationRequest
+        {
+            _builder.AddFakeMessageExecutor<T>(executor);
+        }
+
+        [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors")]
+        public void RemoveFakeMessageExecutor<T>() where T : OrganizationRequest
+        {
+            _builder.RemoveFakeMessageExecutor<T>();
+        }
 
         public void AddGenericFakeMessageExecutor(string message, IFakeMessageExecutor executor)
         {

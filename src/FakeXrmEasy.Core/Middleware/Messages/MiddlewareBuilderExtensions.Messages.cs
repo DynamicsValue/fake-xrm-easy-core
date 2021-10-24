@@ -48,6 +48,30 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
+        public static IMiddlewareBuilder AddFakeMessageExecutor<T>(this IMiddlewareBuilder builder, IFakeMessageExecutor executor) where T: OrganizationRequest
+        {
+            builder.Add(context => {
+                
+                var messageExecutors = context.GetProperty<MessageExecutors>();
+                if (!messageExecutors.ContainsKey(typeof(T)))
+                    messageExecutors.Add(typeof(T), executor);
+                else
+                    messageExecutors[typeof(T)] = executor;
+            });
+
+            return builder;
+        }
+
+        [Obsolete("Please use AddFakeMessageExecutor method that doesn't use generics and instead decides the OrganizationRequest based on the GetResponsibleRequestType")]
+        public static IMiddlewareBuilder RemoveFakeMessageExecutor<T>(this IMiddlewareBuilder builder) where T: OrganizationRequest
+        {
+            builder.Add(context => {
+                var messageExecutors = context.GetProperty<MessageExecutors>();
+                messageExecutors.Remove(typeof(T));
+            });
+
+            return builder;
+        }
 
         public static IMiddlewareBuilder AddExecutionMock<T>(this IMiddlewareBuilder builder, OrganizationRequestExecution mock) where T : OrganizationRequest
         {
