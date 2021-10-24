@@ -7,12 +7,11 @@ using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 {
-    public class TypeConversionTests
+    public class TypeConversionTests : FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_arithmetic_values_are_used_proxy_types_assembly_is_required()
         {
-            var ctx = new XrmFakedContext();
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -22,14 +21,13 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            Assert.Throws<Exception>(() => fetchXml.ToQueryExpression(ctx));
+            Assert.Throws<Exception>(() => fetchXml.ToQueryExpression(_context));
         }
 
         [Fact]
         public void Conversion_to_double_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -40,7 +38,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<double>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(1.2345, query.Criteria.Conditions[0].Values[0]);
         }
@@ -48,8 +46,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void Conversion_to_entityreference_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -60,15 +57,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<EntityReference>(query.Criteria.Conditions[0].Values[0]);
         }
 
         [Fact]
         public void Conversion_to_guid_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -79,15 +75,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<Guid>(query.Criteria.Conditions[0].Values[0]);
         }
 
         [Fact]
         public void Conversion_to_int_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -98,7 +93,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<int>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(4, query.Criteria.Conditions[0].Values[0]);
         }
@@ -106,8 +101,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void Conversion_to_bool_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='account'>
@@ -118,7 +112,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<bool>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(false, query.Criteria.Conditions[0].Values[0]);
 
@@ -131,7 +125,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query2 = fetchXml2.ToQueryExpression(ctx);
+            var query2 = fetchXml2.ToQueryExpression(_context);
             Assert.IsType<bool>(query2.Criteria.Conditions[0].Values[0]);
             Assert.Equal(true, query2.Criteria.Conditions[0].Values[0]);
         }
@@ -139,8 +133,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void Conversion_to_bool_throws_error_if_incorrect()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Account));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Account)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='account'>
@@ -151,7 +144,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var exception = Assert.Throws<Exception>(() => fetchXml.ToQueryExpression(ctx));
+            var exception = Assert.Throws<Exception>(() => fetchXml.ToQueryExpression(_context));
             Assert.Equal("When trying to parse value for entity account and attribute donotemail: Boolean value expected", exception.Message);
 
             var fetchXml2 = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -163,15 +156,14 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var exception2 = Assert.Throws<Exception>(() => fetchXml2.ToQueryExpression(ctx));
+            var exception2 = Assert.Throws<Exception>(() => fetchXml2.ToQueryExpression(_context));
             Assert.Equal("When trying to parse value for entity account and attribute donotemail: Boolean value expected", exception.Message);
         }
 
         [Fact]
         public void Conversion_to_string_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -182,7 +174,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<string>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal("123", query.Criteria.Conditions[0].Values[0]);
         }
@@ -190,8 +182,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void Conversion_to_optionsetvalue_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -202,7 +193,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<OptionSetValue>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(2, (query.Criteria.Conditions[0].Values[0] as OptionSetValue).Value);
         }
@@ -210,8 +201,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void Conversion_to_money_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -222,7 +212,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<Money>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(2, (query.Criteria.Conditions[0].Values[0] as Money).Value);
         }
@@ -230,8 +220,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void Conversion_to_datetime_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Contact));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
@@ -242,7 +231,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<DateTime>(query.Criteria.Conditions[0].Values[0]);
 
             var dtTime = query.Criteria.Conditions[0].Values[0] as DateTime?;
@@ -254,8 +243,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void Conversion_to_enum_is_correct()
         {
-            var ctx = new XrmFakedContext();
-            ctx.ProxyTypesAssembly = Assembly.GetAssembly(typeof(Incident));
+            _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' >
               <entity name='incident' >
@@ -268,7 +256,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
               </entity>
             </fetch>";
 
-            var query = fetchXml.ToQueryExpression(ctx);
+            var query = fetchXml.ToQueryExpression(_context);
             Assert.IsType<OptionSetValue>(query.Criteria.Conditions[0].Values[0]);
             Assert.Equal(2, (query.Criteria.Conditions[0].Values[0] as OptionSetValue).Value);
         }

@@ -366,8 +366,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Aggregate_Min_Date()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -403,8 +401,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Aggregate_Min_Date_With_Nulls()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -440,8 +436,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Aggregate_Max_Date()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -477,8 +471,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Aggregate_Max_Date_With_Nulls()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -514,8 +506,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Aggregate_Min_With_Nulls()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -551,8 +541,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Aggregate_Max_With_Nulls()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");
@@ -588,8 +576,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Aggregate_Avg_With_Nulls()
         {
-            XrmFakedContext context = new XrmFakedContext();
-            IOrganizationService service = _service;
             List<Entity> initialEntities = new List<Entity>();
 
             Entity e = new Entity("entity");

@@ -14,7 +14,7 @@ namespace FakeXrmEasy.FakeMessageExecutors.CustomExecutors
     /// https://community.dynamics.com/crm/b/magnetismsolutionscrmblog/archive/2016/02/19/programmatically-move-cross-entity-business-process-flow-stages-in-crm-2016
     /// https://crmtipoftheday.com/589/programmatically-move-cross-entity-business-process-flow-stages-in-crm-2016/
     /// </summary>
-    public class NavigateToNextEntityOrganizationRequestExecutor : IFakeMessageExecutor
+    public class NavigateToNextEntityOrganizationRequestExecutor : IGenericFakeMessageExecutor
     {
         public static readonly string RequestName = "NavigateToNextEntity";
 
@@ -112,6 +112,11 @@ namespace FakeXrmEasy.FakeMessageExecutors.CustomExecutors
         public Type GetResponsibleRequestType()
         {
             return typeof(OrganizationRequest);
+        }
+
+        public string GetRequestName()
+        {
+            return RequestName;
         }
     }
 }

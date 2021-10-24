@@ -11,7 +11,7 @@
             "preLaunchTask": "",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "dotnet",
-            "args": ["test", "--configuration", "FAKE_XRM_EASY"],
+            "args": ["test", "--configuration", "FAKE_XRM_EASY_9"],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",

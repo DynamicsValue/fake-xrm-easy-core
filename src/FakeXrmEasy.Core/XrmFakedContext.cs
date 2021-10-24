@@ -103,6 +103,9 @@ namespace FakeXrmEasy
         [Obsolete("The default parameterless constructor is deprecated. Please use MiddlewareBuilder to build a custom XrmFakedContext")]
         public XrmFakedContext()
         {
+            _fakeTracingService = new XrmFakedTracingService();
+            _properties = new Dictionary<string, object>();
+
             _builder = MiddlewareBuilder
                         .New(this)
        
@@ -120,7 +123,12 @@ namespace FakeXrmEasy
             }
                         
             _builder.Build();
+            Init();
+        }
 
+        internal XrmFakedContext(IMiddlewareBuilder middlewareBuilder) 
+        {
+            _builder = middlewareBuilder;
             _fakeTracingService = new XrmFakedTracingService();
             _properties = new Dictionary<string, object>();
             Init();
@@ -159,13 +167,7 @@ namespace FakeXrmEasy
             GetOrganizationService();
         }
 
-        internal XrmFakedContext(IMiddlewareBuilder middlewareBuilder) 
-        {
-            _builder = middlewareBuilder;
-            _fakeTracingService = new XrmFakedTracingService();
-            _properties = new Dictionary<string, object>();
-            Init();
-        }
+        
 
         public bool HasProperty<T>()
         {
@@ -272,24 +274,29 @@ namespace FakeXrmEasy
             _builder.AddFakeMessageExecutor<T>(executor);
         }
 
-        [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors")]
+        [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors. If you want to remove one, simply remove it from the middleware setup.")]
         public void RemoveFakeMessageExecutor<T>() where T : OrganizationRequest
         {
             _builder.RemoveFakeMessageExecutor<T>();
         }
 
+        [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors")]
         public void AddGenericFakeMessageExecutor(string message, IFakeMessageExecutor executor)
         {
-            if (!GenericFakeMessageExecutors.ContainsKey(message))
-                GenericFakeMessageExecutors.Add(message, executor);
-            else
-                GenericFakeMessageExecutors[message] = executor;
+            _builder.AddGenericFakeMessageExecutor(message, executor);
         }
 
+        [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors. If you want to remove one, simply remove it from the middleware setup.")]
         public void RemoveGenericFakeMessageExecutor(string message)
         {
-            if (GenericFakeMessageExecutors.ContainsKey(message))
-                GenericFakeMessageExecutors.Remove(message);
+            if(HasProperty<GenericMessageExecutors>()) 
+            {
+                var genericMessageExecutors = GetProperty<GenericMessageExecutors>();
+                if(genericMessageExecutors.ContainsKey(message))
+                {
+                    genericMessageExecutors.Remove(message);
+                }
+            }
         }
 
         public void AddRelationship(string schemaname, XrmFakedRelationship relationship)

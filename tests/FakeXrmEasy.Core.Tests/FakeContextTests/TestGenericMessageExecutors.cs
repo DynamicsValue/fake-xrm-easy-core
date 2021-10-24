@@ -3,36 +3,55 @@ using Xunit;
 using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Middleware;
+using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.Middleware.Crud;
+using FakeXrmEasy.Middleware.Messages;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
     public class TestGenericMessageExecutors
     {
-        [Fact]
-        public void TestGenericMessage()
+        protected readonly IXrmFakedContext _context;
+        protected readonly IOrganizationService _service;
+        public TestGenericMessageExecutors() 
         {
-            XrmFakedContext context = new XrmFakedContext();
-            context.AddGenericFakeMessageExecutor("new_TestAction", new FakeMessageExecutor());
-            IOrganizationService service = context.GetOrganizationService();
+            _context = MiddlewareBuilder
+                        .New()
+       
+                        // Add* -> Middleware configuration
+                        .AddCrud()   
+                        .AddFakeMessageExecutors()
+                        .AddGenericFakeMessageExecutor("new_TestAction", new FakeMessageExecutor())
+
+                        // Use* -> Defines pipeline sequence
+                        .UseCrud() 
+                        .UseMessages()
+
+                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
+                        .Build();
+                        
+            _service = _context.GetOrganizationService();
+        }
+        [Fact]
+        public void Should_execute_generic_message()
+        {
             OrganizationRequest request = new OrganizationRequest("new_TestAction");
             request["input"] = "testinput";
-            OrganizationResponse response = service.Execute(request);
+            OrganizationResponse response = _service.Execute(request);
             Assert.Equal("testinput", response["output"]);
         }
 
         [Fact]
         public void TestGenericMessageRemoval()
         {
-
-            XrmFakedContext context = new XrmFakedContext();
-            context.AddGenericFakeMessageExecutor("new_TestAction", new FakeMessageExecutor());
-            IOrganizationService service = context.GetOrganizationService();
             OrganizationRequest request = new OrganizationRequest("new_TestAction");
             request["input"] = "testinput";
-            OrganizationResponse response = service.Execute(request);
+            OrganizationResponse response = _service.Execute(request);
             Assert.Equal("testinput", response["output"]);
-            context.RemoveGenericFakeMessageExecutor("new_TestAction");
-            Assert.Throws(typeof(FakeXrmEasy.PullRequestException), () => service.Execute(request));
+
+            (_context as XrmFakedContext).RemoveGenericFakeMessageExecutor("new_TestAction");
+            Assert.Throws(typeof(FakeXrmEasy.PullRequestException), () => _service.Execute(request));
         }
     }
 
@@ -52,7 +71,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
 
         public Type GetResponsibleRequestType()
         {
-            throw new NotImplementedException();
+            return typeof(OrganizationRequest);
         }
     }
 }

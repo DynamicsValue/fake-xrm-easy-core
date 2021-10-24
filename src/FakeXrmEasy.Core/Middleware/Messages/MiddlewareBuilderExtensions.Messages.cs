@@ -13,6 +13,11 @@ namespace FakeXrmEasy.Middleware.Messages
 {
     public static class MiddlewareBuilderMessagesExtensions 
     {
+        /// <summary>
+        /// This methods discovers all IFakeMessageExecutor implementations in the current assembly and adds them to the context builder
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder AddFakeMessageExecutors(this IMiddlewareBuilder builder) 
         {
             builder.Add(context => {
@@ -22,10 +27,32 @@ namespace FakeXrmEasy.Middleware.Messages
                     .GetTypes()
                     .Where(t => t.GetInterfaces().Contains(typeof(IFakeMessageExecutor)))
                     .Select(t => Activator.CreateInstance(t) as IFakeMessageExecutor)
+                    .Where(t => t.GetResponsibleRequestType() != typeof(OrganizationRequest)) //Exclude generic messages
                     .ToDictionary(t => t.GetResponsibleRequestType(), t => t);
                     
                 var messageExecutors = new MessageExecutors(fakeMessageExecutorsDictionary);
                 context.SetProperty(messageExecutors);
+
+                AddFakeAssociate(context, service);
+                AddFakeDisassociate(context, service);
+            });
+
+            return builder;
+        }
+
+        public static IMiddlewareBuilder AddGenericFakeMessageExecutors(this IMiddlewareBuilder builder) 
+        {
+            builder.Add(context => {
+                var service = context.GetOrganizationService();
+               
+                var fakeMessageExecutorsDictionary = Assembly.GetExecutingAssembly()
+                    .GetTypes()
+                    .Where(t => t.GetInterfaces().Contains(typeof(IGenericFakeMessageExecutor)))
+                    .Select(t => Activator.CreateInstance(t) as IGenericFakeMessageExecutor)
+                    .ToDictionary(t => t.GetRequestName(), t => t as IFakeMessageExecutor);
+                    
+                var genericMessageExecutors = new GenericMessageExecutors(fakeMessageExecutorsDictionary);
+                context.SetProperty(genericMessageExecutors);
 
                 AddFakeAssociate(context, service);
                 AddFakeDisassociate(context, service);
@@ -103,6 +130,33 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
+        public static IMiddlewareBuilder AddGenericFakeMessageExecutor(this IMiddlewareBuilder builder, string message, IFakeMessageExecutor executor)
+        {
+            builder.Add(context => {
+                if(!context.HasProperty<GenericMessageExecutors>())
+                    context.SetProperty<GenericMessageExecutors>(new GenericMessageExecutors(new Dictionary<string, IFakeMessageExecutor>()));
+
+                var genericMessageExecutors = context.GetProperty<GenericMessageExecutors>();
+                if (!genericMessageExecutors.ContainsKey(message))
+                    genericMessageExecutors.Add(message, executor);
+                else
+                    genericMessageExecutors[message] = executor;
+            });
+
+            return builder;
+        }
+
+        public static IMiddlewareBuilder RemoveGenericFakeMessageExecutor(this IMiddlewareBuilder builder, string message, IFakeMessageExecutor executor)
+        {
+            builder.Add(context => {
+                var genericMessageExecutors = context.GetProperty<GenericMessageExecutors>();
+                if (!genericMessageExecutors.ContainsKey(message))
+                    genericMessageExecutors.Remove(message);
+            });
+
+            return builder;
+        }
+
         public static IMiddlewareBuilder UseMessages(this IMiddlewareBuilder builder) 
         {
 
@@ -130,16 +184,28 @@ namespace FakeXrmEasy.Middleware.Messages
             if(context.HasProperty<ExecutionMocks>()) 
             {
                 var executionMocks = context.GetProperty<ExecutionMocks>();
-                if(executionMocks.ContainsKey(request.GetType()))
+                if(executionMocks.ContainsKey(request.GetType())) 
                 {
                     return true;
-                }
+                };
             }
             
             if(context.HasProperty<MessageExecutors>())
             {
                 var messageExecutors = context.GetProperty<MessageExecutors>();
-                return messageExecutors.ContainsKey(request.GetType());
+                if(messageExecutors.ContainsKey(request.GetType())) 
+                {
+                    return true;
+                };
+            }
+
+            if(context.HasProperty<GenericMessageExecutors>())
+            {
+                var genericMessageExecutors = context.GetProperty<GenericMessageExecutors>();
+                if(genericMessageExecutors.ContainsKey(request.RequestName)) 
+                {
+                    return true;
+                };
             }
             
             return false;
@@ -156,8 +222,26 @@ namespace FakeXrmEasy.Middleware.Messages
                 }
             }
 
-            var messageExecutors = context.GetProperty<MessageExecutors>();
-            return messageExecutors[request.GetType()].Execute(request, context);            
+            if(context.HasProperty<MessageExecutors>()) 
+            {
+                var messageExecutors = context.GetProperty<MessageExecutors>();
+                if(messageExecutors.ContainsKey(request.GetType()))
+                {
+                    return messageExecutors[request.GetType()].Execute(request, context); 
+                }
+            }
+
+            if(context.HasProperty<GenericMessageExecutors>()) 
+            {
+                var genericMessageExecutors = context.GetProperty<GenericMessageExecutors>();
+                if(genericMessageExecutors.ContainsKey(request.RequestName))
+                {
+                    return genericMessageExecutors[request.RequestName].Execute(request, context); 
+                }
+            }
+
+            throw PullRequestException.NotImplementedOrganizationRequest(request.GetType());
+                       
         }
         
 
