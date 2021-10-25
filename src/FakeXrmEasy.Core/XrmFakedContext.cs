@@ -81,14 +81,11 @@ namespace FakeXrmEasy
         /// </summary>
         private Dictionary<Type, ServiceRequestExecution> ExecutionMocks { get; set; }
 
-        private Dictionary<string, IFakeMessageExecutor> GenericFakeMessageExecutors { get; set; }
-
         private Dictionary<string, XrmFakedRelationship> _relationships { get; set; }
         public IEnumerable<XrmFakedRelationship> Relationships 
         { 
             get => _relationships.Values;
         }
-
         public IEntityInitializerService EntityInitializerService { get; set; }
 
         public int MaxRetrieveCount { get; set; }
@@ -105,6 +102,7 @@ namespace FakeXrmEasy
         {
             _fakeTracingService = new XrmFakedTracingService();
             _properties = new Dictionary<string, object>();
+            _service = A.Fake<IOrganizationService>();
 
             _builder = MiddlewareBuilder
                         .New(this)
@@ -129,8 +127,11 @@ namespace FakeXrmEasy
         internal XrmFakedContext(IMiddlewareBuilder middlewareBuilder) 
         {
             _builder = middlewareBuilder;
+
             _fakeTracingService = new XrmFakedTracingService();
             _properties = new Dictionary<string, object>();
+            _service = A.Fake<IOrganizationService>();
+            
             Init();
         }
 
@@ -143,8 +144,6 @@ namespace FakeXrmEasy
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
             Data = new Dictionary<string, Dictionary<Guid, Entity>>();
             ExecutionMocks = new Dictionary<Type, ServiceRequestExecution>();
-
-            GenericFakeMessageExecutors = new Dictionary<string, IFakeMessageExecutor>();
 
             _relationships = new Dictionary<string, XrmFakedRelationship>();
 
@@ -365,52 +364,8 @@ namespace FakeXrmEasy
 
         protected IOrganizationService GetFakedOrganizationService(XrmFakedContext context)
         {
-            if (context._service != null)
-            {
-                return context._service;
-            }
-
-            var fakedService = A.Fake<IOrganizationService>();
-
-            //Fake / Intercept other requests
-            FakeExecute(context, fakedService);
-            context._service = fakedService;
-
             return context._service;
         }
-
-        /// <summary>
-        /// Fakes the Execute method of the organization service.
-        /// Not all the OrganizationRequest are going to be implemented, so stay tunned on updates!
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="fakedService"></param>
-        public static void FakeExecute(XrmFakedContext context, IOrganizationService fakedService)
-        {
-            OrganizationResponse response = null;
-            Func<OrganizationRequest, OrganizationResponse> execute = (req) =>
-            {
-                if (context.ExecutionMocks.ContainsKey(req.GetType()))
-                    return context.ExecutionMocks[req.GetType()].Invoke(req);
-
-                if (req.GetType() == typeof(OrganizationRequest)
-                    && context.GenericFakeMessageExecutors.ContainsKey(req.RequestName))
-                    return context.GenericFakeMessageExecutors[req.RequestName].Execute(req, context);
-
-                throw PullRequestException.NotImplementedOrganizationRequest(req.GetType());
-            };
-
-            
-            A.CallTo(() => fakedService.Execute(A<OrganizationRequest>._))
-                .Invokes((OrganizationRequest req) => response = execute(req))
-                .ReturnsLazily((OrganizationRequest req) => response);
-        }
-
-        
-
-        
-
-        
 
     }
 }

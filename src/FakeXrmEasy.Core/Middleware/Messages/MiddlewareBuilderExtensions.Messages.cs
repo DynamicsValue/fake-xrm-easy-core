@@ -227,7 +227,7 @@ namespace FakeXrmEasy.Middleware.Messages
                 var messageExecutors = context.GetProperty<MessageExecutors>();
                 if(messageExecutors.ContainsKey(request.GetType()))
                 {
-                    return messageExecutors[request.GetType()].Execute(request, context); 
+                    return (messageExecutors[request.GetType()] as IBaseFakeMessageExecutor).Execute(request, context); 
                 }
             }
 
@@ -236,7 +236,7 @@ namespace FakeXrmEasy.Middleware.Messages
                 var genericMessageExecutors = context.GetProperty<GenericMessageExecutors>();
                 if(genericMessageExecutors.ContainsKey(request.RequestName))
                 {
-                    return genericMessageExecutors[request.RequestName].Execute(request, context); 
+                    return (genericMessageExecutors[request.RequestName] as IBaseFakeMessageExecutor).Execute(request, context); 
                 }
             }
 

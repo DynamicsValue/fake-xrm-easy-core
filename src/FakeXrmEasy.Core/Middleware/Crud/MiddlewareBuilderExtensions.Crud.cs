@@ -91,7 +91,8 @@ namespace FakeXrmEasy.Middleware.Crud
         private static OrganizationResponse ProcessRequest(IXrmFakedContext context, OrganizationRequest request) 
         {
             var crudMessageExecutors = context.GetProperty<CrudMessageExecutors>();
-            return crudMessageExecutors[request.GetType()].Execute(request, context);
+            var fakeMessageExecutor = crudMessageExecutors[request.GetType()] as IBaseFakeMessageExecutor;
+            return fakeMessageExecutor.Execute(request, context);
         }
 
         private static void AddFakeCreate(IXrmFakedContext context, IOrganizationService service) 
