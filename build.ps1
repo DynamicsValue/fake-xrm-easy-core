@@ -5,7 +5,7 @@ param (
  )
 
 $localPackagesFolder = '../local-packages'
-$restoredPackagesFolder = './packages'
+
 
 Write-Host "Checking if local packages folder '$($localPackagesFolder)' exists..."
 
@@ -17,6 +17,7 @@ if(!($packagesFolderExists))
 }
 
 Write-Host "Deleting previous dependencies..." -ForegroundColor Yellow
+$restoredPackagesFolder = './packages'
 $restoredPackagesFolderExists = Test-Path $restoredPackagesFolder -PathType Container
 
 if($restoredPackagesFolderExists) 

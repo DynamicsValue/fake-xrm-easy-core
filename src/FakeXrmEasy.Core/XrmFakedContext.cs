@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Metadata;
 using FakeXrmEasy.Abstractions.Middleware;
@@ -97,9 +98,11 @@ namespace FakeXrmEasy
         private readonly Dictionary<string, object> _properties;
         private readonly IXrmFakedTracingService _fakeTracingService;
 
-        [Obsolete("The default parameterless constructor is deprecated. Please use MiddlewareBuilder to build a custom XrmFakedContext")]
-        public XrmFakedContext()
+        [Obsolete("The default constructor is deprecated. Please use MiddlewareBuilder to build a custom XrmFakedContext")]
+        public XrmFakedContext(FakeXrmEasyLicense? license = null)
         {
+            LicenseContext = license;
+
             _fakeTracingService = new XrmFakedTracingService();
             _properties = new Dictionary<string, object>();
             _service = A.Fake<IOrganizationService>();

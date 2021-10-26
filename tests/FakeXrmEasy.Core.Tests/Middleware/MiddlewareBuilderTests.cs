@@ -123,9 +123,15 @@ namespace FakeXrmEasy.Tests.Middleware
         }
 
         [Fact]
-        public void Should_call_internal_middleware_constructor_when_creating_an_instance_of_the_faked_context()
+        public void Should_throw_exception_when_using_default_faked_context_constructor_without_a_license()
         {
-            var existingContext = new XrmFakedContext();
+            Assert.Throws<LicenseException>(() => new XrmFakedContext());
+        }
+
+        [Fact]
+        public void Should_not_throw_exception_when_using_default_faked_context_constructor_with_a_license()
+        {
+            var existingContext = new XrmFakedContext(FakeXrmEasyLicense.RPL_1_5);
             Assert.True(true);
         }
     }

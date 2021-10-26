@@ -11,6 +11,9 @@ using Microsoft.Xrm.Sdk.Messages;
 
 namespace FakeXrmEasy.Middleware.Messages
 {
+    /// <summary>
+    /// Extension methods to configure fake messages execution in the middleware
+    /// </summary>
     public static class MiddlewareBuilderMessagesExtensions 
     {
         /// <summary>
@@ -40,12 +43,20 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
-        public static IMiddlewareBuilder AddGenericFakeMessageExecutors(this IMiddlewareBuilder builder) 
+        /// <summary>
+        /// Discovers all generic fake message executors in the current executing assembly and adds them to the context
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="assembly">The Assembly to search generic fake message executors in, or the executing assembly by default</param>
+        /// <returns></returns>
+        public static IMiddlewareBuilder AddGenericFakeMessageExecutors(this IMiddlewareBuilder builder, Assembly assembly = null) 
         {
             builder.Add(context => {
                 var service = context.GetOrganizationService();
-               
-                var fakeMessageExecutorsDictionary = Assembly.GetExecutingAssembly()
+
+                if (assembly == null) assembly = Assembly.GetExecutingAssembly();
+                var fakeMessageExecutorsDictionary = 
+                    assembly
                     .GetTypes()
                     .Where(t => t.GetInterfaces().Contains(typeof(IGenericFakeMessageExecutor)))
                     .Select(t => Activator.CreateInstance(t) as IGenericFakeMessageExecutor)
@@ -58,6 +69,13 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
+        /// <summary>
+        /// Adds a particular fake message executor to the available fake message executors. If there was one executor for the same OrganizationRequest,
+        /// it'll be replaced with this new instance
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="executor"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder AddFakeMessageExecutor(this IMiddlewareBuilder builder, IFakeMessageExecutor executor) 
         {
             builder.Add(context => {
@@ -72,6 +90,14 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
+        /// <summary>
+        /// Adds a particular fake message executor to the available fake message executors that will be executed when to the given OrganizationRequest is requested. 
+        /// If there was one executor for the same OrganizationRequest, it'll be replaced with this new instance
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <param name="executor"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder AddFakeMessageExecutor<T>(this IMiddlewareBuilder builder, IFakeMessageExecutor executor) where T: OrganizationRequest
         {
             builder.Add(context => {
@@ -86,7 +112,6 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
-        [Obsolete("Please use AddFakeMessageExecutor method that doesn't use generics and instead decides the OrganizationRequest based on the GetResponsibleRequestType")]
         public static IMiddlewareBuilder RemoveFakeMessageExecutor<T>(this IMiddlewareBuilder builder) where T: OrganizationRequest
         {
             builder.Add(context => {
@@ -184,7 +209,7 @@ namespace FakeXrmEasy.Middleware.Messages
                 if(executionMocks.ContainsKey(request.GetType())) 
                 {
                     return true;
-                };
+                }
             }
             
             if(context.HasProperty<GenericMessageExecutors>())
@@ -193,7 +218,7 @@ namespace FakeXrmEasy.Middleware.Messages
                 if(genericMessageExecutors.ContainsKey(request.RequestName)) 
                 {
                     return true;
-                };
+                }
             }
 
             if(context.HasProperty<MessageExecutors>())
@@ -202,11 +227,9 @@ namespace FakeXrmEasy.Middleware.Messages
                 if(messageExecutors.ContainsKey(request.GetType())) 
                 {
                     return true;
-                };
+                }
             }
 
-            
-            
             return false;
         }
 

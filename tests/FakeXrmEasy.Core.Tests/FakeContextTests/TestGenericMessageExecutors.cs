@@ -7,6 +7,7 @@ using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
+using System.Reflection;
 
 namespace FakeXrmEasy.Tests.FakeContextTests
 {
@@ -16,13 +17,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         protected readonly IOrganizationService _service;
         public TestGenericMessageExecutors() 
         {
+            var currentAssembly = Assembly.GetExecutingAssembly();
+
             _context = MiddlewareBuilder
                         .New()
        
                         // Add* -> Middleware configuration
                         .AddCrud()   
                         .AddFakeMessageExecutors()
-                        .AddGenericFakeMessageExecutors()
+                        .AddGenericFakeMessageExecutors(currentAssembly)
 
                         // Use* -> Defines pipeline sequence
                         .UseCrud() 
@@ -70,7 +73,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         }
 
         [Fact]
-        public void TestGenericMessageRemoval()
+        public void Should_throw_exception_if_message_is_removed()
         {
             OrganizationRequest request = new OrganizationRequest("new_TestAction");
             request["input"] = "testinput";
