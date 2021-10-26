@@ -53,9 +53,6 @@ namespace FakeXrmEasy.Middleware.Messages
                     
                 var genericMessageExecutors = new GenericMessageExecutors(fakeMessageExecutorsDictionary);
                 context.SetProperty(genericMessageExecutors);
-
-                AddFakeAssociate(context, service);
-                AddFakeDisassociate(context, service);
             });
 
             return builder;
@@ -190,6 +187,15 @@ namespace FakeXrmEasy.Middleware.Messages
                 };
             }
             
+            if(context.HasProperty<GenericMessageExecutors>())
+            {
+                var genericMessageExecutors = context.GetProperty<GenericMessageExecutors>();
+                if(genericMessageExecutors.ContainsKey(request.RequestName)) 
+                {
+                    return true;
+                };
+            }
+
             if(context.HasProperty<MessageExecutors>())
             {
                 var messageExecutors = context.GetProperty<MessageExecutors>();
@@ -199,14 +205,7 @@ namespace FakeXrmEasy.Middleware.Messages
                 };
             }
 
-            if(context.HasProperty<GenericMessageExecutors>())
-            {
-                var genericMessageExecutors = context.GetProperty<GenericMessageExecutors>();
-                if(genericMessageExecutors.ContainsKey(request.RequestName)) 
-                {
-                    return true;
-                };
-            }
+            
             
             return false;
         }
@@ -222,21 +221,21 @@ namespace FakeXrmEasy.Middleware.Messages
                 }
             }
 
-            if(context.HasProperty<MessageExecutors>()) 
-            {
-                var messageExecutors = context.GetProperty<MessageExecutors>();
-                if(messageExecutors.ContainsKey(request.GetType()))
-                {
-                    return (messageExecutors[request.GetType()] as IBaseFakeMessageExecutor).Execute(request, context); 
-                }
-            }
-
             if(context.HasProperty<GenericMessageExecutors>()) 
             {
                 var genericMessageExecutors = context.GetProperty<GenericMessageExecutors>();
                 if(genericMessageExecutors.ContainsKey(request.RequestName))
                 {
                     return (genericMessageExecutors[request.RequestName] as IBaseFakeMessageExecutor).Execute(request, context); 
+                }
+            }
+
+            if(context.HasProperty<MessageExecutors>()) 
+            {
+                var messageExecutors = context.GetProperty<MessageExecutors>();
+                if(messageExecutors.ContainsKey(request.GetType()))
+                {
+                    return (messageExecutors[request.GetType()] as IBaseFakeMessageExecutor).Execute(request, context); 
                 }
             }
 

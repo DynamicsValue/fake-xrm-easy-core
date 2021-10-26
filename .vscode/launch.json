@@ -8,9 +8,9 @@
             "name": ".NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build --framework 'netcoreapp3.1' --configuration 'FAKE_XRM_EASY_9'",
+            "preLaunchTask": "build --framework 'netcoreapp3.1' --configuration 'Debug'",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/tests/bin/FAKE_XRM_EASY_9/netcoreapp3.1/FakeXrmEasy.Core.Tests.dll",
+            "program": "${workspaceFolder}/tests/bin/Debug/netcoreapp3.1/FakeXrmEasy.Core.Tests.dll",
             "args": [],
             "cwd": "${workspaceFolder}/tests",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
