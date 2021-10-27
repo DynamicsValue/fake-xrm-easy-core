@@ -8,10 +8,12 @@ using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
+using Microsoft.Xrm.Sdk.Messages;
+using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 
 namespace FakeXrmEasy.Tests.Middleware
 {
-    public class MiddlewareBuilderTests
+    public partial class MiddlewareBuilderTests 
     {
         [Fact]
         public void Should_create_new_instance() 
@@ -134,5 +136,10 @@ namespace FakeXrmEasy.Tests.Middleware
             var existingContext = new XrmFakedContext(FakeXrmEasyLicense.RPL_1_5);
             Assert.True(true);
         }
+
     }
+
+
+    
+    
 }

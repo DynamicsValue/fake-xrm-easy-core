@@ -52,8 +52,6 @@ namespace FakeXrmEasy.Middleware.Messages
         public static IMiddlewareBuilder AddGenericFakeMessageExecutors(this IMiddlewareBuilder builder, Assembly assembly = null) 
         {
             builder.Add(context => {
-                var service = context.GetOrganizationService();
-
                 if (assembly == null) assembly = Assembly.GetExecutingAssembly();
                 var fakeMessageExecutorsDictionary = 
                     assembly
@@ -101,7 +99,9 @@ namespace FakeXrmEasy.Middleware.Messages
         public static IMiddlewareBuilder AddFakeMessageExecutor<T>(this IMiddlewareBuilder builder, IFakeMessageExecutor executor) where T: OrganizationRequest
         {
             builder.Add(context => {
-                
+                if (!context.HasProperty<MessageExecutors>())
+                    context.SetProperty(new MessageExecutors());
+
                 var messageExecutors = context.GetProperty<MessageExecutors>();
                 if (!messageExecutors.ContainsKey(typeof(T)))
                     messageExecutors.Add(typeof(T), executor);
@@ -179,6 +179,11 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
+        /// <summary>
+        /// Implements the handling of fake message executors, generic fake message executors, and execution mocks in the pipeline
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder UseMessages(this IMiddlewareBuilder builder) 
         {
 
