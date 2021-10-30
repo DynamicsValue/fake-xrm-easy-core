@@ -21,12 +21,14 @@ namespace FakeXrmEasy.Middleware.Messages
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IMiddlewareBuilder AddFakeMessageExecutors(this IMiddlewareBuilder builder) 
+        public static IMiddlewareBuilder AddFakeMessageExecutors(this IMiddlewareBuilder builder, Assembly assembly = null) 
         {
             builder.Add(context => {
+                if (assembly == null) assembly = Assembly.GetExecutingAssembly();
                 var service = context.GetOrganizationService();
                
-                var fakeMessageExecutorsDictionary = Assembly.GetExecutingAssembly()
+                var fakeMessageExecutorsDictionary = 
+                    assembly
                     .GetTypes()
                     .Where(t => t.GetInterfaces().Contains(typeof(IFakeMessageExecutor)))
                     .Select(t => Activator.CreateInstance(t) as IFakeMessageExecutor)
@@ -77,7 +79,9 @@ namespace FakeXrmEasy.Middleware.Messages
         public static IMiddlewareBuilder AddFakeMessageExecutor(this IMiddlewareBuilder builder, IFakeMessageExecutor executor) 
         {
             builder.Add(context => {
-                
+                if (!context.HasProperty<MessageExecutors>())
+                    context.SetProperty(new MessageExecutors());
+                    
                 var messageExecutors = context.GetProperty<MessageExecutors>();
                 if (!messageExecutors.ContainsKey(executor.GetResponsibleRequestType()))
                     messageExecutors.Add(executor.GetResponsibleRequestType(), executor);
