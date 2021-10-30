@@ -8,8 +8,6 @@ using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
-using Microsoft.Xrm.Sdk.Messages;
-using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 
 namespace FakeXrmEasy.Tests.Middleware
 {

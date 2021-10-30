@@ -50,7 +50,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 
                 if (xmlDoc.HasAggregations())
                 {
-                    list = XrmFakedContext.ProcessAggregateFetchXml(context, xmlDoc, list);
+                    list = list.Aggregate(context, xmlDoc);
                 }
             }
             else if (request.Query is QueryByAttribute)

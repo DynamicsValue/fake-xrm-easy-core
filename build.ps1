@@ -24,14 +24,18 @@ if($restoredPackagesFolderExists)
 {
     Get-ChildItem -Path $restoredPackagesFolder -Include fakexrmeasy.* -Directory -Recurse -Force | Remove-Item -Recurse -Force
 }
+else 
+{
+    New-Item $restoredPackagesFolder -ItemType Directory
+}
 
 
 if($targetFrameworks -eq "all")
 {
-    dotnet restore --no-cache --force --force-evaluate /p:Configuration=$configuration /p:PackTests=$packTests
+    dotnet restore --no-cache --force --force-evaluate /p:Configuration=$configuration /p:PackTests=$packTests --packages $restoredPackagesFolder
 }
 else {
-    dotnet restore --no-cache --force --force-evaluate /p:Configuration=$configuration /p:PackTests=$packTests /p:TargetFrameworks=$targetFrameworks
+    dotnet restore --no-cache --force --force-evaluate /p:Configuration=$configuration /p:PackTests=$packTests /p:TargetFrameworks=$targetFrameworks --packages $restoredPackagesFolder
 }
 
 
