@@ -23,12 +23,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                         .New()
        
                         // Add* -> Middleware configuration
-                        .AddCrud()   
+                        .AddCrud()
                         .AddFakeMessageExecutors()
                         .AddGenericFakeMessageExecutors(currentAssembly)
 
                         // Use* -> Defines pipeline sequence
-                        .UseCrud() 
+                        .UseCrud()
                         .UseMessages()
 
                         .SetLicense(FakeXrmEasyLicense.RPL_1_5)
@@ -44,12 +44,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests
                         .New()
        
                         // Add* -> Middleware configuration
-                        .AddCrud()   
+                        .AddCrud()
                         .AddFakeMessageExecutors()
                         .AddGenericFakeMessageExecutor("new_TestAction", new OldGenericFakeMessageExecutor())
 
                         // Use* -> Defines pipeline sequence
-                        .UseCrud() 
+                        .UseCrud()
                         .UseMessages()
 
                         .SetLicense(FakeXrmEasyLicense.RPL_1_5)

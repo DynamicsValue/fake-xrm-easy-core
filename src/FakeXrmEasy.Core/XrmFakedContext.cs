@@ -8,7 +8,6 @@ using FakeXrmEasy.Abstractions.Permissions;
 using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.Metadata;
 using FakeXrmEasy.Middleware;
-using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using FakeXrmEasy.Permissions;
 using FakeXrmEasy.Services;
@@ -111,11 +110,11 @@ namespace FakeXrmEasy
                         .New(this)
        
                         // Add* -> Middleware configuration
-                        .AddCrud()   
+                        //.AddCrud()   
                         .AddFakeMessageExecutors()
 
                         // Use* -> Defines pipeline sequence
-                        .UseCrud() 
+                        //.UseCrud() 
                         .UseMessages();
 
             if(LicenseContext != null)

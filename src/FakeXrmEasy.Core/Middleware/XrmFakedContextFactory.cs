@@ -23,12 +23,12 @@ namespace FakeXrmEasy.Middleware
                         .New()
        
                         // Add* -> Middleware configuration
-                        .AddCrud()   
+                        .AddCrud()
                         .AddFakeMessageExecutors()
                         .AddGenericFakeMessageExecutors()
 
                         // Use* -> Defines pipeline sequence
-                        .UseCrud() 
+                        .UseCrud()
                         .UseMessages()
 
                         .SetLicense(license)
@@ -47,12 +47,12 @@ namespace FakeXrmEasy.Middleware
                         .New()
        
                         // Add* -> Middleware configuration
-                        .AddCrud(integrityOptions)   
+                        .AddCrud(integrityOptions)
                         .AddFakeMessageExecutors()
                         .AddGenericFakeMessageExecutors()
 
                         // Use* -> Defines pipeline sequence
-                        .UseCrud() 
+                        .UseCrud()
                         .UseMessages()
 
                         .SetLicense(license)
