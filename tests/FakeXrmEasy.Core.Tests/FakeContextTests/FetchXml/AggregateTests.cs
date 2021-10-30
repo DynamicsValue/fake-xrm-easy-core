@@ -11,6 +11,91 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
     public class AggregateTests : FakeXrmEasyTestsBase
     {
         [Fact]
+        public void FetchXml_Aggregate_Should_Throw_Exception_If_All_Attributes_Is_Present()
+        {
+            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' aggregate='true'>
+                              <entity name='contact'>
+                                <all-attributes />
+                              </entity>
+                            </fetch>";
+
+            
+            _context.Initialize(new[] {
+                new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" }
+            });
+
+            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Should_Throw_Exception_If_EntityName_Is_Blank()
+        {
+            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' aggregate='true'>
+                              <entity name=''>
+                                <attribute name='contactid' alias='count.contacts' aggregate='count' />
+                              </entity>
+                            </fetch>";
+
+
+            _context.Initialize(new[] {
+                new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" }
+            });
+
+            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Should_Throw_Exception_If_Alias_Is_Blank()
+        {
+            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' aggregate='true'>
+                              <entity name='contact'>
+                                <attribute name='contactid' alias='' aggregate='count' />
+                              </entity>
+                            </fetch>";
+
+
+            _context.Initialize(new[] {
+                new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" }
+            });
+
+            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Should_Throw_Exception_If_Name_Is_Blank()
+        {
+            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' aggregate='true'>
+                              <entity name='contact'>
+                                <attribute name='' alias='count.contacts' aggregate='count' />
+                              </entity>
+                            </fetch>";
+
+
+            _context.Initialize(new[] {
+                new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" }
+            });
+
+            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Should_Throw_Exception_If_Aggregate_And_GroupBy_Are_Missing()
+        {
+            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' aggregate='true'>
+                              <entity name='contact'>
+                                <attribute name='contactid' alias='count.contacts' />
+                              </entity>
+                            </fetch>";
+
+
+            _context.Initialize(new[] {
+                new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" }
+            });
+
+            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
+        }
+
+        [Fact]
         public void FetchXml_Aggregate_Group_Count()
         {
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' aggregate='true'>
