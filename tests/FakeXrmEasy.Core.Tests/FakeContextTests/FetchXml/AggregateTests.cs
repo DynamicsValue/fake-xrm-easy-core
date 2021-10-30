@@ -4,6 +4,7 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
@@ -75,7 +76,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" }
             });
 
-            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
+            Assert.Throws<FaultException<OrganizationServiceFault>>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
         }
 
         [Fact]
