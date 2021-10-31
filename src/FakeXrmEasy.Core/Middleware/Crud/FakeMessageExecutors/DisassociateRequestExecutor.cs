@@ -6,7 +6,7 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Linq;
 
-namespace FakeXrmEasy.FakeMessageExecutors
+namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
     public class DisassociateRequestExecutor : IFakeMessageExecutor
     {

@@ -169,7 +169,11 @@ namespace FakeXrmEasy
         }
 
         
-
+        /// <summary>
+        /// Checks if this XrmFakedContext has a property of the given type
+        /// </summary>
+        /// <typeparam name="T">The property type</typeparam>
+        /// <returns></returns>
         public bool HasProperty<T>()
         {
             return _properties.ContainsKey(typeof(T).FullName);
@@ -197,6 +201,10 @@ namespace FakeXrmEasy
             }
         }
 
+        /// <summary>
+        /// Returns an interface to an organization service that will execute requests according to the middleware setup
+        /// </summary>
+        /// <returns></returns>
         public IOrganizationService GetOrganizationService()
         {
             return GetFakedOrganizationService(this);

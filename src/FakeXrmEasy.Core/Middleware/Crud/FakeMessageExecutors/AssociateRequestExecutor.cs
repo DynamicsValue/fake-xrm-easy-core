@@ -5,7 +5,7 @@ using System.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 
-namespace FakeXrmEasy.FakeMessageExecutors
+namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
     public class AssociateRequestExecutor : IFakeMessageExecutor
     {

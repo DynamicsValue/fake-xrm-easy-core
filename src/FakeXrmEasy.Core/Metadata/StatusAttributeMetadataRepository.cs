@@ -6,6 +6,9 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Metadata
 {
+    /// <summary>
+    /// This repository contains metadata for the global option sets
+    /// </summary>
     public class StatusAttributeMetadataRepository : IStatusAttributeMetadataRepository
     {
         private readonly Dictionary<string, StatusAttributeMetadata> _repository;

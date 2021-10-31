@@ -16,8 +16,6 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             return request.GetType().Equals(GetResponsibleRequestType());
         }
 
-
-
         public OrganizationResponse Execute(OrganizationRequest req, IXrmFakedContext ctx)
         {
             var context = (ctx as XrmFakedContext);

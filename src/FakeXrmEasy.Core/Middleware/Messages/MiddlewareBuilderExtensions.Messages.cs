@@ -7,7 +7,6 @@ using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Middleware;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 
 namespace FakeXrmEasy.Middleware.Messages
 {
@@ -38,8 +37,7 @@ namespace FakeXrmEasy.Middleware.Messages
                 var messageExecutors = new MessageExecutors(fakeMessageExecutorsDictionary);
                 context.SetProperty(messageExecutors);
 
-                AddFakeAssociate(context, service);
-                AddFakeDisassociate(context, service);
+                
             });
 
             return builder;
@@ -276,48 +274,6 @@ namespace FakeXrmEasy.Middleware.Messages
         }
         
 
-        private static void AddFakeAssociate(IXrmFakedContext context, IOrganizationService service)
-        {
-            A.CallTo(() => service.Associate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
-                .Invokes((string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection entityCollection) =>
-                {
-                    var messageExecutors = context.GetProperty<MessageExecutors>();
-
-                    if (messageExecutors.ContainsKey(typeof(AssociateRequest)))
-                    {
-                        var request = new AssociateRequest()
-                        {
-                            Target = new EntityReference() { Id = entityId, LogicalName = entityName },
-                            Relationship = relationship,
-                            RelatedEntities = entityCollection
-                        };
-                        service.Execute(request);
-                    }
-                    else
-                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(AssociateRequest));
-                });
-        }
-
-        private static void AddFakeDisassociate(IXrmFakedContext context, IOrganizationService service)
-        {
-            A.CallTo(() => service.Disassociate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
-                .Invokes((string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection entityCollection) =>
-                {
-                    var messageExecutors = context.GetProperty<MessageExecutors>();
-
-                    if (messageExecutors.ContainsKey(typeof(DisassociateRequest)))
-                    {
-                        var request = new DisassociateRequest()
-                        {
-                            Target = new EntityReference() { Id = entityId, LogicalName = entityName },
-                            Relationship = relationship,
-                            RelatedEntities = entityCollection
-                        };
-                        service.Execute(request);
-                    }
-                    else
-                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(DisassociateRequest));
-                });
-        }
+        
     }
 }
