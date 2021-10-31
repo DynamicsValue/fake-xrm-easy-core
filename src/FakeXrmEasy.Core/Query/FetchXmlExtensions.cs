@@ -392,7 +392,7 @@ namespace FakeXrmEasy.Query
                     return lst.Min(x => (DateTime)x);
                 }
 
-                throw new Exception("Unhndled property type '" + valType.FullName + "' in 'min' aggregate");
+                throw new UnhandledPropertyTypeException(valType.FullName, "min");
             }
         }
 
@@ -436,7 +436,7 @@ namespace FakeXrmEasy.Query
                     return lst.Max(x => (DateTime)x);
                 }
 
-                throw new Exception("Unhndled property type '" + valType.FullName + "' in 'max' aggregate");
+                throw new UnhandledPropertyTypeException(valType.FullName, "max");
             }
         }
 
@@ -475,7 +475,7 @@ namespace FakeXrmEasy.Query
                     return lst.Average(x => (double)x);
                 }
 
-                throw new Exception("Unhndled property type '" + valType.FullName + "' in 'avg' aggregate");
+                throw new UnhandledPropertyTypeException(valType.FullName, "avg");
             }
         }
 

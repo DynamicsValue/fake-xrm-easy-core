@@ -782,7 +782,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         }
 
         [Fact]
-        public void FetchXml_Aggregate_Max_With_Nulls()
+        public void FetchXml_Aggregate_Max_With_Nulls_Decimal()
         {
             List<Entity> initialEntities = new List<Entity>();
 
@@ -812,8 +812,247 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 ");
 
             EntityCollection result = _service.RetrieveMultiple(query);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
             Assert.Equal(-0.5m, result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value);
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Max_With_Nulls_Float()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = (float) -0.5;
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = (float) -2;
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='maxvalue' aggregate='max' />
+                  </entity>
+                </fetch>
+                ");
+
+            EntityCollection result = _service.RetrieveMultiple(query);
+            Assert.Single(result.Entities);
+            Assert.Equal((float) -0.5, result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value);
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Min_Unhandled_Property_Type()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = true;
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = false;
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='maxvalue' aggregate='min' />
+                  </entity>
+                </fetch>
+                ");
+
+            Assert.Throws<UnhandledPropertyTypeException>(() => _service.RetrieveMultiple(query));
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Avg_Unhandled_Property_Type()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = true;
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = false;
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='maxvalue' aggregate='avg' />
+                  </entity>
+                </fetch>
+                ");
+
+            Assert.Throws<UnhandledPropertyTypeException>(() => _service.RetrieveMultiple(query));
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Max_Unhandled_Property_Type()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = true;
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = false;
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='maxvalue' aggregate='max' />
+                  </entity>
+                </fetch>
+                ");
+
+            Assert.Throws<UnhandledPropertyTypeException>(() => _service.RetrieveMultiple(query));
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Max_With_Nulls_Double()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = -0.5;
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = -2;
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='maxvalue' aggregate='max' />
+                  </entity>
+                </fetch>
+                ");
+
+            EntityCollection result = _service.RetrieveMultiple(query);
+            Assert.Single(result.Entities);
+            Assert.Equal(-0.5, result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value);
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Max_With_Nulls_Money()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = new Money(-0.5m);
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = new Money(-2m);
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='maxvalue' aggregate='MAX' />
+                  </entity>
+                </fetch>
+                ");
+
+            EntityCollection result = _service.RetrieveMultiple(query);
+            Assert.Single(result.Entities);
+            Assert.Equal(-0.5m, (result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value as Money).Value);
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Max_With_Nulls_Int()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = 2;
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = -1;
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='maxvalue' aggregate='max' />
+                  </entity>
+                </fetch>
+                ");
+
+            EntityCollection result = _service.RetrieveMultiple(query);
+            Assert.Single(result.Entities);
+            Assert.Equal(2, result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value);
         }
 
         [Fact]
