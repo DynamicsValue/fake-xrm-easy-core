@@ -962,7 +962,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             Entity e2 = new Entity("entity");
             e2.Id = Guid.NewGuid();
-            e2["value"] = -2;
+            e2["value"] = -2.1;
             initialEntities.Add(e2);
 
             Entity e3 = new Entity("entity");
