@@ -1,4 +1,1 @@
-﻿/* Moved to fake-xrm-easy-plugins
-
-
-*/
+﻿/* Moved to fake-xrm-easy-plugins repo */

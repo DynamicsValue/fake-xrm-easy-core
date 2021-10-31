@@ -12,9 +12,9 @@ using System.Reflection;
 using System.ServiceModel;
 using Xunit;
 
-namespace FakeXrmEasy.Tests
+namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.UpdateRequestTests
 {
-    public class FakeContextTestUpdate : FakeXrmEasyTestsBase
+    public class UpdateRequestTests : FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_a_null_entity_is_updated_an_exception_is_thrown()

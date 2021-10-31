@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.RetrieveMultiple
+namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipleRequestTests
 {
     public class RetrieveMultipleTests : FakeXrmEasyTestsBase
     {

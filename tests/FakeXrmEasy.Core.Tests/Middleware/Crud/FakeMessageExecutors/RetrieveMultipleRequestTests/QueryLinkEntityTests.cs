@@ -9,7 +9,7 @@ using System.Reflection;
 using Xunit;
 using FakeXrmEasy.Abstractions;
 
-namespace FakeXrmEasy.Tests.FakeContextTests
+namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipleRequestTests
 {
     public class QueryLinkEntityTests : FakeXrmEasyTestsBase
     {       
