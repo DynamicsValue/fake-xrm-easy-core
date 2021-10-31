@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Core.Exceptions.Query.FetchXml.Aggregations;
 using FakeXrmEasy.Extensions.FetchXml;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -185,7 +186,7 @@ namespace FakeXrmEasy.Query
                             break;
 
                         default:
-                            throw new Exception("Unknown aggregate function '" + agrFn + "'");
+                            throw new UnknownAggregateFunctionException(agrFn);
                     }
 
                     newAgr.OutputAlias = alias;

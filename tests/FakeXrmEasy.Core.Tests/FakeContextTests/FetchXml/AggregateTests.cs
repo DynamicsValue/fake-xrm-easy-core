@@ -1,4 +1,5 @@
 ﻿using Crm;
+using FakeXrmEasy.Core.Exceptions.Query.FetchXml.Aggregations;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
@@ -37,10 +38,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                               </entity>
                             </fetch>";
 
-
-            _context.Initialize(new[] {
-                new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" }
-            });
 
             Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
         }
@@ -95,6 +92,26 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
         }
+
+        [Fact]
+        public void FetchXml_Aggregate_Should_Throw_Exception_If_Aggregate_Function_Is_Unknown()
+        {
+            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' aggregate='true'>
+                              <entity name='contact'>
+                                    <attribute name='contactid' alias='count.contacts' aggregate='asdasd' />
+                                    <attribute name='lastname' alias='group.lastname' groupby='true' />
+                                  </entity>
+                            </fetch>";
+
+
+            _context.Initialize(new[] {
+                new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" }
+            });
+
+            Assert.Throws<UnknownAggregateFunctionException>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
+        }
+
+        
 
         [Fact]
         public void FetchXml_Aggregate_Group_Count()
@@ -590,7 +607,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
         }
 
         [Fact]
-        public void FetchXml_Aggregate_Min_With_Nulls()
+        public void FetchXml_Aggregate_Min_With_Nulls_Int()
         {
             List<Entity> initialEntities = new List<Entity>();
 
@@ -620,8 +637,148 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 ");
 
             EntityCollection result = _service.RetrieveMultiple(query);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
             Assert.Equal(1, result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value);
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Min_With_Nulls_Decimal()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = 1.1m;
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = 2.2m;
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='minvalue' aggregate='min' />
+                  </entity>
+                </fetch>
+                ");
+
+            EntityCollection result = _service.RetrieveMultiple(query);
+            Assert.Single(result.Entities);
+            Assert.Equal(1.1m, result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value);
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Min_With_Nulls_Money()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = new Money(1.1m);
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = new Money(2.2m);
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='minvalue' aggregate='min' />
+                  </entity>
+                </fetch>
+                ");
+
+            EntityCollection result = _service.RetrieveMultiple(query);
+            Assert.Single(result.Entities);
+            Assert.Equal(1.1m, (result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value as Money).Value);
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Min_With_Nulls_Float()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = (float) 1.1;
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = (float) 2.2;
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='minvalue' aggregate='min' />
+                  </entity>
+                </fetch>
+                ");
+
+            EntityCollection result = _service.RetrieveMultiple(query);
+            Assert.Single(result.Entities);
+            Assert.Equal((float) 1.1, result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value);
+        }
+
+        [Fact]
+        public void FetchXml_Aggregate_Min_With_Nulls_Double()
+        {
+            List<Entity> initialEntities = new List<Entity>();
+
+            Entity e = new Entity("entity");
+            e.Id = Guid.NewGuid();
+            e["value"] = 1.1;
+            initialEntities.Add(e);
+
+            Entity e2 = new Entity("entity");
+            e2.Id = Guid.NewGuid();
+            e2["value"] = 2.2;
+            initialEntities.Add(e2);
+
+            Entity e3 = new Entity("entity");
+            e3.Id = Guid.NewGuid();
+            e3["value"] = null;
+            initialEntities.Add(e3);
+
+            _context.Initialize(initialEntities);
+
+            FetchExpression query = new FetchExpression($@"
+                <fetch aggregate='true' >
+                  <entity name='entity' >
+                    <attribute name='value' alias='minvalue' aggregate='min' />
+                  </entity>
+                </fetch>
+                ");
+
+            EntityCollection result = _service.RetrieveMultiple(query);
+            Assert.Single(result.Entities);
+            Assert.Equal(1.1, result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value);
         }
 
         [Fact]
