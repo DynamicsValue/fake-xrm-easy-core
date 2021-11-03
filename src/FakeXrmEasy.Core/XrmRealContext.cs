@@ -16,7 +16,7 @@ using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.Abstractions.Enums;
 
 #if FAKE_XRM_EASY_NETCORE
-using Microsoft.Powerplatform.Cds.Client;
+using Microsoft.PowerPlatform.Dataverse.Client;
 #elif FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
 using Microsoft.Xrm.Tooling.Connector;
 #else 
@@ -104,7 +104,7 @@ namespace FakeXrmEasy
 
             // Connect to the CRM web service using a connection string.
 #if FAKE_XRM_EASY_NETCORE
-            var client = new CdsServiceClient(connectionString);
+            var client = new ServiceClient(connectionString);
 #elif FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
             var client = new CrmServiceClient(connectionString);
 #else
