@@ -9,6 +9,9 @@ using FakeItEasy;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
+using Microsoft.Xrm.Sdk.Query;
+using Microsoft.PowerPlatform.Dataverse.Client;
+using System.Threading;
 
 namespace FakeXrmEasy.Middleware
 {
@@ -79,8 +82,12 @@ namespace FakeXrmEasy.Middleware
             A.CallTo(() => service.Execute(A<OrganizationRequest>._))
                 .ReturnsLazily((OrganizationRequest request) => app.Invoke(_context, request));
 
-            AddOrganizationServiceAsyncFake();
-            AddOrganizationServiceAsyncFake2();
+            var serviceAsync = _context.GetAsyncOrganizationService();
+            AddOrganizationServiceAsyncFake(serviceAsync);
+
+            var serviceAsync2 = _context.GetAsyncOrganizationService2();
+            AddOrganizationServiceAsyncFake(serviceAsync2);
+            AddOrganizationServiceAsyncFake2(serviceAsync2);
 
             return _context;
         }
@@ -91,28 +98,70 @@ namespace FakeXrmEasy.Middleware
             return this;
         }
 
-        private void AddOrganizationServiceAsyncFake()
+        private void AddOrganizationServiceAsyncFake(IOrganizationServiceAsync serviceAsync)
         {
             var service = _context.GetOrganizationService();
-            var serviceAsync = _context.GetAsyncOrganizationService();
+
+            A.CallTo(() => serviceAsync.Create(A<Entity>._))
+                .ReturnsLazily((Entity entity) => service.Create(entity));
 
             A.CallTo(() => serviceAsync.CreateAsync(A<Entity>._))
                 .ReturnsLazily((Entity entity) => service.Create(entity));
 
+            A.CallTo(() => serviceAsync.Update(A<Entity>._))
+                .Invokes((Entity entity) => service.Update(entity));
+
+            A.CallTo(() => serviceAsync.UpdateAsync(A<Entity>._))
+                .Invokes((Entity entity) => service.Update(entity));
+
+            A.CallTo(() => serviceAsync.Delete(A<string>._, A<Guid>._))
+                .Invokes((string entityLogicalName, Guid id) => service.Delete(entityLogicalName, id));
+
+            A.CallTo(() => serviceAsync.DeleteAsync(A<string>._, A<Guid>._))
+                .Invokes((string entityLogicalName, Guid id) => service.Delete(entityLogicalName, id));
+
+            A.CallTo(() => serviceAsync.Retrieve(A<string>._, A<Guid>._, A<ColumnSet>._))
+                .ReturnsLazily((string entityLogicalName, Guid id, ColumnSet columnSet) => service.Retrieve(entityLogicalName, id, columnSet));
+
+            A.CallTo(() => serviceAsync.RetrieveAsync(A<string>._, A<Guid>._, A<ColumnSet>._))
+                .ReturnsLazily((string entityLogicalName, Guid id, ColumnSet columnSet) => service.Retrieve(entityLogicalName, id, columnSet));
+
+            A.CallTo(() => serviceAsync.RetrieveMultiple(A<QueryBase>._))
+                .ReturnsLazily((QueryBase query) => service.RetrieveMultiple(query));
+
+            A.CallTo(() => serviceAsync.RetrieveMultipleAsync(A<QueryBase>._))
+                .ReturnsLazily((QueryBase query) => service.RetrieveMultiple(query));
+
             A.CallTo(() => serviceAsync.ExecuteAsync(A<OrganizationRequest>._))
                 .ReturnsLazily((OrganizationRequest request) => service.Execute(request));
+
+            A.CallTo(() => serviceAsync.Execute(A<OrganizationRequest>._))
+                .ReturnsLazily((OrganizationRequest request) => service.Execute(request));
+
+            A.CallTo(() => serviceAsync.AssociateAsync(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
+                .Invokes((string entityLogicalName, Guid id, Relationship relationship, EntityReferenceCollection entityRefCollection) 
+                    => service.Associate(entityLogicalName, id, relationship, entityRefCollection ));
+
+            A.CallTo(() => serviceAsync.Associate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
+                .Invokes((string entityLogicalName, Guid id, Relationship relationship, EntityReferenceCollection entityRefCollection) 
+                    => service.Associate(entityLogicalName, id, relationship, entityRefCollection ));
+
+            A.CallTo(() => serviceAsync.DisassociateAsync(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
+                .Invokes((string entityLogicalName, Guid id, Relationship relationship, EntityReferenceCollection entityRefCollection) 
+                    => service.Disassociate(entityLogicalName, id, relationship, entityRefCollection ));
+
+            A.CallTo(() => serviceAsync.Disassociate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
+                .Invokes((string entityLogicalName, Guid id, Relationship relationship, EntityReferenceCollection entityRefCollection) 
+                    => service.Disassociate(entityLogicalName, id, relationship, entityRefCollection ));
+
         }
 
-        private void AddOrganizationServiceAsyncFake2()
+        private void AddOrganizationServiceAsyncFake2(IOrganizationServiceAsync2 serviceAsync)
         {
             var service = _context.GetOrganizationService();
-            var serviceAsync = _context.GetAsyncOrganizationService2();
 
-            A.CallTo(() => serviceAsync.CreateAsync(A<Entity>._))
-                .ReturnsLazily((Entity entity) => service.Create(entity));
-
-            A.CallTo(() => serviceAsync.ExecuteAsync(A<OrganizationRequest>._))
-                .ReturnsLazily((OrganizationRequest request) => service.Execute(request));
+            A.CallTo(() => serviceAsync.CreateAsync(A<Entity>._, A<CancellationToken>._))
+                .ReturnsLazily((Entity entity, CancellationToken token) => service.Create(entity));
         }
     }
 }
