@@ -35,7 +35,8 @@ namespace FakeXrmEasy
         public FakeXrmEasyLicense? LicenseContext { get; set; }
         public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
         protected IOrganizationService _service;
-
+        protected IOrganizationServiceAsync _serviceAsync;
+        protected IOrganizationServiceAsync2 _serviceAsync2;
         private readonly Dictionary<string, object> _properties;
 
         public XrmRealContext()
@@ -89,7 +90,25 @@ namespace FakeXrmEasy
             return _service;
         }
 
-        protected IOrganizationService GetOrgService()
+        public IOrganizationServiceAsync GetAsyncOrganizationService()
+        {
+            if (_serviceAsync != null)
+                return _serviceAsync;
+
+            _serviceAsync = GetOrgService();
+            return _serviceAsync;
+        }
+
+        public IOrganizationServiceAsync2 GetAsyncOrganizationService2()
+        {
+            if (_serviceAsync2 != null)
+                return _serviceAsync2;
+
+            _serviceAsync2 = GetOrgService();
+            return _serviceAsync2;
+        }
+
+        protected ServiceClient GetOrgService()
         {
             var connection = ConfigurationManager.ConnectionStrings[ConnectionStringName];
 
@@ -103,14 +122,7 @@ namespace FakeXrmEasy
             }
 
             // Connect to the CRM web service using a connection string.
-#if FAKE_XRM_EASY_NETCORE
             var client = new ServiceClient(connectionString);
-#elif FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
-            var client = new CrmServiceClient(connectionString);
-#else
-            CrmConnection crmConnection = CrmConnection.Parse(connectionString);
-            var client = new OrganizationService(crmConnection);
-#endif
             return client;
         }
 

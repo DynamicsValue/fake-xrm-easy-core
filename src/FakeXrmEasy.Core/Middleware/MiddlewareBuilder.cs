@@ -79,6 +79,9 @@ namespace FakeXrmEasy.Middleware
             A.CallTo(() => service.Execute(A<OrganizationRequest>._))
                 .ReturnsLazily((OrganizationRequest request) => app.Invoke(_context, request));
 
+            AddOrganizationServiceAsyncFake();
+            AddOrganizationServiceAsyncFake2();
+
             return _context;
         }
 
@@ -86,6 +89,30 @@ namespace FakeXrmEasy.Middleware
         {
             _context.LicenseContext = license;
             return this;
+        }
+
+        private void AddOrganizationServiceAsyncFake()
+        {
+            var service = _context.GetOrganizationService();
+            var serviceAsync = _context.GetAsyncOrganizationService();
+
+            A.CallTo(() => serviceAsync.CreateAsync(A<Entity>._))
+                .ReturnsLazily((Entity entity) => service.Create(entity));
+
+            A.CallTo(() => serviceAsync.ExecuteAsync(A<OrganizationRequest>._))
+                .ReturnsLazily((OrganizationRequest request) => service.Execute(request));
+        }
+
+        private void AddOrganizationServiceAsyncFake2()
+        {
+            var service = _context.GetOrganizationService();
+            var serviceAsync = _context.GetAsyncOrganizationService2();
+
+            A.CallTo(() => serviceAsync.CreateAsync(A<Entity>._))
+                .ReturnsLazily((Entity entity) => service.Create(entity));
+
+            A.CallTo(() => serviceAsync.ExecuteAsync(A<OrganizationRequest>._))
+                .ReturnsLazily((OrganizationRequest request) => service.Execute(request));
         }
     }
 }
