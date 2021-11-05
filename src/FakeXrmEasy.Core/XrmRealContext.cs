@@ -47,12 +47,16 @@ namespace FakeXrmEasy
 
         public XrmRealContext(string connectionStringName)
         {
+            _properties = new Dictionary<string, object>();
             ConnectionStringName = connectionStringName;
         }
 
-        public XrmRealContext(IOrganizationService organizationService)
+        public XrmRealContext(IOrganizationService organizationService, IOrganizationServiceAsync serviceAsync = null, IOrganizationServiceAsync2 serviceAsync2 = null)
         {
+            _properties = new Dictionary<string, object>();
             _service = organizationService;
+            _serviceAsync = serviceAsync;
+            _serviceAsync2 = serviceAsync2;
         }
 
         public bool HasProperty<T>()

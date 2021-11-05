@@ -1,4 +1,5 @@
 ﻿using Crm;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
@@ -10,26 +11,16 @@ using Xunit.Sdk;
 
 namespace FakeXrmEasy.Tests.XrmRealContextTests
 {
-    public class XrmRealContextTests
+    public class XrmRealContextTests : FakeXrmEasyTestsBase
     {
-        /*  Move to separate int test
-        [Fact]
-        public void Should_connect_to_CRM()
+        private readonly IOrganizationServiceAsync _serviceAsync;
+        private readonly IOrganizationServiceAsync2 _serviceAsync2;
+        
+        public XrmRealContextTests()
         {
-            var ctx = new XrmRealContext();
-            var ex = Record.Exception(() => ctx.GetOrganizationService());
-            Assert.Null(ex);
+            _serviceAsync = _context.GetAsyncOrganizationService();
+            _serviceAsync2 = _context.GetAsyncOrganizationService2();
         }
-
-        [Fact]
-        public void Should_connect_to_CRM_with_given_OrganizationService()
-        {
-            var ctx = new XrmRealContext();
-            var organizationService = ctx.GetOrganizationService();
-            var ctx2 = new XrmRealContext(organizationService);
-            Assert.Equal(organizationService, ctx2.GetOrganizationService());
-        }
-        */
 
         [Fact]
         public void Should_connect_to_CRM_with_given_ConnectionString()
@@ -51,5 +42,47 @@ namespace FakeXrmEasy.Tests.XrmRealContextTests
             var pluginProfile = ctx.GetContextFromSerialisedCompressedProfile(serialised);
             Assert.NotEqual(0, pluginProfile.Stage);
         }
+
+        [Fact]
+        public void Should_retrieve_fake_organization_service() 
+        {           
+            var ctx = new XrmRealContext(_service, _serviceAsync, _serviceAsync2);
+
+            Assert.Equal(_service, ctx.GetOrganizationService());
+            Assert.Equal(_serviceAsync, ctx.GetAsyncOrganizationService());
+            Assert.Equal(_serviceAsync2, ctx.GetAsyncOrganizationService2());
+        }
+
+        [Fact]
+        public void Should_return_false_if_context_doesnt_have_a_property()
+        {
+            var ctx = new XrmRealContext(_service, _serviceAsync, _serviceAsync2);
+            Assert.False(ctx.HasProperty<MyCustomProperty>());
+        }
+
+        [Fact]
+        public void Should_return_true_if_context_does_have_a_property()
+        {
+            var ctx = new XrmRealContext(_service, _serviceAsync, _serviceAsync2);
+            ctx.SetProperty<MyCustomProperty>(new MyCustomProperty());
+            Assert.True(ctx.HasProperty<MyCustomProperty>());
+        }
+
+        [Fact]
+        public void Should_retrieve_property_that_was_previously_set()
+        {
+            var ctx = new XrmRealContext(_service, _serviceAsync, _serviceAsync2);
+            
+            var prop = new MyCustomProperty();
+            ctx.SetProperty<MyCustomProperty>(prop);
+
+            var retrieved = ctx.GetProperty<MyCustomProperty>(); 
+            Assert.Equal(prop, retrieved);
+        }
+    }
+
+    class MyCustomProperty
+    {
+
     }
 }

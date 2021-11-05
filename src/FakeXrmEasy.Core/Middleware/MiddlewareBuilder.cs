@@ -162,6 +162,30 @@ namespace FakeXrmEasy.Middleware
 
             A.CallTo(() => serviceAsync.CreateAsync(A<Entity>._, A<CancellationToken>._))
                 .ReturnsLazily((Entity entity, CancellationToken token) => service.Create(entity));
+
+            A.CallTo(() => serviceAsync.UpdateAsync(A<Entity>._, A<CancellationToken>._))
+                .Invokes((Entity entity, CancellationToken token) => service.Update(entity));
+
+            A.CallTo(() => serviceAsync.DeleteAsync(A<string>._, A<Guid>._, A<CancellationToken>._))
+                .Invokes((string entityLogicalName, Guid id, CancellationToken token) => service.Delete(entityLogicalName, id));
+
+            A.CallTo(() => serviceAsync.RetrieveAsync(A<string>._, A<Guid>._, A<ColumnSet>._, A<CancellationToken>._))
+                .ReturnsLazily((string entityLogicalName, Guid id, ColumnSet columnSet, CancellationToken token) => service.Retrieve(entityLogicalName, id, columnSet));
+
+            A.CallTo(() => serviceAsync.RetrieveMultipleAsync(A<QueryBase>._, A<CancellationToken>._))
+                .ReturnsLazily((QueryBase query, CancellationToken token) => service.RetrieveMultiple(query));
+
+            A.CallTo(() => serviceAsync.ExecuteAsync(A<OrganizationRequest>._, A<CancellationToken>._))
+                .ReturnsLazily((OrganizationRequest request, CancellationToken token) => service.Execute(request));
+
+            A.CallTo(() => serviceAsync.AssociateAsync(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._, A<CancellationToken>._))
+                .Invokes((string entityLogicalName, Guid id, Relationship relationship, EntityReferenceCollection entityRefCollection, CancellationToken token) 
+                    => service.Associate(entityLogicalName, id, relationship, entityRefCollection ));
+
+            A.CallTo(() => serviceAsync.DisassociateAsync(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._, A<CancellationToken>._))
+                .Invokes((string entityLogicalName, Guid id, Relationship relationship, EntityReferenceCollection entityRefCollection, CancellationToken token) 
+                    => service.Disassociate(entityLogicalName, id, relationship, entityRefCollection ));
+            
         }
     }
 }
