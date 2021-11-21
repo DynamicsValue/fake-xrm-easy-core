@@ -60,7 +60,7 @@ namespace FakeXrmEasy.Middleware
         {
             if(_context.LicenseContext == null)
             {
-                throw new LicenseException("Please, you need to choose a FakeXrmEasy license. More info at https://github.com/DynamicsValue/licence-agreements/blob/main/FakeXrmEasy/LICENSE.md");
+                throw new LicenseException("Please, you need to choose a FakeXrmEasy license. More info at https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/licensing-exception/");
             }
 
             OrganizationRequestDelegate app = (context, request) => {
