@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, 3x, 2x-dev, 3x-dev ]
+    branches: [ 3x-dev, 2x-dev ]
     paths-ignore:
       - 'coverage/**'
       - '*.md'

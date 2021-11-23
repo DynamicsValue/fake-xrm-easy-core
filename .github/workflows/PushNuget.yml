@@ -1,8 +1,8 @@
-name: CI-PR
+name: Push to Nuget
 
 on:
-  pull_request:
-    branches: [ 3x-dev, 2x-dev ]
+  push:
+    branches: [ 3x, main ]
     paths-ignore:
       - 'coverage/**'
       - '*.md'
@@ -10,7 +10,7 @@ on:
 
 env: 
   dotnet-version: 3.1.201
-  source-url: "https://nuget.pkg.github.com/${{github.repository_owner}}/index.json"
+  source-url: "https://api.nuget.org/v3/index.json"
 
 jobs:
   build-netcore:
@@ -59,12 +59,9 @@ jobs:
  
     - name: Disable local packages feed
       run: dotnet nuget disable source "local-packages"
-
-    - name: Enable GitHub packages feed
-      run: dotnet nuget enable source github
       
     - name: Build
-      run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFramework 'all'
+      run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFrameworks 'all'
       env: 
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
@@ -93,7 +90,7 @@ jobs:
         buildCommand: dotnet build . --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1
         testCommand: dotnet test . --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
-        projectName: fake-xrm-easy-core
+        projectName: fake-xrm-easy
         sonarOrganisation: dynamicsvalue
         beginArguments: >
             /d:sonar.verbose="true"
@@ -105,3 +102,40 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
+
+  pack-push:
+    needs:  [build-netcore, build-windows, sonar]
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup .NET Core for Actual Source
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.dotnet-version }}
+ 
+      - name: Disable local packages feed
+        run: dotnet nuget disable source "local-packages"
+
+      - name: Build
+        run: pwsh ./build.ps1 -targetFrameworks 'all'
+        env: 
+          NUGET_USERNAME: DynamicsValue
+          NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+      - name: Pack
+        run: pwsh ./pack-src.ps1 -targetFrameworks 'all' -versionSuffix "rc1.${{ github.head_ref }}${{ github.run_number }}"
+        env: 
+          NUGET_USERNAME: DynamicsValue
+          NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+      - name: Push Src
+        run: nuget.exe push .\nupkgs\FakeXrmEasy.Core.*.nupkg -Source ${{ env.source-url }} -ApiKey ${{ secrets.NUGET_API_KEY }} 
+
+
+
+    
+    
+    
+    
