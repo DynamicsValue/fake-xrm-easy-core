@@ -2,7 +2,7 @@ name: CI-PR
 
 on:
   pull_request:
-    branches: [ master, dev ]
+    branches: [ 3x-dev, 2x-dev ]
     paths-ignore:
       - 'coverage/**'
       - '*.md'
