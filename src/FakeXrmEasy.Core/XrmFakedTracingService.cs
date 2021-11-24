@@ -4,15 +4,29 @@ using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class XrmFakedTracingService : IXrmFakedTracingService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected StringBuilder _trace { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public XrmFakedTracingService()
         {
             _trace = new StringBuilder();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="args"></param>
         public void Trace(string format, params object[] args)
         {
             if (args.Length == 0)
@@ -27,6 +41,10 @@ namespace FakeXrmEasy
             };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string DumpTrace()
         {
             return _trace.ToString();

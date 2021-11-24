@@ -125,16 +125,19 @@ namespace FakeXrmEasy.Tests.Middleware
         [Fact]
         public void Should_throw_exception_when_using_default_faked_context_constructor_without_a_license()
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             Assert.Throws<LicenseException>(() => new XrmFakedContext());
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [Fact]
         public void Should_not_throw_exception_when_using_default_faked_context_constructor_with_a_license()
         {
-            var existingContext = new XrmFakedContext(FakeXrmEasyLicense.RPL_1_5);
-            Assert.True(true);
+#pragma warning disable CS0618 // Type or member is obsolete
+            var exception = Record.Exception(()=> new XrmFakedContext(FakeXrmEasyLicense.RPL_1_5));
+#pragma warning restore CS0618 // Type or member is obsolete
+            Assert.Null(exception);
         }
-
     }
 
 

@@ -13,6 +13,9 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Middleware.Crud
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class MiddlewareBuilderCrudExtensions 
     {
         private class CrudMessageExecutors : Dictionary<Type, IFakeMessageExecutor>
@@ -20,6 +23,11 @@ namespace FakeXrmEasy.Middleware.Crud
 
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder AddCrud(this IMiddlewareBuilder builder) 
         {
             builder.Add(context => {
@@ -50,6 +58,12 @@ namespace FakeXrmEasy.Middleware.Crud
             return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="integrityOptions"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder AddCrud(this IMiddlewareBuilder builder, IIntegrityOptions integrityOptions) 
         {
             builder.AddCrud();
@@ -62,6 +76,11 @@ namespace FakeXrmEasy.Middleware.Crud
             return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder UseCrud(this IMiddlewareBuilder builder) 
         {
 

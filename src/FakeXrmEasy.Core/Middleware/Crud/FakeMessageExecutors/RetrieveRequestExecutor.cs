@@ -9,13 +9,29 @@ using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RetrieveRequestExecutor : IFakeMessageExecutor
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public bool CanExecute(OrganizationRequest request)
         {
             return request.GetType().Equals(GetResponsibleRequestType());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
         public OrganizationResponse Execute(OrganizationRequest req, IXrmFakedContext ctx)
         {
             var context = (ctx as XrmFakedContext);
@@ -162,6 +178,10 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Type GetResponsibleRequestType()
         {
             return typeof(RetrieveRequest);

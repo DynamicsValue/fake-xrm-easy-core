@@ -11,8 +11,17 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class FetchXmlExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fetchXml"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static QueryExpression ToQueryExpression(this string fetchXml, IXrmFakedContext context)
         {
             var xlDoc = fetchXml.ToXmlDocument();
@@ -65,6 +74,12 @@ namespace FakeXrmEasy.Query
             return query;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fetchXml"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static XDocument ToXmlDocument(this string fetchXml)
         {
             try
@@ -77,6 +92,15 @@ namespace FakeXrmEasy.Query
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="resultOfQuery"></param>
+        /// <param name="ctx"></param>
+        /// <param name="xmlDoc"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="UnknownAggregateFunctionException"></exception>
         public static List<Entity> Aggregate(this List<Entity> resultOfQuery, XrmFakedContext ctx, XDocument xmlDoc)
         {
             // Validate that <all-attributes> is not present,

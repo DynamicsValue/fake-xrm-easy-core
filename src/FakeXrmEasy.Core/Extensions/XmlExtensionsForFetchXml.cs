@@ -9,6 +9,9 @@ using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Extensions.FetchXml
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class XmlExtensionsForFetchXml
     {
         private static IEnumerable<ConditionOperator> OperatorsNotToConvertArray = new[]
@@ -35,6 +38,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             ConditionOperator.InFiscalYear
         };
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <param name="attributeName"></param>
+        /// <returns></returns>
         public static bool IsAttributeTrue(this XElement elem, string attributeName)
         {
             var val = elem.GetAttribute(attributeName)?.Value;
@@ -43,16 +52,32 @@ namespace FakeXrmEasy.Extensions.FetchXml
                 || "1".Equals(val, StringComparison.InvariantCultureIgnoreCase);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
         public static bool HasAggregations(this XDocument doc)
         {
             return doc.Root.IsAttributeTrue("aggregate");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
         public static bool IsDistincFetchXml(this XDocument doc)
         {
             return doc.Root.IsAttributeTrue("distinct");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static bool IsFetchXmlNodeValid(this XElement elem)
         {
             switch (elem.Name.LocalName)
@@ -98,11 +123,22 @@ namespace FakeXrmEasy.Extensions.FetchXml
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <param name="sAttributeName"></param>
+        /// <returns></returns>
         public static XAttribute GetAttribute(this XElement elem, string sAttributeName)
         {
             return elem.Attributes().FirstOrDefault((a => a.Name.LocalName.Equals(sAttributeName)));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="el"></param>
+        /// <returns></returns>
         public static ColumnSet ToColumnSet(this XElement el)
         {
             var allAttributes = el.Elements()
@@ -123,6 +159,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return new ColumnSet(attributes);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="el"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static int? ToTopCount(this XElement el)
         {
             var countAttr = el.GetAttribute("top");
@@ -135,6 +177,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return iCount;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="el"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static int? ToCount(this XElement el)
         {
             var countAttr = el.GetAttribute("count");
@@ -147,7 +195,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return iCount;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="el"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static bool ToReturnTotalRecordCount(this XElement el)
         {
             var returnTotalRecordCountAttr = el.GetAttribute("returntotalrecordcount");
@@ -160,6 +213,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return bReturnCount;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="el"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static int? ToPageNumber(this XElement el)
         {
             var pageAttr = el.GetAttribute("page");
@@ -172,6 +231,11 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return iPage;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xlDoc"></param>
+        /// <returns></returns>
         public static ColumnSet ToColumnSet(this XDocument xlDoc)
         {
             //Check if all-attributes exist
@@ -181,7 +245,11 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     .ToColumnSet();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xlDoc"></param>
+        /// <returns></returns>
         public static int? ToTopCount(this XDocument xlDoc)
         {
             //Check if all-attributes exist
@@ -190,6 +258,11 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     .ToTopCount();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xlDoc"></param>
+        /// <returns></returns>
         public static int? ToCount(this XDocument xlDoc)
         {
             //Check if all-attributes exist
@@ -198,6 +271,11 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     .ToCount();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xlDoc"></param>
+        /// <returns></returns>
         public static bool ToReturnTotalRecordCount(this XDocument xlDoc)
         {
             return xlDoc.Elements()   //fetch
@@ -205,7 +283,11 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     .ToReturnTotalRecordCount();
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xlDoc"></param>
+        /// <returns></returns>
         public static int? ToPageNumber(this XDocument xlDoc)
         {
             //Check if all-attributes exist
@@ -214,6 +296,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     .ToPageNumber();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xlDoc"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public static FilterExpression ToCriteria(this XDocument xlDoc, IXrmFakedContext ctx)
         {
             return xlDoc.Elements()   //fetch
@@ -224,6 +312,11 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     .FirstOrDefault();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="el"></param>
+        /// <returns></returns>
         public static string GetAssociatedEntityNameForConditionExpression(this XElement el)
         {
 
@@ -240,6 +333,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="el"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public static LinkEntity ToLinkEntity(this XElement el, IXrmFakedContext ctx)
         {
             //Create this node
@@ -292,6 +391,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return linkEntity;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xlDoc"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public static List<LinkEntity> ToLinkEntities(this XDocument xlDoc, IXrmFakedContext ctx)
         {
             return xlDoc.Elements()   //fetch
@@ -302,6 +407,11 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     .ToList();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xlDoc"></param>
+        /// <returns></returns>
         public static List<OrderExpression> ToOrderExpressionList(this XDocument xlDoc)
         {
             var orderByElements = xlDoc.Elements()   //fetch
@@ -319,6 +429,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return orderByElements;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public static FilterExpression ToFilterExpression(this XElement elem, IXrmFakedContext ctx)
         {
             var filterExpression = new FilterExpression();
@@ -358,11 +474,26 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return filterExpression;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <param name="ctx"></param>
+        /// <param name="sEntityName"></param>
+        /// <param name="sAttributeName"></param>
+        /// <param name="op"></param>
+        /// <returns></returns>
         public static object ToValue(this XElement elem, IXrmFakedContext ctx, string sEntityName, string sAttributeName, ConditionOperator op)
         {
             return GetConditionExpressionValueCast(elem.Value, ctx, sEntityName, sAttributeName, op);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="elem"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public static ConditionExpression ToConditionExpression(this XElement elem, IXrmFakedContext ctx)
         {
             var conditionExpression = new ConditionExpression();
@@ -641,7 +772,13 @@ namespace FakeXrmEasy.Extensions.FetchXml
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static object GetValueBasedOnType(Type t, string value)
         {
             if (t == typeof(int)
@@ -772,16 +909,31 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return value;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="conditionOperator"></param>
+        /// <returns></returns>
         public static bool ValueNeedsConverting(ConditionOperator conditionOperator)
         {
             return !OperatorsNotToConvertArray.Contains(conditionOperator);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="ctx"></param>
+        /// <param name="sEntityName"></param>
+        /// <param name="sAttributeName"></param>
+        /// <param name="op"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static object GetConditionExpressionValueCast(string value, IXrmFakedContext ctx, string sEntityName, string sAttributeName, ConditionOperator op)
         {
             if (ctx.ProxyTypesAssemblies.Count() > 0)
             {
-                //We have proxy types so get appropiate type value based on entity name and attribute type
+                //We have proxy types so get appropriate type value based on entity name and attribute type
                 var reflectedType = ctx.FindReflectedType(sEntityName);
                 if (reflectedType != null)
                 {
@@ -810,12 +962,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             }
 
 
-            //Try parsing a guid
+            // Try parsing a guid
             Guid gOut = Guid.Empty;
             if (Guid.TryParse(value, out gOut))
                 return gOut;
 
-            //Try checking if it is a numeric value, cause, from the fetchxml it 
+            //Try checking if it is a numeric value, cause, from the FetchXML it 
             //would be impossible to know the real typed based on the string value only
             // ex: "123" might compared as a string, or, as an int, it will depend on the attribute
             //    data type, therefore, in this case we do need to use proxy types
@@ -848,6 +1000,12 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return value;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xlDoc"></param>
+        /// <param name="sName"></param>
+        /// <returns></returns>
         public static XElement RetrieveFetchXmlNode(this XDocument xlDoc, string sName)
         {
             return xlDoc.Descendants().Where(e => e.Name.LocalName.Equals(sName)).FirstOrDefault();

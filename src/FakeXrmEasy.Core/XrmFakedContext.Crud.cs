@@ -17,12 +17,29 @@ namespace FakeXrmEasy
 {
     public partial class XrmFakedContext : IXrmFakedContext
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public FakeXrmEasyLicense? LicenseContext { get; set; }
 
+        /// <summary>
+        /// Entity Active StateCode
+        /// </summary>
         protected const int EntityActiveStateCode = 0;
+
+        /// <summary>
+        /// Entity Inactive StateCode
+        /// </summary>
         protected const int EntityInactiveStateCode = 1;
 
         #region CRUD
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="record"></param>
+        /// <param name="validate"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public Guid GetRecordUniqueId(EntityReference record, bool validate = true)
         {
             if (string.IsNullOrWhiteSpace(record.LogicalName))
@@ -33,12 +50,12 @@ namespace FakeXrmEasy
             // Don't fail with invalid operation exception, if no record of this entity exists, but entity is known
             if (!Data.ContainsKey(record.LogicalName) && !EntityMetadata.ContainsKey(record.LogicalName))
             {
-                if (ProxyTypesAssembly == null)
+                if (ProxyTypesAssemblies == null || !ProxyTypesAssemblies.Any())
                 {
                     throw new InvalidOperationException($"The entity logical name {record.LogicalName} is not valid.");
                 }
 
-                if (!ProxyTypesAssembly.GetTypes().Any(type => FindReflectedType(record.LogicalName) != null))
+                if (!ProxyTypesAssemblies.SelectMany(p=> p.GetTypes()).Any(type => FindReflectedType(record.LogicalName) != null))
                 {
                     throw new InvalidOperationException($"The entity logical name {record.LogicalName} is not valid.");
                 }
@@ -99,6 +116,11 @@ namespace FakeXrmEasy
                 });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <exception cref="InvalidOperationException"></exception>
         public void UpdateEntity(Entity e)
         {
             if (e == null)
@@ -146,7 +168,7 @@ namespace FakeXrmEasy
 
                 // Update ModifiedOn
                 cachedEntity["modifiedon"] = DateTime.UtcNow;
-                cachedEntity["modifiedby"] = CallerId;
+                cachedEntity["modifiedby"] = CallerProperties.CallerId;
 
                 if (this.UsePipelineSimulation)
                 {
@@ -163,6 +185,13 @@ namespace FakeXrmEasy
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sLogicalName"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public Entity GetEntityById(string sLogicalName, Guid id)
         {
             if(!Data.ContainsKey(sLogicalName)) 
@@ -178,6 +207,12 @@ namespace FakeXrmEasy
             return Data[sLogicalName][id];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sLogicalName"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public bool ContainsEntity(string sLogicalName, Guid id)
         {
             if(!Data.ContainsKey(sLogicalName)) 
@@ -193,6 +228,12 @@ namespace FakeXrmEasy
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public T GetEntityById<T>(Guid id) where T: Entity
         {
             var typeParameter = typeof(T);
@@ -207,6 +248,11 @@ namespace FakeXrmEasy
             return GetEntityById(logicalName, id) as T;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="er"></param>
+        /// <returns></returns>
         protected EntityReference ResolveEntityReference(EntityReference er)
         {
             if (!Data.ContainsKey(er.LogicalName) || !Data[er.LogicalName].ContainsKey(er.Id))
@@ -223,6 +269,11 @@ namespace FakeXrmEasy
             return er;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="er"></param>
+        /// <returns></returns>
         protected EntityReference ResolveEntityReferenceByAlternateKeys(EntityReference er)
         {
             var resolvedId = GetRecordUniqueId(er);
@@ -233,13 +284,11 @@ namespace FakeXrmEasy
                 Id = resolvedId
             };
         }
+
         /// <summary>
         /// Fakes the delete method. Very similar to the Retrieve one
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="fakedService"></param>
-        
-
+        /// <param name="er"></param>
         public void DeleteEntity(EntityReference er)
         {
             // Don't fail with invalid operation exception, if no record of this entity exists, but entity is known
@@ -285,35 +334,42 @@ namespace FakeXrmEasy
 
         #region Other protected methods
         
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
         public void AddEntityDefaultAttributes(Entity e)
         {
             // Add createdon, modifiedon, createdby, modifiedby properties
-            if (CallerId == null)
+            if (CallerProperties.CallerId == null)
             {
-                CallerId = new EntityReference("systemuser", Guid.NewGuid()); // Create a new instance by default
+                CallerProperties.CallerId = new EntityReference("systemuser", Guid.NewGuid()); // Create a new instance by default
+            }
 
-                var integrityOptions = GetProperty<IIntegrityOptions>();
+            var integrityOptions = GetProperty<IIntegrityOptions>();
 
-                if (integrityOptions.ValidateEntityReferences)
+            if (integrityOptions.ValidateEntityReferences)
+            {
+                if (!Data.ContainsKey("systemuser"))
                 {
-                    if (!Data.ContainsKey("systemuser"))
-                    {
-                        Data.Add("systemuser", new Dictionary<Guid, Entity>());
-                    }
-                    if (!Data["systemuser"].ContainsKey(CallerId.Id))
-                    {
-                        Data["systemuser"].Add(CallerId.Id, new Entity("systemuser") { Id = CallerId.Id });
-                    }
+                    Data.Add("systemuser", new Dictionary<Guid, Entity>());
                 }
-
+                if (!Data["systemuser"].ContainsKey(CallerProperties.CallerId.Id))
+                {
+                    Data["systemuser"].Add(CallerProperties.CallerId.Id, new Entity("systemuser") { Id = CallerProperties.CallerId.Id });
+                }
             }
 
             var isManyToManyRelationshipEntity = e.LogicalName != null && this._relationships.ContainsKey(e.LogicalName);
 
-            EntityInitializerService.Initialize(e, CallerId.Id, this, isManyToManyRelationshipEntity);
+            EntityInitializerService.Initialize(e, CallerProperties.CallerId.Id, this, isManyToManyRelationshipEntity);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <exception cref="InvalidOperationException"></exception>
         protected void ValidateEntity(Entity e)
         {
             if (e == null)
@@ -333,6 +389,12 @@ namespace FakeXrmEasy
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public Guid CreateEntity(Entity e)
         {
             if (e == null)
@@ -406,6 +468,12 @@ namespace FakeXrmEasy
             return clone.Id;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="clone"></param>
+        /// <param name="usePluginPipeline"></param>
         public void AddEntityWithDefaults(Entity e, bool clone = false, bool usePluginPipeline = false)
         {
             // Create the entity with defaults
@@ -426,6 +494,11 @@ namespace FakeXrmEasy
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <exception cref="Exception"></exception>
         public void AddEntity(Entity e)
         {
             //Automatically detect proxy types assembly if an early bound type was used.
@@ -503,6 +576,11 @@ namespace FakeXrmEasy
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attribute"></param>
+        /// <returns></returns>
         protected internal DateTime ConvertToUtc(DateTime attribute)
         {
             return DateTime.SpecifyKind(attribute, DateTimeKind.Utc);

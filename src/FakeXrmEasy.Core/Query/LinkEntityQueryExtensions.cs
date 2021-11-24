@@ -10,6 +10,9 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class LinkEntityQueryExtensions
     {
         internal static IQueryable<Entity> ToQueryable(this LinkEntity le, IXrmFakedContext context, IQueryable<Entity> query, ColumnSet previousColumnSet, Dictionary<string, int> linkedEntities, string linkFromAlias = "", string linkFromEntity = "") 

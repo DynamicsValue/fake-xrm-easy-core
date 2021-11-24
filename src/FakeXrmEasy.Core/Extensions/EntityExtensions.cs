@@ -8,6 +8,9 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Extensions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class EntityExtensions
     {
         /// <summary>
@@ -28,13 +31,18 @@ namespace FakeXrmEasy.Extensions
         /// </summary>
         /// <param name="e"></param>
         /// <param name="columnSet"></param>
-        /// <param name="alias"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
         public static Entity ProjectAttributes(this Entity e, ColumnSet columnSet, IXrmFakedContext context)
         {
             return ProjectAttributes(e, new QueryExpression() { ColumnSet = columnSet }, context);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="context"></param>
         public static void ApplyDateBehaviour(this Entity e, XrmFakedContext context)
         {
 #if FAKE_XRM_EASY || FAKE_XRM_EASY_2013
@@ -70,6 +78,13 @@ namespace FakeXrmEasy.Extensions
 #endif
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="projected"></param>
+        /// <param name="le"></param>
+        /// <param name="context"></param>
         public static void ProjectAttributes(Entity e, Entity projected, LinkEntity le, IXrmFakedContext context)
         {
             var sAlias = string.IsNullOrWhiteSpace(le.EntityAlias) ? le.LinkToEntityName : le.EntityAlias;
@@ -112,6 +127,13 @@ namespace FakeXrmEasy.Extensions
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="qe"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static Entity ProjectAttributes(this Entity e, QueryExpression qe, IXrmFakedContext context)
         {
             if (qe.ColumnSet == null || qe.ColumnSet.AllColumns)
@@ -171,6 +193,11 @@ namespace FakeXrmEasy.Extensions
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public static Entity RemoveNullAttributes(Entity entity)
         {
             IList<string> nullAttributes = entity.Attributes
@@ -184,6 +211,13 @@ namespace FakeXrmEasy.Extensions
             return entity;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attributeValue"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static object CloneAttribute(object attributeValue, IXrmFakedContext context = null)
         {
             if (attributeValue == null)
@@ -300,6 +334,12 @@ namespace FakeXrmEasy.Extensions
             throw new Exception(string.Format("Attribute type not supported when trying to clone attribute '{0}'", type.ToString()));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static Entity Clone(this Entity e, IXrmFakedContext context = null)
         {
             var cloned = new Entity(e.LogicalName);
@@ -328,11 +368,24 @@ namespace FakeXrmEasy.Extensions
             return cloned;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="e"></param>
+        /// <returns></returns>
         public static T Clone<T>(this Entity e) where T : Entity
         {
             return (T)e.Clone(typeof(T));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="t"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static Entity Clone(this Entity e, Type t, IXrmFakedContext context = null)
         {
             if (t == null)
@@ -370,7 +423,9 @@ namespace FakeXrmEasy.Extensions
         /// </summary>
         /// <param name="e"></param>
         /// <param name="otherEntity"></param>
-        /// <param name="attributes"></param>
+        /// <param name="columnSet"></param>
+        /// <param name="alias"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
         public static Entity JoinAttributes(this Entity e, Entity otherEntity, ColumnSet columnSet, string alias, IXrmFakedContext context)
         {
@@ -418,6 +473,15 @@ namespace FakeXrmEasy.Extensions
             return e;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="otherEntities"></param>
+        /// <param name="columnSet"></param>
+        /// <param name="alias"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static Entity JoinAttributes(this Entity e, IEnumerable<Entity> otherEntities, ColumnSet columnSet, string alias, IXrmFakedContext context)
         {
             foreach (var otherEntity in otherEntities)
@@ -470,6 +534,7 @@ namespace FakeXrmEasy.Extensions
         /// </summary>
         /// <param name="e"></param>
         /// <param name="sAttributeName"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
         public static object KeySelector(this Entity e, string sAttributeName, IXrmFakedContext context)
         {
@@ -532,6 +597,12 @@ namespace FakeXrmEasy.Extensions
             e.GetType().GetProperty(property).SetValue(e, value, null);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="property"></param>
+        /// <param name="value"></param>
         public static void SetValueIfEmpty(this Entity e, string property, object value)
         {
             var containsKey = e.Attributes.ContainsKey(property);
@@ -554,7 +625,5 @@ namespace FakeXrmEasy.Extensions
 #endif
             return result;
         }
-
-
     }
 }

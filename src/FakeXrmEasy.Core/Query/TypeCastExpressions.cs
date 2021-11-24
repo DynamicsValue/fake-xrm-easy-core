@@ -6,6 +6,9 @@ using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Query
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class TypeCastExpressions
     {
         internal static Expression GetAppropiateCastExpressionBasedOnType(this Type t, Expression input, object value)

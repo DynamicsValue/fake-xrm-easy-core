@@ -7,6 +7,9 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class FilterExpressionExtensions
     {
         internal static Expression TranslateFilterExpressionToExpression(this FilterExpression fe, QueryExpression qe, IXrmFakedContext context, string sEntityName, ParameterExpression entity, bool bIsOuter)

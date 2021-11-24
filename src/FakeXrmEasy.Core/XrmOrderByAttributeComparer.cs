@@ -4,8 +4,17 @@ using System.Collections.Generic;
 
 namespace FakeXrmEasy
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class XrmOrderByAttributeComparer : IComparer<object>
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="objectA"></param>
+        /// <param name="objectB"></param>
+        /// <returns></returns>
         public int Compare(Object objectA, Object objectB)
         {
             if (objectA == null && objectB == null) return 0;  //Equal
