@@ -19,7 +19,7 @@ namespace FakeXrmEasy
     public partial class XrmFakedContext : IXrmFakedContext
     {
         /// <summary>
-        /// 
+        /// Stores the current license context (the current selected license of the 3 available licenses)
         /// </summary>
         public FakeXrmEasyLicense? LicenseContext { get; set; }
 
@@ -92,33 +92,12 @@ namespace FakeXrmEasy
                     throw new InvalidOperationException($"The requested key attributes do not exist for the entity {record.LogicalName}");
                 }
             }
-#endif
-            /*
-            if (validate && record.Id == Guid.Empty)
-            {
-                throw new InvalidOperationException("The id must not be empty.");
-            }
-            */
-            
+#endif          
             return record.Id;
         }   
-        
-        /// <summary>
-        /// Fakes the Create message
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="fakedService"></param>
-        protected static void FakeCreate(XrmFakedContext context, IOrganizationService fakedService)
-        {
-            A.CallTo(() => fakedService.Create(A<Entity>._))
-                .ReturnsLazily((Entity e) =>
-                {
-                    return context.CreateEntity(e);
-                });
-        }
 
         /// <summary>
-        /// 
+        /// Updates an entity in the context directly (i.e. skips any middleware setup)
         /// </summary>
         /// <param name="e"></param>
         /// <exception cref="InvalidOperationException"></exception>
