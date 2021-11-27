@@ -282,5 +282,21 @@ namespace FakeXrmEasy.Tests
             Assert.Null(ex);
         }
 
+        [Fact]
+        public void Should_return_entity_by_id() 
+        {
+            var contact = new Contact() 
+            { 
+                Id = Guid.NewGuid(),
+                FirstName = "Steve",
+                LastName = "Vai"
+            };
+            _context.Initialize(contact);
+
+            var retrievedContact = _context.GetEntityById<Contact>(contact.Id);
+            Assert.Equal(contact.Id, retrievedContact.Id);
+            Assert.Equal(contact.FirstName, retrievedContact.FirstName);
+            Assert.Equal(contact.LastName, retrievedContact.LastName);   
+        }
     }
 }
