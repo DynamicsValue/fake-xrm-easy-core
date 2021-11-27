@@ -12,6 +12,7 @@ using Microsoft.Xrm.Sdk.Client;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy
 {

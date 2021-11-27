@@ -10,6 +10,7 @@ using FakeXrmEasy.Middleware.Crud.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Middleware.Crud
 {

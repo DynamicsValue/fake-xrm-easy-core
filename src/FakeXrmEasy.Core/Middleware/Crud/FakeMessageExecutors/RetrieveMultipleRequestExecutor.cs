@@ -1,4 +1,5 @@
 ﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;

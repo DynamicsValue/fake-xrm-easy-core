@@ -8,6 +8,7 @@ using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using System.Reflection;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Tests.Middleware
 {

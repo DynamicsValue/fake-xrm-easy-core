@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Microsoft.Xrm.Sdk;
 using System.Globalization;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Extensions.FetchXml
 {

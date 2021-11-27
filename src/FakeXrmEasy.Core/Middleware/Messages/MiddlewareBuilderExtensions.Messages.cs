@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using FakeItEasy;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Middleware;
 using Microsoft.Xrm.Sdk;
