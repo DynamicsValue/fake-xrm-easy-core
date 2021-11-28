@@ -54,8 +54,8 @@ namespace FakeXrmEasy.Middleware.Crud
                 AddFakeRetrieveMultiple(context, service);
                 AddFakeUpdate(context,service);
                 AddFakeDelete(context,service);
-                AddFakeAssociate(context, service);
-                AddFakeDisassociate(context, service);
+                AddFakeAssociate(service);
+                AddFakeDisassociate(service);
             });
 
             return builder;
@@ -192,7 +192,7 @@ namespace FakeXrmEasy.Middleware.Crud
                 });
         }
 
-        private static void AddFakeAssociate(IXrmFakedContext context, IOrganizationService service)
+        private static void AddFakeAssociate(IOrganizationService service)
         {
             A.CallTo(() => service.Associate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
                 .Invokes((string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection entityCollection) =>
@@ -207,7 +207,7 @@ namespace FakeXrmEasy.Middleware.Crud
                 });
         }
 
-        private static void AddFakeDisassociate(IXrmFakedContext context, IOrganizationService service)
+        private static void AddFakeDisassociate(IOrganizationService service)
         {
             A.CallTo(() => service.Disassociate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
                 .Invokes((string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection entityCollection) =>
