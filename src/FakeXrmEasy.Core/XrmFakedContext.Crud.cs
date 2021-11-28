@@ -1,5 +1,4 @@
-﻿using FakeItEasy;
-using FakeXrmEasy.Extensions;
+﻿using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
@@ -350,7 +349,7 @@ namespace FakeXrmEasy
         /// </summary>
         /// <param name="e"></param>
         /// <exception cref="InvalidOperationException"></exception>
-        protected void ValidateEntity(Entity e)
+        protected internal void ValidateEntity(Entity e)
         {
             if (e == null)
             {
