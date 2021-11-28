@@ -89,7 +89,7 @@ namespace FakeXrmEasy.Tests
 
                 Assert.True(matches.Count == 1);
                 Assert.True(matches[0].FirstName.Equals("Jordi"));
-                Assert.IsAssignableFrom(typeof(Contact), matches[0].CrmRecord);
+                Assert.IsAssignableFrom<Contact>(matches[0].CrmRecord);
                 Assert.True(matches[0].CrmRecord.GetType() == typeof(Contact));
             }
         }
@@ -735,7 +735,7 @@ namespace FakeXrmEasy.Tests
                                }).ToList();
 
                 Assert.True(matches.Count == 1);
-                Assert.Equal(matches[0].Name, "Chuck");
+                Assert.Equal("Chuck", matches[0].Name);
             }
         }
 

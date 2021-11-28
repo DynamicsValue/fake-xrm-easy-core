@@ -1,4 +1,5 @@
 ﻿using Crm;
+using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;

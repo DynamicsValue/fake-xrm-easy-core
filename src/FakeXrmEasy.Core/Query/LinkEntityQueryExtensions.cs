@@ -4,12 +4,16 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class LinkEntityQueryExtensions
     {
         internal static IQueryable<Entity> ToQueryable(this LinkEntity le, IXrmFakedContext context, IQueryable<Entity> query, ColumnSet previousColumnSet, Dictionary<string, int> linkedEntities, string linkFromAlias = "", string linkFromEntity = "") 

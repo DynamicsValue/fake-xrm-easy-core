@@ -5,8 +5,16 @@ using System.Text;
 
 namespace FakeXrmEasy.Extensions
 {
+    /// <summary>
+    /// EntityReference Extensions
+    /// </summary>
     public static class EntityReferenceExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="er"></param>
+        /// <returns></returns>
         public static bool HasKeyAttributes(this EntityReference er)
         {
             if(er == null)

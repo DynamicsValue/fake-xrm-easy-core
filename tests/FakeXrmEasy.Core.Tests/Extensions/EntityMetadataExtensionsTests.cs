@@ -65,7 +65,7 @@ namespace FakeXrmEasy.Tests.Extensions
 
 
             entityMetadata.SetAttribute(fakeAttribute);
-            Assert.Equal(1, entityMetadata.Attributes.Length);
+            Assert.Single(entityMetadata.Attributes);
             Assert.Equal("name", entityMetadata.Attributes[0].LogicalName);
         }
     }

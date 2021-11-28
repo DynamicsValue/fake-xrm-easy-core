@@ -13,7 +13,14 @@ namespace FakeXrmEasy.Query
     /// </summary>
     public class TypedConditionExpression
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ConditionExpression CondExpression { get; set; }
+ 
+        /// <summary>
+        /// 
+        /// </summary>
         public Type AttributeType { get; set; }
 
         /// <summary>
@@ -21,6 +28,10 @@ namespace FakeXrmEasy.Query
         /// </summary>
         public bool IsOuter { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="c"></param>
         public TypedConditionExpression(ConditionExpression c)
         {
             IsOuter = false;

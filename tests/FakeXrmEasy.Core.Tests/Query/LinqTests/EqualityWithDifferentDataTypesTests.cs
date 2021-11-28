@@ -338,7 +338,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
             query.Criteria.AddCondition("industrycode", ConditionOperator.Equal, "23");
             var result = _service.RetrieveMultiple(query);
 
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
             Assert.Equal(23, (result.Entities[0] as Account).IndustryCode.Value);
         }
 

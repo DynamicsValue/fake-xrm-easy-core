@@ -9,8 +9,17 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class QueryExpressionExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="qe"></param>
+        /// <param name="sAlias"></param>
+        /// <returns></returns>
         public static string GetEntityNameFromAlias(this QueryExpression qe, string sAlias)
         {
             if (sAlias == null)
@@ -38,6 +47,13 @@ namespace FakeXrmEasy.Query
         {
             return qe.Copy();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="qe"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static IQueryable<Entity> ToQueryable(this QueryExpression qe, IXrmFakedContext context)
         {
             if (qe == null) return null;

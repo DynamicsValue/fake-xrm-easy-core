@@ -12,6 +12,9 @@ using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Middleware
 {
+    /// <summary>
+    /// Middleware Builder
+    /// </summary>
     public class MiddlewareBuilder: IMiddlewareBuilder
     {
         private readonly IList<Func<OrganizationRequestDelegate, OrganizationRequestDelegate>> _components = new List<Func<OrganizationRequestDelegate, OrganizationRequestDelegate>>();
@@ -25,6 +28,11 @@ namespace FakeXrmEasy.Middleware
         {
             _context = existingContext;
         }
+
+        /// <summary>
+        /// New
+        /// </summary>
+        /// <returns></returns>
         public static IMiddlewareBuilder New() 
         {
             var builder = new MiddlewareBuilder();
@@ -39,6 +47,11 @@ namespace FakeXrmEasy.Middleware
             return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="addToContextAction"></param>
+        /// <returns></returns>
         public IMiddlewareBuilder Add(Action<IXrmFakedContext> addToContextAction)
         {
             addToContextAction.Invoke(_context);
@@ -50,12 +63,22 @@ namespace FakeXrmEasy.Middleware
             _context.SetProperty<IIntegrityOptions>(new IntegrityOptions() {  ValidateEntityReferences = false });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="middleware"></param>
+        /// <returns></returns>
         public IMiddlewareBuilder Use(Func<OrganizationRequestDelegate, OrganizationRequestDelegate> middleware) 
         {
             _components.Add(middleware);
             return this;
         }
 
+        /// <summary>
+        /// Build
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="LicenseException"></exception>
         public IXrmFakedContext Build() 
         {
             if(_context.LicenseContext == null)
@@ -82,6 +105,11 @@ namespace FakeXrmEasy.Middleware
             return _context;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="license"></param>
+        /// <returns></returns>
         public IMiddlewareBuilder SetLicense(FakeXrmEasyLicense license)
         {
             _context.LicenseContext = license;

@@ -1,4 +1,5 @@
 ﻿using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;
@@ -13,13 +14,27 @@ using System.Xml.Linq;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RetrieveMultipleRequestExecutor : IFakeMessageExecutor
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public bool CanExecute(OrganizationRequest request)
         {
             return request is RetrieveMultipleRequest;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public OrganizationResponse Execute(OrganizationRequest req, IXrmFakedContext ctx)
         {
             var context = ctx as XrmFakedContext;
@@ -156,7 +171,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
         }
 
         /// <summary>
-        /// Populates the formmated values property of this entity record based on the proxy types
+        /// Populates the formatted values property of this entity record based on the proxy types
         /// </summary>
         /// <param name="e"></param>
         protected void PopulateFormattedValues(Entity e)
@@ -178,6 +193,12 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="bShouldAddFormattedValue"></param>
+        /// <returns></returns>
         protected string GetFormattedValueForValue(object value, out bool bShouldAddFormattedValue)
         {
             bShouldAddFormattedValue = false;
@@ -197,6 +218,10 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             return sFormattedValue;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Type GetResponsibleRequestType()
         {
             return typeof(RetrieveMultipleRequest);

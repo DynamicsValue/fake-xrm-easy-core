@@ -1,5 +1,4 @@
-﻿using FakeItEasy;
-using FakeXrmEasy.Extensions;
+﻿using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
@@ -12,17 +11,35 @@ using Microsoft.Xrm.Sdk.Client;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy
 {
     public partial class XrmFakedContext : IXrmFakedContext
     {
+        /// <summary>
+        /// Stores the current license context (the current selected license of the 3 available licenses)
+        /// </summary>
         public FakeXrmEasyLicense? LicenseContext { get; set; }
 
+        /// <summary>
+        /// Entity Active StateCode
+        /// </summary>
         protected const int EntityActiveStateCode = 0;
+
+        /// <summary>
+        /// Entity Inactive StateCode
+        /// </summary>
         protected const int EntityInactiveStateCode = 1;
 
         #region CRUD
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="record"></param>
+        /// <param name="validate"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public Guid GetRecordUniqueId(EntityReference record, bool validate = true)
         {
             if (string.IsNullOrWhiteSpace(record.LogicalName))
@@ -33,12 +50,12 @@ namespace FakeXrmEasy
             // Don't fail with invalid operation exception, if no record of this entity exists, but entity is known
             if (!Data.ContainsKey(record.LogicalName) && !EntityMetadata.ContainsKey(record.LogicalName))
             {
-                if (ProxyTypesAssembly == null)
+                if (ProxyTypesAssemblies == null || !ProxyTypesAssemblies.Any())
                 {
                     throw new InvalidOperationException($"The entity logical name {record.LogicalName} is not valid.");
                 }
 
-                if (!ProxyTypesAssembly.GetTypes().Any(type => FindReflectedType(record.LogicalName) != null))
+                if (!ProxyTypesAssemblies.SelectMany(p=> p.GetTypes()).Any(type => FindReflectedType(record.LogicalName) != null))
                 {
                     throw new InvalidOperationException($"The entity logical name {record.LogicalName} is not valid.");
                 }
@@ -74,31 +91,15 @@ namespace FakeXrmEasy
                     throw new InvalidOperationException($"The requested key attributes do not exist for the entity {record.LogicalName}");
                 }
             }
-#endif
-            /*
-            if (validate && record.Id == Guid.Empty)
-            {
-                throw new InvalidOperationException("The id must not be empty.");
-            }
-            */
-            
+#endif          
             return record.Id;
         }   
-        
-        /// <summary>
-        /// Fakes the Create message
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="fakedService"></param>
-        protected static void FakeCreate(XrmFakedContext context, IOrganizationService fakedService)
-        {
-            A.CallTo(() => fakedService.Create(A<Entity>._))
-                .ReturnsLazily((Entity e) =>
-                {
-                    return context.CreateEntity(e);
-                });
-        }
 
+        /// <summary>
+        /// Updates an entity in the context directly (i.e. skips any middleware setup)
+        /// </summary>
+        /// <param name="e"></param>
+        /// <exception cref="InvalidOperationException"></exception>
         public void UpdateEntity(Entity e)
         {
             if (e == null)
@@ -113,11 +114,6 @@ namespace FakeXrmEasy
             if (Data.ContainsKey(e.LogicalName) &&
                 Data[e.LogicalName].ContainsKey(e.Id))
             {
-                if (this.UsePipelineSimulation)
-                {
-                    //ExecutePipelineStage("Update", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
-                }
-
                 var integrityOptions = GetProperty<IIntegrityOptions>();
 
                 // Add as many attributes to the entity as the ones received (this will keep existing ones)
@@ -146,15 +142,7 @@ namespace FakeXrmEasy
 
                 // Update ModifiedOn
                 cachedEntity["modifiedon"] = DateTime.UtcNow;
-                cachedEntity["modifiedby"] = CallerId;
-
-                if (this.UsePipelineSimulation)
-                {
-                    //ExecutePipelineStage("Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, e);
-
-                    var clone = e.Clone(e.GetType());
-                    //ExecutePipelineStage("Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, clone);
-                }
+                cachedEntity["modifiedby"] = CallerProperties.CallerId;
             }
             else
             {
@@ -163,6 +151,13 @@ namespace FakeXrmEasy
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sLogicalName"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public Entity GetEntityById(string sLogicalName, Guid id)
         {
             if(!Data.ContainsKey(sLogicalName)) 
@@ -178,6 +173,12 @@ namespace FakeXrmEasy
             return Data[sLogicalName][id];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sLogicalName"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public bool ContainsEntity(string sLogicalName, Guid id)
         {
             if(!Data.ContainsKey(sLogicalName)) 
@@ -193,6 +194,12 @@ namespace FakeXrmEasy
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public T GetEntityById<T>(Guid id) where T: Entity
         {
             var typeParameter = typeof(T);
@@ -207,6 +214,11 @@ namespace FakeXrmEasy
             return GetEntityById(logicalName, id) as T;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="er"></param>
+        /// <returns></returns>
         protected EntityReference ResolveEntityReference(EntityReference er)
         {
             if (!Data.ContainsKey(er.LogicalName) || !Data[er.LogicalName].ContainsKey(er.Id))
@@ -223,6 +235,11 @@ namespace FakeXrmEasy
             return er;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="er"></param>
+        /// <returns></returns>
         protected EntityReference ResolveEntityReferenceByAlternateKeys(EntityReference er)
         {
             var resolvedId = GetRecordUniqueId(er);
@@ -233,13 +250,11 @@ namespace FakeXrmEasy
                 Id = resolvedId
             };
         }
+
         /// <summary>
         /// Fakes the delete method. Very similar to the Retrieve one
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="fakedService"></param>
-        
-
+        /// <param name="er"></param>
         public void DeleteEntity(EntityReference er)
         {
             // Don't fail with invalid operation exception, if no record of this entity exists, but entity is known
@@ -260,19 +275,8 @@ namespace FakeXrmEasy
             if (this.Data.ContainsKey(er.LogicalName) && this.Data[er.LogicalName] != null &&
                 this.Data[er.LogicalName].ContainsKey(er.Id))
             {
-                if (this.UsePipelineSimulation)
-                {
-                    //ExecutePipelineStage("Delete", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, er);
-                }
-
                 // Entity found => return only the subset of columns specified or all of them
                 this.Data[er.LogicalName].Remove(er.Id);
-
-                if (this.UsePipelineSimulation)
-                {
-                    //ExecutePipelineStage("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, er);
-                    //ExecutePipelineStage("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, er);
-                }
             }
             else
             {
@@ -285,36 +289,37 @@ namespace FakeXrmEasy
 
         #region Other protected methods
         
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
         public void AddEntityDefaultAttributes(Entity e)
         {
-            // Add createdon, modifiedon, createdby, modifiedby properties
-            if (CallerId == null)
+            var integrityOptions = GetProperty<IIntegrityOptions>();
+
+            if (integrityOptions.ValidateEntityReferences)
             {
-                CallerId = new EntityReference("systemuser", Guid.NewGuid()); // Create a new instance by default
-
-                var integrityOptions = GetProperty<IIntegrityOptions>();
-
-                if (integrityOptions.ValidateEntityReferences)
+                if (!Data.ContainsKey("systemuser"))
                 {
-                    if (!Data.ContainsKey("systemuser"))
-                    {
-                        Data.Add("systemuser", new Dictionary<Guid, Entity>());
-                    }
-                    if (!Data["systemuser"].ContainsKey(CallerId.Id))
-                    {
-                        Data["systemuser"].Add(CallerId.Id, new Entity("systemuser") { Id = CallerId.Id });
-                    }
+                    Data.Add("systemuser", new Dictionary<Guid, Entity>());
                 }
-
+                if (!Data["systemuser"].ContainsKey(CallerProperties.CallerId.Id))
+                {
+                    Data["systemuser"].Add(CallerProperties.CallerId.Id, new Entity("systemuser") { Id = CallerProperties.CallerId.Id });
+                }
             }
 
             var isManyToManyRelationshipEntity = e.LogicalName != null && this._relationships.ContainsKey(e.LogicalName);
 
-            EntityInitializerService.Initialize(e, CallerId.Id, this, isManyToManyRelationshipEntity);
+            EntityInitializerService.Initialize(e, CallerProperties.CallerId.Id, this, isManyToManyRelationshipEntity);
         }
 
-        protected void ValidateEntity(Entity e)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        protected internal void ValidateEntity(Entity e)
         {
             if (e == null)
             {
@@ -333,6 +338,12 @@ namespace FakeXrmEasy
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public Guid CreateEntity(Entity e)
         {
             if (e == null)
@@ -369,7 +380,7 @@ namespace FakeXrmEasy
                 throw new InvalidOperationException($"When creating an entity with logical name '{clone.LogicalName}', or any other entity, it is not possible to create records with the statecode property. Statecode must be set after creation.");
             }
 
-            AddEntityWithDefaults(clone, false, this.UsePipelineSimulation);
+            AddEntityWithDefaults(clone, false);
 
             if (e.RelatedEntities.Count > 0)
             {
@@ -385,47 +396,38 @@ namespace FakeXrmEasy
                         entityReferenceCollection.Add(new EntityReference(relatedEntity.LogicalName, relatedId));
                     }
 
-                    var messageExecutors = GetProperty<MessageExecutors>();
-                    if(messageExecutors == null) 
+                    var request = new AssociateRequest
                     {
-                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(AssociateRequest));
-                    }
-                    else 
-                    {
-                        var request = new AssociateRequest
-                        {
-                            Target = clone.ToEntityReference(),
-                            Relationship = relationship,
-                            RelatedEntities = entityReferenceCollection
-                        };
-                        _service.Execute(request);
-                    }
+                        Target = clone.ToEntityReference(),
+                        Relationship = relationship,
+                        RelatedEntities = entityReferenceCollection
+                    };
+                    _service.Execute(request);
                 }
             }
 
             return clone.Id;
         }
 
-        public void AddEntityWithDefaults(Entity e, bool clone = false, bool usePluginPipeline = false)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="clone"></param>
+        /// <param name="deprecatedAndToBeRemoved"></param>
+        public void AddEntityWithDefaults(Entity e, bool clone = false, bool deprecatedAndToBeRemoved = false)
         {
             // Create the entity with defaults
             AddEntityDefaultAttributes(e);
-
-            if (usePluginPipeline)
-            {
-                //ExecutePipelineStage("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
-            }
-
             // Store
             AddEntity(clone ? e.Clone(e.GetType()) : e);
-
-            if (usePluginPipeline)
-            {
-                //ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, e);
-                //ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, e);
-            }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <exception cref="Exception"></exception>
         public void AddEntity(Entity e)
         {
             //Automatically detect proxy types assembly if an early bound type was used.
@@ -503,6 +505,11 @@ namespace FakeXrmEasy
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attribute"></param>
+        /// <returns></returns>
         protected internal DateTime ConvertToUtc(DateTime attribute)
         {
             return DateTime.SpecifyKind(attribute, DateTimeKind.Utc);

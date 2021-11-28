@@ -20,7 +20,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.UpdateRequestTe
         public void When_a_null_entity_is_updated_an_exception_is_thrown()
         {
             var ex = Assert.Throws<InvalidOperationException>(() => _service.Update(null));
-            Assert.Equal(ex.Message, "The entity must not be null");
+            Assert.Equal("The entity must not be null", ex.Message);
         }
 
         [Fact]
@@ -171,7 +171,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.UpdateRequestTe
 
             //Make sure existing entity still maintains AccountNumber property
             var account = _context.CreateQuery<Account>().FirstOrDefault();
-            Assert.Equal(account.AccountNumber, "69");
+            Assert.Equal("69", account.AccountNumber);
         }
 
         [Fact]
@@ -196,7 +196,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.UpdateRequestTe
 
             //Make other account wasn't updated
             var account = _context.CreateQuery<Account>().Where(e => e.Id == otherExistingAccount.Id).FirstOrDefault();
-            Assert.Equal(account.Name, "Devil Customer");
+            Assert.Equal("Devil Customer", account.Name);
         }
 
         [Fact]
@@ -222,7 +222,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.UpdateRequestTe
 
             //Make other account wasn't updated
             var account = _context.CreateQuery<Account>().Where(e => e.Id == existingAccount.Id).FirstOrDefault();
-            Assert.Equal(account.Name, "Super Great Customer Name Updated!");
+            Assert.Equal("Super Great Customer Name Updated!", account.Name);
         }
 
         [Fact]
@@ -367,7 +367,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.UpdateRequestTe
             _context.InitializeMetadata(userMetadata);
             _context.Initialize(user);
 
-            (_context as XrmFakedContext).CallerId = user.ToEntityReference();
+            (_context as XrmFakedContext).CallerProperties.CallerId = user.ToEntityReference();
 
             var account = new Entity() { LogicalName = "account" };
 
