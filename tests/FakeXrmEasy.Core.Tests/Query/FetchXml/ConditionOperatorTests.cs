@@ -143,7 +143,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.Equal, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
@@ -167,7 +167,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.NotEqual, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
@@ -191,7 +191,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.NotEqual, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
@@ -215,7 +215,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.Contains, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
@@ -239,7 +239,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.BeginsWith, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
@@ -263,7 +263,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.BeginsWith, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
@@ -287,7 +287,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.DoesNotBeginWith, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
@@ -311,7 +311,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.EndsWith, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
@@ -335,7 +335,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.EndsWith, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
@@ -2315,11 +2315,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("currentcost", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal("product", query.Criteria.Conditions[0].EntityName);
             Assert.Equal(ConditionOperator.Null, query.Criteria.Conditions[0].Operator);
-            Assert.Equal(0, query.Criteria.Conditions[0].Values.Count);
+            Assert.Empty(query.Criteria.Conditions[0].Values);
 
         }
 
@@ -2362,7 +2362,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var collection = _context.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(0, collection.Entities.Count);
+            Assert.Empty(collection.Entities);
         }
 
         [Fact]
@@ -2582,7 +2582,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("birthdate", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.LastXDays, query.Criteria.Conditions[0].Operator);
             Assert.Equal(3, query.Criteria.Conditions[0].Values[0]);
@@ -2712,7 +2712,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("birthdate", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.LastXWeeks, query.Criteria.Conditions[0].Operator);
             Assert.Equal(3, query.Criteria.Conditions[0].Values[0]);
@@ -2777,7 +2777,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("birthdate", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.NextXWeeks, query.Criteria.Conditions[0].Operator);
             Assert.Equal(3, query.Criteria.Conditions[0].Values[0]);
@@ -2803,7 +2803,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("birthdate", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.LastXMonths, query.Criteria.Conditions[0].Operator);
             Assert.Equal(3, query.Criteria.Conditions[0].Values[0]);
@@ -2868,7 +2868,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("birthdate", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.NextXMonths, query.Criteria.Conditions[0].Operator);
             Assert.Equal(3, query.Criteria.Conditions[0].Values[0]);
@@ -2933,7 +2933,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("birthdate", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.LastXYears, query.Criteria.Conditions[0].Operator);
             Assert.Equal(3, query.Criteria.Conditions[0].Values[0]);
@@ -2998,7 +2998,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("birthdate", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.NextXYears, query.Criteria.Conditions[0].Operator);
             Assert.Equal(3, query.Criteria.Conditions[0].Values[0]);

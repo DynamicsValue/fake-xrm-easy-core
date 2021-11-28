@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Extensions;
 using System.Reflection;
-using Microsoft.Xrm.Sdk.Client;
-using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Metadata;
 using FakeXrmEasy.Abstractions;
 
@@ -23,7 +21,11 @@ namespace FakeXrmEasy
         /// </summary>
         protected internal Dictionary<string, EntityMetadata> EntityMetadata { get; set; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityMetadataList"></param>
+        /// <exception cref="Exception"></exception>
         public void InitializeMetadata(IEnumerable<EntityMetadata> entityMetadataList)
         {
             if (entityMetadataList == null)
@@ -47,11 +49,19 @@ namespace FakeXrmEasy
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityMetadata"></param>
         public void InitializeMetadata(EntityMetadata entityMetadata)
         {
             this.InitializeMetadata(new List<EntityMetadata>() { entityMetadata });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="earlyBoundEntitiesAssembly"></param>
         public void InitializeMetadata(Assembly earlyBoundEntitiesAssembly)
         {
             IEnumerable<EntityMetadata> entityMetadatas = MetadataGenerator.FromEarlyBoundEntities(earlyBoundEntitiesAssembly);
@@ -61,6 +71,10 @@ namespace FakeXrmEasy
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IQueryable<EntityMetadata> CreateMetadataQuery()
         {
             return this.EntityMetadata.Values
@@ -69,6 +83,11 @@ namespace FakeXrmEasy
                     .AsQueryable();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sLogicalName"></param>
+        /// <returns></returns>
         public EntityMetadata GetEntityMetadataByName(string sLogicalName)
         {
             if (EntityMetadata.ContainsKey(sLogicalName))
@@ -77,6 +96,10 @@ namespace FakeXrmEasy
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="em"></param>
         public void SetEntityMetadata(EntityMetadata em)
         {
             if (this.EntityMetadata.ContainsKey(em.LogicalName))
@@ -85,6 +108,13 @@ namespace FakeXrmEasy
                 this.EntityMetadata.Add(em.LogicalName, em.Copy());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sEntityName"></param>
+        /// <param name="sAttributeName"></param>
+        /// <param name="attributeType"></param>
+        /// <returns></returns>
         public AttributeMetadata GetAttributeMetadataFor(string sEntityName, string sAttributeName, Type attributeType)
         {
             if (EntityMetadata.ContainsKey(sEntityName))

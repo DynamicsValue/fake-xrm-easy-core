@@ -7,13 +7,28 @@ using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
+    /// <summary>
+    /// Implementation of the Associate Request
+    /// </summary>
     public class AssociateRequestExecutor : IFakeMessageExecutor
     {
+        /// <summary>
+        /// Returns true if request is of type AssociateRequest
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public bool CanExecute(OrganizationRequest request)
         {
             return request is AssociateRequest;
         }
 
+        /// <summary>
+        /// Fake implementation of the AssociateRequest
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var associateRequest = request as AssociateRequest;
@@ -97,6 +112,10 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             return new AssociateResponse();
         }
 
+        /// <summary>
+        /// Returns AssociateRequest
+        /// </summary>
+        /// <returns></returns>
         public Type GetResponsibleRequestType()
         {
             return typeof(AssociateRequest);

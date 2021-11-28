@@ -4,6 +4,9 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ExpressionExtensions
     {
         internal static Expression TransformValueBasedOnOperator(this Expression input, ConditionOperator op)

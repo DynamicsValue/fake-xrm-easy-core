@@ -13,6 +13,11 @@ namespace FakeXrmEasy.Extensions
     {
         private static readonly MethodInfo CloneMethod = typeof(Object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public static bool IsPrimitive(this Type type)
         {
             if (type == typeof(String)) return true;
@@ -32,6 +37,14 @@ namespace FakeXrmEasy.Extensions
             return fieldInfo;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static object GetFieldValue(this object obj, string fieldName)
         {
             if (obj == null)
@@ -44,6 +57,14 @@ namespace FakeXrmEasy.Extensions
             return fieldInfo.GetValue(obj);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="fieldName"></param>
+        /// <param name="val"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static void SetFieldValue(this object obj, string fieldName, object val)
         {
             if (obj == null)
@@ -56,7 +77,11 @@ namespace FakeXrmEasy.Extensions
             fieldInfo.SetValue(obj, val);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="originalObject"></param>
+        /// <returns></returns>
         public static Object Copy(this Object originalObject)
         {
             return InternalCopy(originalObject, new Dictionary<Object, Object>(new ReferenceEqualityComparer()));
@@ -106,19 +131,39 @@ namespace FakeXrmEasy.Extensions
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original"></param>
+        /// <returns></returns>
         public static T Copy<T>(this T original)
         {
             return (T)Copy((Object)original);
         }
     }
 
-    public class ReferenceEqualityComparer : EqualityComparer<Object>
+    /// <summary>
+    /// Reference Equality Comparer
+    /// </summary>
+    public class ReferenceEqualityComparer : EqualityComparer<object>
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public override bool Equals(object x, object y)
         {
             return ReferenceEquals(x, y);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override int GetHashCode(object obj)
         {
             if (obj == null) return 0;
@@ -126,8 +171,16 @@ namespace FakeXrmEasy.Extensions
         }
     }
 
+    /// <summary>
+    /// Array Extensions
+    /// </summary>
     public static class ArrayExtensions
     {
+        /// <summary>
+        /// Execute action for each element of the array
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="action"></param>
         public static void ForEach(this Array array, Action<Array, int[]> action)
         {
             if (array.LongLength == 0) return;

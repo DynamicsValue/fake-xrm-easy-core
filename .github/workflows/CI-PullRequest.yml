@@ -105,3 +105,22 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
         NUGET_USERNAME: DynamicsValue
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
+
+  changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository
+      - uses: actions/checkout@v2
+
+      - name: Run Changelog CI
+        uses: saadmk11/changelog-ci@v1.0.0
+        with:
+          # Optional, only required when you want more customization
+          # e.g: group your changelog by labels with custom titles,
+          # different version prefix, pull request title and version number regex etc.
+          # config file can be in JSON or YAML format.
+          config_file: changelog-ci-config.json
+          # Optional
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
