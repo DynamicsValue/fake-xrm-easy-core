@@ -209,8 +209,6 @@ namespace FakeXrmEasy
 
             EntityMetadata = new Dictionary<string, EntityMetadata>();
 
-            UsePipelineSimulation = false;
-
             InitializationLevel = EntityInitializationLevel.Default;
 
             _proxyTypesAssemblies = new List<Assembly>();

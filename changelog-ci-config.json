@@ -8,6 +8,10 @@
     "version_regex": "v?([0-9]{1,2})+[.]+([0-9]{1,2})+[.]+([0-9]{1,2})\\s\\(\\d{1,2}-\\d{1,2}-\\d{4}\\)",
     "group_config": [
       {
+        "title": "Breaking Changes",
+        "labels": ["breaking"]
+      },
+      {
         "title": "Bug Fixes",
         "labels": ["bug", "bugfix"]
       },

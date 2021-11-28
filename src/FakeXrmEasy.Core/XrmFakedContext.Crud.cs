@@ -114,11 +114,6 @@ namespace FakeXrmEasy
             if (Data.ContainsKey(e.LogicalName) &&
                 Data[e.LogicalName].ContainsKey(e.Id))
             {
-                if (this.UsePipelineSimulation)
-                {
-                    //ExecutePipelineStage("Update", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
-                }
-
                 var integrityOptions = GetProperty<IIntegrityOptions>();
 
                 // Add as many attributes to the entity as the ones received (this will keep existing ones)
@@ -148,14 +143,6 @@ namespace FakeXrmEasy
                 // Update ModifiedOn
                 cachedEntity["modifiedon"] = DateTime.UtcNow;
                 cachedEntity["modifiedby"] = CallerProperties.CallerId;
-
-                if (this.UsePipelineSimulation)
-                {
-                    //ExecutePipelineStage("Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, e);
-
-                    var clone = e.Clone(e.GetType());
-                    //ExecutePipelineStage("Update", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, clone);
-                }
             }
             else
             {
@@ -288,19 +275,8 @@ namespace FakeXrmEasy
             if (this.Data.ContainsKey(er.LogicalName) && this.Data[er.LogicalName] != null &&
                 this.Data[er.LogicalName].ContainsKey(er.Id))
             {
-                if (this.UsePipelineSimulation)
-                {
-                    //ExecutePipelineStage("Delete", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, er);
-                }
-
                 // Entity found => return only the subset of columns specified or all of them
                 this.Data[er.LogicalName].Remove(er.Id);
-
-                if (this.UsePipelineSimulation)
-                {
-                    //ExecutePipelineStage("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, er);
-                    //ExecutePipelineStage("Delete", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, er);
-                }
             }
             else
             {
@@ -410,7 +386,7 @@ namespace FakeXrmEasy
                 throw new InvalidOperationException($"When creating an entity with logical name '{clone.LogicalName}', or any other entity, it is not possible to create records with the statecode property. Statecode must be set after creation.");
             }
 
-            AddEntityWithDefaults(clone, false, this.UsePipelineSimulation);
+            AddEntityWithDefaults(clone, false);
 
             if (e.RelatedEntities.Count > 0)
             {
@@ -452,25 +428,13 @@ namespace FakeXrmEasy
         /// </summary>
         /// <param name="e"></param>
         /// <param name="clone"></param>
-        /// <param name="usePluginPipeline"></param>
-        public void AddEntityWithDefaults(Entity e, bool clone = false, bool usePluginPipeline = false)
+        /// <param name="deprecatedAndToBeRemoved"></param>
+        public void AddEntityWithDefaults(Entity e, bool clone = false, bool deprecatedAndToBeRemoved = false)
         {
             // Create the entity with defaults
             AddEntityDefaultAttributes(e);
-
-            if (usePluginPipeline)
-            {
-                //ExecutePipelineStage("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
-            }
-
             // Store
             AddEntity(clone ? e.Clone(e.GetType()) : e);
-
-            if (usePluginPipeline)
-            {
-                //ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, e);
-                //ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, e);
-            }
         }
 
         /// <summary>
