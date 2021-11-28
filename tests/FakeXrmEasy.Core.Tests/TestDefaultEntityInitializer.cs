@@ -17,7 +17,7 @@ namespace FakeXrmEasy.Tests
             user.Id = Guid.NewGuid();
             initialEntities.Add(user);
 
-            (_context as XrmFakedContext).CallerId = user.ToEntityReference();
+            (_context as XrmFakedContext).CallerProperties.CallerId = user.ToEntityReference();
 
             Entity testEntity = new Entity("test");
             testEntity.Id = Guid.NewGuid();

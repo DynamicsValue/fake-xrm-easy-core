@@ -131,7 +131,7 @@ jobs:
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
       - name: Pack Src
-        run: pwsh ./pack-src.ps1 -targetFrameworks 'all' -versionSuffix "ci.${{ github.head_ref }}${{ github.run_number }}"
+        run: pwsh ./pack-src.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
         env: 
           NUGET_USERNAME: DynamicsValue
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
@@ -144,7 +144,7 @@ jobs:
           NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pack Tests
-        run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "ci.${{ github.head_ref }}${{ github.run_number }}"
+        run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
         env: 
           NUGET_USERNAME: DynamicsValue
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}

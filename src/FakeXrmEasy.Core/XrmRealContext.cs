@@ -32,38 +32,73 @@ namespace FakeXrmEasy
     /// </summary>
     public class XrmRealContext : IXrmRealContext
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public FakeXrmEasyLicense? LicenseContext { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected IOrganizationService _service;
         protected IOrganizationServiceAsync _serviceAsync;
         protected IOrganizationServiceAsync2 _serviceAsync2;
         private readonly Dictionary<string, object> _properties;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public XrmRealContext()
         {
             //Don't setup fakes in this case.
             _properties = new Dictionary<string, object>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connectionStringName"></param>
         public XrmRealContext(string connectionStringName)
         {
             _properties = new Dictionary<string, object>();
             ConnectionStringName = connectionStringName;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="organizationService"></param>
+        /// <param name="serviceAsync"></param>
+        /// <param name="serviceAsync2"></param>
         public XrmRealContext(IOrganizationService organizationService, IOrganizationServiceAsync serviceAsync = null, IOrganizationServiceAsync2 serviceAsync2 = null)
         {
             _properties = new Dictionary<string, object>();
-            _service = organizationService;
-            _serviceAsync = serviceAsync;
-            _serviceAsync2 = serviceAsync2;
+            _service = organizationService ?? throw new ArgumentNullException(nameof(organizationService));
+            _serviceAsync = serviceAsync ?? throw new ArgumentNullException(nameof(serviceAsync));
+            _serviceAsync2 = serviceAsync2 ?? throw new ArgumentNullException(nameof(serviceAsync2));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public bool HasProperty<T>()
         {
             return _properties.ContainsKey(typeof(T).FullName);
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="TypeAccessException"></exception>
         public T GetProperty<T>() 
         {
             if(!_properties.ContainsKey(typeof(T).FullName)) 
@@ -74,6 +109,11 @@ namespace FakeXrmEasy
             return (T) _properties[typeof(T).FullName];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="property"></param>
         public void SetProperty<T>(T property) 
         {
             if(!_properties.ContainsKey(typeof(T).FullName)) 
@@ -85,6 +125,11 @@ namespace FakeXrmEasy
                 _properties[typeof(T).FullName] = property;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IOrganizationService GetOrganizationService()
         {
             if (_service != null)
@@ -112,6 +157,11 @@ namespace FakeXrmEasy
             return _serviceAsync2;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected ServiceClient GetOrgService()
         {
             var connection = ConfigurationManager.ConnectionStrings[ConnectionStringName];
@@ -130,6 +180,11 @@ namespace FakeXrmEasy
             return client;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sCompressedProfile"></param>
+        /// <returns></returns>
         public XrmFakedPluginExecutionContext GetContextFromSerialisedCompressedProfile(string sCompressedProfile)
         {
             byte[] data = Convert.FromBase64String(sCompressedProfile);

@@ -5,8 +5,16 @@ using System.Reflection;
 
 namespace FakeXrmEasy.Extensions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class TypeExtensions
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static bool IsOptionSet(this Type t)
         {
             var nullableType = Nullable.GetUnderlyingType(t);
@@ -23,6 +31,11 @@ namespace FakeXrmEasy.Extensions
         }
 #endif
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static bool IsDateTime(this Type t)
         {
             var nullableType = Nullable.GetUnderlyingType(t);
@@ -30,6 +43,11 @@ namespace FakeXrmEasy.Extensions
                    || nullableType != null && nullableType == typeof(DateTime);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static bool IsNullableEnum(this Type t)
         {
             return
@@ -38,6 +56,12 @@ namespace FakeXrmEasy.Extensions
                 && t.GetGenericArguments()[0].IsEnum;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="earlyBoundType"></param>
+        /// <param name="attributeName"></param>
+        /// <returns></returns>
         public static PropertyInfo GetEarlyBoundTypeAttribute(this Type earlyBoundType, string attributeName)
         {
             var attributeInfo = earlyBoundType.GetProperties()

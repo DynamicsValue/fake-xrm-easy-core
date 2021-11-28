@@ -13,12 +13,14 @@ using FakeXrmEasy.Permissions;
 using FakeXrmEasy.Services;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("FakeXrmEasy.Core.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c124cb50761165a765adf6078bde555a7c5a2b692ed6e6ec9df0bd7d20da69170bae9bf95e874fa50995cc080af404ccad36515fa509c4ea6599a0502c1642db254a293e023c47c79ce69889c6ba921d124d896d87f0baaa9ea1d87b28589ffbe7b08492606bacef19dc4bc4cefb0d525be63ee722b02dc8c79688a7a8f623a2")]
 
 namespace FakeXrmEasy
 {
@@ -30,23 +32,42 @@ namespace FakeXrmEasy
     public partial class XrmFakedContext : IXrmFakedContext
     {
         internal IMiddlewareBuilder _builder;
+        /// <summary>
+        /// 
+        /// </summary>
         protected internal IOrganizationService _service;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IXrmFakedPluginContextProperties PluginContextProperties { get; set; }
 
         /// <summary>
         /// All proxy type assemblies available on mocked database.
         /// </summary>
         private List<Assembly> _proxyTypesAssemblies { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public IEnumerable<Assembly> ProxyTypesAssemblies 
         {
             get => _proxyTypesAssemblies;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected internal bool Initialised { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, Dictionary<Guid, Entity>> Data { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Obsolete("Please use ProxyTypesAssemblies to retrieve assemblies and EnableProxyTypes to add new ones")]
         public Assembly ProxyTypesAssembly
         {
@@ -72,9 +93,17 @@ namespace FakeXrmEasy
         [Obsolete("Please use CallerProperties instead")]
         public EntityReference CallerId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [Obsolete("Please use CallerProperties instead")]
         public EntityReference BusinessUnitId { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
         public delegate OrganizationResponse ServiceRequestExecution(OrganizationRequest req);
 
         /// <summary>
@@ -83,21 +112,42 @@ namespace FakeXrmEasy
         private Dictionary<Type, ServiceRequestExecution> ExecutionMocks { get; set; }
 
         private Dictionary<string, XrmFakedRelationship> _relationships { get; set; }
+
+        /// <summary>
+        /// Relationships
+        /// </summary>
         public IEnumerable<XrmFakedRelationship> Relationships 
         { 
             get => _relationships.Values;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public IEntityInitializerService EntityInitializerService { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public int MaxRetrieveCount { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public EntityInitializationLevel InitializationLevel { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ICallerProperties CallerProperties { get; set; }
 
         private readonly Dictionary<string, object> _properties;
         private readonly IXrmFakedTracingService _fakeTracingService;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="license"></param>
         [Obsolete("The default constructor is deprecated. Please use MiddlewareBuilder to build a custom XrmFakedContext")]
         public XrmFakedContext(FakeXrmEasyLicense? license = null)
         {
@@ -164,8 +214,6 @@ namespace FakeXrmEasy
 
             EntityMetadata = new Dictionary<string, EntityMetadata>();
 
-            UsePipelineSimulation = false;
-
             InitializationLevel = EntityInitializationLevel.Default;
 
             _proxyTypesAssemblies = new List<Assembly>();
@@ -184,6 +232,12 @@ namespace FakeXrmEasy
             return _properties.ContainsKey(typeof(T).FullName);
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="TypeAccessException"></exception>
         public T GetProperty<T>() 
         {
             if(!_properties.ContainsKey(typeof(T).FullName)) 
@@ -194,6 +248,11 @@ namespace FakeXrmEasy
             return (T) _properties[typeof(T).FullName];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="property"></param>
         public void SetProperty<T>(T property) 
         {
             if(!_properties.ContainsKey(typeof(T).FullName)) 
@@ -215,6 +274,10 @@ namespace FakeXrmEasy
             return GetFakedOrganizationService(this);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IOrganizationServiceFactory GetOrganizationServiceFactory() 
         {
             var fakedServiceFactory = A.Fake<IOrganizationServiceFactory>();
@@ -222,6 +285,10 @@ namespace FakeXrmEasy
             return fakedServiceFactory;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IXrmFakedTracingService GetTracingService()
         {
             return _fakeTracingService;
@@ -251,6 +318,10 @@ namespace FakeXrmEasy
             Initialised = true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
         public void Initialize(Entity e)
         {
             this.Initialize(new List<Entity>() { e });
@@ -281,25 +352,42 @@ namespace FakeXrmEasy
             _proxyTypesAssemblies.Add(assembly);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="executor"></param>
         [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors")]
         public void AddFakeMessageExecutor<T>(IFakeMessageExecutor executor) where T : OrganizationRequest
         {
             _builder.AddFakeMessageExecutor<T>(executor);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors. If you want to remove one, simply remove it from the middleware setup.")]
         public void RemoveFakeMessageExecutor<T>() where T : OrganizationRequest
         {
             _builder.RemoveFakeMessageExecutor<T>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="executor"></param>
         [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors")]
         public void AddGenericFakeMessageExecutor(string message, IFakeMessageExecutor executor)
         {
             _builder.AddGenericFakeMessageExecutor(message, executor);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
         [Obsolete("Please use MiddlewareBuilder's functionality to set custom message executors. If you want to remove one, simply remove it from the middleware setup.")]
         public void RemoveGenericFakeMessageExecutor(string message)
         {
@@ -313,16 +401,30 @@ namespace FakeXrmEasy
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="schemaname"></param>
+        /// <param name="relationship"></param>
         public void AddRelationship(string schemaname, XrmFakedRelationship relationship)
         {
             _relationships.Add(schemaname, relationship);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="schemaname"></param>
         public void RemoveRelationship(string schemaname)
         {
             _relationships.Remove(schemaname);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="schemaName"></param>
+        /// <returns></returns>
         public XrmFakedRelationship GetRelationship(string schemaName)
         {
             if (_relationships.ContainsKey(schemaName))
@@ -333,6 +435,14 @@ namespace FakeXrmEasy
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceEntityName"></param>
+        /// <param name="sourceAttributeName"></param>
+        /// <param name="targetEntityName"></param>
+        /// <param name="targetAttributeName"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void AddAttributeMapping(string sourceEntityName, string sourceAttributeName, string targetEntityName, string targetAttributeName)
         {
             if (string.IsNullOrWhiteSpace(sourceEntityName))
@@ -363,9 +473,7 @@ namespace FakeXrmEasy
 
             AddEntityWithDefaults(entityMap);
             AddEntityWithDefaults(attributeMap);
-        }
-
-        
+        }            
 
         /// <summary>
         /// Deprecated. Use GetOrganizationService instead
@@ -377,6 +485,11 @@ namespace FakeXrmEasy
             return GetFakedOrganizationService(this);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         protected IOrganizationService GetFakedOrganizationService(XrmFakedContext context)
         {
             return context._service;

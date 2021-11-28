@@ -23,7 +23,7 @@ namespace FakeXrmEasy.Tests
         public void When_initializing_the_context_with_a_null_list_of_entities_an_exception_is_thrown()
         {
             var ex = Assert.Throws<InvalidOperationException>(() => _context.Initialize(entities: null));
-            Assert.Equal(ex.Message, "The entities parameter must be not null");
+            Assert.Equal("The entities parameter must be not null", ex.Message);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace FakeXrmEasy.Tests
             };
 
             var ex = Assert.Throws<InvalidOperationException>(() => _context.Initialize(data));
-            Assert.Equal(ex.Message, "The LogicalName property must not be empty");
+            Assert.Equal("The LogicalName property must not be empty", ex.Message);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace FakeXrmEasy.Tests
             };
 
             var ex = Assert.Throws<InvalidOperationException>(() => _context.Initialize(data));
-            Assert.Equal(ex.Message, "The Id property must not be empty");
+            Assert.Equal("The Id property must not be empty", ex.Message);
         }
 
         [Fact]
@@ -192,13 +192,13 @@ namespace FakeXrmEasy.Tests
             var c = new Contact() { Id = Guid.NewGuid(), FirstName = "Jordi" };
             _context.Initialize(new List<Entity>() { c });
 
-            //Linq 2 Query Expression
+            // Linq 2 Query Expression
             using (var ctx = new XrmServiceContext(_service))
             {
                 var contacts = (from con in ctx.CreateQuery<Contact>()
                                 select con).ToList();
 
-                Assert.Equal(contacts.Count, 1);
+                Assert.Single(contacts);
             }
 
             //Query faked context directly
@@ -210,7 +210,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_initializing_the_entities_a_proxy_types_assembly_is_not_mandatory()
         {
-            //This will make tests much more simple as we won't need to specificy the ProxyTypesAssembly every single time if 
+            //This will make tests much more simple as we won't need to specify the ProxyTypesAssembly every single time if 
             //we use early bound entities
 
             var assembly = Assembly.GetAssembly(typeof(Contact));
@@ -218,7 +218,7 @@ namespace FakeXrmEasy.Tests
             var c = new Contact() { Id = Guid.NewGuid(), FirstName = "Jordi" };
             _context.Initialize(new List<Entity>() { c });
 
-            Assert.Equal(assembly, (_context as XrmFakedContext).ProxyTypesAssembly);
+            Assert.Equal(assembly, (_context as XrmFakedContext).ProxyTypesAssemblies.FirstOrDefault());
         }
 
         [Fact]
@@ -282,5 +282,41 @@ namespace FakeXrmEasy.Tests
             Assert.Null(ex);
         }
 
+        [Fact]
+        public void Should_return_entity_by_id() 
+        {
+            var contact = new Contact() 
+            { 
+                Id = Guid.NewGuid(),
+                FirstName = "Steve",
+                LastName = "Vai"
+            };
+            _context.Initialize(contact);
+
+            var retrievedContact = _context.GetEntityById<Contact>(contact.Id);
+            Assert.Equal(contact.Id, retrievedContact.Id);
+            Assert.Equal(contact.FirstName, retrievedContact.FirstName);
+            Assert.Equal(contact.LastName, retrievedContact.LastName);   
+        }
+
+        [Fact]
+        public void Should_return_error_if_entity_lofical_name_doesnt_exists() 
+        {
+            Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("doesNotExist", Guid.NewGuid())); 
+        }
+
+        [Fact]
+        public void Should_return_error_if_entity_id_does_not_exists() 
+        {
+            var contact = new Contact() 
+            { 
+                Id = Guid.NewGuid(),
+                FirstName = "Steve",
+                LastName = "Vai"
+            };
+            _context.Initialize(contact);
+
+            Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("contact", Guid.NewGuid())); 
+        }
     }
 }

@@ -5,6 +5,9 @@ using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Extensions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class IXrmFakedContextExtensionsMetadata
     {
         internal static void EnsureEntityNameExistsInMetadata(this IXrmFakedContext context, string sEntityName)

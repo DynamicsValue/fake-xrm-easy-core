@@ -7,10 +7,19 @@ using FakeXrmEasy.Abstractions.Permissions;
 
 namespace FakeXrmEasy.Permissions
 {
+    /// <summary>
+    /// Access Rights Repository
+    /// </summary>
     public class AccessRightsRepository : IAccessRightsRepository
     {
+        /// <summary>
+        /// Dictionary of access rights
+        /// </summary>
         protected Dictionary<EntityReference, List<PrincipalAccess>> _accessRights;
 
+        /// <summary>
+        /// Access Rights Repository
+        /// </summary>
         public AccessRightsRepository()
         {
             //One record might be accessed from many security principals
@@ -83,7 +92,7 @@ namespace FakeXrmEasy.Permissions
         /// Revokes the specified rights to the security principal (user or team) for the specified record
         /// </summary>
         /// <param name="er"></param>
-        /// <param name="pa"></param>
+        /// <param name="principal"></param>
         public void RevokeAccessTo(EntityReference er, EntityReference principal)
         {
             List<PrincipalAccess> accessList = GetAccessListForRecord(er);
