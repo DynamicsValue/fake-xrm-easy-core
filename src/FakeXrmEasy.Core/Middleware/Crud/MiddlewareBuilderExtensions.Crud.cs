@@ -41,6 +41,8 @@ namespace FakeXrmEasy.Middleware.Crud
                 crudMessageExecutors.Add(typeof(RetrieveRequest), new RetrieveRequestExecutor());
                 crudMessageExecutors.Add(typeof(UpdateRequest), new UpdateRequestExecutor());
                 crudMessageExecutors.Add(typeof(DeleteRequest), new DeleteRequestExecutor());
+                crudMessageExecutors.Add(typeof(AssociateRequest), new AssociateRequestExecutor());
+                crudMessageExecutors.Add(typeof(DisassociateRequest), new DisassociateRequestExecutor());
 
                 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
                 crudMessageExecutors.Add(typeof(UpsertRequest), new UpsertRequestExecutor());
@@ -195,20 +197,13 @@ namespace FakeXrmEasy.Middleware.Crud
             A.CallTo(() => service.Associate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
                 .Invokes((string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection entityCollection) =>
                 {
-                    var messageExecutors = context.GetProperty<MessageExecutors>();
-
-                    if (messageExecutors.ContainsKey(typeof(AssociateRequest)))
+                    var request = new AssociateRequest()
                     {
-                        var request = new AssociateRequest()
-                        {
-                            Target = new EntityReference() { Id = entityId, LogicalName = entityName },
-                            Relationship = relationship,
-                            RelatedEntities = entityCollection
-                        };
-                        service.Execute(request);
-                    }
-                    else
-                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(AssociateRequest));
+                        Target = new EntityReference() { Id = entityId, LogicalName = entityName },
+                        Relationship = relationship,
+                        RelatedEntities = entityCollection
+                    };
+                    service.Execute(request);
                 });
         }
 
@@ -217,20 +212,13 @@ namespace FakeXrmEasy.Middleware.Crud
             A.CallTo(() => service.Disassociate(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._))
                 .Invokes((string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection entityCollection) =>
                 {
-                    var messageExecutors = context.GetProperty<MessageExecutors>();
-
-                    if (messageExecutors.ContainsKey(typeof(DisassociateRequest)))
+                    var request = new DisassociateRequest()
                     {
-                        var request = new DisassociateRequest()
-                        {
-                            Target = new EntityReference() { Id = entityId, LogicalName = entityName },
-                            Relationship = relationship,
-                            RelatedEntities = entityCollection
-                        };
-                        service.Execute(request);
-                    }
-                    else
-                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(DisassociateRequest));
+                        Target = new EntityReference() { Id = entityId, LogicalName = entityName },
+                        Relationship = relationship,
+                        RelatedEntities = entityCollection
+                    };
+                    service.Execute(request);
                 });
         }
         

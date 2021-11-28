@@ -402,21 +402,13 @@ namespace FakeXrmEasy
                         entityReferenceCollection.Add(new EntityReference(relatedEntity.LogicalName, relatedId));
                     }
 
-                    var messageExecutors = GetProperty<MessageExecutors>();
-                    if(messageExecutors == null) 
+                    var request = new AssociateRequest
                     {
-                        throw PullRequestException.NotImplementedOrganizationRequest(typeof(AssociateRequest));
-                    }
-                    else 
-                    {
-                        var request = new AssociateRequest
-                        {
-                            Target = clone.ToEntityReference(),
-                            Relationship = relationship,
-                            RelatedEntities = entityReferenceCollection
-                        };
-                        _service.Execute(request);
-                    }
+                        Target = clone.ToEntityReference(),
+                        Relationship = relationship,
+                        RelatedEntities = entityReferenceCollection
+                    };
+                    _service.Execute(request);
                 }
             }
 

@@ -298,5 +298,25 @@ namespace FakeXrmEasy.Tests
             Assert.Equal(contact.FirstName, retrievedContact.FirstName);
             Assert.Equal(contact.LastName, retrievedContact.LastName);   
         }
+
+        [Fact]
+        public void Should_return_error_if_entity_lofical_name_doesnt_exists() 
+        {
+            Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("doesNotExist", Guid.NewGuid())); 
+        }
+
+        [Fact]
+        public void Should_return_error_if_entity_id_does_not_exists() 
+        {
+            var contact = new Contact() 
+            { 
+                Id = Guid.NewGuid(),
+                FirstName = "Steve",
+                LastName = "Vai"
+            };
+            _context.Initialize(contact);
+
+            Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("contact", Guid.NewGuid())); 
+        }
     }
 }
