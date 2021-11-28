@@ -406,24 +406,13 @@ namespace FakeXrmEasy
             return clone.Id;
         }
 
-        public void AddEntityWithDefaults(Entity e, bool clone = false, bool usePluginPipeline = false)
+        public void AddEntityWithDefaults(Entity e, bool clone = false)
         {
             // Create the entity with defaults
             AddEntityDefaultAttributes(e);
 
-            if (usePluginPipeline)
-            {
-                //ExecutePipelineStage("Create", ProcessingStepStage.Preoperation, ProcessingStepMode.Synchronous, e);
-            }
-
             // Store
             AddEntity(clone ? e.Clone(e.GetType()) : e);
-
-            if (usePluginPipeline)
-            {
-                //ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Synchronous, e);
-                //ExecutePipelineStage("Create", ProcessingStepStage.Postoperation, ProcessingStepMode.Asynchronous, e);
-            }
         }
 
         public void AddEntity(Entity e)
