@@ -295,12 +295,6 @@ namespace FakeXrmEasy
         /// <param name="e"></param>
         public void AddEntityDefaultAttributes(Entity e)
         {
-            // Add createdon, modifiedon, createdby, modifiedby properties
-            if (CallerProperties.CallerId == null)
-            {
-                CallerProperties.CallerId = new EntityReference("systemuser", Guid.NewGuid()); // Create a new instance by default
-            }
-
             var integrityOptions = GetProperty<IIntegrityOptions>();
 
             if (integrityOptions.ValidateEntityReferences)
