@@ -136,7 +136,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests
             Assert.Equal(otherEntity.Id, otherEntityInContext.Id);
         }
 
-        #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
+        [Fact]
+        public void Should_raise_exception_when_validating_a_null_entity()
+        {
+            Entity entity = new Entity("entity");
+
+            Assert.Throws<InvalidOperationException>(() => (_contextWithIntegrity as XrmFakedContext).ValidateEntity(null));
+        }
+
+    #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
         [Fact]
         public void An_entity_which_references_another_existent_entity_by_alternate_key_can_be_created_when_integrity_is_enabled()
         {

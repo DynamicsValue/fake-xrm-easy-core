@@ -1,10 +1,10 @@
-using System;
-using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
+    /// <summary>
+    /// ConditionExpression Extensions
+    /// </summary>
     public static partial class ConditionExpressionExtensions
     {
         internal static Expression ToBetweenExpression(this TypedConditionExpression tc, Expression getAttributeValueExpr, Expression containsAttributeExpr)

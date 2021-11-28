@@ -12,8 +12,17 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class XrmFakedContext : IXrmFakedContext
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logicalName"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public Type FindReflectedType(string logicalName)
         {
             var types =
@@ -84,7 +93,14 @@ namespace FakeXrmEasy
             }
         }
 
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="earlyBoundType"></param>
+        /// <param name="sEntityName"></param>
+        /// <param name="attributeName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public Type FindReflectedAttributeType(Type earlyBoundType, string sEntityName, string attributeName)
         {
             //Get that type properties
@@ -146,12 +162,21 @@ namespace FakeXrmEasy
         }
 
         
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityLogicalName"></param>
+        /// <returns></returns>
         public IQueryable<Entity> CreateQuery(string entityLogicalName)
         {
             return this.CreateQuery<Entity>(entityLogicalName);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public IQueryable<T> CreateQuery<T>()
             where T : Entity
         {
@@ -177,6 +202,13 @@ namespace FakeXrmEasy
             return this.CreateQuery<T>(logicalName);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="entityLogicalName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected IQueryable<T> CreateQuery<T>(string entityLogicalName)
             where T : Entity
         {
@@ -206,16 +238,14 @@ namespace FakeXrmEasy
             return lst.AsQueryable();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <returns></returns>
         public IQueryable<Entity> CreateQueryFromEntityName(string entityName)
         {
             return Data[entityName].Values.AsQueryable();
         }      
-
-
-
-
-        
-
-        
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Extensions;
 using System;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Query
 {

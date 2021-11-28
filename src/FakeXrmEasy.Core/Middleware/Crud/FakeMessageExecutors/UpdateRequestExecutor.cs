@@ -6,13 +6,27 @@ using System;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class UpdateRequestExecutor : IFakeMessageExecutor
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public bool CanExecute(OrganizationRequest request)
         {
             return request is UpdateRequest;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var updateRequest = (UpdateRequest)request;
@@ -24,6 +38,10 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             return new UpdateResponse();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Type GetResponsibleRequestType()
         {
             return typeof(UpdateRequest);

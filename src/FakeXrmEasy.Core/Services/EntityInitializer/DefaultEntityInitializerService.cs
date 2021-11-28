@@ -6,15 +6,34 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public enum EntityInitializationLevel
     {
-        Default = 0,  //Minimal initialization of common attributes
-        PerEntity = 1 //More detailed initialization of entities, on an entity per entity basis
+        /// <summary>
+        /// Minimal initialization of common attributes
+        /// </summary>
+        Default = 0,
+        /// <summary>
+        /// More detailed initialization of entities, on an entity per entity basis
+        /// </summary>
+        PerEntity = 1
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class DefaultEntityInitializerService : IEntityInitializerService
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, IEntityInitializerService> InitializerServiceDictionary { get; set; } 
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DefaultEntityInitializerService()
         {
             InitializerServiceDictionary = new Dictionary<string, IEntityInitializerService>()
@@ -24,6 +43,14 @@ namespace FakeXrmEasy.Services
             };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="gCallerId"></param>
+        /// <param name="ctx"></param>
+        /// <param name="isManyToManyRelationshipEntity"></param>
+        /// <returns></returns>
         public Entity Initialize(Entity e, Guid gCallerId, XrmFakedContext ctx, bool isManyToManyRelationshipEntity = false)
         {
             //Validate primary key for dynamic entities
@@ -44,7 +71,7 @@ namespace FakeXrmEasy.Services
 
             e.SetValueIfEmpty("createdon", now);
 
-            //Overriden created on should replace created on
+            // Overridden created on should replace created on
             if (e.Contains("overriddencreatedon"))
             {
                 e["createdon"] = e["overriddencreatedon"];
@@ -65,6 +92,13 @@ namespace FakeXrmEasy.Services
             return e;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="ctx"></param>
+        /// <param name="isManyToManyRelationshipEntity"></param>
+        /// <returns></returns>
         public Entity Initialize(Entity e, XrmFakedContext ctx, bool isManyToManyRelationshipEntity = false)
         {
             return this.Initialize(e, Guid.NewGuid(), ctx, isManyToManyRelationshipEntity);

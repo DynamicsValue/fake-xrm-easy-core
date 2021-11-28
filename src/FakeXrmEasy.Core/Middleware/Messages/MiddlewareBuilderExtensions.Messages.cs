@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using FakeItEasy;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Middleware;
 using Microsoft.Xrm.Sdk;
@@ -19,6 +20,7 @@ namespace FakeXrmEasy.Middleware.Messages
         /// This methods discovers all IFakeMessageExecutor implementations in the current assembly and adds them to the context builder
         /// </summary>
         /// <param name="builder"></param>
+        /// <param name="assembly"></param>
         /// <returns></returns>
         public static IMiddlewareBuilder AddFakeMessageExecutors(this IMiddlewareBuilder builder, Assembly assembly = null) 
         {
@@ -114,6 +116,12 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder RemoveFakeMessageExecutor<T>(this IMiddlewareBuilder builder) where T: OrganizationRequest
         {
             builder.Add(context => {
@@ -124,6 +132,13 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <param name="mock"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder AddExecutionMock<T>(this IMiddlewareBuilder builder, OrganizationRequestExecution mock) where T : OrganizationRequest
         {
             builder.Add(context => {
@@ -141,6 +156,12 @@ namespace FakeXrmEasy.Middleware.Messages
            return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder RemoveExecutionMock<T>(this IMiddlewareBuilder builder) where T : OrganizationRequest
         {
             builder.Add(context => {
@@ -154,6 +175,13 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="message"></param>
+        /// <param name="executor"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder AddGenericFakeMessageExecutor(this IMiddlewareBuilder builder, string message, IFakeMessageExecutor executor)
         {
             builder.Add(context => {
@@ -170,6 +198,13 @@ namespace FakeXrmEasy.Middleware.Messages
             return builder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="message"></param>
+        /// <param name="executor"></param>
+        /// <returns></returns>
         public static IMiddlewareBuilder RemoveGenericFakeMessageExecutor(this IMiddlewareBuilder builder, string message, IFakeMessageExecutor executor)
         {
             builder.Add(context => {

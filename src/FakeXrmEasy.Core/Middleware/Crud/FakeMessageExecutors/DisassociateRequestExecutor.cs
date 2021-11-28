@@ -8,13 +8,28 @@ using System.Linq;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DisassociateRequestExecutor : IFakeMessageExecutor
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public bool CanExecute(OrganizationRequest request)
         {
             return request is DisassociateRequest;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var disassociateRequest = request as DisassociateRequest;
@@ -68,6 +83,10 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             return new DisassociateResponse();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Type GetResponsibleRequestType()
         {
             return typeof(DisassociateRequest);

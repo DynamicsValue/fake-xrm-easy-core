@@ -16,7 +16,7 @@ namespace FakeXrmEasy.Tests.Extensions
             e["name"] = "Some name";
 
             e.SetValueIfEmpty("name", "another name");
-            Assert.Equal(e["name"].ToString(), "Some name");
+            Assert.Equal("Some name", e["name"].ToString());
         }
 
         [Fact]
@@ -26,7 +26,7 @@ namespace FakeXrmEasy.Tests.Extensions
             e["name"] = null;
 
             e.SetValueIfEmpty("name", "new name");
-            Assert.Equal(e["name"].ToString(), "new name");
+            Assert.Equal("new name", e["name"].ToString());
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace FakeXrmEasy.Tests.Extensions
             var e = new Entity("account");
 
             e.SetValueIfEmpty("name", "new name");
-            Assert.Equal(e["name"].ToString(), "new name");
+            Assert.Equal("new name", e["name"].ToString());
         }
 
         [Fact]

@@ -8,6 +8,7 @@ using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using System.Reflection;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Tests.Middleware
 {
@@ -80,8 +81,10 @@ namespace FakeXrmEasy.Tests.Middleware
             OrganizationResponse response = _service.Execute(request);
             Assert.Equal("testinput", response["output"]);
 
+#pragma warning disable CS0618 // Type or member is obsolete
             (_context as XrmFakedContext).RemoveGenericFakeMessageExecutor("new_TestAction");
-            Assert.Throws(typeof(FakeXrmEasy.PullRequestException), () => _service.Execute(request));
+#pragma warning restore CS0618 // Type or member is obsolete
+            Assert.Throws<PullRequestException>(() => _service.Execute(request));
         }
     }
 

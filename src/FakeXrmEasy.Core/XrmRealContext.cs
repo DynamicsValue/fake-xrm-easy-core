@@ -32,33 +32,66 @@ namespace FakeXrmEasy
     /// </summary>
     public class XrmRealContext : IXrmRealContext
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public FakeXrmEasyLicense? LicenseContext { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected IOrganizationService _service;
 
         private readonly Dictionary<string, object> _properties;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public XrmRealContext()
         {
             //Don't setup fakes in this case.
             _properties = new Dictionary<string, object>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connectionStringName"></param>
         public XrmRealContext(string connectionStringName)
         {
             ConnectionStringName = connectionStringName;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="organizationService"></param>
         public XrmRealContext(IOrganizationService organizationService)
         {
             _service = organizationService;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public bool HasProperty<T>()
         {
             return _properties.ContainsKey(typeof(T).FullName);
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="TypeAccessException"></exception>
         public T GetProperty<T>() 
         {
             if(!_properties.ContainsKey(typeof(T).FullName)) 
@@ -69,6 +102,11 @@ namespace FakeXrmEasy
             return (T) _properties[typeof(T).FullName];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="property"></param>
         public void SetProperty<T>(T property) 
         {
             if(!_properties.ContainsKey(typeof(T).FullName)) 
@@ -80,6 +118,11 @@ namespace FakeXrmEasy
                 _properties[typeof(T).FullName] = property;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public IOrganizationService GetOrganizationService()
         {
             if (_service != null)
@@ -89,6 +132,11 @@ namespace FakeXrmEasy
             return _service;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected IOrganizationService GetOrgService()
         {
             var connection = ConfigurationManager.ConnectionStrings[ConnectionStringName];
@@ -114,6 +162,11 @@ namespace FakeXrmEasy
             return client;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sCompressedProfile"></param>
+        /// <returns></returns>
         public XrmFakedPluginExecutionContext GetContextFromSerialisedCompressedProfile(string sCompressedProfile)
         {
             byte[] data = Convert.FromBase64String(sCompressedProfile);

@@ -7,13 +7,27 @@ using System.ServiceModel;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DeleteRequestExecutor : IFakeMessageExecutor
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public bool CanExecute(OrganizationRequest request)
         {
             return request is DeleteRequest;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var deleteRequest = (DeleteRequest)request;
@@ -33,6 +47,10 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             return new DeleteResponse();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Type GetResponsibleRequestType()
         {
             return typeof(DeleteRequest);
