@@ -141,7 +141,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         {
             Entity entity = new Entity("entity");
 
-            //Assert.Throws<InvalidOperationException>(() => (_contextWithIntegrity as XrmFakedContext).ValidateEntity(null));
+            Assert.Throws<InvalidOperationException>(() => (_contextWithIntegrity as XrmFakedContext).ValidateEntity(null));
         }
 
     #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
