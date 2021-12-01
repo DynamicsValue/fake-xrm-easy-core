@@ -197,7 +197,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
             var ent = collection.Entities[0];
 
             Assert.Equal(3, ent.GetAttributeValue<AliasedValue>("count")?.Value);
@@ -221,7 +221,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
             var ent = collection.Entities[0];
 
             Assert.Equal(3, ent.GetAttributeValue<AliasedValue>("sum")?.Value);
@@ -245,7 +245,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
             var ent = collection.Entities[0];
 
             Assert.IsType(typeof(Money), ent.GetAttributeValue<AliasedValue>("sum")?.Value);
@@ -424,7 +424,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
             Assert.Equal(0, collection.Entities.First().GetAttributeValue<AliasedValue>("count.contacts")?.Value);
         }
 
@@ -442,7 +442,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
             Assert.Equal(1, collection.Entities.First().Attributes.Count);
             Assert.True(collection.Entities.First().Contains("sum"));
         }
@@ -461,7 +461,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
             Assert.Equal(1, collection.Entities.First().Attributes.Count);
             Assert.True(collection.Entities.First().Contains("avg"));
         }
@@ -497,7 +497,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 ");
 
             EntityCollection result = _service.RetrieveMultiple(query);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
             Assert.Equal(new DateTime(2011, 01, 01), result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value);
         }
 
@@ -532,7 +532,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 ");
 
             EntityCollection result = _service.RetrieveMultiple(query);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
             Assert.Equal(new DateTime(2011, 01, 01), result.Entities.Single().GetAttributeValue<AliasedValue>("minvalue").Value);
         }
 
@@ -567,7 +567,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 ");
 
             EntityCollection result = _service.RetrieveMultiple(query);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
             Assert.Equal(new DateTime(2011, 01, 03), result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value);
         }
 
@@ -602,7 +602,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 ");
 
             EntityCollection result = _service.RetrieveMultiple(query);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
             Assert.Equal(new DateTime(2011, 01, 03), result.Entities.Single().GetAttributeValue<AliasedValue>("maxvalue").Value);
         }
 
@@ -1086,7 +1086,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                 ");
 
             EntityCollection result = _service.RetrieveMultiple(query);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
             Assert.Equal(-1.5m, result.Entities.Single().GetAttributeValue<AliasedValue>("avgvalue").Value);
         }
 
@@ -1115,7 +1115,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 </fetch>"));
 
 
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
             var value = result.Entities.First().GetAttributeValue<AliasedValue>("sales12m.TotalAmount");
             Assert.NotNull(value);
             Assert.Equal(10m, ((Money)value.Value).Value);
@@ -1151,7 +1151,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             EntityCollection collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
         }
     }
 }

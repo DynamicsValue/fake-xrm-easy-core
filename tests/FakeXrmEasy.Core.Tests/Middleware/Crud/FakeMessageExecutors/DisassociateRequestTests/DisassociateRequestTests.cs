@@ -88,13 +88,13 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.DisassociateReq
                                          where tu.TeamId == user2Id
                                          && tu.SystemUserId == teamId
                                          select tu).ToList();
-                Assert.Equal(1, wrongAssociation2.Count());
+                Assert.Single(wrongAssociation2);
 
                 var wrongAssociation = (from tu in ctx.TeamMembershipSet
                                         where tu.TeamId == userId
                                         && tu.SystemUserId == teamId
                                         select tu).ToList();
-                Assert.Equal(1, wrongAssociation.Count());
+                Assert.Single(wrongAssociation);
             }
         }
 
@@ -182,13 +182,13 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.DisassociateReq
                                          where tu.TeamId == userId
                                          && tu.SystemUserId == team2Id
                                          select tu).ToList();
-                Assert.Equal(1, wrongAssociation1.Count());
+                Assert.Single(wrongAssociation1);
 
                 var wrongAssociation = (from tu in ctx.TeamMembershipSet
                                         where tu.TeamId == userId
                                         && tu.SystemUserId == teamId
                                         select tu).ToList();
-                Assert.Equal(1, wrongAssociation.Count());
+                Assert.Single(wrongAssociation);
             }
         }
     }
