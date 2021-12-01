@@ -90,7 +90,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var query = fetchXml.ToQueryExpression(_context);
 
-            Assert.True(query.EntityName.Equals("contact"));
+            Assert.Equal("contact", query.EntityName);
         }
 
         [Fact]

@@ -85,7 +85,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
 
             var result = _service.RetrieveMultiple(query);
             Assert.NotEmpty(result.Entities);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
         }
 
         [Fact]
@@ -184,7 +184,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
 
             var result = _service.RetrieveMultiple(query);
             Assert.NotEmpty(result.Entities);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
         }
 
         [Fact]
@@ -343,7 +343,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
 
             var result = _service.RetrieveMultiple(query);
             Assert.NotEmpty(result.Entities);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
         }
 
         [Fact]
@@ -493,7 +493,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
 
             var result = _service.RetrieveMultiple(query);
             Assert.NotEmpty(result.Entities);
-            Assert.Equal(1, result.Entities.Count);
+            Assert.Single(result.Entities);
         }
 
         [Fact]
@@ -509,7 +509,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
 
             var queryResult = _service.RetrieveMultiple(query);
 
-            Assert.Equal(1, queryResult.Entities.Count);
+            Assert.Single(queryResult.Entities);
         }
 
         [Fact]
@@ -565,7 +565,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
 
             var result = _service.RetrieveMultiple(query);
 
-            Assert.Equal(0, result.Entities.Count);
+            Assert.Empty(result.Entities);
         }
 
         [Fact]
@@ -592,7 +592,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
                                 where c.FirstName == name || c.LastName == name
                                 select new Contact { Id = c.Id, FirstName = c.FirstName, LastName = c.LastName }).ToList();
 
-                Assert.Equal(1, contacts.Count);
+                Assert.Single(contacts);
                 Assert.Null(contacts[0].FirstName);
             }
         }
@@ -747,7 +747,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
             };
 
             var incidents = _service.RetrieveMultiple(query).Entities;
-            Assert.Equal(1, incidents.Count);
+            Assert.Single(incidents);
         }
 
         [Fact]
@@ -827,7 +827,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
             };
 
             var incidents = _service.RetrieveMultiple(query).Entities;
-            Assert.Equal(1, incidents.Count);
+            Assert.Single(incidents);
         }
 #endif
 
@@ -1125,7 +1125,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
             Assert.Equal("entity2", entity2Name);
 
             // this fails (entity2Value is "value")
-            Assert.Equal(null, entity2Value);
+            Assert.Null(entity2Value);
         }
     }
 }

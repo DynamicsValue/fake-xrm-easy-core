@@ -39,7 +39,7 @@ namespace FakeXrmEasy.Tests.Issues
             _context.Initialize(new[] { contact1, contact2 });
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
         }
     }
 }
