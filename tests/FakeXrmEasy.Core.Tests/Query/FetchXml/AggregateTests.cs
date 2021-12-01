@@ -248,7 +248,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             Assert.Single(collection.Entities);
             var ent = collection.Entities[0];
 
-            Assert.IsType(typeof(Money), ent.GetAttributeValue<AliasedValue>("sum")?.Value);
+            Assert.IsType<Money>(ent.GetAttributeValue<AliasedValue>("sum")?.Value);
             Assert.Equal(200m, (ent.GetAttributeValue<AliasedValue>("sum")?.Value as Money)?.Value);
         }
 

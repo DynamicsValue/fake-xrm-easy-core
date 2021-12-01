@@ -882,7 +882,7 @@ namespace FakeXrmEasy.Tests
 
             invoiceDetails = _service.RetrieveMultiple(query);
 
-            Assert.Equal(1, invoiceDetails.Entities.Count);
+            Assert.Single(invoiceDetails.Entities);
             Assert.Equal(invoicedetail02.Id, invoiceDetails.Entities[0].Id);
         }
     }
