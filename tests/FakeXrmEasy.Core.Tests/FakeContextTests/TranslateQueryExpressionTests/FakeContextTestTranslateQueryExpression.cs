@@ -723,7 +723,7 @@ namespace FakeXrmEasy.Tests
                                   join parent in ctx.CreateQuery<Role>() on r.ParentRoleId.Id equals parent.RoleId.Value
                                   select r).FirstOrDefault();
 
-                Assert.Equal(roleResult, null);
+                Assert.Null(roleResult);
             }
         }
 

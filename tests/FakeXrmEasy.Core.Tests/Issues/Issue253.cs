@@ -36,7 +36,7 @@ namespace FakeXrmEasy.Tests.Issues
 
             EntityCollection ec = _service.RetrieveMultiple(new FetchExpression(FetchXml));
 
-            Assert.Equal(ec.Entities.Count, 1);
+            Assert.Single(ec.Entities);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace FakeXrmEasy.Tests.Issues
 
             EntityCollection ec = _service.RetrieveMultiple(new FetchExpression(FetchXml));
 
-            Assert.Equal(ec.Entities.Count, 1);
+            Assert.Single(ec.Entities);
         }
     }
 }
