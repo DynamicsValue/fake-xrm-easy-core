@@ -20,20 +20,20 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.DeleteRequestTe
         public void When_delete_is_invoked_with_an_empty_logical_name_an_exception_is_thrown()
         {
             var ex = Assert.Throws<InvalidOperationException>(() => _service.Delete(null, Guid.Empty));
-            Assert.Equal(ex.Message, "The entity logical name must not be null or empty.");
+            Assert.Equal("The entity logical name must not be null or empty.", ex.Message);
 
             ex = Assert.Throws<InvalidOperationException>(() => _service.Delete("", Guid.Empty));
-            Assert.Equal(ex.Message, "The entity logical name must not be null or empty.");
+            Assert.Equal("The entity logical name must not be null or empty.", ex.Message);
 
             ex = Assert.Throws<InvalidOperationException>(() => _service.Delete("     ", Guid.Empty));
-            Assert.Equal(ex.Message, "The entity logical name must not be null or empty.");
+            Assert.Equal("The entity logical name must not be null or empty.", ex.Message);
         }
 
         [Fact]
         public void When_delete_is_invoked_with_an_empty_guid_an_exception_is_thrown()
         {
             var ex = Assert.Throws<InvalidOperationException>(() => _service.Delete("account", Guid.Empty));
-            Assert.Equal(ex.Message, "The id must not be empty.");
+            Assert.Equal("The id must not be empty.", ex.Message);
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.DeleteRequestTe
             var nonExistingGuid = Guid.NewGuid();
 
             var ex = Assert.Throws<InvalidOperationException>(() => _service.Delete("account", nonExistingGuid));
-            Assert.Equal(ex.Message.ToLower(), "the entity logical name account is not valid.");
+            Assert.Equal("the entity logical name account is not valid.", ex.Message.ToLower());
         }
 
         [Fact]

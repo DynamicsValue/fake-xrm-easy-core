@@ -30,7 +30,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
-            Assert.Equal(1, query.Criteria.Conditions.Count);
+            Assert.Single(query.Criteria.Conditions);
             Assert.Equal("nickname", query.Criteria.Conditions[0].AttributeName);
             Assert.Equal(ConditionOperator.LessThan, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Bob", query.Criteria.Conditions[0].Values[0]);
