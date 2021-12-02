@@ -59,10 +59,10 @@ namespace FakeXrmEasy.Tests
             _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
 
             //Find the contact
-            var contact = (from c in _context.CreateQuery<Contact>()
+            var contacts = (from c in _context.CreateQuery<Contact>()
                            select c).ToList();
 
-            Assert.Equal(contact.Count, 0);
+            Assert.Empty(contacts);
         }
 
         [Fact]
@@ -70,10 +70,10 @@ namespace FakeXrmEasy.Tests
         {
             
             //Find the contact
-            var contact = (from c in _context.CreateQuery("contact")
+            var contacts = (from c in _context.CreateQuery("contact")
                            select c).ToList();
 
-            Assert.Equal(contact.Count, 0);
+            Assert.Empty(contacts);
         }
 
         [Fact]
@@ -81,17 +81,15 @@ namespace FakeXrmEasy.Tests
         {
             
             //Find the contact
-            var contact = (from c in _context.CreateQuery("contact")
+            var contacts = (from c in _context.CreateQuery("contact")
                            select c).ToList();
 
-            Assert.Equal(contact.Count, 0);
+            Assert.Empty(contacts);
         }
 
         [Fact]
         public void When_Querying_Using_LinQ_Results_Should_Appear()
         {
-            
-
             var account = new Account
             {
                 Id = Guid.NewGuid()

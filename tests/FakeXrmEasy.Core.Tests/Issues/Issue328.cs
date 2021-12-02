@@ -49,7 +49,7 @@ namespace FakeXrmEasy.Tests.Issues
 
             var distinctResult = _service.RetrieveMultiple(queryDistinct);
             distinctResult.Entities.ToList().ForEach(e => Debug.WriteLine($"Id: {e.Id} distinct_value_field: {e.GetAttributeValue<string>("distinct_value_field")}"));
-            Assert.Equal(1, distinctResult.Entities.Count);
+            Assert.Single(distinctResult.Entities);
         }
     }
 }

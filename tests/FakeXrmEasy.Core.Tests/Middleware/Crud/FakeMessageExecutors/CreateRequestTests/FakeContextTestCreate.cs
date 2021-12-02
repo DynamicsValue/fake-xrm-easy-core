@@ -18,7 +18,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequestTe
         public void When_a_null_entity_is_created_an_exception_is_thrown()
         {
             var ex = Assert.Throws<InvalidOperationException>(() => _service.Create(null));
-            Assert.Equal(ex.Message, "The entity must not be null");
+            Assert.Equal("The entity must not be null", ex.Message);
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequestTe
             var e = new Entity("") { Id = Guid.Empty };
 
             var ex = Assert.Throws<InvalidOperationException>(() => _service.Create(e));
-            Assert.Equal(ex.Message, "The LogicalName property must not be empty");
+            Assert.Equal("The LogicalName property must not be empty", ex.Message);
         }
 
         [Fact]
@@ -207,7 +207,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequestTe
             var exception = Record.Exception(() => _service.Execute(request));
 
             Assert.IsType<Exception>(exception);
-            Assert.Equal(exception.Message, "Relationship order_details does not exist in the metadata cache");
+            Assert.Equal("Relationship order_details does not exist in the metadata cache", exception.Message);
         }
 
         [Fact]
@@ -246,7 +246,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequestTe
             var id = (_service.Execute(request) as CreateResponse).id;
             var createdOrderDetails = _context.CreateQuery<SalesOrderDetail>().ToList();
 
-            Assert.Equal(createdOrderDetails.Count, 2);
+            Assert.Equal(2, createdOrderDetails.Count);
             Assert.Equal(createdOrderDetails[0].SalesOrderId.Id, id);
             Assert.Equal(createdOrderDetails[1].SalesOrderId.Id, id);
         }

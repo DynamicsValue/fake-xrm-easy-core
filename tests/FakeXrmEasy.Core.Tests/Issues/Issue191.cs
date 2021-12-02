@@ -65,8 +65,8 @@ namespace FakeXrmEasy.Tests.Issues
             Console.WriteLine(count2); // returns 1 record
 
             var results = _service.RetrieveMultiple(query2);
-            Assert.Equal(true, results.Entities[0].Attributes.ContainsKey("child1.contactid"));
-            Assert.Equal(true, results.Entities[0].Attributes.ContainsKey("pet1.childid")); //test fails unless link22 is Inner join
+            Assert.True(results.Entities[0].Attributes.ContainsKey("child1.contactid"));
+            Assert.True(results.Entities[0].Attributes.ContainsKey("pet1.childid")); //test fails unless link22 is Inner join
         }
     }
 }
