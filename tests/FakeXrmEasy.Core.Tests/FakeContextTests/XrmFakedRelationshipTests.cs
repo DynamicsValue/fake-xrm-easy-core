@@ -14,11 +14,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         {
             var rel = new XrmFakedRelationship("entity1Attribute", "entity2Attribute", "entity1LogicalName", "entity2LogicalName");
 
-            Assert.Equal(rel.Entity1LogicalName, "entity1LogicalName");
-            Assert.Equal(rel.Entity2LogicalName, "entity2LogicalName");
-            Assert.Equal(rel.Entity1Attribute, "entity1Attribute");
-            Assert.Equal(rel.Entity2Attribute, "entity2Attribute");
-            Assert.Equal(rel.RelationshipType, XrmFakedRelationship.FakeRelationshipType.OneToMany);
+            Assert.Equal("entity1LogicalName", rel.Entity1LogicalName);
+            Assert.Equal("entity2LogicalName", rel.Entity2LogicalName);
+            Assert.Equal("entity1Attribute", rel.Entity1Attribute);
+            Assert.Equal("entity2Attribute", rel.Entity2Attribute);
+            Assert.Equal(XrmFakedRelationship.FakeRelationshipType.OneToMany, rel.RelationshipType);
         }
 
         [Fact]
@@ -26,12 +26,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests
         {
             var rel = new XrmFakedRelationship("intersectName", "entity1Attribute", "entity2Attribute", "entity1LogicalName", "entity2LogicalName");
 
-            Assert.Equal(rel.Entity1LogicalName, "entity1LogicalName");
-            Assert.Equal(rel.Entity2LogicalName, "entity2LogicalName");
-            Assert.Equal(rel.Entity1Attribute, "entity1Attribute");
-            Assert.Equal(rel.Entity2Attribute, "entity2Attribute");
-            Assert.Equal(rel.IntersectEntity, "intersectName");
-            Assert.Equal(rel.RelationshipType, XrmFakedRelationship.FakeRelationshipType.ManyToMany);
+            Assert.Equal("entity1LogicalName", rel.Entity1LogicalName);
+            Assert.Equal("entity2LogicalName", rel.Entity2LogicalName);
+            Assert.Equal("entity1Attribute", rel.Entity1Attribute);
+            Assert.Equal("entity2Attribute", rel.Entity2Attribute);
+            Assert.Equal("intersectName", rel.IntersectEntity);
+            Assert.Equal(XrmFakedRelationship.FakeRelationshipType.ManyToMany, rel.RelationshipType);
         }
 
         [Fact]

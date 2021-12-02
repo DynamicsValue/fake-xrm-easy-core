@@ -6,9 +6,18 @@ using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Extensions
 {
+    /// <summary>
+    /// Extension methods for OptionSetValue Collection
+    /// </summary>
     public static class OptionSetValueCollectionExtensions
     {
         
+        /// <summary>
+        /// Converts current OptionSetValueCollection to a HashSet&lt;int&gt; values
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="isOptionSetValueCollectionAccepted"></param>
+        /// <returns></returns>
         public static HashSet<int> ConvertToHashSetOfInt(object input, bool isOptionSetValueCollectionAccepted)
         {
             var set = new HashSet<int>();
