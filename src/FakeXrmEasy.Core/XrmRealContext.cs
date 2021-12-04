@@ -40,37 +40,25 @@ namespace FakeXrmEasy
         /// <summary>
         /// 
         /// </summary>
-        public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
-
-        /// <summary>
-        /// 
-        /// </summary>
         protected IOrganizationService _service;
         protected IOrganizationServiceAsync _serviceAsync;
         protected IOrganizationServiceAsync2 _serviceAsync2;
         private readonly Dictionary<string, object> _properties;
 
+        private readonly string _connectionString;
+
         /// <summary>
-        /// 
+        /// The actual connection string to connect to a Dataverse environment
         /// </summary>
-        public XrmRealContext()
+        /// <param name="connectionString"></param>
+        public XrmRealContext(string connectionString)
         {
-            //Don't setup fakes in this case.
             _properties = new Dictionary<string, object>();
+            _connectionString = connectionString;
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="connectionStringName"></param>
-        public XrmRealContext(string connectionStringName)
-        {
-            _properties = new Dictionary<string, object>();
-            ConnectionStringName = connectionStringName;
-        }
-
-        /// <summary>
-        /// 
+        /// Constructor of an XrmRealContext from previously created instances
         /// </summary>
         /// <param name="organizationService"></param>
         /// <param name="serviceAsync"></param>
@@ -84,7 +72,7 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Returns true if the property exists in this XrmRealContext
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -94,7 +82,7 @@ namespace FakeXrmEasy
         }
         
         /// <summary>
-        /// 
+        /// Returns a property from this XrmRealContext
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -110,7 +98,7 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Sets a property to this XrmRealContext
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="property"></param>
@@ -127,7 +115,7 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Returns an IOrganizationService instance that uses the underlying connectionString 
         /// </summary>
         /// <returns></returns>
         public IOrganizationService GetOrganizationService()
@@ -139,6 +127,10 @@ namespace FakeXrmEasy
             return _service;
         }
 
+        /// <summary>
+        /// Returns an IOrganizationServiceAsync instance that uses the underlying connectionString, without cancellation tokens
+        /// </summary>
+        /// <returns></returns>
         public IOrganizationServiceAsync GetAsyncOrganizationService()
         {
             if (_serviceAsync != null)
@@ -148,6 +140,10 @@ namespace FakeXrmEasy
             return _serviceAsync;
         }
 
+        /// <summary>
+        /// Returns an IOrganizationServiceAsync instance that uses the underlying connectionString, with cancellation tokens
+        /// </summary>
+        /// <returns></returns>
         public IOrganizationServiceAsync2 GetAsyncOrganizationService2()
         {
             if (_serviceAsync2 != null)
@@ -158,32 +154,26 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Internal method to retrieve an instance of an organization service
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         protected ServiceClient GetOrgService()
         {
-            var connection = ConfigurationManager.ConnectionStrings[ConnectionStringName];
-
-            // In case of missing connection string in configuration,
-            // use ConnectionStringName as an explicit connection string
-            var connectionString = connection == null ? ConnectionStringName : connection.ConnectionString;
-
-            if (string.IsNullOrWhiteSpace(connectionString))
+            if (string.IsNullOrWhiteSpace(_connectionString))
             {
-                throw new Exception("The ConnectionStringName property must be either a connection string or a connection string name");
+                throw new Exception("The ConnectionString property is null or empty");
             }
 
-            // Connect to the CRM web service using a connection string.
-            var client = new ServiceClient(connectionString);
+            // Connect to the Dataverse with a connection string.
+            var client = new ServiceClient(_connectionString);
             return client;
         }
 
         /// <summary>
-        /// 
+        /// Execute the code of a plugin locally simulating the execution in a target environment with a serialised, compressed plugin profile execution from that environment
         /// </summary>
-        /// <param name="sCompressedProfile"></param>
+        /// <param name="sCompressedProfile">The compressed, serialised, plugin profile execution</param>
         /// <returns></returns>
         public XrmFakedPluginExecutionContext GetContextFromSerialisedCompressedProfile(string sCompressedProfile)
         {
