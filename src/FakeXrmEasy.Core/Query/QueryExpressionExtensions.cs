@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Core.Exceptions.Query;
 using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -57,6 +58,11 @@ namespace FakeXrmEasy.Query
         public static IQueryable<Entity> ToQueryable(this QueryExpression qe, IXrmFakedContext context)
         {
             if (qe == null) return null;
+
+            if (qe.TopCount != null && qe.PageInfo != null)
+            {
+                throw new CantSetBothPageInfoAndTopCountException();
+            }
 
             //Start form the root entity and build a LINQ query to execute the query against the In-Memory context:
             context.EnsureEntityNameExistsInMetadata(qe.EntityName);
