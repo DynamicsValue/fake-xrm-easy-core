@@ -202,10 +202,11 @@ namespace FakeXrmEasy.Extensions.FetchXml
         /// <param name="el"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static bool ToReturnTotalRecordCount(this XElement el)
+        public static bool? ToReturnTotalRecordCount(this XElement el)
         {
             var returnTotalRecordCountAttr = el.GetAttribute("returntotalrecordcount");
-            if (returnTotalRecordCountAttr == null) return false;
+            if (returnTotalRecordCountAttr == null) 
+                return null;
 
             bool bReturnCount;
             if (!bool.TryParse(returnTotalRecordCountAttr.Value, out bReturnCount))
@@ -277,7 +278,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
         /// </summary>
         /// <param name="xlDoc"></param>
         /// <returns></returns>
-        public static bool ToReturnTotalRecordCount(this XDocument xlDoc)
+        public static bool? ToReturnTotalRecordCount(this XDocument xlDoc)
         {
             return xlDoc.Elements()   //fetch
                     .FirstOrDefault()
