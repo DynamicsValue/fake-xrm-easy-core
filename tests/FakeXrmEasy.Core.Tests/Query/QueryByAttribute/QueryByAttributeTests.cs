@@ -1,4 +1,5 @@
 ﻿using Crm;
+using FakeXrmEasy.Core.Exceptions.Query;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -194,6 +195,51 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QueryByAttributeTests
 
             Assert.Single(results.Entities);
             Assert.Equal(2, results.TotalRecordCount);
+        }
+
+        [Fact]
+        public void TopCount_is_respected_for_query_by_attribute()
+        {
+            var listOfContacts = new List<Contact>();
+
+            for(var i = 0; i < 10; i++)
+            {
+                listOfContacts.Add(new Contact()
+                {
+                    FirstName = "Dummy",
+                    Id = Guid.NewGuid()
+                });
+            }
+            _context.Initialize(listOfContacts);
+
+            QueryByAttribute query = new QueryByAttribute("contact")
+            {
+                ColumnSet = new ColumnSet("firstname"),
+                TopCount = 5
+            };
+            var results = _service.RetrieveMultiple(query);
+
+            Assert.Equal(5, results.Entities.Count);
+        }
+
+        [Fact]
+        public void Should_throw_exception_if_both_pageinfo_and_topcount_are_specified()
+        {
+            QueryByAttribute queryByAttribute = new QueryByAttribute("contact")
+            {
+                ColumnSet = new ColumnSet("firstname"),
+                PageInfo = new PagingInfo(),
+                TopCount = 5
+            };
+            Assert.Throws<CantSetBothPageInfoAndTopCountException>(() => _service.RetrieveMultiple(queryByAttribute));
+
+            QueryExpression query = new QueryExpression("contact")
+            {
+                ColumnSet = new ColumnSet("firstname"),
+                PageInfo = new PagingInfo(),
+                TopCount = 5
+            };
+            Assert.Throws<CantSetBothPageInfoAndTopCountException>(() => _service.RetrieveMultiple(query));
         }
     }
 }

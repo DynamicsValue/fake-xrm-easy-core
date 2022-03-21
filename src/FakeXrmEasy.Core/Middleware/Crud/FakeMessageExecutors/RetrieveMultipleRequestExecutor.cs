@@ -1,6 +1,7 @@
 ﻿using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
+using FakeXrmEasy.Core.Exceptions.Query;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;
 using FakeXrmEasy.Query;
@@ -88,6 +89,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
                 }
 
                 qe.PageInfo = query.PageInfo;
+                qe.TopCount = query.TopCount;
 
                 // QueryExpression now done... execute it!
                 var linqQuery = qe.ToQueryable(context);
