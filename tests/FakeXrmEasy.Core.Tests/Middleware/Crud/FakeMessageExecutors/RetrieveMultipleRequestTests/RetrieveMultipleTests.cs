@@ -97,6 +97,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
             _context.Initialize(initialEntities);
 
             QueryExpression query = new QueryExpression("entity");
+            query.PageInfo = null;
             query.TopCount = 5;
             EntityCollection result = _service.RetrieveMultiple(query);
             Assert.Equal(query.TopCount, result.Entities.Count);

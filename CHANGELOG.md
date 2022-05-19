@@ -1,3 +1,9 @@
+## [3.1.0]
+
+### Changed
+
+Added TopCount support in QueryByAttribute, and throw exception if both TopCount and PageInfo are set: DynamicsValue/fake-xrm-easy#16
+
 ## [3.0.2]
 
 ### Changed 
@@ -7,4 +13,3 @@ Also replaced Microsoft.Dynamics.Sdk.Messages dependency, as it has also been de
 
 ## [3.0.1-rc1] - Initial release
 
-## [2.0.1-rc1] - Initial release

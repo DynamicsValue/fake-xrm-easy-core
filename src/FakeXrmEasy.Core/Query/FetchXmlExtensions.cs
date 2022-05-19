@@ -61,9 +61,22 @@ namespace FakeXrmEasy.Query
 
             query.TopCount = xlDoc.ToTopCount();
 
-            query.PageInfo.Count = xlDoc.ToCount() ?? 0;
-            query.PageInfo.PageNumber = xlDoc.ToPageNumber() ?? 1;
-            query.PageInfo.ReturnTotalRecordCount = xlDoc.ToReturnTotalRecordCount();
+            int? count = xlDoc.ToCount();
+            int? pageNumber = xlDoc.ToPageNumber();
+            bool? returnTotalRecordCount = xlDoc.ToReturnTotalRecordCount();
+
+            bool hasPageInfoAttributes = count != null 
+                                            || pageNumber != null 
+                                            || returnTotalRecordCount != null;
+
+            query.PageInfo = null;
+            if(hasPageInfoAttributes)
+            {
+                query.PageInfo = new PagingInfo();
+                query.PageInfo.Count = count ?? 0;
+                query.PageInfo.PageNumber = pageNumber ?? 1;
+                query.PageInfo.ReturnTotalRecordCount = returnTotalRecordCount ?? false;
+            }
 
             var linkedEntities = xlDoc.ToLinkEntities(context);
             foreach (var le in linkedEntities)
