@@ -3,6 +3,7 @@
 ### Changed
 
 Added TopCount support in QueryByAttribute, and throw exception if both TopCount and PageInfo are set: DynamicsValue/fake-xrm-easy#16
+Removed .netcoreapp3.1 target framework in versions 2.x, it'll be supported from versions 3.x onwards. Bump
 
 ## [3.0.2]
 
