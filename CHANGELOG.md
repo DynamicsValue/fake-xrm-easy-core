@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Changed
+
+- Modified TopCount support in QueryByAttribute and QueryExpression, to not throw exception if PageInfo was set but empty: DynamicsValue/fake-xrm-easy#16
+
 ## [2.1.0]
 
 ### Changed
