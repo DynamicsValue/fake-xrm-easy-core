@@ -374,10 +374,9 @@ namespace FakeXrmEasy
                 throw new InvalidOperationException($"There is already a record of entity {clone.LogicalName} with id {clone.Id}, can't create with this Id.");
             }
 
-            // Create specific validations
-            if (clone.Attributes.ContainsKey("statecode"))
+            if(clone.Attributes.ContainsKey("statecode"))
             {
-                throw new InvalidOperationException($"When creating an entity with logical name '{clone.LogicalName}', or any other entity, it is not possible to create records with the statecode property. Statecode must be set after creation.");
+                clone["statecode"] = new OptionSetValue(0);  //Always active by default regardless of value on Create
             }
 
             AddEntityWithDefaults(clone, false);
