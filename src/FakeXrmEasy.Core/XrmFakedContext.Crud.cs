@@ -152,7 +152,7 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Returns an entity record by logical name and primary key
         /// </summary>
         /// <param name="sLogicalName"></param>
         /// <param name="id"></param>
@@ -160,12 +160,19 @@ namespace FakeXrmEasy
         /// <exception cref="InvalidOperationException"></exception>
         public Entity GetEntityById(string sLogicalName, Guid id)
         {
-            if(!Data.ContainsKey(sLogicalName)) 
+            var entity = GetEntityById_Internal(sLogicalName, id);
+            //return entity;
+            return entity.Clone(null, this);
+        }
+
+        internal Entity GetEntityById_Internal(string sLogicalName, Guid id, Type t = null)
+        {
+            if (!Data.ContainsKey(sLogicalName))
             {
                 throw new InvalidOperationException($"The entity logical name '{sLogicalName}' is not valid.");
             }
 
-            if(!Data[sLogicalName].ContainsKey(id)) 
+            if (!Data[sLogicalName].ContainsKey(id))
             {
                 throw new InvalidOperationException($"The id parameter '{id.ToString()}' for entity logical name '{sLogicalName}' is not valid.");
             }
@@ -195,7 +202,7 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Returns a strongly-typed entity record by Id and its class name
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
@@ -211,7 +218,10 @@ namespace FakeXrmEasy
                 logicalName = (typeParameter.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true)[0] as EntityLogicalNameAttribute).LogicalName;
             }
 
-            return GetEntityById(logicalName, id) as T;
+            var entity = GetEntityById_Internal(logicalName, id, typeParameter);
+
+            //return entity as T;
+            return entity.Clone(typeParameter, this) as T;
         }
 
         /// <summary>
