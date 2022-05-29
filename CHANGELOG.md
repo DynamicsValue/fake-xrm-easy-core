@@ -1,3 +1,15 @@
+## [2.1.1]
+
+### Changed
+
+- Made CRM SDK v8.2 dependencies less specific - DynamicsValue/fake-xrm-easy#21
+- Limit FakeItEasy package dependency to v6.x versions - DynamicsValue/fake-xrm-easy#37
+- Updated build script to also include the major version in the Title property of the generated .nuspec file - DynamicsValue/fake-xrm-easy#41
+- Modified TopCount support in QueryByAttribute and QueryExpression, to not throw exception if PageInfo was set but empty: DynamicsValue/fake-xrm-easy#16
+- Do not clear previous FakeMessageExecutors or GenericFakeMessageExecutors when adding new ones or when calling them multiple times: DynamicsValue/fake-xrm-easy#15
+- Allow creating records with any statecode attribute, which will be overriden by the platform as Active - DynamicsValue/fake-xrm-easy#36
+- Both GetEntityById and GetEntityById&lt;T&gt; now clone the entity record before returning it - DynamicsValue/fake-xrm-easy#27
+
 ## [2.1.0]
 
 ### Changed

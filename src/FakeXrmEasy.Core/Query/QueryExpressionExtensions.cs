@@ -59,9 +59,9 @@ namespace FakeXrmEasy.Query
         {
             if (qe == null) return null;
 
-            if (qe.TopCount != null && qe.PageInfo != null)
+            if (qe.TopCount != null && !qe.IsPageInfoEmpty())
             {
-                throw new CantSetBothPageInfoAndTopCountException();
+                throw CantSetBothPageInfoAndTopCountException.New(qe.TopCount.Value);
             }
 
             //Start form the root entity and build a LINQ query to execute the query against the In-Memory context:
@@ -275,6 +275,17 @@ namespace FakeXrmEasy.Query
             }
         }
 
+
+        internal static bool IsPageInfoEmpty(this QueryExpression qe)
+        {
+            if (qe.PageInfo == null)
+                return true;
+
+            return qe.PageInfo.PageNumber == 0 &&
+                    qe.PageInfo.Count == 0 &&
+                    !qe.PageInfo.ReturnTotalRecordCount &&
+                    string.IsNullOrEmpty(qe.PageInfo.PagingCookie);
+        }
         
     }
 }

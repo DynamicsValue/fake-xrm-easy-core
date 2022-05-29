@@ -248,7 +248,7 @@ namespace FakeXrmEasy.Extensions
                         && !string.IsNullOrEmpty(entityMetadata.PrimaryNameAttribute) 
                         && containsEntity)
                 {
-                    var entity = context.GetEntityById(original.LogicalName, original.Id);
+                    var entity = (context as XrmFakedContext).GetEntityById_Internal(original.LogicalName, original.Id);
                     clone.Name = entity.GetAttributeValue<string>(entityMetadata.PrimaryNameAttribute);
                 }
                 else
