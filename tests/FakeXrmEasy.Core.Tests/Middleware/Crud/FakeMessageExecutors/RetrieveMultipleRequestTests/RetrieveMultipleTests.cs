@@ -80,29 +80,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMultipl
             Assert.False(result.MoreRecords);
         }
 
-        /// <summary>
-        /// Tests that top count works correctly
-        /// </summary>
-        [Fact]
-        public void TestTop()
-        {
-            List<Entity> initialEntities = new List<Entity>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                Entity e = new Entity("entity");
-                e.Id = Guid.NewGuid();
-                initialEntities.Add(e);
-            }
-            _context.Initialize(initialEntities);
-
-            QueryExpression query = new QueryExpression("entity");
-            query.PageInfo = null;
-            query.TopCount = 5;
-            EntityCollection result = _service.RetrieveMultiple(query);
-            Assert.Equal(query.TopCount, result.Entities.Count);
-            Assert.False(result.MoreRecords);
-        }
+        
 
         /// <summary>
         /// Tests that an empty result set doesn't cause an error and that more records is correctly set to false

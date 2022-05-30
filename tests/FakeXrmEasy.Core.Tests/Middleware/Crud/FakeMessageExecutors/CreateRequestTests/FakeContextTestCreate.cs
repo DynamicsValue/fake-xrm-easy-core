@@ -86,7 +86,7 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequestTe
         }
 
         [Fact]
-        public void When_Creating_With_A_StateCode_Property_Exception_Is_Thrown()
+        public void When_Creating_With_A_StateCode_Property_In_v9_Exception_Is_NotThrown()
         {
             var accId = Guid.NewGuid();
 
@@ -95,10 +95,16 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequestTe
                 Name = "TestAcc",
                 Id = accId
             };
-            account["statecode"] = 2;
+            account["statecode"] = new OptionSetValue(1);
 
-            Assert.Throws<InvalidOperationException>(() => _service.Create(account));
+            _service.Create(account);
+
+            var accountCreated = _context.CreateQuery<Account>().FirstOrDefault();
+            Assert.NotNull(accountCreated);
+
+            Assert.Equal(AccountState.Active, accountCreated.StateCode.Value);
         }
+
 
         [Fact]
         public void When_Creating_Using_Organization_Context_Record_Should_Be_Created()
