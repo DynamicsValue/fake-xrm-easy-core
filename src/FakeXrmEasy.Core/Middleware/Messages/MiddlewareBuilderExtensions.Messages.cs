@@ -37,9 +37,16 @@ namespace FakeXrmEasy.Middleware.Messages
                     .ToDictionary(t => t.GetResponsibleRequestType(), t => t);
                     
                 var messageExecutors = new MessageExecutors(fakeMessageExecutorsDictionary);
-                context.SetProperty(messageExecutors);
 
-                
+                if (!context.HasProperty<MessageExecutors>())
+                    context.SetProperty(messageExecutors);
+                else
+                {
+                    foreach(var messageExecutorKey in messageExecutors.Keys)
+                    {
+                        builder.AddFakeMessageExecutor(messageExecutors[messageExecutorKey]);
+                    }
+                }               
             });
 
             return builder;
@@ -62,8 +69,19 @@ namespace FakeXrmEasy.Middleware.Messages
                     .Select(t => Activator.CreateInstance(t) as IGenericFakeMessageExecutor)
                     .ToDictionary(t => t.GetRequestName(), t => t as IFakeMessageExecutor);
                     
+                
                 var genericMessageExecutors = new GenericMessageExecutors(fakeMessageExecutorsDictionary);
-                context.SetProperty(genericMessageExecutors);
+
+                if (!context.HasProperty<GenericMessageExecutors>())
+                    context.SetProperty(genericMessageExecutors);
+                else
+                {
+                    foreach (var genericMessageExecutorMessage in genericMessageExecutors.Keys)
+                    {
+                        builder.AddGenericFakeMessageExecutor(genericMessageExecutorMessage, genericMessageExecutors[genericMessageExecutorMessage]);
+                    }
+                }
+
             });
 
             return builder;

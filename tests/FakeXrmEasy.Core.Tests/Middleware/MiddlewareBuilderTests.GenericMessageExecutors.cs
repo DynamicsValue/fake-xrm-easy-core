@@ -65,6 +65,33 @@ namespace FakeXrmEasy.Tests.Middleware
         }
 
         [Fact]
+        public void Should_not_clear_previous_generic_fake_message_executors()
+        {
+            var context = MiddlewareBuilder
+                        .New()
+
+                        // Add* -> Middleware configuration
+                        .AddCrud()
+
+                        .AddGenericFakeMessageExecutor("new_TestAction", new OldGenericFakeMessageExecutor())
+                        .AddGenericFakeMessageExecutors()
+
+                        // Use* -> Defines pipeline sequence
+                        .UseCrud()
+                        .UseMessages()
+
+                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
+                        .Build();
+
+            var service = context.GetOrganizationService();
+
+            OrganizationRequest request = new OrganizationRequest("new_TestAction");
+            request["input"] = "testinput";
+            OrganizationResponse response = service.Execute(request);
+            Assert.Equal("testinput", response["output"]);
+        }
+
+        [Fact]
         public void Should_execute_generic_message_with_add_generic_fake_message_executors()
         {
             OrganizationRequest request = new OrganizationRequest("new_TestAction");

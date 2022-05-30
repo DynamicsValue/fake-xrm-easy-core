@@ -15,7 +15,7 @@ namespace FakeXrmEasy.Tests.Middleware
     {
         
         [Fact]
-        public void Should_Override_FakeMessageExecutor()
+        public void Should_override_FakeMessageExecutor()
         {
             var context = MiddlewareBuilder
                         .New()
@@ -88,6 +88,34 @@ namespace FakeXrmEasy.Tests.Middleware
 
             var executors = ctx.GetProperty<MessageExecutors>();
             Assert.False(executors.ContainsKey(typeof(AssociateRequest)));
+        }
+
+
+        [Fact]
+        public void Should_not_clear_previous_fake_message_executors_when_AddFakeMessageExecutors_is_called()
+        {
+            var context = MiddlewareBuilder
+                        .New()
+                        .AddFakeMessageExecutor(new FakeRetrieveEntityRequestExecutor())
+                        .AddFakeMessageExecutors()
+                        .UseMessages()
+                        .SetLicense(FakeXrmEasyLicense.RPL_1_5)
+                        .Build();
+
+            var service = context.GetOrganizationService();
+
+            var e = new Entity("Contact") { Id = Guid.NewGuid() };
+            context.Initialize(new[] { e });
+
+            var request = new RetrieveEntityRequest
+            {
+                LogicalName = "Contact",
+                EntityFilters = EntityFilters.All,
+                RetrieveAsIfPublished = false
+            };
+            var response = (RetrieveEntityResponse)service.Execute(request);
+
+            Assert.Equal("Successful", response.ResponseName);
         }
 
         private class MyDummyFakeMessageExecutor : IFakeMessageExecutor

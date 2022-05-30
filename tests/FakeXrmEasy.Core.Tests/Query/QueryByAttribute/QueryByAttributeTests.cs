@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.ServiceModel;
 using Xunit;
 
 namespace FakeXrmEasy.Tests.FakeContextTests.QueryByAttributeTests
@@ -222,24 +223,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.QueryByAttributeTests
             Assert.Equal(5, results.Entities.Count);
         }
 
-        [Fact]
-        public void Should_throw_exception_if_both_pageinfo_and_topcount_are_specified()
-        {
-            QueryByAttribute queryByAttribute = new QueryByAttribute("contact")
-            {
-                ColumnSet = new ColumnSet("firstname"),
-                PageInfo = new PagingInfo(),
-                TopCount = 5
-            };
-            Assert.Throws<CantSetBothPageInfoAndTopCountException>(() => _service.RetrieveMultiple(queryByAttribute));
-
-            QueryExpression query = new QueryExpression("contact")
-            {
-                ColumnSet = new ColumnSet("firstname"),
-                PageInfo = new PagingInfo(),
-                TopCount = 5
-            };
-            Assert.Throws<CantSetBothPageInfoAndTopCountException>(() => _service.RetrieveMultiple(query));
-        }
+        
     }
 }
