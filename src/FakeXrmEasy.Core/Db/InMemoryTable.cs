@@ -30,7 +30,7 @@ namespace FakeXrmEasy.Core.Db
         /// <summary>
         /// Return true if the current table already contains this record
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="e">The entity record to check</param>
         /// <returns></returns>
         protected internal bool Contains(Entity e)
         {
@@ -40,7 +40,7 @@ namespace FakeXrmEasy.Core.Db
         /// <summary>
         /// Returns true if the current table contains a record with the specified id
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">The primary key of the entity record</param>
         /// <returns></returns>
         protected internal bool Contains(Guid key)
         {
@@ -50,7 +50,7 @@ namespace FakeXrmEasy.Core.Db
         /// <summary>
         /// Adds the entity record to the current table
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">The entity record to add</param>
         protected internal void Add(Entity e)
         {
             _rows.Add(e.Id, e);
@@ -69,7 +69,7 @@ namespace FakeXrmEasy.Core.Db
         /// <summary>
         /// Remove the entity record by primary key
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">The primary key</param>
         protected internal void Remove(Guid key)
         {
             _rows.Remove(key);
@@ -78,7 +78,7 @@ namespace FakeXrmEasy.Core.Db
         /// <summary>
         /// Returns a record by its primary key
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">The primary key</param>
         /// <returns></returns>
         protected internal Entity GetById(Guid key)
         {
