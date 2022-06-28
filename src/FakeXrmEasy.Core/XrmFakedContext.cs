@@ -6,6 +6,7 @@ using FakeXrmEasy.Abstractions.Metadata;
 using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Abstractions.Permissions;
 using FakeXrmEasy.Abstractions.Plugins;
+using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Metadata;
 using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Messages;
@@ -60,9 +61,9 @@ namespace FakeXrmEasy
         protected internal bool Initialised { get; set; }
 
         /// <summary>
-        /// 
+        /// Internal In-Memory Database
         /// </summary>
-        public Dictionary<string, Dictionary<Guid, Entity>> Data { get; set; }
+        internal InMemoryDb Data { get; set; }
 
         /// <summary>
         /// 
@@ -194,7 +195,7 @@ namespace FakeXrmEasy
             MaxRetrieveCount = 5000;
 
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
-            Data = new Dictionary<string, Dictionary<Guid, Entity>>();
+            Data = new InMemoryDb();
             ExecutionMocks = new Dictionary<Type, ServiceRequestExecution>();
 
             _relationships = new Dictionary<string, XrmFakedRelationship>();

@@ -52,14 +52,14 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             var id = context.GetRecordUniqueId(request.Target);
 
             //Entity logical name exists, so , check if the requested entity exists
-            if (context.Data.ContainsKey(entityName) && context.Data[entityName] != null
-                && context.Data[entityName].ContainsKey(id))
+            if (context.ContainsEntity(entityName, id))
             {
                 //Return the subset of columns requested only
                 var reflectedType = context.FindReflectedType(entityName);
 
+                
                 //Entity found => return only the subset of columns specified or all of them
-                var resultEntity = context.Data[entityName][id].Clone(reflectedType, context);
+                var resultEntity = context.GetEntityById_Internal(entityName, id).Clone(reflectedType, context);
                 if (!columnSet.AllColumns)
                 {
                     resultEntity = resultEntity.ProjectAttributes(columnSet, context);

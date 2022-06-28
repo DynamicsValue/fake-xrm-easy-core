@@ -8,10 +8,8 @@ using System.Reflection;
 using System.ServiceModel;
 using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk.Client;
-using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Abstractions.Enums;
-using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy
 {
@@ -48,7 +46,7 @@ namespace FakeXrmEasy
             }
 
             // Don't fail with invalid operation exception, if no record of this entity exists, but entity is known
-            if (!Data.ContainsKey(record.LogicalName) && !EntityMetadata.ContainsKey(record.LogicalName))
+            if (!Data.ContainsTable(record.LogicalName) && !EntityMetadata.ContainsKey(record.LogicalName))
             {
                 if (ProxyTypesAssemblies == null || !ProxyTypesAssemblies.Any())
                 {
@@ -71,9 +69,10 @@ namespace FakeXrmEasy
                     {
                         if (record.KeyAttributes.Keys.Count == key.KeyAttributes.Length && key.KeyAttributes.All(x => record.KeyAttributes.Keys.Contains(x)))
                         {
-                            if (Data.ContainsKey(record.LogicalName))
+                            if (Data.ContainsTable(record.LogicalName))
                             {
-                                var matchedRecord = Data[record.LogicalName].Values.SingleOrDefault(x => record.KeyAttributes.All(k => x.Attributes.ContainsKey(k.Key) && x.Attributes[k.Key] != null && x.Attributes[k.Key].Equals(k.Value)));
+                                var table = Data.GetTable(record.LogicalName);
+                                var matchedRecord = table.Rows.SingleOrDefault(x => record.KeyAttributes.All(k => x.Attributes.ContainsKey(k.Key) && x.Attributes[k.Key] != null && x.Attributes[k.Key].Equals(k.Value)));
                                 if (matchedRecord != null)
                                 {
                                     return matchedRecord.Id;
@@ -111,13 +110,14 @@ namespace FakeXrmEasy
             e.Id = GetRecordUniqueId(reference);
 
             // Update specific validations: The entity record must exist in the context
-            if (Data.ContainsKey(e.LogicalName) &&
-                Data[e.LogicalName].ContainsKey(e.Id))
+            if (ContainsEntity(e.LogicalName, e.Id))
             {
                 var integrityOptions = GetProperty<IIntegrityOptions>();
 
+                var table = Data.GetTable(e.LogicalName);
+
                 // Add as many attributes to the entity as the ones received (this will keep existing ones)
-                var cachedEntity = Data[e.LogicalName][e.Id];
+                var cachedEntity = table.GetById(e.Id);
                 foreach (var sAttributeName in e.Attributes.Keys.ToList())
                 {
                     var attribute = e[sAttributeName];
@@ -167,33 +167,36 @@ namespace FakeXrmEasy
 
         internal Entity GetEntityById_Internal(string sLogicalName, Guid id, Type t = null)
         {
-            if (!Data.ContainsKey(sLogicalName))
+            if (!Data.ContainsTable(sLogicalName))
             {
                 throw new InvalidOperationException($"The entity logical name '{sLogicalName}' is not valid.");
             }
 
-            if (!Data[sLogicalName].ContainsKey(id))
+            var table = Data.GetTable(sLogicalName);
+
+            if (!table.Contains(id))
             {
                 throw new InvalidOperationException($"The id parameter '{id.ToString()}' for entity logical name '{sLogicalName}' is not valid.");
             }
 
-            return Data[sLogicalName][id];
+            return table.GetById(id);
         }
 
         /// <summary>
-        /// 
+        /// Returns true if the entity record with the specified logical name and id exists in the InMemory database
         /// </summary>
         /// <param name="sLogicalName"></param>
         /// <param name="id"></param>
         /// <returns></returns>
         public bool ContainsEntity(string sLogicalName, Guid id)
         {
-            if(!Data.ContainsKey(sLogicalName)) 
+            if(!Data.ContainsTable(sLogicalName)) 
             {
                 return false;
             }
 
-            if(!Data[sLogicalName].ContainsKey(id)) 
+            var table = Data.GetTable(sLogicalName);
+            if(!table.Contains(id)) 
             {
                 return false;
             }
@@ -231,7 +234,7 @@ namespace FakeXrmEasy
         /// <returns></returns>
         protected EntityReference ResolveEntityReference(EntityReference er)
         {
-            if (!Data.ContainsKey(er.LogicalName) || !Data[er.LogicalName].ContainsKey(er.Id))
+            if (!Data.ContainsTable(er.LogicalName) || !ContainsEntity(er.LogicalName, er.Id))
             {
                 if (er.Id == Guid.Empty && er.HasKeyAttributes())
                 {
@@ -268,7 +271,7 @@ namespace FakeXrmEasy
         public void DeleteEntity(EntityReference er)
         {
             // Don't fail with invalid operation exception, if no record of this entity exists, but entity is known
-            if (!this.Data.ContainsKey(er.LogicalName))
+            if (!Data.ContainsTable(er.LogicalName))
             {
                 if (ProxyTypesAssemblies.Count() == 0)
                 {
@@ -282,11 +285,11 @@ namespace FakeXrmEasy
             }
 
             // Entity logical name exists, so , check if the requested entity exists
-            if (this.Data.ContainsKey(er.LogicalName) && this.Data[er.LogicalName] != null &&
-                this.Data[er.LogicalName].ContainsKey(er.Id))
+            if (Data.ContainsTable(er.LogicalName) && ContainsEntity(er.LogicalName, er.Id))
             {
-                // Entity found => return only the subset of columns specified or all of them
-                this.Data[er.LogicalName].Remove(er.Id);
+                // Entity found => remove entity
+                var table = Data.GetTable(er.LogicalName);
+                table.Remove(er.Id);
             }
             else
             {
@@ -309,14 +312,9 @@ namespace FakeXrmEasy
 
             if (integrityOptions.ValidateEntityReferences)
             {
-                if (!Data.ContainsKey("systemuser"))
-                {
-                    Data.Add("systemuser", new Dictionary<Guid, Entity>());
-                }
-                if (!Data["systemuser"].ContainsKey(CallerProperties.CallerId.Id))
-                {
-                    Data["systemuser"].Add(CallerProperties.CallerId.Id, new Entity("systemuser") { Id = CallerProperties.CallerId.Id });
-                }
+                var caller = new Entity("systemuser") { Id = CallerProperties.CallerId.Id };
+
+                AddEntityRecordInternal(caller);
             }
 
             var isManyToManyRelationshipEntity = e.LogicalName != null && this._relationships.ContainsKey(e.LogicalName);
@@ -378,8 +376,7 @@ namespace FakeXrmEasy
             ValidateEntity(clone);
 
             // Create specific validations
-            if (clone.Id != Guid.Empty && Data.ContainsKey(clone.LogicalName) &&
-                Data[clone.LogicalName].ContainsKey(clone.Id))
+            if (clone.Id != Guid.Empty && ContainsEntity(clone.LogicalName, clone.Id))
             {
                 throw new InvalidOperationException($"There is already a record of entity {clone.LogicalName} with id {clone.Id}, can't create with this Id.");
             }
@@ -431,6 +428,12 @@ namespace FakeXrmEasy
             AddEntity(clone ? e.Clone(e.GetType()) : e);
         }
 
+        internal void AddEntityRecordInternal(Entity e)
+        {
+            //Add the entity collection
+            Data.AddOrReplaceEntityRecord(e);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -463,20 +466,7 @@ namespace FakeXrmEasy
                 }
             }
 
-            //Add the entity collection
-            if (!Data.ContainsKey(e.LogicalName))
-            {
-                Data.Add(e.LogicalName, new Dictionary<Guid, Entity>());
-            }
-
-            if (Data[e.LogicalName].ContainsKey(e.Id))
-            {
-                Data[e.LogicalName][e.Id] = e;
-            }
-            else
-            {
-                Data[e.LogicalName].Add(e.Id, e);
-            }
+            AddEntityRecordInternal(e);
 
             //Update metadata for that entity
             if (!AttributeMetadataNames.ContainsKey(e.LogicalName))

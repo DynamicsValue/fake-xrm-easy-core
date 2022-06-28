@@ -27,8 +27,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             var entityLogicalName = upsertRequest.Target.LogicalName;
             var entityId = ctx.GetRecordUniqueId(upsertRequest.Target.ToEntityReferenceWithKeyAttributes(), validate: false);
 
-            if (fakedContext.Data.ContainsKey(entityLogicalName) &&
-                fakedContext.Data[entityLogicalName].ContainsKey(entityId))
+            if (fakedContext.ContainsEntity(entityLogicalName, entityId))
             {
                 recordCreated = false;
                 service.Update(upsertRequest.Target);
