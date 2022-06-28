@@ -5,7 +5,7 @@ namespace FakeXrmEasy.Core.Db.Exceptions
     /// <summary>
     /// Exception thrown when a table with the same logical name already exists in the current InMemoryDb
     /// </summary>
-    internal class TableAlreadyExistsException : Exception
+    public class TableAlreadyExistsException : Exception
     {
         /// <summary>
         /// Default constructor
