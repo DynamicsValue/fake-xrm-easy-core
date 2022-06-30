@@ -154,13 +154,13 @@ namespace FakeXrmEasy
         /// <summary>
         /// Returns an entity record by logical name and primary key
         /// </summary>
-        /// <param name="sLogicalName"></param>
+        /// <param name="logicalName"></param>
         /// <param name="id"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public Entity GetEntityById(string sLogicalName, Guid id)
+        public Entity GetEntityById(string logicalName, Guid id)
         {
-            var entity = GetEntityById_Internal(sLogicalName, id);
+            var entity = GetEntityById_Internal(logicalName, id);
             //return entity;
             return entity.Clone(null, this);
         }

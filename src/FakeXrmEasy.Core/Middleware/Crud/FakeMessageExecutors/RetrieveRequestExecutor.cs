@@ -164,8 +164,8 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 
             if (isFrom1to2)
             {
-                var fromAttribute = isFrom1to2 ? fakeRelationship.Entity1Attribute : fakeRelationship.Entity2Attribute;
-                var toAttribute = isFrom1to2 ? fakeRelationship.Entity2Attribute : fakeRelationship.Entity1Attribute;
+                var fromAttribute = fakeRelationship.Entity1Attribute;
+                var toAttribute = fakeRelationship.Entity2Attribute;
 
                 var linkEntity = new LinkEntity
                 {
