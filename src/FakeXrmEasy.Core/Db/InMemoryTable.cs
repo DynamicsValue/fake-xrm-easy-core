@@ -1,4 +1,6 @@
-﻿using Microsoft.Xrm.Sdk;
+﻿using FakeXrmEasy.Extensions;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
 
@@ -20,11 +22,31 @@ namespace FakeXrmEasy.Core.Db
         protected internal Dictionary<Guid, Entity> _rows;
 
         /// <summary>
+        /// The metadata definition for this table
+        /// </summary>
+        protected internal InMemoryTableMetadata _metadata;
+
+        /// <summary>
         /// Default constructor with no metadata and an empty records table
         /// </summary>
-        public InMemoryTable()
+        public InMemoryTable(string logicalName)
         {
+            _logicalName = logicalName;
             _rows = new Dictionary<Guid, Entity>();
+            _metadata = new InMemoryTableMetadata();
+        }
+
+        /// <summary>
+        /// Creates a new table with specific entity metadata
+        /// </summary>
+        /// <param name="logicalName"></param>
+        /// <param name="entityMetadata"></param>
+        public InMemoryTable(string logicalName, EntityMetadata entityMetadata)
+        {
+            _logicalName = logicalName;
+            _rows = new Dictionary<Guid, Entity>();
+            _metadata = new InMemoryTableMetadata();
+            SetMetadata(entityMetadata);
         }
 
         /// <summary>
@@ -94,6 +116,15 @@ namespace FakeXrmEasy.Core.Db
             {
                 return _rows.Values;
             }
+        }
+
+        /// <summary>
+        /// Sets the current metadata for this table
+        /// </summary>
+        /// <param name="entityMetadata"></param>
+        protected internal void SetMetadata(EntityMetadata entityMetadata)
+        {
+            _metadata._entityMetadata = entityMetadata.Copy();
         }
     }
 }
