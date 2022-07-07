@@ -36,13 +36,13 @@ namespace FakeXrmEasy.Core.Db
         }
 
         /// <summary>
-        /// Returns true if the InMemoryDb contains a table object with a non-empty metadata
+        /// Returns true if the InMemoryDb contains a table object with a non-empty entity metadata
         /// </summary>
         /// <param name="logicalName"></param>
         /// <returns></returns>
         protected internal bool ContainsTableMetadata(string logicalName)
         {
-            return _tables.ContainsKey(logicalName) && _tables[logicalName]._metadata != null;
+            return _tables.ContainsKey(logicalName) && _tables[logicalName]._metadata._entityMetadata != null;
         }
 
         /// <summary>
