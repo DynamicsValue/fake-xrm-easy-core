@@ -1,3 +1,11 @@
+## [2.2.0]
+
+### Changed
+
+- **BREAKING**: In-Memory data dictionary that was defined as a public dictionary is now internal using an rewritten internal data structure to prepare for parallelization and concurrency. If you were accessing this property, please use the GetEntity or CreateQuery public methods in the IXrmFakedContext interface to query the state of the In-Memory database state instead. For any other use, always rely on the IOrganizationService* interfaces only. This breaking change will affect you only if you were accessing the 'Data' dictionary directly.
+- Fix Sonar Quality Gate settings: DynamicsValue/fake-xrm-easy#28
+ 
+
 ## [2.1.1]
 
 ### Changed
