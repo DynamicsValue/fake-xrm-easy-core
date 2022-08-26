@@ -33,7 +33,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="columnSet"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Entity ProjectAttributes(this Entity e, ColumnSet columnSet, IXrmFakedContext context)
+        internal static Entity ProjectAttributes(this Entity e, ColumnSet columnSet, IXrmFakedContext context)
         {
             return ProjectAttributes(e, new QueryExpression() { ColumnSet = columnSet }, context);
         }
@@ -134,7 +134,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="qe"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Entity ProjectAttributes(this Entity e, QueryExpression qe, IXrmFakedContext context)
+        internal static Entity ProjectAttributes(this Entity e, QueryExpression qe, IXrmFakedContext context)
         {
             if (qe.ColumnSet == null || qe.ColumnSet.AllColumns)
             {
