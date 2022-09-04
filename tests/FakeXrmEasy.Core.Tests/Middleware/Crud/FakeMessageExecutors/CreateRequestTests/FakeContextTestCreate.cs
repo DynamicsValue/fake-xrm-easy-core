@@ -374,5 +374,24 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequestTe
             var createdAccount = _context.CreateQuery<Account>().FirstOrDefault();
             Assert.Equal(now, createdAccount.CreatedOn);
         }
+
+        [Fact]
+        public void When_creating_a_record_with_a_generic_organization_request_record_should_also_be_created()
+        {
+            var account = new Account() { Name = "test" };
+            var request = new OrganizationRequest()
+            {
+                RequestName = "Create",
+                Parameters = new ParameterCollection()
+                {
+                    { "Target", account }
+                }
+            };
+
+            _service.Execute(request);
+
+            var createdAccount = _context.CreateQuery<Account>().FirstOrDefault();
+            Assert.Equal(account.Name, createdAccount.Name);
+        }
     }
 }

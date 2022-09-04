@@ -720,7 +720,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     break;
 #endif
                 default:
-                    throw PullRequestException.FetchXmlOperatorNotImplemented(elem.GetAttribute("operator").Value);
+                    throw UnsupportedExceptionFactory.FetchXmlOperatorNotImplemented(ctx.LicenseContext.Value, elem.GetAttribute("operator").Value);
             }
 
             //Process values

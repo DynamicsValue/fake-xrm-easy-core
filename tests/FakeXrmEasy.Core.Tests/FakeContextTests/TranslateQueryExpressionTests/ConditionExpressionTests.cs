@@ -14,7 +14,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
     {
 
         [Fact]
-        public void When_executing_a_query_expression_with_a_not_implemented_operator_pull_request_exception_is_thrown()
+        public void When_executing_a_query_expression_with_an_unsupported_exception_is_thrown()
         {
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
@@ -27,7 +27,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests
             var condition = new ConditionExpression("fullname", ConditionOperator.LastXFiscalPeriods, "Contact 1");
             qe.Criteria.AddCondition(condition);
 
-            Assert.Throws<PullRequestException>(() => qe.ToQueryable(_context).ToList());
+            Assert.Throws<OpenSourceUnsupportedException>(() => qe.ToQueryable(_context).ToList());
         }
 
         [Fact]
