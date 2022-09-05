@@ -71,8 +71,9 @@ namespace FakeXrmEasy.Extensions.OrganizationRequests
             if (!request.IsCreateRequest())
                 throw new ToInvalidOrganizationRequestException();
 
-            if (request is CreateRequest)
-                return (CreateRequest) request;
+            var createRequest = request as CreateRequest;
+            if (createRequest != null)
+                return createRequest;
 
             return new CreateRequest()
             {
@@ -91,10 +92,11 @@ namespace FakeXrmEasy.Extensions.OrganizationRequests
             if (!request.IsUpdateRequest())
                 throw new ToInvalidOrganizationRequestException();
 
-            if (request is UpdateRequest)
-                return (UpdateRequest)request;
+            var updateRequest = request as UpdateRequest;
+            if (updateRequest != null)
+                return updateRequest;
 
-            var updateRequest = new UpdateRequest()
+            updateRequest = new UpdateRequest()
             {
                 Target = (Entity)request.Parameters["Target"]
             };
@@ -119,10 +121,11 @@ namespace FakeXrmEasy.Extensions.OrganizationRequests
             if (!request.IsDeleteRequest())
                 throw new ToInvalidOrganizationRequestException();
 
-            if (request is DeleteRequest)
-                return (DeleteRequest)request;
+            var deleteRequest = request as DeleteRequest;
+            if (deleteRequest != null)
+                return deleteRequest;
 
-            var deleteRequest = new DeleteRequest()
+            deleteRequest = new DeleteRequest()
             {
                 Target = (EntityReference) request.Parameters["Target"]
             };
@@ -146,8 +149,9 @@ namespace FakeXrmEasy.Extensions.OrganizationRequests
             if (!request.IsRetrieveRequest())
                 throw new ToInvalidOrganizationRequestException();
 
-            if (request is RetrieveRequest)
-                return (RetrieveRequest)request;
+            var retrieveRequest = request as RetrieveRequest;
+            if (retrieveRequest != null)
+                return retrieveRequest;
 
             return new RetrieveRequest()
             {
@@ -166,8 +170,9 @@ namespace FakeXrmEasy.Extensions.OrganizationRequests
             if (!request.IsRetrieveMultipleRequest())
                 throw new ToInvalidOrganizationRequestException();
 
-            if (request is RetrieveMultipleRequest)
-                return (RetrieveMultipleRequest)request;
+            var retrieveMultipleRequest = request as RetrieveMultipleRequest;
+            if (retrieveMultipleRequest != null)
+                return retrieveMultipleRequest;
 
             return new RetrieveMultipleRequest()
             {
