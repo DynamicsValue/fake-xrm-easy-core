@@ -322,7 +322,7 @@ namespace FakeXrmEasy.Middleware.Messages
                 }
             }
 
-            throw PullRequestException.NotImplementedOrganizationRequest(request.GetType());
+            throw UnsupportedExceptionFactory.NotImplementedOrganizationRequest(context.LicenseContext.Value, request.GetType());
                        
         }
         
