@@ -94,13 +94,18 @@ namespace FakeXrmEasy.Extensions.OrganizationRequests
             if (request is UpdateRequest)
                 return (UpdateRequest)request;
 
-            return new UpdateRequest()
+            var updateRequest = new UpdateRequest()
             {
-                Target = (Entity)request.Parameters["Target"],
-                ConcurrencyBehavior = request.Parameters.ContainsKey("ConcurrencyBehavior") ?
-                            (ConcurrencyBehavior) request.Parameters["ConcurrencyBehavior"]
-                            : ConcurrencyBehavior.Default
+                Target = (Entity)request.Parameters["Target"]
             };
+
+#if FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+            updateRequest.ConcurrencyBehavior = request.Parameters.ContainsKey("ConcurrencyBehavior") ?
+                                        (ConcurrencyBehavior)request.Parameters["ConcurrencyBehavior"]
+                                        : ConcurrencyBehavior.Default;
+#endif
+
+            return updateRequest;
         }
 
         /// <summary>
@@ -117,13 +122,17 @@ namespace FakeXrmEasy.Extensions.OrganizationRequests
             if (request is DeleteRequest)
                 return (DeleteRequest)request;
 
-            return new DeleteRequest()
+            var deleteRequest = new DeleteRequest()
             {
-                Target = (EntityReference) request.Parameters["Target"],
-                ConcurrencyBehavior = request.Parameters.ContainsKey("ConcurrencyBehavior") ?
-                            (ConcurrencyBehavior)request.Parameters["ConcurrencyBehavior"]
-                            : ConcurrencyBehavior.Default
+                Target = (EntityReference) request.Parameters["Target"]
             };
+
+#if FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+            deleteRequest.ConcurrencyBehavior = request.Parameters.ContainsKey("ConcurrencyBehavior") ?
+                                        (ConcurrencyBehavior)request.Parameters["ConcurrencyBehavior"]
+                                        : ConcurrencyBehavior.Default;
+#endif
+            return deleteRequest;
         }
 
         /// <summary>
