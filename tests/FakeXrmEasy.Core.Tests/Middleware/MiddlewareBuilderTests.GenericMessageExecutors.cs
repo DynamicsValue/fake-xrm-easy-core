@@ -111,7 +111,7 @@ namespace FakeXrmEasy.Tests.Middleware
 #pragma warning disable CS0618 // Type or member is obsolete
             (_context as XrmFakedContext).RemoveGenericFakeMessageExecutor("new_TestAction");
 #pragma warning restore CS0618 // Type or member is obsolete
-            Assert.Throws<PullRequestException>(() => _service.Execute(request));
+            Assert.Throws<OpenSourceUnsupportedException>(() => _service.Execute(request));
         }
     }
 

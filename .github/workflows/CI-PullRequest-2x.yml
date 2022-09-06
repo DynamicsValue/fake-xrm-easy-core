@@ -90,25 +90,8 @@ jobs:
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"DynamicsValue_fake-xrm-easy-core" /o:"dynamicsvalue" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"DynamicsValue_fake-xrm-easy-core" /o:"dynamicsvalue" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.verbose="true" /d:sonar.qualitygate.wait="true" /d:sonar.cs.opencover.reportsPaths="coverage/**/coverage.opencover.xml" /d:sonar.coverage.exclusions="tests/**/**"
           .\build.ps1 -configuration FAKE_XRM_EASY_9 -targetFrameworks 'all'
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
-  changelog:
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checks-out your repository
-      - uses: actions/checkout@v2
-
-      - name: Run Changelog CI
-        uses: saadmk11/changelog-ci@v1.0.0
-        with:
-          # Optional, only required when you want more customization
-          # e.g: group your changelog by labels with custom titles,
-          # different version prefix, pull request title and version number regex etc.
-          # config file can be in JSON or YAML format.
-          config_file: changelog-ci-config.json
-          # Optional
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 

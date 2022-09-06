@@ -6,6 +6,7 @@ using FakeXrmEasy.Abstractions.Metadata;
 using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Abstractions.Permissions;
 using FakeXrmEasy.Abstractions.Plugins;
+using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Metadata;
 using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Messages;
@@ -31,7 +32,11 @@ namespace FakeXrmEasy
     /// </summary>
     public partial class XrmFakedContext : IXrmFakedContext
     {
+        /// <summary>
+        /// Internal middleware setup
+        /// </summary>
         internal IMiddlewareBuilder _builder;
+
         /// <summary>
         /// 
         /// </summary>
@@ -61,9 +66,9 @@ namespace FakeXrmEasy
         protected internal bool Initialised { get; set; }
 
         /// <summary>
-        /// 
+        /// Internal In-Memory Database
         /// </summary>
-        public Dictionary<string, Dictionary<Guid, Entity>> Data { get; set; }
+        internal InMemoryDb Db { get; set; }
 
         /// <summary>
         /// 
@@ -106,11 +111,6 @@ namespace FakeXrmEasy
         /// <returns></returns>
         public delegate OrganizationResponse ServiceRequestExecution(OrganizationRequest req);
 
-        /// <summary>
-        /// Probably should be replaced by FakeMessageExecutors, more generic, which can use custom interfaces rather than a single method / delegate
-        /// </summary>
-        private Dictionary<Type, ServiceRequestExecution> ExecutionMocks { get; set; }
-
         private Dictionary<string, XrmFakedRelationship> _relationships { get; set; }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace FakeXrmEasy
         public IEntityInitializerService EntityInitializerService { get; set; }
 
         /// <summary>
-        /// 
+        /// Default max count value when retrieving data, defaults to 5000
         /// </summary>
         public int MaxRetrieveCount { get; set; }
 
@@ -194,13 +194,11 @@ namespace FakeXrmEasy
 
         private void Init()
         {
-            
             CallerProperties = new CallerProperties();
             MaxRetrieveCount = 5000;
 
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
-            Data = new Dictionary<string, Dictionary<Guid, Entity>>();
-            ExecutionMocks = new Dictionary<Type, ServiceRequestExecution>();
+            Db = new InMemoryDb();
 
             _relationships = new Dictionary<string, XrmFakedRelationship>();
 
@@ -211,8 +209,6 @@ namespace FakeXrmEasy
             SetProperty<IStatusAttributeMetadataRepository>(new StatusAttributeMetadataRepository());
 
             SystemTimeZone = TimeZoneInfo.Local;
-
-            EntityMetadata = new Dictionary<string, EntityMetadata>();
 
             InitializationLevel = EntityInitializationLevel.Default;
 

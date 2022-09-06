@@ -12,6 +12,7 @@ using FakeXrmEasy.Abstractions.Exceptions;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using System.Threading;
+using FakeXrmEasy.Core.Exceptions;
 
 namespace FakeXrmEasy.Middleware
 {
@@ -92,7 +93,7 @@ namespace FakeXrmEasy.Middleware
             OrganizationRequestDelegate app = (context, request) => {
                 
                 //return default PullRequestException at the end of the pipeline
-                throw PullRequestException.NotImplementedOrganizationRequest(request.GetType());
+                throw UnsupportedExceptionFactory.NotImplementedOrganizationRequest(_context.LicenseContext.Value, request.GetType());
             };
 
             foreach(var component in _components.Reverse())
