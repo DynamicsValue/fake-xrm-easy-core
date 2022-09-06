@@ -32,10 +32,10 @@ else
 Write-Host " -> Cleaning..." -ForegroundColor Yellow
 if($targetFrameworks -eq "all")
 {
-    dotnet clean /p:Configuration=$configuration /p:PackTests=$packTests
+    dotnet clean /p:Configuration=$configuration /p:PackTests=$packTests --verbosity quiet
 }
 else {
-    dotnet clean /p:Configuration=$configuration /p:PackTests=$packTests /p:TargetFrameworks=$targetFrameworks
+    dotnet clean /p:Configuration=$configuration /p:PackTests=$packTests /p:TargetFrameworks=$targetFrameworks --verbosity quiet
 }
 
 if($targetFrameworks -eq "all")

@@ -297,7 +297,7 @@ namespace FakeXrmEasy.Query
 #endif
 
                 default:
-                    throw new PullRequestException(string.Format("Operator {0} not yet implemented for condition expression", c.CondExpression.Operator.ToString()));
+                    throw UnsupportedExceptionFactory.New(context.LicenseContext.Value, string.Format("Operator {0} not yet implemented for condition expression", c.CondExpression.Operator.ToString()));
 
 
             }

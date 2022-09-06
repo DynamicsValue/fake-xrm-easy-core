@@ -17,11 +17,6 @@ namespace FakeXrmEasy
         protected internal Dictionary<string, Dictionary<string, string>> AttributeMetadataNames { get; set; }
 
         /// <summary>
-        /// Stores fake entity metadata
-        /// </summary>
-        protected internal Dictionary<string, EntityMetadata> EntityMetadata { get; set; }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="entityMetadataList"></param>
@@ -41,11 +36,11 @@ namespace FakeXrmEasy
                     throw new Exception("An entity metadata record must have a LogicalName property.");
                 }
 
-                if (EntityMetadata.ContainsKey(eMetadata.LogicalName))
+                if (Db.ContainsTableMetadata(eMetadata.LogicalName))
                 {
                     throw new Exception("An entity metadata record with the same logical name was previously added. ");
                 }
-                EntityMetadata.Add(eMetadata.LogicalName, eMetadata.Copy());
+                Db.AddOrUpdateMetadata(eMetadata.LogicalName, eMetadata);
             }
         }
 
@@ -77,9 +72,8 @@ namespace FakeXrmEasy
         /// <returns></returns>
         public IQueryable<EntityMetadata> CreateMetadataQuery()
         {
-            return this.EntityMetadata.Values
-                    .Select(em => em.Copy())
-                    .ToList()
+            return Db
+                    .AllMetadata
                     .AsQueryable();
         }
 
@@ -90,8 +84,8 @@ namespace FakeXrmEasy
         /// <returns></returns>
         public EntityMetadata GetEntityMetadataByName(string sLogicalName)
         {
-            if (EntityMetadata.ContainsKey(sLogicalName))
-                return EntityMetadata[sLogicalName].Copy();
+            if (Db.ContainsTableMetadata(sLogicalName))
+                return Db.GetTableMetadata(sLogicalName);
 
             return null;
         }
@@ -102,10 +96,7 @@ namespace FakeXrmEasy
         /// <param name="em"></param>
         public void SetEntityMetadata(EntityMetadata em)
         {
-            if (this.EntityMetadata.ContainsKey(em.LogicalName))
-                this.EntityMetadata[em.LogicalName] = em.Copy();
-            else
-                this.EntityMetadata.Add(em.LogicalName, em.Copy());
+            Db.AddOrUpdateMetadata(em.LogicalName, em);
         }
 
         /// <summary>
@@ -117,7 +108,7 @@ namespace FakeXrmEasy
         /// <returns></returns>
         public AttributeMetadata GetAttributeMetadataFor(string sEntityName, string sAttributeName, Type attributeType)
         {
-            if (EntityMetadata.ContainsKey(sEntityName))
+            if (Db.ContainsTableMetadata(sEntityName))
             {
                 var entityMetadata = GetEntityMetadataByName(sEntityName);
                 var attribute = entityMetadata.Attributes

@@ -219,12 +219,13 @@ namespace FakeXrmEasy
             }
 
             var lst = new List<T>();
-            if (!Data.ContainsKey(entityLogicalName))
+            if (!Db.ContainsTable(entityLogicalName))
             {
                 return lst.AsQueryable(); //Empty list
             }
 
-            foreach (var e in Data[entityLogicalName].Values)
+            var table = Db.GetTable(entityLogicalName);
+            foreach (var e in table.Rows)
             {
                 if (subClassType != null)
                 {
@@ -245,7 +246,7 @@ namespace FakeXrmEasy
         /// <returns></returns>
         public IQueryable<Entity> CreateQueryFromEntityName(string entityName)
         {
-            return Data[entityName].Values.AsQueryable();
+            return Db.GetTable(entityName).Rows.AsQueryable();
         }      
     }
 }
