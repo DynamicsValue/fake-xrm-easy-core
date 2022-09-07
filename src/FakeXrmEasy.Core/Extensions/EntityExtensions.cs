@@ -33,7 +33,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="columnSet"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Entity ProjectAttributes(this Entity e, ColumnSet columnSet, IXrmFakedContext context)
+        internal static Entity ProjectAttributes(this Entity e, ColumnSet columnSet, IXrmFakedContext context)
         {
             return ProjectAttributes(e, new QueryExpression() { ColumnSet = columnSet }, context);
         }
@@ -134,7 +134,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="qe"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Entity ProjectAttributes(this Entity e, QueryExpression qe, IXrmFakedContext context)
+        internal static Entity ProjectAttributes(this Entity e, QueryExpression qe, IXrmFakedContext context)
         {
             if (qe.ColumnSet == null || qe.ColumnSet.AllColumns)
             {
@@ -218,7 +218,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="context"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static object CloneAttribute(object attributeValue, IXrmFakedContext context = null)
+        internal static object CloneAttribute(object attributeValue, IXrmFakedContext context = null)
         {
             if (attributeValue == null)
                 return null;
@@ -427,7 +427,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="alias"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Entity JoinAttributes(this Entity e, Entity otherEntity, ColumnSet columnSet, string alias, IXrmFakedContext context)
+        internal static Entity JoinAttributes(this Entity e, Entity otherEntity, ColumnSet columnSet, string alias, IXrmFakedContext context)
         {
             if (otherEntity == null) return e; //Left Join where otherEntity was not matched
 
@@ -482,7 +482,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="alias"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static Entity JoinAttributes(this Entity e, IEnumerable<Entity> otherEntities, ColumnSet columnSet, string alias, IXrmFakedContext context)
+        internal static Entity JoinAttributes(this Entity e, IEnumerable<Entity> otherEntities, ColumnSet columnSet, string alias, IXrmFakedContext context)
         {
             foreach (var otherEntity in otherEntities)
             {
@@ -536,7 +536,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="sAttributeName"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static object KeySelector(this Entity e, string sAttributeName, IXrmFakedContext context)
+        internal static object KeySelector(this Entity e, string sAttributeName, IXrmFakedContext context)
         {
             if (sAttributeName.Contains("."))
             {
@@ -613,7 +613,7 @@ namespace FakeXrmEasy.Extensions
         }
 
         /// <summary>
-        /// ToEntityReference implementation which converts an entity into an entity reference with key attribute info as well
+        /// ToEntityReference implementation that converts an entity into an entity reference with key attribute info as well
         /// </summary>
         /// <param name="e">Entity to convert to an Entity Reference</param>
         /// <returns></returns>

@@ -33,16 +33,25 @@ namespace FakeXrmEasy
     public class XrmRealContext : IXrmRealContext
     {
         /// <summary>
-        /// 
+        /// The current license context
         /// </summary>
         public FakeXrmEasyLicense? LicenseContext { get; set; }
 
         /// <summary>
-        /// 
+        /// Reference to an actual IOrganizationService
         /// </summary>
         protected IOrganizationService _service;
+
+        /// <summary>
+        /// Reference to an IOrganizationService instance without cancellation tokens
+        /// </summary>
         protected IOrganizationServiceAsync _serviceAsync;
+
+        /// <summary>
+        /// Reference to an IOrganizationService instance with cancellation tokens
+        /// </summary>
         protected IOrganizationServiceAsync2 _serviceAsync2;
+
         private readonly Dictionary<string, object> _properties;
 
         private readonly string _connectionString;

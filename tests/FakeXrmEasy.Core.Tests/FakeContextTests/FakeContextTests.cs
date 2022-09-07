@@ -16,7 +16,7 @@ namespace FakeXrmEasy.Tests
         [Fact]
         public void When_a_fake_context_is_created_the_data_is_initialized()
         {
-            Assert.True((_context as XrmFakedContext).Data != null);
+            Assert.True((_context as XrmFakedContext).Db != null);
         }
 
         [Fact]

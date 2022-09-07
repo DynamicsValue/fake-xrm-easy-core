@@ -90,7 +90,7 @@ namespace FakeXrmEasy.Query
 
                     break;
                 default: //This shouldn't be reached as there are only 3 types of Join...
-                    throw new PullRequestException(string.Format("The join operator {0} is currently not supported. Feel free to implement and send a PR.", le.JoinOperator));
+                    throw UnsupportedExceptionFactory.New(context.LicenseContext.Value, string.Format("The join operator {0} is currently not supported. ", le.JoinOperator));
 
             }
 
