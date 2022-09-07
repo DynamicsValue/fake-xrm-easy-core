@@ -9,6 +9,7 @@ using FakeItEasy;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
+using FakeXrmEasy.Core.Exceptions;
 
 namespace FakeXrmEasy.Middleware
 {
@@ -89,7 +90,7 @@ namespace FakeXrmEasy.Middleware
             OrganizationRequestDelegate app = (context, request) => {
                 
                 //return default PullRequestException at the end of the pipeline
-                throw PullRequestException.NotImplementedOrganizationRequest(request.GetType());
+                throw UnsupportedExceptionFactory.NotImplementedOrganizationRequest(_context.LicenseContext.Value, request.GetType());
             };
 
             foreach(var component in _components.Reverse())

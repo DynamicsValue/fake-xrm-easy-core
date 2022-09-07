@@ -381,5 +381,27 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.UpdateRequestTe
 
             Assert.Equal("Good Job", account.GetAttributeValue<EntityReference>("ownerid").Name);
         }
+
+        [Fact]
+        public void When_updating_a_record_with_a_generic_organization_request_record_should_also_be_updated()
+        {
+            var account = new Account() { Id = Guid.NewGuid(), Name = "test" };
+            _context.Initialize(account);
+
+            account.Name = "Updated name";
+            var request = new OrganizationRequest()
+            {
+                RequestName = "Update",
+                Parameters = new ParameterCollection()
+                {
+                    { "Target", account }
+                }
+            };
+
+            _service.Execute(request);
+
+            var updatedAccount = _context.CreateQuery<Account>().FirstOrDefault();
+            Assert.Equal("Updated name", updatedAccount.Name);
+        }
     }
 }

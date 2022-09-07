@@ -11,6 +11,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using FakeXrmEasy.Abstractions.Exceptions;
+using FakeXrmEasy.Extensions.OrganizationRequests;
 
 namespace FakeXrmEasy.Middleware.Crud
 {
@@ -90,8 +91,13 @@ namespace FakeXrmEasy.Middleware.Crud
             Func<OrganizationRequestDelegate, OrganizationRequestDelegate> middleware = next => {
 
                 return (IXrmFakedContext context, OrganizationRequest request) => {
-                    
-                    if(CanHandleRequest(context, request)) 
+
+                    if (request.IsCrudRequest())
+                    {
+                        request = request.ToStronglyTypedCrudRequest();
+                    }
+
+                    if (CanHandleRequest(context, request)) 
                     {
                         return ProcessRequest(context, request);
                     }
@@ -109,6 +115,7 @@ namespace FakeXrmEasy.Middleware.Crud
         private static bool CanHandleRequest(IXrmFakedContext context, OrganizationRequest request) 
         {
             var crudMessageExecutors = context.GetProperty<CrudMessageExecutors>();
+
             return crudMessageExecutors.ContainsKey(request.GetType());
         }
 

@@ -161,5 +161,25 @@ namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.DeleteRequestTe
             DeleteRequest req = new DeleteRequest() { Target = null };
             Assert.Throws<FaultException<OrganizationServiceFault>>(() => executor.Execute(req, _context));
         }
+
+        [Fact]
+        public void When_deleting_a_record_with_a_generic_organization_request_record_should_also_be_deleted()
+        {
+            var account = new Account() { Id = Guid.NewGuid(), Name = "test" };
+            var request = new OrganizationRequest()
+            {
+                RequestName = "Delete",
+                Parameters = new ParameterCollection()
+                {
+                    { "Target", account.ToEntityReference() }
+                }
+            };
+
+            _context.Initialize(account);
+            _service.Execute(request);
+
+            var deletedAccount = _context.CreateQuery<Account>().FirstOrDefault();
+            Assert.Null(deletedAccount);
+        }
     }
 }

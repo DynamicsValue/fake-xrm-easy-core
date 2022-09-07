@@ -97,7 +97,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             }
             else
             {
-                throw PullRequestException.NotImplementedOrganizationRequest(request.Query.GetType());
+                throw UnsupportedExceptionFactory.NotImplementedOrganizationRequest(ctx.LicenseContext.Value, request.Query.GetType());
             }
 
             if (qe.Distinct)

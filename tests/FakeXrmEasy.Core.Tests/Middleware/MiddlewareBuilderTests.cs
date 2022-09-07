@@ -21,7 +21,7 @@ namespace FakeXrmEasy.Tests.Middleware
         }
 
         [Fact]
-        public void Should_build_a_default_pull_request_exception_pipeline_if_no_other_delegates_are_added() 
+        public void Should_build_a_default_exception_pipeline_if_no_other_delegates_are_added() 
         {
             var builder = MiddlewareBuilder.New();
             var ctx = builder.SetLicense(FakeXrmEasyLicense.RPL_1_5).Build();
@@ -30,7 +30,7 @@ namespace FakeXrmEasy.Tests.Middleware
             var dummyRequest = new OrganizationRequest("DummyRequest");
             var service = ctx.GetOrganizationService();
 
-            Assert.Throws<PullRequestException>(() => service.Execute(dummyRequest));
+            Assert.Throws<OpenSourceUnsupportedException>(() => service.Execute(dummyRequest));
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace FakeXrmEasy.Tests.Middleware
             var response = service.Execute(new OrganizationRequest("DummyRequest"));
             Assert.Equal("DummyResponse", response.ResponseName);
 
-            Assert.Throws<PullRequestException>(() => service.Execute(new OrganizationRequest("UnknownRequest")));
+            Assert.Throws<OpenSourceUnsupportedException>(() => service.Execute(new OrganizationRequest("UnknownRequest")));
         }
 
 
