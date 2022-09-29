@@ -339,6 +339,22 @@ namespace FakeXrmEasy.Extensions.FetchXml
         /// 
         /// </summary>
         /// <param name="el"></param>
+        /// <param name="conditionEntityName"></param>
+        /// <returns></returns>
+        public static string GetAssociatedConditionEntityNameForConditionExpression(this XElement el, string conditionEntityName)
+        {
+            var linkEntityElement = el.Document
+                                      .Descendants("link-entity")
+                                      .FirstOrDefault(x => x.GetAttribute("name")?.Value == conditionEntityName ||
+                                                           x.GetAttribute("alias")?.Value == conditionEntityName);
+
+            return linkEntityElement?.GetAttribute("name")?.Value;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="el"></param>
         /// <param name="ctx"></param>
         /// <returns></returns>
         public static LinkEntity ToLinkEntity(this XElement el, IXrmFakedContext ctx)
@@ -727,7 +743,8 @@ namespace FakeXrmEasy.Extensions.FetchXml
             object[] values = null;
 
 
-            var entityName = GetAssociatedEntityNameForConditionExpression(elem);
+            var entityName = string.IsNullOrWhiteSpace(conditionEntityName) ? GetAssociatedEntityNameForConditionExpression(elem)
+                                                                            : GetAssociatedConditionEntityNameForConditionExpression(elem, conditionEntityName);
 
             //Find values inside the condition expression, if apply
             values = elem
