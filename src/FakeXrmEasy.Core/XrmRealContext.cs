@@ -43,6 +43,13 @@ namespace FakeXrmEasy
         public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
 
         /// <summary>
+        /// Use these user to impersonate calls
+        /// </summary>
+        public ICallerProperties CallerProperties { get; set; }
+
+        public IXrmFakedPluginContextProperties PluginContextProperties { get; set; }
+
+        /// <summary>
         /// 
         /// </summary>
         protected IOrganizationService _service;
@@ -162,51 +169,9 @@ namespace FakeXrmEasy
             return client;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sCompressedProfile"></param>
-        /// <returns></returns>
-        public XrmFakedPluginExecutionContext GetContextFromSerialisedCompressedProfile(string sCompressedProfile)
+        public IXrmFakedTracingService GetTracingService()
         {
-            byte[] data = Convert.FromBase64String(sCompressedProfile);
-
-            using (var memStream = new MemoryStream(data))
-            {
-                using (var decompressedStream = new DeflateStream(memStream, CompressionMode.Decompress, false))
-                {
-                    byte[] buffer = new byte[0x1000];
-
-                    using (var tempStream = new MemoryStream())
-                    {
-                        int numBytesRead = decompressedStream.Read(buffer, 0, buffer.Length);
-                        while (numBytesRead > 0)
-                        {
-                            tempStream.Write(buffer, 0, numBytesRead);
-                            numBytesRead = decompressedStream.Read(buffer, 0, buffer.Length);
-                        }
-
-                        //tempStream has the decompressed plugin context now
-                        var decompressedString = Encoding.UTF8.GetString(tempStream.ToArray());
-                        var xlDoc = XDocument.Parse(decompressedString);
-
-                        var contextElement = xlDoc.Descendants().Elements()
-                            .Where(x => x.Name.LocalName.Equals("Context"))
-                            .FirstOrDefault();
-
-                        var pluginContextString = contextElement.Value;
-
-                        XrmFakedPluginExecutionContext context = null;
-                        using (var reader = new MemoryStream(Encoding.UTF8.GetBytes(pluginContextString)))
-                        {
-                            var dcSerializer = new DataContractSerializer(typeof(XrmFakedPluginExecutionContext));
-                            context = (XrmFakedPluginExecutionContext)dcSerializer.ReadObject(reader);
-                        }
-
-                        return context;
-                    }
-                }
-            }
+            throw new NotImplementedException();
         }
     }
 }
