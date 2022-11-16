@@ -12,24 +12,10 @@ namespace FakeXrmEasy.Tests.XrmRealContextTests
 {
     public class XrmRealContextTests: FakeXrmEasyTestsBase
     {
-        /*  Move to separate int test
-        [Fact]
-        public void Should_connect_to_CRM()
+        private class CustomProperty
         {
-            var ctx = new XrmRealContext();
-            var ex = Record.Exception(() => ctx.GetOrganizationService());
-            Assert.Null(ex);
-        }
 
-        [Fact]
-        public void Should_connect_to_CRM_with_given_OrganizationService()
-        {
-            var ctx = new XrmRealContext();
-            var organizationService = ctx.GetOrganizationService();
-            var ctx2 = new XrmRealContext(organizationService);
-            Assert.Equal(organizationService, ctx2.GetOrganizationService());
         }
-        */
 
         [Fact]
         public void Should_connect_to_CRM_with_given_ConnectionString()
@@ -43,6 +29,19 @@ namespace FakeXrmEasy.Tests.XrmRealContextTests
         {
             var ctx = new XrmRealContext(_service);
             Assert.Equal(_service, ctx.GetOrganizationService());
+        }
+
+        [Fact]
+        public void Should_set_property()
+        {
+            var ctx = new XrmRealContext(_service);
+            var customProperty = new CustomProperty();
+            ctx.SetProperty(customProperty);
+
+            Assert.True(ctx.HasProperty<CustomProperty>());
+
+            var property = ctx.GetProperty<CustomProperty>();
+            Assert.Equal(property, customProperty);
         }
     }
 }

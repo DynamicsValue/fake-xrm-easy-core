@@ -57,17 +57,16 @@ namespace FakeXrmEasy
         /// <summary>
         /// A fake tracing service if one is needed
         /// </summary>
-        private readonly IXrmFakedTracingService _fakeTracingService;
+        private IXrmFakedTracingService _fakeTracingService;
 
-        private readonly Dictionary<string, object> _properties;
+        private Dictionary<string, object> _properties;
 
         /// <summary>
         /// A default constructor that will use a connection string with name fakexrmeasy-connection to establish a real connection to an environment for integration testing purposes
         /// </summary>
         public XrmRealContext()
         {
-            _properties = new Dictionary<string, object>();
-            _fakeTracingService = new XrmFakedTracingService();
+            Init();
         }
 
         /// <summary>
@@ -76,20 +75,28 @@ namespace FakeXrmEasy
         /// <param name="connectionStringName"></param>
         public XrmRealContext(string connectionStringName)
         {
-            _properties = new Dictionary<string, object>();
             ConnectionStringName = connectionStringName;
-            _fakeTracingService = new XrmFakedTracingService();
+            Init();
         }
 
         /// <summary>
-        /// 
+        /// Creates an XrmRealContext that uses the specified IOrganizationService interface
         /// </summary>
         /// <param name="organizationService"></param>
         public XrmRealContext(IOrganizationService organizationService)
         {
-            _properties = new Dictionary<string, object>();
             _service = organizationService;
+            Init();
+        }
+
+        /// <summary>
+        /// Initializes common properties across different constructors
+        /// </summary>
+        private void Init()
+        {
+            _properties = new Dictionary<string, object>();
             _fakeTracingService = new XrmFakedTracingService();
+            CallerProperties = new CallerProperties();
         }
 
         /// <summary>
