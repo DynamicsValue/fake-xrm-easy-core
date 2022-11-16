@@ -50,28 +50,35 @@ namespace FakeXrmEasy
         public IXrmFakedPluginContextProperties PluginContextProperties { get; set; }
 
         /// <summary>
-        /// 
+        /// Internal reference to an IOrganizationService.
         /// </summary>
         protected IOrganizationService _service;
+
+        /// <summary>
+        /// A fake tracing service if one is needed
+        /// </summary>
+        private readonly IXrmFakedTracingService _fakeTracingService;
 
         private readonly Dictionary<string, object> _properties;
 
         /// <summary>
-        /// 
+        /// A default constructor that will use a connection string with name fakexrmeasy-connection to establish a real connection to an environment for integration testing purposes
         /// </summary>
         public XrmRealContext()
         {
-            //Don't setup fakes in this case.
             _properties = new Dictionary<string, object>();
+            _fakeTracingService = new XrmFakedTracingService();
         }
 
         /// <summary>
-        /// 
+        /// A constructor that will use a different connection string name
         /// </summary>
         /// <param name="connectionStringName"></param>
         public XrmRealContext(string connectionStringName)
         {
+            _properties = new Dictionary<string, object>();
             ConnectionStringName = connectionStringName;
+            _fakeTracingService = new XrmFakedTracingService();
         }
 
         /// <summary>
@@ -80,7 +87,9 @@ namespace FakeXrmEasy
         /// <param name="organizationService"></param>
         public XrmRealContext(IOrganizationService organizationService)
         {
+            _properties = new Dictionary<string, object>();
             _service = organizationService;
+            _fakeTracingService = new XrmFakedTracingService();
         }
 
         /// <summary>
@@ -127,7 +136,7 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Returns the internal organization service reference
         /// </summary>
         /// <returns></returns>
         public IOrganizationService GetOrganizationService()
@@ -169,9 +178,13 @@ namespace FakeXrmEasy
             return client;
         }
 
+        /// <summary>
+        /// Returns a default ITracingService that will store all traces In-Memory
+        /// </summary>
+        /// <returns></returns>
         public IXrmFakedTracingService GetTracingService()
         {
-            throw new NotImplementedException();
+            return _fakeTracingService;
         }
     }
 }
