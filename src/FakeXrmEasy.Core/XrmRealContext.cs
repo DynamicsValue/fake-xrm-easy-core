@@ -14,6 +14,7 @@ using System.Runtime.Serialization;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 #if FAKE_XRM_EASY_NETCORE
 using Microsoft.Powerplatform.Cds.Client;
@@ -43,37 +44,60 @@ namespace FakeXrmEasy
         public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
 
         /// <summary>
-        /// 
+        /// Use these user to impersonate calls
+        /// </summary>
+        public ICallerProperties CallerProperties { get; set; }
+
+        public IXrmFakedPluginContextProperties PluginContextProperties { get; set; }
+
+        /// <summary>
+        /// Internal reference to an IOrganizationService.
         /// </summary>
         protected IOrganizationService _service;
 
-        private readonly Dictionary<string, object> _properties;
+        /// <summary>
+        /// A fake tracing service if one is needed
+        /// </summary>
+        private IXrmFakedTracingService _fakeTracingService;
+
+        private Dictionary<string, object> _properties;
 
         /// <summary>
-        /// 
+        /// A default constructor that will use a connection string with name fakexrmeasy-connection to establish a real connection to an environment for integration testing purposes
         /// </summary>
         public XrmRealContext()
         {
-            //Don't setup fakes in this case.
-            _properties = new Dictionary<string, object>();
+            Init();
         }
 
         /// <summary>
-        /// 
+        /// A constructor that will use a different connection string name
         /// </summary>
         /// <param name="connectionStringName"></param>
         public XrmRealContext(string connectionStringName)
         {
             ConnectionStringName = connectionStringName;
+            Init();
         }
 
         /// <summary>
-        /// 
+        /// Creates an XrmRealContext that uses the specified IOrganizationService interface
         /// </summary>
         /// <param name="organizationService"></param>
         public XrmRealContext(IOrganizationService organizationService)
         {
             _service = organizationService;
+            Init();
+        }
+
+        /// <summary>
+        /// Initializes common properties across different constructors
+        /// </summary>
+        private void Init()
+        {
+            _properties = new Dictionary<string, object>();
+            _fakeTracingService = new XrmFakedTracingService();
+            CallerProperties = new CallerProperties();
         }
 
         /// <summary>
@@ -120,11 +144,16 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Returns the internal organization service reference
         /// </summary>
         /// <returns></returns>
         public IOrganizationService GetOrganizationService()
         {
+            if (LicenseContext == null)
+            {
+                throw new LicenseException("Please, you need to choose a FakeXrmEasy license. More info at https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/licensing-exception/");
+            }
+
             if (_service != null)
                 return _service;
 
@@ -163,50 +192,12 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Returns a default ITracingService that will store all traces In-Memory
         /// </summary>
-        /// <param name="sCompressedProfile"></param>
         /// <returns></returns>
-        public XrmFakedPluginExecutionContext GetContextFromSerialisedCompressedProfile(string sCompressedProfile)
+        public IXrmFakedTracingService GetTracingService()
         {
-            byte[] data = Convert.FromBase64String(sCompressedProfile);
-
-            using (var memStream = new MemoryStream(data))
-            {
-                using (var decompressedStream = new DeflateStream(memStream, CompressionMode.Decompress, false))
-                {
-                    byte[] buffer = new byte[0x1000];
-
-                    using (var tempStream = new MemoryStream())
-                    {
-                        int numBytesRead = decompressedStream.Read(buffer, 0, buffer.Length);
-                        while (numBytesRead > 0)
-                        {
-                            tempStream.Write(buffer, 0, numBytesRead);
-                            numBytesRead = decompressedStream.Read(buffer, 0, buffer.Length);
-                        }
-
-                        //tempStream has the decompressed plugin context now
-                        var decompressedString = Encoding.UTF8.GetString(tempStream.ToArray());
-                        var xlDoc = XDocument.Parse(decompressedString);
-
-                        var contextElement = xlDoc.Descendants().Elements()
-                            .Where(x => x.Name.LocalName.Equals("Context"))
-                            .FirstOrDefault();
-
-                        var pluginContextString = contextElement.Value;
-
-                        XrmFakedPluginExecutionContext context = null;
-                        using (var reader = new MemoryStream(Encoding.UTF8.GetBytes(pluginContextString)))
-                        {
-                            var dcSerializer = new DataContractSerializer(typeof(XrmFakedPluginExecutionContext));
-                            context = (XrmFakedPluginExecutionContext)dcSerializer.ReadObject(reader);
-                        }
-
-                        return context;
-                    }
-                }
-            }
+            return _fakeTracingService;
         }
     }
 }

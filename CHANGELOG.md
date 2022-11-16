@@ -1,3 +1,9 @@
+## [2.3.0]
+
+### Changed
+
+- Moved GetContextFromSerialisedCompressedProfile method into the Plugins package and FakeXrmEasy.Plugins namespace
+
 ## [2.2.0]
 
 ### Changed
