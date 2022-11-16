@@ -14,6 +14,7 @@ using System.Runtime.Serialization;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Plugins;
 using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.Abstractions.Exceptions;
 
 #if FAKE_XRM_EASY_NETCORE
 using Microsoft.Powerplatform.Cds.Client;
@@ -148,6 +149,11 @@ namespace FakeXrmEasy
         /// <returns></returns>
         public IOrganizationService GetOrganizationService()
         {
+            if (LicenseContext == null)
+            {
+                throw new LicenseException("Please, you need to choose a FakeXrmEasy license. More info at https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/licensing-exception/");
+            }
+
             if (_service != null)
                 return _service;
 
