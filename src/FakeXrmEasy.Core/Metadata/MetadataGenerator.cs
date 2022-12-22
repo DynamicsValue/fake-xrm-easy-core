@@ -14,14 +14,23 @@ namespace FakeXrmEasy.Metadata
         public static IEnumerable<EntityMetadata> FromEarlyBoundEntities(Assembly earlyBoundEntitiesAssembly)
         {
             List<EntityMetadata> entityMetadatas = new List<EntityMetadata>();
-            foreach (var earlyBoundEntity in earlyBoundEntitiesAssembly.GetTypes())
+            var types = earlyBoundEntitiesAssembly.GetTypes();
+            return FromTypes(types);
+        }
+
+        internal static IEnumerable<EntityMetadata> FromTypes(Type[] types)
+        {
+            var entityMetadatas = new List<EntityMetadata>();
+
+            foreach (var possibleEarlyBoundEntity in types)
             {
-                EntityLogicalNameAttribute entityLogicalNameAttribute = GetCustomAttribute<EntityLogicalNameAttribute>(earlyBoundEntity);
+                EntityLogicalNameAttribute entityLogicalNameAttribute = GetCustomAttribute<EntityLogicalNameAttribute>(possibleEarlyBoundEntity);
                 if (entityLogicalNameAttribute == null) continue;
+
                 EntityMetadata metadata = new EntityMetadata();
                 metadata.LogicalName = entityLogicalNameAttribute.LogicalName;
 
-                FieldInfo entityTypeCode = earlyBoundEntity.GetField("EntityTypeCode", BindingFlags.Static | BindingFlags.Public);
+                FieldInfo entityTypeCode = possibleEarlyBoundEntity.GetField("EntityTypeCode", BindingFlags.Static | BindingFlags.Public);
                 if (entityTypeCode != null)
                 {
                     metadata.SetFieldValue("_objectTypeCode", entityTypeCode.GetValue(null));
@@ -32,14 +41,14 @@ namespace FakeXrmEasy.Metadata
                 List<OneToManyRelationshipMetadata> oneToManyRelationshipMetadatas = new List<OneToManyRelationshipMetadata>();
                 List<OneToManyRelationshipMetadata> manyToOneRelationshipMetadatas = new List<OneToManyRelationshipMetadata>();
 
-                var idProperty = earlyBoundEntity.GetProperty("Id");
+                var idProperty = possibleEarlyBoundEntity.GetProperty("Id");
                 AttributeLogicalNameAttribute attributeLogicalNameAttribute;
                 if (idProperty != null && (attributeLogicalNameAttribute = GetCustomAttribute<AttributeLogicalNameAttribute>(idProperty)) != null)
                 {
                     metadata.SetFieldValue("_primaryIdAttribute", attributeLogicalNameAttribute.LogicalName);
                 }
 
-                var properties = earlyBoundEntity.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                var properties = possibleEarlyBoundEntity.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                     .Where(x => x.Name != "Id" && Attribute.IsDefined(x, typeof(AttributeLogicalNameAttribute))
                                              || Attribute.IsDefined(x, typeof(RelationshipSchemaNameAttribute)));
 
@@ -84,7 +93,7 @@ namespace FakeXrmEasy.Metadata
                     {
                         if (property.PropertyType.Name == "IEnumerable`1")
                         {
-                            PropertyInfo peerProperty = property.PropertyType.GetGenericArguments()[0].GetProperties().SingleOrDefault(x => x.PropertyType == earlyBoundEntity && GetCustomAttribute<RelationshipSchemaNameAttribute>(x)?.SchemaName == relationshipSchemaNameAttribute.SchemaName);
+                            PropertyInfo peerProperty = property.PropertyType.GetGenericArguments()[0].GetProperties().SingleOrDefault(x => x.PropertyType == possibleEarlyBoundEntity && GetCustomAttribute<RelationshipSchemaNameAttribute>(x)?.SchemaName == relationshipSchemaNameAttribute.SchemaName);
                             if (peerProperty == null || peerProperty.PropertyType.Name == "IEnumerable`1") // N:N relationship
                             {
                                 ManyToManyRelationshipMetadata relationshipMetadata = new ManyToManyRelationshipMetadata();
@@ -94,12 +103,12 @@ namespace FakeXrmEasy.Metadata
                             }
                             else // 1:N relationship
                             {
-                                AddOneToManyRelationshipMetadata(earlyBoundEntity, property, property.PropertyType.GetGenericArguments()[0], peerProperty, oneToManyRelationshipMetadatas);
+                                AddOneToManyRelationshipMetadata(possibleEarlyBoundEntity, property, property.PropertyType.GetGenericArguments()[0], peerProperty, oneToManyRelationshipMetadatas);
                             }
                         }
                         else //N:1 Property
                         {
-                            AddOneToManyRelationshipMetadata(property.PropertyType, property.PropertyType.GetProperties().SingleOrDefault(x => x.PropertyType.GetGenericArguments().SingleOrDefault() == earlyBoundEntity && GetCustomAttribute<RelationshipSchemaNameAttribute>(x)?.SchemaName == relationshipSchemaNameAttribute.SchemaName), earlyBoundEntity, property, manyToOneRelationshipMetadatas);
+                            AddOneToManyRelationshipMetadata(property.PropertyType, property.PropertyType.GetProperties().SingleOrDefault(x => x.PropertyType.GetGenericArguments().SingleOrDefault() == possibleEarlyBoundEntity && GetCustomAttribute<RelationshipSchemaNameAttribute>(x)?.SchemaName == relationshipSchemaNameAttribute.SchemaName), possibleEarlyBoundEntity, property, manyToOneRelationshipMetadatas);
                         }
                     }
                 }
@@ -121,6 +130,7 @@ namespace FakeXrmEasy.Metadata
                 }
                 entityMetadatas.Add(metadata);
             }
+
             return entityMetadatas;
         }
 
