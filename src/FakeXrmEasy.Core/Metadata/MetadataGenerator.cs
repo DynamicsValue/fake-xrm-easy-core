@@ -24,114 +24,121 @@ namespace FakeXrmEasy.Metadata
 
             foreach (var possibleEarlyBoundEntity in types)
             {
-                EntityLogicalNameAttribute entityLogicalNameAttribute = GetCustomAttribute<EntityLogicalNameAttribute>(possibleEarlyBoundEntity);
-                if (entityLogicalNameAttribute == null) continue;
-
-                EntityMetadata metadata = new EntityMetadata();
-                metadata.LogicalName = entityLogicalNameAttribute.LogicalName;
-
-                FieldInfo entityTypeCode = possibleEarlyBoundEntity.GetField("EntityTypeCode", BindingFlags.Static | BindingFlags.Public);
-                if (entityTypeCode != null)
-                {
-                    metadata.SetFieldValue("_objectTypeCode", entityTypeCode.GetValue(null));
-                }
-
-                List<AttributeMetadata> attributeMetadatas = new List<AttributeMetadata>();
-                List<ManyToManyRelationshipMetadata> manyToManyRelationshipMetadatas = new List<ManyToManyRelationshipMetadata>();
-                List<OneToManyRelationshipMetadata> oneToManyRelationshipMetadatas = new List<OneToManyRelationshipMetadata>();
-                List<OneToManyRelationshipMetadata> manyToOneRelationshipMetadatas = new List<OneToManyRelationshipMetadata>();
-
-                var idProperty = possibleEarlyBoundEntity.GetProperty("Id");
-                AttributeLogicalNameAttribute attributeLogicalNameAttribute;
-                if (idProperty != null && (attributeLogicalNameAttribute = GetCustomAttribute<AttributeLogicalNameAttribute>(idProperty)) != null)
-                {
-                    metadata.SetFieldValue("_primaryIdAttribute", attributeLogicalNameAttribute.LogicalName);
-                }
-
-                var properties = possibleEarlyBoundEntity.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                    .Where(x => x.Name != "Id" && Attribute.IsDefined(x, typeof(AttributeLogicalNameAttribute))
-                                             || Attribute.IsDefined(x, typeof(RelationshipSchemaNameAttribute)));
-
-                foreach (var property in properties)
-                {
-                    RelationshipSchemaNameAttribute relationshipSchemaNameAttribute = GetCustomAttribute<RelationshipSchemaNameAttribute>(property);
-                    attributeLogicalNameAttribute = GetCustomAttribute<AttributeLogicalNameAttribute>(property);
-
-                    if (relationshipSchemaNameAttribute == null)
-                    {
-#if !FAKE_XRM_EASY
-                        if (property.PropertyType == typeof(byte[]))
-                        {
-                            metadata.SetFieldValue("_primaryImageAttribute", attributeLogicalNameAttribute.LogicalName);
-                        }
-#endif
-                        AttributeMetadata attributeMetadata;
-                        if (attributeLogicalNameAttribute.LogicalName == "statecode")
-                        {
-                            attributeMetadata = new StateAttributeMetadata();
-                        }
-                        else if (attributeLogicalNameAttribute.LogicalName == "statuscode")
-                        {
-                            attributeMetadata = new StatusAttributeMetadata();
-                        }
-                        else if (attributeLogicalNameAttribute.LogicalName == metadata.PrimaryIdAttribute)
-                        {
-                            attributeMetadata = new AttributeMetadata();
-                            attributeMetadata.SetSealedPropertyValue("AttributeType", AttributeTypeCode.Uniqueidentifier);
-                        }
-                        else
-                        {
-                            attributeMetadata = CreateAttributeMetadata(property.PropertyType);
-                        }
-
-                        attributeMetadata.SetFieldValue("_entityLogicalName", entityLogicalNameAttribute.LogicalName);
-                        attributeMetadata.SetFieldValue("_logicalName", attributeLogicalNameAttribute.LogicalName);
-
-                        attributeMetadatas.Add(attributeMetadata);
-                    }
-                    else
-                    {
-                        if (property.PropertyType.Name == "IEnumerable`1")
-                        {
-                            PropertyInfo peerProperty = property.PropertyType.GetGenericArguments()[0].GetProperties().SingleOrDefault(x => x.PropertyType == possibleEarlyBoundEntity && GetCustomAttribute<RelationshipSchemaNameAttribute>(x)?.SchemaName == relationshipSchemaNameAttribute.SchemaName);
-                            if (peerProperty == null || peerProperty.PropertyType.Name == "IEnumerable`1") // N:N relationship
-                            {
-                                ManyToManyRelationshipMetadata relationshipMetadata = new ManyToManyRelationshipMetadata();
-                                relationshipMetadata.SchemaName = relationshipSchemaNameAttribute.SchemaName;
-
-                                manyToManyRelationshipMetadatas.Add(relationshipMetadata);
-                            }
-                            else // 1:N relationship
-                            {
-                                AddOneToManyRelationshipMetadata(possibleEarlyBoundEntity, property, property.PropertyType.GetGenericArguments()[0], peerProperty, oneToManyRelationshipMetadatas);
-                            }
-                        }
-                        else //N:1 Property
-                        {
-                            AddOneToManyRelationshipMetadata(property.PropertyType, property.PropertyType.GetProperties().SingleOrDefault(x => x.PropertyType.GetGenericArguments().SingleOrDefault() == possibleEarlyBoundEntity && GetCustomAttribute<RelationshipSchemaNameAttribute>(x)?.SchemaName == relationshipSchemaNameAttribute.SchemaName), possibleEarlyBoundEntity, property, manyToOneRelationshipMetadatas);
-                        }
-                    }
-                }
-                if (attributeMetadatas.Any())
-                {
-                    metadata.SetSealedPropertyValue("Attributes", attributeMetadatas.ToArray());
-                }
-                if (manyToManyRelationshipMetadatas.Any())
-                {
-                    metadata.SetSealedPropertyValue("ManyToManyRelationships", manyToManyRelationshipMetadatas.ToArray());
-                }
-                if (manyToOneRelationshipMetadatas.Any())
-                {
-                    metadata.SetSealedPropertyValue("ManyToOneRelationships", manyToOneRelationshipMetadatas.ToArray());
-                }
-                if (oneToManyRelationshipMetadatas.Any())
-                {
-                    metadata.SetSealedPropertyValue("OneToManyRelationships", oneToManyRelationshipMetadatas.ToArray());
-                }
-                entityMetadatas.Add(metadata);
+                var metadata = FromType(possibleEarlyBoundEntity);
+                if(metadata != null)
+                    entityMetadatas.Add(metadata);
             }
 
             return entityMetadatas;
+        }
+
+        internal static EntityMetadata FromType(Type possibleEarlyBoundEntity)
+        {
+            EntityLogicalNameAttribute entityLogicalNameAttribute = GetCustomAttribute<EntityLogicalNameAttribute>(possibleEarlyBoundEntity);
+            if (entityLogicalNameAttribute == null) return null;
+
+            EntityMetadata metadata = new EntityMetadata();
+            metadata.LogicalName = entityLogicalNameAttribute.LogicalName;
+
+            FieldInfo entityTypeCode = possibleEarlyBoundEntity.GetField("EntityTypeCode", BindingFlags.Static | BindingFlags.Public);
+            if (entityTypeCode != null)
+            {
+                metadata.SetFieldValue("_objectTypeCode", entityTypeCode.GetValue(null));
+            }
+
+            List<AttributeMetadata> attributeMetadatas = new List<AttributeMetadata>();
+            List<ManyToManyRelationshipMetadata> manyToManyRelationshipMetadatas = new List<ManyToManyRelationshipMetadata>();
+            List<OneToManyRelationshipMetadata> oneToManyRelationshipMetadatas = new List<OneToManyRelationshipMetadata>();
+            List<OneToManyRelationshipMetadata> manyToOneRelationshipMetadatas = new List<OneToManyRelationshipMetadata>();
+
+            var idProperty = possibleEarlyBoundEntity.GetProperty("Id");
+            AttributeLogicalNameAttribute attributeLogicalNameAttribute;
+            if (idProperty != null && (attributeLogicalNameAttribute = GetCustomAttribute<AttributeLogicalNameAttribute>(idProperty)) != null)
+            {
+                metadata.SetFieldValue("_primaryIdAttribute", attributeLogicalNameAttribute.LogicalName);
+            }
+
+            var properties = possibleEarlyBoundEntity.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                .Where(x => x.Name != "Id" && Attribute.IsDefined(x, typeof(AttributeLogicalNameAttribute))
+                                         || Attribute.IsDefined(x, typeof(RelationshipSchemaNameAttribute)));
+
+            foreach (var property in properties)
+            {
+                RelationshipSchemaNameAttribute relationshipSchemaNameAttribute = GetCustomAttribute<RelationshipSchemaNameAttribute>(property);
+                attributeLogicalNameAttribute = GetCustomAttribute<AttributeLogicalNameAttribute>(property);
+
+                if (relationshipSchemaNameAttribute == null)
+                {
+#if !FAKE_XRM_EASY
+                    if (property.PropertyType == typeof(byte[]))
+                    {
+                        metadata.SetFieldValue("_primaryImageAttribute", attributeLogicalNameAttribute.LogicalName);
+                    }
+#endif
+                    AttributeMetadata attributeMetadata;
+                    if (attributeLogicalNameAttribute.LogicalName == "statecode")
+                    {
+                        attributeMetadata = new StateAttributeMetadata();
+                    }
+                    else if (attributeLogicalNameAttribute.LogicalName == "statuscode")
+                    {
+                        attributeMetadata = new StatusAttributeMetadata();
+                    }
+                    else if (attributeLogicalNameAttribute.LogicalName == metadata.PrimaryIdAttribute)
+                    {
+                        attributeMetadata = new AttributeMetadata();
+                        attributeMetadata.SetSealedPropertyValue("AttributeType", AttributeTypeCode.Uniqueidentifier);
+                    }
+                    else
+                    {
+                        attributeMetadata = CreateAttributeMetadata(property.PropertyType);
+                    }
+
+                    attributeMetadata.SetFieldValue("_entityLogicalName", entityLogicalNameAttribute.LogicalName);
+                    attributeMetadata.SetFieldValue("_logicalName", attributeLogicalNameAttribute.LogicalName);
+
+                    attributeMetadatas.Add(attributeMetadata);
+                }
+                else
+                {
+                    if (property.PropertyType.Name == "IEnumerable`1")
+                    {
+                        PropertyInfo peerProperty = property.PropertyType.GetGenericArguments()[0].GetProperties().SingleOrDefault(x => x.PropertyType == possibleEarlyBoundEntity && GetCustomAttribute<RelationshipSchemaNameAttribute>(x)?.SchemaName == relationshipSchemaNameAttribute.SchemaName);
+                        if (peerProperty == null || peerProperty.PropertyType.Name == "IEnumerable`1") // N:N relationship
+                        {
+                            ManyToManyRelationshipMetadata relationshipMetadata = new ManyToManyRelationshipMetadata();
+                            relationshipMetadata.SchemaName = relationshipSchemaNameAttribute.SchemaName;
+
+                            manyToManyRelationshipMetadatas.Add(relationshipMetadata);
+                        }
+                        else // 1:N relationship
+                        {
+                            AddOneToManyRelationshipMetadata(possibleEarlyBoundEntity, property, property.PropertyType.GetGenericArguments()[0], peerProperty, oneToManyRelationshipMetadatas);
+                        }
+                    }
+                    else //N:1 Property
+                    {
+                        AddOneToManyRelationshipMetadata(property.PropertyType, property.PropertyType.GetProperties().SingleOrDefault(x => x.PropertyType.GetGenericArguments().SingleOrDefault() == possibleEarlyBoundEntity && GetCustomAttribute<RelationshipSchemaNameAttribute>(x)?.SchemaName == relationshipSchemaNameAttribute.SchemaName), possibleEarlyBoundEntity, property, manyToOneRelationshipMetadatas);
+                    }
+                }
+            }
+            if (attributeMetadatas.Any())
+            {
+                metadata.SetSealedPropertyValue("Attributes", attributeMetadatas.ToArray());
+            }
+            if (manyToManyRelationshipMetadatas.Any())
+            {
+                metadata.SetSealedPropertyValue("ManyToManyRelationships", manyToManyRelationshipMetadatas.ToArray());
+            }
+            if (manyToOneRelationshipMetadatas.Any())
+            {
+                metadata.SetSealedPropertyValue("ManyToOneRelationships", manyToOneRelationshipMetadatas.ToArray());
+            }
+            if (oneToManyRelationshipMetadatas.Any())
+            {
+                metadata.SetSealedPropertyValue("OneToManyRelationships", oneToManyRelationshipMetadatas.ToArray());
+            }
+            return metadata;
         }
 
         private static T GetCustomAttribute<T>(MemberInfo member) where T : Attribute
