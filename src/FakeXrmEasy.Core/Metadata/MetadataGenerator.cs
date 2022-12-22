@@ -186,7 +186,7 @@ namespace FakeXrmEasy.Metadata
                     }
                     else
                     {
-                        throw new Exception($"Type {propertyType.Name}{genericType.Name} has not been mapped to an AttributeMetadata.");
+                        throw new Exception($"Type {propertyType.Name}{genericType?.Name} has not been mapped to an AttributeMetadata.");
                     }
                 }
                 else if (propertyType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
@@ -197,7 +197,7 @@ namespace FakeXrmEasy.Metadata
                 }
                 else
                 {
-                    throw new Exception($"Type {propertyType.Name}{genericType.Name} has not been mapped to an AttributeMetadata.");
+                    throw new Exception($"Type {propertyType.Name}{genericType?.Name} has not been mapped to an AttributeMetadata.");
                 }
             }
             else if (typeof(BooleanManagedProperty) == propertyType)

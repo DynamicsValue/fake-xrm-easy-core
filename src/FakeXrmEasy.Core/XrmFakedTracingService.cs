@@ -5,7 +5,7 @@ using FakeXrmEasy.Abstractions;
 namespace FakeXrmEasy
 {
     /// <summary>
-    /// 
+    /// A fake tracing service that stores all traces In-Memory and can then dump the entire trace log
     /// </summary>
     public class XrmFakedTracingService : IXrmFakedTracingService
     {
