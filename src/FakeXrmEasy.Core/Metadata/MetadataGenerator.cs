@@ -45,9 +45,6 @@ namespace FakeXrmEasy.Metadata
                 metadata.SetFieldValue("_objectTypeCode", entityTypeCode.GetValue(null));
             }
 
-            List<ManyToManyRelationshipMetadata> manyToManyRelationshipMetadatas = new List<ManyToManyRelationshipMetadata>();
-            List<OneToManyRelationshipMetadata> manyToOneRelationshipMetadatas = new List<OneToManyRelationshipMetadata>();
-
             var idProperty = possibleEarlyBoundEntity.GetProperty("Id");
             AttributeLogicalNameAttribute attributeLogicalNameAttribute;
             if (idProperty != null && (attributeLogicalNameAttribute = GetCustomAttribute<AttributeLogicalNameAttribute>(idProperty)) != null)
@@ -68,7 +65,7 @@ namespace FakeXrmEasy.Metadata
                 metadata.SetSealedPropertyValue("Attributes", attributeMetadatas.ToArray());
             }
 
-            var relationshipMetadatas = PopulateRelationshipProperties(possibleEarlyBoundEntity, metadata, relationshipMetadataProperties);
+            var relationshipMetadatas = PopulateRelationshipProperties(possibleEarlyBoundEntity, relationshipMetadataProperties);
             
             if (relationshipMetadatas.ManyToManyRelationships.Any())
             {
@@ -83,22 +80,6 @@ namespace FakeXrmEasy.Metadata
                 metadata.SetSealedPropertyValue("OneToManyRelationships", relationshipMetadatas.OneToManyRelationships.ToArray());
             }
             return metadata;
-        }
-
-        private static List<AttributeMetadata> PopulateProperties(EntityMetadata metadata, IEnumerable<PropertyInfo> properties)
-        {
-            List<AttributeMetadata> attributeMetadatas = new List<AttributeMetadata>();
-
-            foreach (var property in properties)
-            {
-                var attributeMetadata = PopulateAttributeProperty(metadata, property);
-                if(attributeMetadata != null)
-                {
-                    attributeMetadatas.Add(attributeMetadata);
-                }
-            }
-
-            return attributeMetadatas;
         }
 
         private static List<AttributeMetadata> PopulateAttributeProperties(EntityMetadata metadata, IEnumerable<PropertyInfo> properties)
@@ -132,14 +113,13 @@ namespace FakeXrmEasy.Metadata
         }
 
         private static AllRelationShips PopulateRelationshipProperties(Type possibleEarlyBoundEntityType, 
-                                                                                    EntityMetadata metadata, 
                                                                                     IEnumerable<PropertyInfo> properties)
         {
             var allRelationships = new AllRelationShips();
 
             foreach (var property in properties)
             {
-                PopulateRelationshipProperty(possibleEarlyBoundEntityType, metadata, property, allRelationships);
+                PopulateRelationshipProperty(possibleEarlyBoundEntityType, property, allRelationships);
             }
 
             return allRelationships;
@@ -178,7 +158,7 @@ namespace FakeXrmEasy.Metadata
 
             return attributeMetadata;
         }
-        private static void PopulateRelationshipProperty(Type possibleEarlyBoundEntity, EntityMetadata metadata, PropertyInfo property, AllRelationShips allRelationships)
+        private static void PopulateRelationshipProperty(Type possibleEarlyBoundEntity, PropertyInfo property, AllRelationShips allRelationships)
         {
             RelationshipSchemaNameAttribute relationshipSchemaNameAttribute = GetCustomAttribute<RelationshipSchemaNameAttribute>(property);
 
