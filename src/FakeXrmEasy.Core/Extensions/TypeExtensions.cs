@@ -23,6 +23,17 @@ namespace FakeXrmEasy.Extensions
                    || nullableType != null && nullableType.IsEnum;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static bool IsMoney(this Type t)
+        {
+            var nullableType = Nullable.GetUnderlyingType(t);
+            return t == typeof(Money) || nullableType != null && nullableType == typeof(Money);
+        }
+
 #if FAKE_XRM_EASY_9
         public static bool IsOptionSetValueCollection(this Type t)
         {
