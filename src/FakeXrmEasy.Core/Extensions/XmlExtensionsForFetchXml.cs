@@ -205,7 +205,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
         public static bool? ToReturnTotalRecordCount(this XElement el)
         {
             var returnTotalRecordCountAttr = el.GetAttribute("returntotalrecordcount");
-            if (returnTotalRecordCountAttr == null) 
+            if (returnTotalRecordCountAttr == null)
                 return null;
 
             bool bReturnCount;
@@ -738,7 +738,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
 
 
             //Otherwise, a single value was used
-            if (value != null)
+            if (value != null && values.Length == 0)
             {
 #if FAKE_XRM_EASY_2013 || FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
                 if (string.IsNullOrWhiteSpace(conditionEntityName))
