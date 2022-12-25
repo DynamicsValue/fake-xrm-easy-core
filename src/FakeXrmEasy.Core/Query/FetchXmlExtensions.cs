@@ -65,12 +65,12 @@ namespace FakeXrmEasy.Query
             int? pageNumber = xlDoc.ToPageNumber();
             bool? returnTotalRecordCount = xlDoc.ToReturnTotalRecordCount();
 
-            bool hasPageInfoAttributes = count != null 
-                                            || pageNumber != null 
+            bool hasPageInfoAttributes = count != null
+                                            || pageNumber != null
                                             || returnTotalRecordCount != null;
 
             query.PageInfo = null;
-            if(hasPageInfoAttributes)
+            if (hasPageInfoAttributes)
             {
                 query.PageInfo = new PagingInfo();
                 query.PageInfo.Count = count ?? 0;
@@ -139,9 +139,7 @@ namespace FakeXrmEasy.Query
             {
                 //TODO: Find entity alias. Handle aliasedvalue in the query result.
                 var namespacedAlias = attr.Ancestors(ns + "link-entity").Select(x => x.GetAttribute("alias")?.Value != null ? x.GetAttribute("alias").Value : x.GetAttribute("name").Value).ToList();
-                namespacedAlias.Add(attr.GetAttribute("alias")?.Value);
-                var alias = string.Join(".", namespacedAlias);
-                namespacedAlias.RemoveAt(namespacedAlias.Count - 1);
+                var alias = attr.GetAttribute("alias")?.Value;
                 namespacedAlias.Add(attr.GetAttribute("name")?.Value);
                 var logicalName = string.Join(".", namespacedAlias);
 
@@ -423,7 +421,7 @@ namespace FakeXrmEasy.Query
                 {
                     return lst.Min(x => (double)x);
                 }
-                
+
                 if (valType == typeof(DateTime) || valType == typeof(DateTime?))
                 {
                     return lst.Min(x => (DateTime)x);
@@ -467,7 +465,7 @@ namespace FakeXrmEasy.Query
                 {
                     return lst.Max(x => (double)x);
                 }
-                  
+
                 if (valType == typeof(DateTime) || valType == typeof(DateTime?))
                 {
                     return lst.Max(x => (DateTime)x);
@@ -549,7 +547,7 @@ namespace FakeXrmEasy.Query
                 {
                     return lst.Sum(x => x as double? ?? 0d);
                 }
-              
+
                 throw new Exception("Unhndled property type '" + valType.FullName + "' in 'sum' aggregate");
             }
         }
@@ -631,6 +629,11 @@ namespace FakeXrmEasy.Query
         {
             public override IComparable FindGroupValue(object attributeValue)
             {
+                if (attributeValue is AliasedValue aliasedValue)
+                {
+                    attributeValue = aliasedValue.Value;
+                }
+
                 if (attributeValue is EntityReference)
                 {
                     return new ComparableEntityReference(attributeValue as EntityReference) as IComparable;
@@ -694,5 +697,5 @@ namespace FakeXrmEasy.Query
             }
         }
     }
-    
+
 }
