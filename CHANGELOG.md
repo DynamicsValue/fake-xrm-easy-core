@@ -1,3 +1,10 @@
+## [3.3.0]
+
+### Changed
+
+- Adding tests for MetadataGenerator - https://github.com/DynamicsValue/fake-xrm-easy/issues/77
+- Moved GetContextFromSerialisedCompressedProfile method into the Plugins package and FakeXrmEasy.Plugins namespace
+
 ## [3.2.0]
 
 ### Changed
