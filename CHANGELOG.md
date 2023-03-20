@@ -1,3 +1,9 @@
+## [3.3.1]
+
+### Changed
+
+- Bump DataversClient nuget package to use net6.0 - https://github.com/DynamicsValue/fake-xrm-easy/issues/90
+
 ## [3.3.0]
 
 ### Changed
