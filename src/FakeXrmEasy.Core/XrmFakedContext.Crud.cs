@@ -487,7 +487,7 @@ namespace FakeXrmEasy
                     }
                 }
                 else
-                    throw new Exception(string.Format("Couldnt find reflected type for {0}", e.LogicalName));
+                    throw new Exception(string.Format("Couldn't find reflected type for {0}", e.LogicalName));
 
             }
             else

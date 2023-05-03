@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using FakeItEasy;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Core.PipelineTypes;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;
 using Microsoft.Xrm.Sdk;
@@ -31,7 +33,7 @@ namespace FakeXrmEasy
 
             if (types.Count() > 1)
             {
-                var errorMsg = $"Type { logicalName } is defined in multiple assemblies: ";
+                var errorMsg = $"Type {logicalName} is defined in multiple assemblies: ";
                 foreach (var type in types)
                 {
                     errorMsg += type.Assembly
@@ -42,8 +44,16 @@ namespace FakeXrmEasy
                 errorMsg = errorMsg.Substring(0, lastIndex) + ".";
                 throw new InvalidOperationException(errorMsg);
             }
-
-            return types.SingleOrDefault();
+            var reflectedType = types.SingleOrDefault();
+            if (reflectedType == null && (
+                    logicalName == "sdkmessage" ||
+                    logicalName == "sdkmessagefilter" ||
+                    logicalName == "sdkmessageprocessingstep" ||
+                    logicalName == "plugintype"))
+            {
+                reflectedType = FindReflectedType(logicalName, typeof(EntityOptionSetEnum).Assembly);
+            }
+            return reflectedType;
         }
 
         /// <summary>
@@ -161,7 +171,7 @@ namespace FakeXrmEasy
             return attributeInfo.PropertyType;
         }
 
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -247,6 +257,6 @@ namespace FakeXrmEasy
         public IQueryable<Entity> CreateQueryFromEntityName(string entityName)
         {
             return Db.GetTable(entityName).Rows.AsQueryable();
-        }      
+        }
     }
 }
