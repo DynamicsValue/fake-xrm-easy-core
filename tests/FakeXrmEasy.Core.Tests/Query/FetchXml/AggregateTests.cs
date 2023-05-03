@@ -69,12 +69,12 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                 </entity>
                              </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new[] {
+         
+            _context.Initialize(new[] {
                 new Contact() { Id = Guid.NewGuid() },
             });
 
-            var exception = Record.Exception(() => ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml)));
+            var exception = Record.Exception(() => _context.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml)));
 
             Assert.IsType<Exception>(exception);
             Assert.Equal("Missing alias for attribute in aggregate fetch xml", exception.Message);
@@ -143,12 +143,11 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
                                 </entity>
                              </fetch>";
 
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new[] {
+            _context.Initialize(new[] {
                 new Contact() { Id = Guid.NewGuid(), LastName = "Smith" },
             });
 
-            var exception = Record.Exception(() => ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml)));
+            var exception = Record.Exception(() => _context.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml)));
 
             Assert.IsType<Exception>(exception);
             Assert.Equal("An alias is required for an order clause for an aggregate Query.", exception.Message);
@@ -227,16 +226,15 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
             var male = new OptionSetValue(1);
             var female = new OptionSetValue(2);
-
-            var ctx = new XrmFakedContext();
-            ctx.Initialize(new[] {
+                       
+            _context.Initialize(new[] {
                 new Contact() { Id = Guid.NewGuid(), GenderCode = male, FirstName = "John" },
                 new Contact() { Id = Guid.NewGuid(), GenderCode = female, FirstName = "Jane" },
                 new Contact() { Id = Guid.NewGuid(), GenderCode = male, FirstName = "Sam" },
                 new Contact() { Id = Guid.NewGuid(), GenderCode = male, FirstName = "John" },
             });
 
-            var collection = ctx.GetFakedOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
+            var collection = _context.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml));
 
             // Make sure we only have the expected properties
             foreach (var e in collection.Entities)
@@ -1194,7 +1192,7 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
 
 
             Assert.Single(result.Entities);
-            var value = result.Entities.First().GetAttributeValue<AliasedValue>("sales12m.TotalAmount");
+            var value = result.Entities.First().GetAttributeValue<AliasedValue>("TotalAmount");
             Assert.NotNull(value);
             Assert.Equal(10m, ((Money)value.Value).Value);
         }
