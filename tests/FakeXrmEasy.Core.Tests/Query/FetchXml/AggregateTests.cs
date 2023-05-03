@@ -59,6 +59,27 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
         }
 
+
+        [Fact]
+        public void FetchXml_Aggregate_Should_Throw_Exception_If_Alias_IsMissing()
+        {
+            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' aggregate='true'>
+                                <entity name='contact'>
+                                   <attribute name='contactid' aggregate='count' />
+                                </entity>
+                             </fetch>";
+
+            var ctx = new XrmFakedContext();
+            ctx.Initialize(new[] {
+                new Contact() { Id = Guid.NewGuid() },
+            });
+
+            var exception = Record.Exception(() => ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml)));
+
+            Assert.IsType<Exception>(exception);
+            Assert.Equal("Missing alias for attribute in aggregate fetch xml", exception.Message);
+        }
+
         [Fact]
         public void FetchXml_Aggregate_Should_Throw_Exception_If_Name_Is_Blank()
         {
@@ -111,7 +132,27 @@ namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
             Assert.Throws<UnknownAggregateFunctionException>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
         }
 
+        [Fact]
+        public void FetchXml_Aggregate_EmptyOrderAlias_shouldThrowException()
+        {
+            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false' aggregate='true'>
+                                <entity name='contact'>
+                                   <attribute name='contactid' alias='count.contacts' aggregate='count' />
+                                   <attribute name='lastname' alias='group.lastname' groupby='true' />
+                                   <order alias='' />
+                                </entity>
+                             </fetch>";
 
+            var ctx = new XrmFakedContext();
+            ctx.Initialize(new[] {
+                new Contact() { Id = Guid.NewGuid(), LastName = "Smith" },
+            });
+
+            var exception = Record.Exception(() => ctx.GetOrganizationService().RetrieveMultiple(new FetchExpression(fetchXml)));
+
+            Assert.IsType<Exception>(exception);
+            Assert.Equal("An alias is required for an order clause for an aggregate Query.", exception.Message);
+        }
 
         [Fact]
         public void FetchXml_Aggregate_Group_Count()
