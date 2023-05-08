@@ -21,7 +21,7 @@ namespace FakeXrmEasy.Tests.Issues
             };
 
             _context.Initialize(new List<Entity> { account });
-            var ids = new[] { account.OriginatingLeadId.Id, Guid.NewGuid(), Guid.NewGuid() };
+            var ids = new object[] { account.OriginatingLeadId.Id, Guid.NewGuid(), Guid.NewGuid() };
 
             var qe = new QueryExpression(Account.EntityLogicalName);
             qe.Criteria.AddCondition("originatingleadid", ConditionOperator.In, ids);
@@ -44,7 +44,7 @@ namespace FakeXrmEasy.Tests.Issues
 
             _context.Initialize(new List<Entity> { account });
 
-            var ids = new[] { Guid.Empty, Guid.Empty, Guid.Empty };
+            var ids = new object[] { Guid.Empty, Guid.Empty, Guid.Empty };
 
             var qe = new QueryExpression(Account.EntityLogicalName);
             qe.Criteria.AddCondition("originatingleadid", ConditionOperator.In, ids);

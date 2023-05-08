@@ -31,12 +31,12 @@ namespace FakeXrmEasy.Query
                 {
                     if (value is Array)
                     {
-                        foreach (var a in ((Array)value))
-                        {
-                            expOrValues = Expression.Or(expOrValues, Expression.Equal(
-                                tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, a),
-                                TypeCastExpressions.GetAppropiateTypedValueAndType(a, tc.AttributeType)));
-                        }
+                        //foreach (var a in ((Array)value))
+                        //{
+                        //    expOrValues = Expression.Or(expOrValues, Expression.Equal(
+                        //        tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, a),
+                        //        TypeCastExpressions.GetAppropiateTypedValueAndType(a, tc.AttributeType)));
+                        //}
                     }
                     else
                     {
