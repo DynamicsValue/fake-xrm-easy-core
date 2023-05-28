@@ -159,6 +159,9 @@ namespace FakeXrmEasy.Query
                     break;
 
                 case ConditionOperator.BeginsWith:
+                    operatorExpression = c.ToBeginsWithExpression(getNonBasicValueExpr, containsAttributeExpression);
+                    break; 
+
                 case ConditionOperator.Like:
                     operatorExpression = c.ToLikeExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
@@ -176,10 +179,19 @@ namespace FakeXrmEasy.Query
                     break;
 
                 case ConditionOperator.DoesNotBeginWith:
+                    operatorExpression = Expression.Not(c.ToBeginsWithExpression(getNonBasicValueExpr, containsAttributeExpression));
+                    break;
+
                 case ConditionOperator.DoesNotEndWith:
+                    operatorExpression = Expression.Not(c.ToEndsWithExpression(getNonBasicValueExpr, containsAttributeExpression));
+                    break;
+
                 case ConditionOperator.NotLike:
-                case ConditionOperator.DoesNotContain:
                     operatorExpression = Expression.Not(c.ToLikeExpression(getNonBasicValueExpr, containsAttributeExpression));
+                    break;
+
+                case ConditionOperator.DoesNotContain:
+                    operatorExpression = Expression.Not(c.ToContainsExpression(getNonBasicValueExpr, containsAttributeExpression));
                     break;
 
                 case ConditionOperator.Null:
