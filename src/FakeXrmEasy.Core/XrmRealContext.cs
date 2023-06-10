@@ -48,6 +48,9 @@ namespace FakeXrmEasy
         /// </summary>
         public ICallerProperties CallerProperties { get; set; }
 
+        /// <summary>
+        /// Plugin Context Properties
+        /// </summary>
         public IXrmFakedPluginContextProperties PluginContextProperties { get; set; }
 
         /// <summary>
