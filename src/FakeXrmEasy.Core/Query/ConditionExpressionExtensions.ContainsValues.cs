@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using FakeXrmEasy.Extensions;
+using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Query
 {
@@ -10,7 +11,7 @@ namespace FakeXrmEasy.Query
     {
         internal static Expression ToContainsValuesExpression(this TypedConditionExpression tc, Expression getAttributeValueExpr, Expression containsAttributeExpr)
         {
-            var leftHandSideExpression = tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, null);
+            var leftHandSideExpression = typeof(OptionSetValueCollection).GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, null);
             var rightHandSideExpression = Expression.Constant(OptionSetValueCollectionExtensions.ConvertToHashSetOfInt(tc.CondExpression.Values, isOptionSetValueCollectionAccepted: false));
 
             return Expression.AndAlso(
