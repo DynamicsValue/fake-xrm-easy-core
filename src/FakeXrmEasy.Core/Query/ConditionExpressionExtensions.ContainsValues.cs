@@ -1,5 +1,4 @@
 #if FAKE_XRM_EASY_9
-
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using FakeXrmEasy.Extensions;
