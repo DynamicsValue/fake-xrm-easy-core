@@ -958,12 +958,16 @@ namespace FakeXrmEasy.Extensions.FetchXml
                         {
                             throw new Exception(string.Format("When trying to parse value for entity {0} and attribute {1}: {2}", sEntityName, sAttributeName, e.Message));
                         }
-
                     }
                 }
             }
 
-
+#if FAKE_XRM_EASY_9
+            if(op == ConditionOperator.ContainValues || op == ConditionOperator.DoesNotContainValues)
+            {
+                return GetValueBasedOnType(typeof(OptionSetValueCollection), value);
+            }
+#endif
             // Try parsing a guid
             Guid gOut = Guid.Empty;
             if (Guid.TryParse(value, out gOut))

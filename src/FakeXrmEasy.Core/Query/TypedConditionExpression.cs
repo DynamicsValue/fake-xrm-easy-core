@@ -9,17 +9,17 @@ using System.Linq.Expressions;
 namespace FakeXrmEasy.Query
 {
     /// <summary>
-    /// A condition expression with a decorated type
+    /// A condition expression with a decorated type of the attribute in the condition expression
     /// </summary>
     public class TypedConditionExpression
     {
         /// <summary>
-        /// 
+        /// The original condition expression
         /// </summary>
         public ConditionExpression CondExpression { get; set; }
  
         /// <summary>
-        /// 
+        /// The attribute type of the condition expression, if known (i.e. was generated via a strongly-typed generation tool)
         /// </summary>
         public Type AttributeType { get; set; }
 
@@ -29,7 +29,7 @@ namespace FakeXrmEasy.Query
         public bool IsOuter { get; set; }
 
         /// <summary>
-        /// 
+        /// Creates a TypedConditionExpression from an existing ConditionExpression with no attribute type information
         /// </summary>
         /// <param name="c"></param>
         public TypedConditionExpression(ConditionExpression c)

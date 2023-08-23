@@ -1,3 +1,9 @@
+## [2.3.3]
+
+### Changed
+
+ - Resolves an issue with query evaluation and MultiOptionSets when using late bound entities or if type information is not present. - https://github.com/DynamicsValue/fake-xrm-easy/issues/66
+
 ## [2.3.2]
 
 ### Changed
