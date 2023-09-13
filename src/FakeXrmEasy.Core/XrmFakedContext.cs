@@ -490,7 +490,7 @@ namespace FakeXrmEasy
         /// </summary>
         /// <param name="logicalName">The entity logical name of the entity</param>
         /// <returns>An early-bound record dif the context is already using early-bound entity records, a late bound entity otherwise</returns>
-        internal Entity NewEntityRecord(string logicalName)
+        public Entity NewEntityRecord(string logicalName)
         {
             if (_proxyTypesAssemblies.Any())
             {                
