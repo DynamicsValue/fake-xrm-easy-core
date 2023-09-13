@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ED506DF3-19B6-420B-9172-13D54CC1A020}"
 	ProjectSection(SolutionItems) = preProject
 		CHANGELOG.md = CHANGELOG.md
+		build.ps1 = build.ps1
 	EndProjectSection
 EndProject
 Global
