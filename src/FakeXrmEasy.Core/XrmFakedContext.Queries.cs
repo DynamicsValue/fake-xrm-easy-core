@@ -95,11 +95,6 @@ namespace FakeXrmEasy
         {
             try
             {
-                if (assembly == null)
-                {
-                    throw new ArgumentNullException(nameof(assembly));
-                }
-
                 var subClassType = assembly.GetTypes()
                         .Where(t => typeof(Entity).IsAssignableFrom(t))
                         .Where(t => t.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true).Length > 0)
@@ -142,11 +137,6 @@ namespace FakeXrmEasy
         {
             try
             {
-                if (assembly == null)
-                {
-                    throw new ArgumentNullException(nameof(assembly));
-                }
-
                 var subClassType = assembly.GetTypes()
                     .Where(t => typeof(Entity).IsAssignableFrom(t))
                     .Where(t => t.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true).Length > 0)

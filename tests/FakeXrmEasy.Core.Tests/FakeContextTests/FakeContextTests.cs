@@ -351,6 +351,15 @@ namespace FakeXrmEasy.Core.Tests
         }
         
         [Fact]
+        public void Should_throw_argument_exception_when_finding_reflected_type_by_entity_logical_for_a_null_assembly()
+        {
+            var assembly = typeof(Crm.Account).Assembly;
+            _context.EnableProxyTypes(assembly);
+
+            Assert.Throws<InvalidOperationException>(() => _context.FindReflectedType(Account.EntityLogicalName));
+        }
+        
+        [Fact]
         public void Should_throw_exception_when_finding_reflected_type_by_entity_type_code_if_exists_in_more_than_one_assembly()
         {
             var assembly = typeof(Crm.Account).Assembly;
