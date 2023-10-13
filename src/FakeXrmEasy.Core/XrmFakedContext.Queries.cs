@@ -126,7 +126,7 @@ namespace FakeXrmEasy
         /// </param>
         /// <param name="assembly">
         /// Assembly where early-bound type is searched for given
-        /// <paramref name="logicalName"/>.
+        /// <paramref name="entityTypeCode"/>.
         /// </param>
         /// <returns>
         /// Early-bound type of <paramref name="entityTypeCode"/> if it's found
@@ -304,15 +304,5 @@ namespace FakeXrmEasy
 
             return lst.AsQueryable();
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entityName"></param>
-        /// <returns></returns>
-        public IQueryable<Entity> CreateQueryFromEntityName(string entityName)
-        {
-            return Db.GetTable(entityName).Rows.AsQueryable();
-        }      
     }
 }
