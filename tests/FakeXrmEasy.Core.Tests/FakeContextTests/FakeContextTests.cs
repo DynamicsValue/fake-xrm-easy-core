@@ -318,15 +318,47 @@ namespace FakeXrmEasy.Core.Tests
 
             Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("contact", Guid.NewGuid())); 
         }
-        
+
+        [Fact]
+        public void Should_find_reflected_type_by_entity_logical_name()
+        {
+            var assembly = typeof(Crm.Account).Assembly;
+            _context.EnableProxyTypes(assembly);
+
+            var type = _context.FindReflectedType(Account.EntityLogicalName);
+            Assert.Equal(typeof(Account), type);
+        }
+
         [Fact]
         public void Should_find_reflected_type_by_entity_type_code() {
 
             var assembly = typeof(Crm.Account).Assembly;
             _context.EnableProxyTypes(assembly);
 
-            var type = _context.FindReflectedType(1);
+            var type = _context.FindReflectedType(Account.EntityTypeCode);
             Assert.Equal(typeof(Account), type);
+        }
+        
+        [Fact]
+        public void Should_throw_exception_when_finding_reflected_type_by_entity_logical_name_if_exists_in_more_than_one_assembly()
+        {
+            var assembly = typeof(Crm.Account).Assembly;
+            var assembly2 = typeof(DataverseEntities.Account).Assembly;
+            _context.EnableProxyTypes(assembly);
+            _context.EnableProxyTypes(assembly2);
+            
+            Assert.Throws<InvalidOperationException>(() => _context.FindReflectedType(Account.EntityLogicalName));
+        }
+        
+        [Fact]
+        public void Should_throw_exception_when_finding_reflected_type_by_entity_type_code_if_exists_in_more_than_one_assembly()
+        {
+            var assembly = typeof(Crm.Account).Assembly;
+            var assembly2 = typeof(DataverseEntities.Account).Assembly;
+            _context.EnableProxyTypes(assembly);
+            _context.EnableProxyTypes(assembly2);
+            
+            Assert.Throws<InvalidOperationException>(() => _context.FindReflectedType(Account.EntityTypeCode));
         }
     }
 }

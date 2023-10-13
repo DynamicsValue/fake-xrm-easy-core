@@ -59,9 +59,13 @@
     <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9;FXE_V2</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataverseEntities\DataverseEntities.csproj" />
+  </ItemGroup>
+  
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.27" />
-    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.0.0.5" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.0.2.4" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
@@ -150,5 +154,6 @@
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
     <PackageReference Include="FakeXrmEasy.Core.v9" Version="[2.3.3-*,3.0)" />
   </ItemGroup>
+  
 
 </Project>
