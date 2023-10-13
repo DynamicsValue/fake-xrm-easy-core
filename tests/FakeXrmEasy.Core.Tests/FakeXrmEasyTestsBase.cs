@@ -3,7 +3,7 @@ using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Middleware;
 using Microsoft.Xrm.Sdk;
 
-namespace FakeXrmEasy.Tests
+namespace FakeXrmEasy.Core.Tests
 {
     public class FakeXrmEasyTestsBase
     {

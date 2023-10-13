@@ -8,7 +8,7 @@ using System.Linq;
 using Xunit;
 using FakeXrmEasy.Abstractions;
 
-namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.AssociateRequestTests
+namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.AssociateRequestTests
 {
     public class AssociateRequestTests : FakeXrmEasyTestsBase
     {

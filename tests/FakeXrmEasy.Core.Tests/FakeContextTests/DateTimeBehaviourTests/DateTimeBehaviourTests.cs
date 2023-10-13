@@ -10,7 +10,7 @@ using System.Linq;
 using Xunit;
 using FakeXrmEasy.Extensions;
 
-namespace FakeXrmEasy.Tests.FakeContextTests
+namespace FakeXrmEasy.Core.Tests.FakeContextTests
 {
     public class DateTimeBehaviourTests: FakeXrmEasyTestsBase
     {

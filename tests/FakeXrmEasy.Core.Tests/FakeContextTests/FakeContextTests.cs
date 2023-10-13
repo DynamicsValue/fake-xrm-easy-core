@@ -9,7 +9,7 @@ using System.Threading;
 using Crm;
 using System.Reflection;
 
-namespace FakeXrmEasy.Tests
+namespace FakeXrmEasy.Core.Tests
 {
     public class FakeContextCoreTests : FakeXrmEasyTestsBase
     {
@@ -300,7 +300,7 @@ namespace FakeXrmEasy.Tests
         }
 
         [Fact]
-        public void Should_return_error_if_entity_lofical_name_doesnt_exists() 
+        public void Should_return_error_if_entity_logical_name_doesnt_exists() 
         {
             Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("doesNotExist", Guid.NewGuid())); 
         }
@@ -317,6 +317,16 @@ namespace FakeXrmEasy.Tests
             _context.Initialize(contact);
 
             Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("contact", Guid.NewGuid())); 
+        }
+        
+        [Fact]
+        public void Should_find_reflected_type_by_entity_type_code() {
+
+            var assembly = typeof(Crm.Account).Assembly;
+            _context.EnableProxyTypes(assembly);
+
+            var type = _context.FindReflectedType(1);
+            Assert.Equal(typeof(Account), type);
         }
     }
 }

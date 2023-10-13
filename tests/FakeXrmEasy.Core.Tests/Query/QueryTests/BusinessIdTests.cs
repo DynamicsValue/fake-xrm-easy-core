@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.QueryTests
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.QueryTests
 {
     public class EqualBusinessIdTests : FakeXrmEasyTestsBase
     {
