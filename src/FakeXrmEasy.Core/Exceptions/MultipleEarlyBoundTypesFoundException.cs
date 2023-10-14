@@ -13,6 +13,11 @@ namespace FakeXrmEasy.Core.Exceptions
     {
         private readonly string _errorMessage;
         
+        /// <summary>
+        /// Creates a MultipleEarlyBoundTypesFoundException from a logical name
+        /// </summary>
+        /// <param name="logicalName">The searched logical name</param>
+        /// <param name="types">The types in which the logical name found</param>
         public MultipleEarlyBoundTypesFoundException(string logicalName, IEnumerable<Type> types)
         {
             var baseMessage =
@@ -23,6 +28,11 @@ namespace FakeXrmEasy.Core.Exceptions
             _errorMessage = $"{baseMessage} Assemblies where the type was found={log.ToString()}";
         }
         
+        /// <summary>
+        /// Creates a MultipleEarlyBoundTypesFoundException from an EntityTypeCode
+        /// </summary>
+        /// <param name="entityTypeCode">The searched entity type code</param>
+        /// <param name="types">The types in which the entity type code was found</param>
         public MultipleEarlyBoundTypesFoundException(int entityTypeCode, IEnumerable<Type> types)
         {
             var baseMessage =
@@ -44,6 +54,9 @@ namespace FakeXrmEasy.Core.Exceptions
             return log.ToString();
         }
         
+        /// <summary>
+        /// Returns the message along with the assemblies that caused this exception
+        /// </summary>
         public override string Message => _errorMessage;
     }
 }
