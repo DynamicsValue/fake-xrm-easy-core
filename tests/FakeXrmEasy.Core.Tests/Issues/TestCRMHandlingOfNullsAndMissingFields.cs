@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.Issues
+namespace FakeXrmEasy.Core.Tests.Issues
 {
     public class TestCRMHandlingOfNullsAndMissingFields: FakeXrmEasyTestsBase
     {

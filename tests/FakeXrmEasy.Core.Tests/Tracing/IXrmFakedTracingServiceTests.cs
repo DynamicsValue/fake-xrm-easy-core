@@ -2,7 +2,7 @@
 
 using Xunit;
 
-namespace FakeXrmEasy.Tests 
+namespace FakeXrmEasy.Core.Tests 
 { 
     public class XrmFakedTracingServiceTests : FakeXrmEasyTestsBase
     {

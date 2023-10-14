@@ -4,7 +4,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using Xunit;
 using System.Collections.Generic;
 
-namespace FakeXrmEasy.Tests.Extensions
+namespace FakeXrmEasy.Core.Tests.Extensions
 {
     public class EntityMetadataExtensionsTests
     {

@@ -9,7 +9,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk.Metadata;
 
-namespace FakeXrmEasy.Tests.Middleware
+namespace FakeXrmEasy.Core.Tests.Middleware
 {
     public partial class MiddlewareBuilderTests 
     {
