@@ -38,7 +38,7 @@ namespace FakeXrmEasy.Core.Exceptions
             var log = new StringBuilder();
             foreach (var type in types)
             {
-                log.Append($"'{type.Assembly.GetName().Name}'; ");
+                log.AppendLine($"'{type.Assembly.GetName().Name}'; ");
             }
 
             return log.ToString();
