@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using Crm;
 using System.Reflection;
+using FakeXrmEasy.Core.Exceptions;
 
 namespace FakeXrmEasy.Core.Tests
 {
@@ -347,7 +348,7 @@ namespace FakeXrmEasy.Core.Tests
             _context.EnableProxyTypes(assembly);
             _context.EnableProxyTypes(assembly2);
             
-            Assert.Throws<InvalidOperationException>(() => _context.FindReflectedType(Account.EntityLogicalName));
+            Assert.Throws<MultipleEarlyBoundTypesFoundException>(() => _context.FindReflectedType(Account.EntityLogicalName));
         }
         
         [Fact]
@@ -358,7 +359,7 @@ namespace FakeXrmEasy.Core.Tests
             _context.EnableProxyTypes(assembly);
             _context.EnableProxyTypes(assembly2);
             
-            Assert.Throws<InvalidOperationException>(() => _context.FindReflectedType(Account.EntityTypeCode));
+            Assert.Throws<MultipleEarlyBoundTypesFoundException>(() => _context.FindReflectedType(Account.EntityTypeCode));
         }
     }
 }

@@ -2,6 +2,7 @@
 
 ### Added
 
+- Introduced new user-defined exceptions to check whether an early-bound type is defined in multiple assemblies.
 - New method to retrieve early bound types based on EntityTypeCode.
 
 ### Changed

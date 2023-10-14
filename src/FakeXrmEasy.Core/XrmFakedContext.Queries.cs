@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Core.Exceptions;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;
 using Microsoft.Xrm.Sdk;
@@ -31,16 +32,7 @@ namespace FakeXrmEasy
 
             if (types.Count() > 1)
             {
-                var errorMsg = $"Type { logicalName } is defined in multiple assemblies: ";
-                foreach (var type in types)
-                {
-                    errorMsg += type.Assembly
-                                    .GetName()
-                                    .Name + "; ";
-                }
-                var lastIndex = errorMsg.LastIndexOf("; ");
-                errorMsg = errorMsg.Substring(0, lastIndex) + ".";
-                throw new InvalidOperationException(errorMsg);
+                throw new MultipleEarlyBoundTypesFoundException(logicalName, types);
             }
 
             return types.SingleOrDefault();
@@ -60,16 +52,7 @@ namespace FakeXrmEasy
 
             if (types.Count() > 1)
             {
-                var errorMsg = $"Type { entityTypeCode } is defined in multiple assemblies: ";
-                foreach (var type in types)
-                {
-                    errorMsg += type.Assembly
-                        .GetName()
-                        .Name + "; ";
-                }
-                var lastIndex = errorMsg.LastIndexOf("; ");
-                errorMsg = errorMsg.Substring(0, lastIndex) + ".";
-                throw new InvalidOperationException(errorMsg);
+                throw new MultipleEarlyBoundTypesFoundException(entityTypeCode, types);
             }
 
             return types.SingleOrDefault();
@@ -105,15 +88,7 @@ namespace FakeXrmEasy
             }
             catch (ReflectionTypeLoadException exception)
             {
-                // now look at ex.LoaderExceptions - this is an Exception[], so:
-                var s = "";
-                foreach (var innerException in exception.LoaderExceptions)
-                {
-                    // write details of "inner", in particular inner.Message
-                    s += innerException.Message + " ";
-                }
-
-                throw new Exception("XrmFakedContext.FindReflectedType: " + s);
+                throw FindReflectedTypeException.New(exception);
             }
         }
         
@@ -147,15 +122,7 @@ namespace FakeXrmEasy
             }
             catch (ReflectionTypeLoadException exception)
             {
-                // now look at ex.LoaderExceptions - this is an Exception[], so:
-                var s = "";
-                foreach (var innerException in exception.LoaderExceptions)
-                {
-                    // write details of "inner", in particular inner.Message
-                    s += innerException.Message + " ";
-                }
-
-                throw new Exception("XrmFakedContext.FindReflectedType: " + s);
+                throw FindReflectedTypeException.New(exception);
             }
         }
 
