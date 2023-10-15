@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Xunit;
 using FakeXrmEasy.Services;
 
-namespace FakeXrmEasy.Tests.Services.EntityInitializer
+namespace FakeXrmEasy.Core.Tests.Services.EntityInitializer
 {
     public class InvoiceInitializerServiceTests : FakeXrmEasyTestsBase
     {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Core.Exceptions;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;
 using Microsoft.Xrm.Sdk;
@@ -18,7 +19,7 @@ namespace FakeXrmEasy
     public partial class XrmFakedContext : IXrmFakedContext
     {
         /// <summary>
-        /// 
+        /// Finds the early-bound type based on an entity's logical name
         /// </summary>
         /// <param name="logicalName"></param>
         /// <returns></returns>
@@ -31,16 +32,27 @@ namespace FakeXrmEasy
 
             if (types.Count() > 1)
             {
-                var errorMsg = $"Type { logicalName } is defined in multiple assemblies: ";
-                foreach (var type in types)
-                {
-                    errorMsg += type.Assembly
-                                    .GetName()
-                                    .Name + "; ";
-                }
-                var lastIndex = errorMsg.LastIndexOf("; ");
-                errorMsg = errorMsg.Substring(0, lastIndex) + ".";
-                throw new InvalidOperationException(errorMsg);
+                throw new MultipleEarlyBoundTypesFoundException(logicalName, types);
+            }
+
+            return types.SingleOrDefault();
+        }
+        
+        /// <summary>
+        /// Finds the early-bound type based on an entity's generated type code
+        /// </summary>
+        /// <param name="entityTypeCode"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public Type FindReflectedType(int entityTypeCode)
+        {
+            var types =
+                ProxyTypesAssemblies.Select(a => FindReflectedType(entityTypeCode, a))
+                    .Where(t => t != null);
+
+            if (types.Count() > 1)
+            {
+                throw new MultipleEarlyBoundTypesFoundException(entityTypeCode, types);
             }
 
             return types.SingleOrDefault();
@@ -66,11 +78,6 @@ namespace FakeXrmEasy
         {
             try
             {
-                if (assembly == null)
-                {
-                    throw new ArgumentNullException(nameof(assembly));
-                }
-
                 var subClassType = assembly.GetTypes()
                         .Where(t => typeof(Entity).IsAssignableFrom(t))
                         .Where(t => t.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true).Length > 0)
@@ -81,15 +88,41 @@ namespace FakeXrmEasy
             }
             catch (ReflectionTypeLoadException exception)
             {
-                // now look at ex.LoaderExceptions - this is an Exception[], so:
-                var s = "";
-                foreach (var innerException in exception.LoaderExceptions)
-                {
-                    // write details of "inner", in particular inner.Message
-                    s += innerException.Message + " ";
-                }
+                throw FindReflectedTypeException.New(exception);
+            }
+        }
+        
+        /// <summary>
+        /// Finds reflected type for given entity from given assembly.
+        /// </summary>
+        /// <param name="entityTypeCode">
+        /// Entity logical name which type is searched from given
+        /// <paramref name="assembly"/>.
+        /// </param>
+        /// <param name="assembly">
+        /// Assembly where early-bound type is searched for given
+        /// <paramref name="entityTypeCode"/>.
+        /// </param>
+        /// <returns>
+        /// Early-bound type of <paramref name="entityTypeCode"/> if it's found
+        /// from <paramref name="assembly"/>. Otherwise null is returned.
+        /// </returns>
+        private static Type FindReflectedType(int entityTypeCode,
+            Assembly assembly)
+        {
+            try
+            {
+                var subClassType = assembly.GetTypes()
+                    .Where(t => typeof(Entity).IsAssignableFrom(t))
+                    .Where(t => t.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true).Length > 0)
+                    .Where(t => t.GetField("EntityTypeCode").GetValue(null).Equals(entityTypeCode))
+                    .FirstOrDefault();
 
-                throw new Exception("XrmFakedContext.FindReflectedType: " + s);
+                return subClassType;
+            }
+            catch (ReflectionTypeLoadException exception)
+            {
+                throw FindReflectedTypeException.New(exception);
             }
         }
 
@@ -238,15 +271,5 @@ namespace FakeXrmEasy
 
             return lst.AsQueryable();
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entityName"></param>
-        /// <returns></returns>
-        public IQueryable<Entity> CreateQueryFromEntityName(string entityName)
-        {
-            return Db.GetTable(entityName).Rows.AsQueryable();
-        }      
     }
 }

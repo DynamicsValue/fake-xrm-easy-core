@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequestTests
+namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequestTests
 {
     public class CreateRequestTests : FakeXrmEasyTestsBase
     {
