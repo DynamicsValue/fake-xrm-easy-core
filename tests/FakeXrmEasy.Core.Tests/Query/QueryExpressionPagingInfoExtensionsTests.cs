@@ -2,7 +2,7 @@
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.Query
+namespace FakeXrmEasy.Core.Tests.Query
 {
     public class QueryExpressionPagingInfoExtensionsTests
     {

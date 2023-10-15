@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
 {
     /// <summary>
     /// This will test that a fetchxml is correctly translated into a QueryExpression

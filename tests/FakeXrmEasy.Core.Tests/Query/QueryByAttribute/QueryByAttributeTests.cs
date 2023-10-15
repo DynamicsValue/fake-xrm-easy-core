@@ -10,7 +10,7 @@ using System.Linq;
 using System.ServiceModel;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.QueryByAttributeTests
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.QueryByAttributeTests
 {
     public class Tests : FakeXrmEasyTestsBase
     {

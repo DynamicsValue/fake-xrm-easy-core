@@ -10,7 +10,7 @@ using Xunit;
 using FakeXrmEasy.Abstractions.Settings;
 using FakeXrmEasy.Query;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
 {
     /// <summary>
     /// To test all different condition operators found in FetchXml

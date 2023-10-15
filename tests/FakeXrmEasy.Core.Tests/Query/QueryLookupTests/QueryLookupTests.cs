@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.QueryLookupTests
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.QueryLookupTests
 {
     public class Tests : FakeXrmEasyTestsBase
     {

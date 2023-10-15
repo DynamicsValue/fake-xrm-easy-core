@@ -9,13 +9,28 @@ using System;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
+    /// <summary>
+    /// Fake Message executor for Upsert requests
+    /// </summary>
     public class UpsertRequestExecutor : IFakeMessageExecutor
     {
+        /// <summary>
+        /// Returns true if this message executor can execute the specified request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public bool CanExecute(OrganizationRequest request)
         {
             return request is UpsertRequest;
         }
 
+
+        /// <summary>
+        /// Executes the current request with the given context
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="ctx"></param>
+        /// <returns></returns>
         public OrganizationResponse Execute(OrganizationRequest request, IXrmFakedContext ctx)
         {
             var fakedContext = ctx as XrmFakedContext;
@@ -44,6 +59,10 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             return result;
         }
 
+        /// <summary>
+        /// Gets request type that will execute this request
+        /// </summary>
+        /// <returns></returns>
         public Type GetResponsibleRequestType()
         {
             return typeof(UpsertRequest);

@@ -9,7 +9,7 @@ using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
 
-namespace FakeXrmEasy.Tests.Middleware
+namespace FakeXrmEasy.Core.Tests.Middleware
 {
     public partial class MiddlewareBuilderTests 
     {

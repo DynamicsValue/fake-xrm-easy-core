@@ -13,7 +13,7 @@ using FakeXrmEasy.Extensions;
 using System.Collections.Generic;
 
 
-namespace FakeXrmEasy.Tests.FakeContextTests
+namespace FakeXrmEasy.Core.Tests.FakeContextTests
 {
     public class ValidateReferencesTests: FakeXrmEasyTestsBase
     {

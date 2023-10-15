@@ -58,7 +58,7 @@ namespace FakeXrmEasy.Query
                 return GetAppropiateCastExpressionDefault(input, value); //any other type
             }
 
-            return GetAppropiateCastExpressionBasedOnValueInherentType(input, value); //Dynamic entities
+            return GetAppropiateCastExpressionBasedOnValueInherentType(input, value); //Dynamic / late bound entities
         }
 
         internal static Expression GetAppropiateCastExpressionBasedGuid(Expression input)

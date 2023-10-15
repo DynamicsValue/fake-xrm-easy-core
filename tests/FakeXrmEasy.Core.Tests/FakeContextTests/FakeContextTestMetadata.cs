@@ -5,7 +5,7 @@ using System.Text;
 using System.Linq;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests
+namespace FakeXrmEasy.Core.Tests.FakeContextTests
 {
     public class FakeContextTestMetadata : FakeXrmEasyTestsBase
     {

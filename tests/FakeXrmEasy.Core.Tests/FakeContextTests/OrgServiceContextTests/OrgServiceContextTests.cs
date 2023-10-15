@@ -1,4 +1,5 @@
-﻿using Crm;
+﻿#if !FXE_V2 //Rpcrt4 related, not working on Linux
+using Crm;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
@@ -96,3 +97,4 @@ namespace FakeXrmEasy.Tests.FakeContextTests.OrgServiceContextTests
 
     }
 }
+#endif

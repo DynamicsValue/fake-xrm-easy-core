@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;  //TypedEntities generated code for testing
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.LinqTests
 {
     /// <summary>
     /// Test suite to check that all the different CRM types in the SDK are supported:

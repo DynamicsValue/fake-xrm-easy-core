@@ -10,7 +10,7 @@ using FakeXrmEasy.Middleware.Messages;
 using System.Reflection;
 using FakeXrmEasy.Abstractions.Exceptions;
 
-namespace FakeXrmEasy.Tests.Middleware
+namespace FakeXrmEasy.Core.Tests.Middleware
 {
     public class GenericMessageExecutorsTests
     {

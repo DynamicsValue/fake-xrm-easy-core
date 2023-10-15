@@ -12,7 +12,7 @@ using System.Reflection;
 using System.ServiceModel;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.DeleteRequestTests
+namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.DeleteRequestTests
 {
     public class DeleteRequestTests : FakeXrmEasyTestsBase
     {
