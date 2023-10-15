@@ -5,7 +5,7 @@ using System;
 using System.Reflection;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
 {
     public class TypeConversionTests : FakeXrmEasyTestsBase
     {

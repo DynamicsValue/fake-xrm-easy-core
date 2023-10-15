@@ -207,3 +207,6 @@ reportgenerator
 #Coverage results
 coverage/
 nupkgs/
+
+#Ignore JetBrains rider
+.idea/

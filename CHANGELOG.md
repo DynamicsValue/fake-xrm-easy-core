@@ -1,3 +1,23 @@
+## [2.3.3]
+
+### Added
+
+- Introduced new user-defined exceptions to check whether an early-bound type is defined in multiple assemblies.
+- New method to retrieve early bound types based on EntityTypeCode.
+
+### Changed
+
+-  Update namespaces in tests project for consistency
+ - Upgraded GitHub Actions to update Java major version to run SonarCloud analysis - https://github.com/DynamicsValue/fake-xrm-easy/issues/110
+ - Introduced new NewEntityRecord method to easily create instances of entity records based on the current use of early-bound or late-bound entities 
+ - Resolves an issue with query evaluation and MultiOptionSets when using late bound entities or if type information is not present. - https://github.com/DynamicsValue/fake-xrm-easy/issues/66
+
+## [2.3.2]
+
+### Changed
+
+- Update legacy CRM SDK 2011 dependency to use official MS package - https://github.com/DynamicsValue/fake-xrm-easy/issues/105
+
 ## [2.3.0]
 
 ### Changed

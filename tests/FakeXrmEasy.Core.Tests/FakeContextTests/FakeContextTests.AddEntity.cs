@@ -2,7 +2,7 @@ using System;
 using Crm;
 using Xunit;
 
-namespace FakeXrmEasy.Tests
+namespace FakeXrmEasy.Core.Tests
 {
     public class FakeXrmEasyTestsAddEntity : FakeXrmEasyTestsBase
     {

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Xunit;
 using FakeXrmEasy.Abstractions;
 
-namespace FakeXrmEasy.Tests.Issues
+namespace FakeXrmEasy.Core.Tests.Issues
 {
     public class Issue125 : FakeXrmEasyTestsBase
     {

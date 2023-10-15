@@ -8,7 +8,7 @@ using System.Linq;
 using System.ServiceModel;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
 {
     public class AggregateTests : FakeXrmEasyTestsBase
     {

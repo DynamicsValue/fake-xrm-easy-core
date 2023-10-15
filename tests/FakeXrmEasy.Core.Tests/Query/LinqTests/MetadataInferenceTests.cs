@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;  //TypedEntities generated code for testing
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.LinqTests
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.LinqTests
 {
     public class MetadataInferenceTests : FakeXrmEasyTestsBase
     {

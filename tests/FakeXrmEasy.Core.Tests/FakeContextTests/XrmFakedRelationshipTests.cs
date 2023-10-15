@@ -5,7 +5,7 @@ using System;
 using Xunit;
 using FakeXrmEasy.Abstractions;
 
-namespace FakeXrmEasy.Tests.FakeContextTests
+namespace FakeXrmEasy.Core.Tests.FakeContextTests
 {
     public class XrmFakedRelationshipTests: FakeXrmEasyTestsBase
     {

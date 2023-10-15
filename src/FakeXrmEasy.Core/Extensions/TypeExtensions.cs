@@ -11,7 +11,7 @@ namespace FakeXrmEasy.Extensions
     public static class TypeExtensions
     {
         /// <summary>
-        /// 
+        /// Returns true if the type is an OptionSetValue
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
@@ -24,6 +24,12 @@ namespace FakeXrmEasy.Extensions
         }
 
 #if FAKE_XRM_EASY_9
+
+        /// <summary>
+        /// Returns true if the type is an OptionSetValueCollection
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public static bool IsOptionSetValueCollection(this Type t)
         {
             var nullableType = Nullable.GetUnderlyingType(t);
@@ -32,7 +38,7 @@ namespace FakeXrmEasy.Extensions
 #endif
 
         /// <summary>
-        /// 
+        /// Returns true if the type is a DateTime
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
@@ -44,7 +50,7 @@ namespace FakeXrmEasy.Extensions
         }
 
         /// <summary>
-        /// 
+        /// Returns true if the type is a Nullable Enum
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
@@ -57,7 +63,7 @@ namespace FakeXrmEasy.Extensions
         }
 
         /// <summary>
-        /// 
+        /// Gets the PropertyInfo for an attribute of an earlybound type
         /// </summary>
         /// <param name="earlyBoundType"></param>
         /// <param name="attributeName"></param>

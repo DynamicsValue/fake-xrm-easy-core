@@ -4,7 +4,7 @@ using Crm;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
-namespace FakeXrmEasy.Tests.Issues
+namespace FakeXrmEasy.Core.Tests.Issues
 {
     public class Issue312: FakeXrmEasyTestsBase
     {

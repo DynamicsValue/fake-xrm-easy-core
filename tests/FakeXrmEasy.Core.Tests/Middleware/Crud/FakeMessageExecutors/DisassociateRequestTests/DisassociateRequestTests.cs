@@ -6,7 +6,7 @@ using System.Linq;
 using Xunit;
 using FakeXrmEasy.Abstractions;
 
-namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.DisassociateRequestTests
+namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.DisassociateRequestTests
 {
     public class DisassociateRequestTests: FakeXrmEasyTestsBase
     {
