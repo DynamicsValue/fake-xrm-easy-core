@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.Issues
+namespace FakeXrmEasy.Core.Tests.Issues
 {
     public class Issue226: FakeXrmEasyTestsBase
     {

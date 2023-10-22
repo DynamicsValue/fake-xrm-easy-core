@@ -12,7 +12,7 @@ using System.Reflection;
 using System.ServiceModel;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveRequestTests
+namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveRequestTests
 {
     public class RetrieveRequestTests : FakeXrmEasyTestsBase
     {

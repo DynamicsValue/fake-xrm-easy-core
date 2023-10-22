@@ -73,12 +73,11 @@ namespace FakeXrmEasy
         /// <summary>
         /// 
         /// </summary>
-        [Obsolete("Please use ProxyTypesAssemblies to retrieve assemblies and EnableProxyTypes to add new ones")]
+        [Obsolete("Please use ProxyTypesAssemblies to retrieve assemblies and EnableProxyTypes to add new ones. This method is solely maintained for making a smoother transition to the latest versions from v1")]
         public Assembly ProxyTypesAssembly
         {
             get
             {
-                // TODO What we should do when ProxyTypesAssemblies contains multiple assemblies? One shouldn't throw exceptions from properties.
                 return _proxyTypesAssemblies.FirstOrDefault();
             }
             set
@@ -315,12 +314,12 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Initializes the context with a single entity record
         /// </summary>
         /// <param name="e"></param>
-        public void Initialize(Entity e)
+        public void Initialize(Entity entity)
         {
-            this.Initialize(new List<Entity>() { e });
+            this.Initialize(new List<Entity>() { entity });
         }
 
         /// <summary>
@@ -489,6 +488,30 @@ namespace FakeXrmEasy
         protected IOrganizationService GetFakedOrganizationService(XrmFakedContext context)
         {
             return context._service;
+        }
+
+        /// <summary>
+        /// Creates a new entity record that is consistent with the current use of early-bound or late-bound entities by the current context
+        /// </summary>
+        /// <param name="logicalName">The entity logical name of the entity</param>
+        /// <returns>An early-bound record dif the context is already using early-bound entity records, a late bound entity otherwise</returns>
+        public Entity NewEntityRecord(string logicalName)
+        {
+            if (_proxyTypesAssemblies.Any())
+            {                
+                var subClassType = FindReflectedType(logicalName);
+                if (subClassType != null)
+                {
+                    var instance = Activator.CreateInstance(subClassType);
+                    return (Entity) instance;                    
+                }
+            }
+            
+            return new Entity
+            {
+                LogicalName = logicalName,
+                Id = Guid.Empty
+            };
         }
 
     }

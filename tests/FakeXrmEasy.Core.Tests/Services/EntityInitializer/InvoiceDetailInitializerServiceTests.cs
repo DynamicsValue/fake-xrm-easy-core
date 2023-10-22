@@ -6,7 +6,7 @@ using Xunit;
 using FakeItEasy;
 using FakeXrmEasy.Services;
 
-namespace FakeXrmEasy.Tests.Services.EntityInitializer
+namespace FakeXrmEasy.Core.Tests.Services.EntityInitializer
 {
     public class InvoiceDetailInitializerServiceTests : FakeXrmEasyTestsBase
     {

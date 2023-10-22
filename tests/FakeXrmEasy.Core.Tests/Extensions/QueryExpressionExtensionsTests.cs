@@ -3,7 +3,7 @@ using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk.Query;
 using FakeXrmEasy.Query;
 
-namespace FakeXrmEasy.Tests.Extensions
+namespace FakeXrmEasy.Core.Tests.Extensions
 {
     public class QueryExpressionExtensionsTests
     {

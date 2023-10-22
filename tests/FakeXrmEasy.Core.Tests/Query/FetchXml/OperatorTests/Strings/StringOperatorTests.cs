@@ -6,7 +6,7 @@ using System.Reflection;
 using Xunit;
 using FakeXrmEasy.Query;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 {
     public class StringOperatorTests : FakeXrmEasyTestsBase
     {

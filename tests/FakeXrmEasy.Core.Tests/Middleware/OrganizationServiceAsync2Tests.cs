@@ -11,7 +11,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.Middleware
+namespace FakeXrmEasy.Core.Tests.Middleware
 {
     public class OrganizationServiceAsync2Tests : OrganizationServiceAsyncTests
     {

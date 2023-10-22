@@ -6,7 +6,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.OperatorTests.MultiSelectOptionSet
+namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests.OperatorTests.MultiSelectOptionSet
 {
     public class MultiSelectOptionSetTests: FakeXrmEasyTestsBase
     {
@@ -500,9 +500,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
         [Fact]
         public void When_executing_a_query_expression_containvalues_operator_throws_exception_for_optionsetvaluecollection_right_hand_side()
         {
-            
-
-            
             _service.Create(new Contact { FirstName = "1,2,3", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) } });
 
             var qe = new QueryExpression("contact");
@@ -514,9 +511,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
         [Fact]
         public void When_executing_a_query_expression_containvalues_operator_returns_partial_matches_for_single_int_array_right_hand_side()
         {
-            
-
-            
             _service.Create(new Contact { FirstName = "1,2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2,3", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } });
@@ -558,9 +552,6 @@ namespace FakeXrmEasy.Tests.FakeContextTests.TranslateQueryExpressionTests.Opera
         [Fact]
         public void When_executing_a_query_expression_containvalues_operator_returns_partial_matches_for_int_params_right_hand_side()
         {
-            
-
-            
             _service.Create(new Contact { FirstName = "1,2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2,3", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } });
