@@ -311,7 +311,7 @@ namespace FakeXrmEasy
         /// <summary>
         /// Initializes the context with a single entity record
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="entity">Entity record that will be used to initialize the In-Memory context</param>
         public void Initialize(Entity entity)
         {
             this.Initialize(new List<Entity>() { entity });

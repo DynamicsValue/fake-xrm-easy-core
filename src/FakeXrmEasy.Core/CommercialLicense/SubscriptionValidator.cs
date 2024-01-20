@@ -7,11 +7,11 @@ namespace FakeXrmEasy.Core.CommercialLicense
     /// <summary>
     /// Validates the current subscription usage is within the current subscription plan
     /// </summary>
-    public sealed class SubscriptionValidator
+    internal sealed class SubscriptionValidator
     {
         private readonly IEnvironmentReader _environmentReader;
         
-        public SubscriptionValidator(IEnvironmentReader environmentReader)
+        internal SubscriptionValidator(IEnvironmentReader environmentReader)
         {
             _environmentReader = environmentReader;
         }
