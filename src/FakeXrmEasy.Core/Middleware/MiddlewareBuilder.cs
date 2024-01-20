@@ -107,7 +107,7 @@ namespace FakeXrmEasy.Middleware
         }
 
         /// <summary>
-        /// 
+        /// FakeXrmEasy can be used under 3 different licences, this method defines the license. More info at: https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/license/
         /// </summary>
         /// <param name="license"></param>
         /// <returns></returns>

@@ -138,6 +138,14 @@ namespace FakeXrmEasy.Core.Tests.Middleware
 #pragma warning restore CS0618 // Type or member is obsolete
             Assert.Null(exception);
         }
+
+        [Fact]
+        public void Should_return_user_info()
+        {
+            var windowsIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            string userName = windowsIdentity.Name;
+            Assert.NotNull(userName);
+        }
     }
 
 
