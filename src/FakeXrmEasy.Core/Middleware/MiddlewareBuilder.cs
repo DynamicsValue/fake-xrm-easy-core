@@ -6,9 +6,11 @@ using FakeXrmEasy.Integrity;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 using FakeItEasy;
+using FakeXrmEasy.Abstractions.CommercialLicense;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
+using FakeXrmEasy.Core.CommercialLicense;
 using FakeXrmEasy.Core.Exceptions;
 
 namespace FakeXrmEasy.Middleware
@@ -87,6 +89,15 @@ namespace FakeXrmEasy.Middleware
                 throw new LicenseException("Please, you need to choose a FakeXrmEasy license. More info at https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/licensing-exception/");
             }
 
+            if (_context.LicenseContext == FakeXrmEasyLicense.Commercial)
+            {
+                var subscriptionInfo = SubscriptionManager._subscriptionInfo;
+                if (subscriptionInfo != null)
+                {
+                    
+                }
+            }
+            
             OrganizationRequestDelegate app = (context, request) => {
                 
                 //return default PullRequestException at the end of the pipeline
@@ -114,6 +125,28 @@ namespace FakeXrmEasy.Middleware
         public IMiddlewareBuilder SetLicense(FakeXrmEasyLicense license)
         {
             _context.LicenseContext = license;
+            return this;
+        }
+        
+        /// <summary>
+        /// Sets the current subscription license key
+        /// </summary>
+        /// <param name="licenseKey">the license key that was provided to you</param>
+        /// <returns></returns>
+        public IMiddlewareBuilder SetLicenseKey(string licenseKey)
+        {
+            SubscriptionManager.SetLicense(licenseKey);
+            return this;
+        }
+        
+        /// <summary>
+        /// Sets the subscription storage provider that will be used to read / write subscription usage data
+        /// </summary>
+        /// <param name="storageProvider"></param>
+        /// <returns></returns>
+        public IMiddlewareBuilder SetSubscriptionUsageStorage(ISubscriptionStorageProvider storageProvider)
+        {
+            SubscriptionManager.SetSubscriptionUsageStoreProvider(storageProvider, new UserReader());
             return this;
         }
     }

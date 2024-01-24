@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using FakeXrmEasy.Abstractions.CommercialLicense;
 using FakeXrmEasy.Core.CommercialLicense.Exceptions;
 
 namespace FakeXrmEasy.Core.CommercialLicense
@@ -10,22 +11,19 @@ namespace FakeXrmEasy.Core.CommercialLicense
     internal sealed class SubscriptionValidator
     {
         private readonly IEnvironmentReader _environmentReader;
-        
-        internal SubscriptionValidator(IEnvironmentReader environmentReader)
+        private readonly ISubscriptionInfo _subscriptionInfo;
+        private readonly ISubscriptionUsage _subscriptionUsage;
+
+        internal SubscriptionValidator(
+            IEnvironmentReader environmentReader,
+            ISubscriptionInfo subscriptionInfo,
+            ISubscriptionUsage subscriptionUsage)
         {
             _environmentReader = environmentReader;
+            _subscriptionInfo = subscriptionInfo;
+            _subscriptionUsage = subscriptionUsage;
         }
         
-        /// <summary>
-        /// The current subscription plan
-        /// </summary>
-        internal SubscriptionInfo SubscriptionPlan { get; set; }
-        
-        /// <summary>
-        /// The current usage of the subscription
-        /// </summary>
-        internal SubscriptionUsage CurrentUsage { get; set; }
-
         /// <summary>
         /// Validates if the current usage is within the subscription limits
         /// </summary>
@@ -55,19 +53,17 @@ namespace FakeXrmEasy.Core.CommercialLicense
         /// <exception cref="SubscriptionExpiredException"></exception>
         internal bool IsSubscriptionPlanValid()
         {
-            if (SubscriptionPlan == null)
+            if (_subscriptionInfo == null)
             {
                 throw new NoSubscriptionPlanInfoException();
             }
 
-            if (SubscriptionPlan.AutoRenews)
+            if (_subscriptionInfo.AutoRenews)
             {
                 return true;
             }
-            
-            var expiryDate = SubscriptionPlan.BillingType == SubscriptionBillingCycleType.Annual
-                ? SubscriptionPlan.StartDate.AddYears(1)
-                : SubscriptionPlan.StartDate.AddMonths(1);
+
+            var expiryDate = _subscriptionInfo.EndDate;
 
             if (expiryDate < DateTime.UtcNow)
             {
@@ -83,18 +79,18 @@ namespace FakeXrmEasy.Core.CommercialLicense
             {
                 return true;
             }
-            if (CurrentUsage == null)
+            if (_subscriptionUsage == null)
             {
                 throw new NoUsageFoundException();
             }
 
-            var currentNumberOfUsers = CurrentUsage
+            var currentNumberOfUsers = _subscriptionUsage
                 .Users
                 .Count(userInfo => userInfo.LastTimeUsed >= DateTime.UtcNow.AddMonths(-1));
 
-            if (currentNumberOfUsers > SubscriptionPlan.NumberOfUsers)
+            if (currentNumberOfUsers > _subscriptionInfo.NumberOfUsers)
             {
-                throw new ConsiderUpgradingPlanException(currentNumberOfUsers, SubscriptionPlan.NumberOfUsers);
+                throw new ConsiderUpgradingPlanException(currentNumberOfUsers, _subscriptionInfo.NumberOfUsers);
             }
             return true;
         }
@@ -102,7 +98,7 @@ namespace FakeXrmEasy.Core.CommercialLicense
         private bool IsRunningInContinuousIntegration()
         {
             return "1".Equals(_environmentReader.GetEnvironmentVariable("FAKE_XRM_EASY_CI"))
-                || "True".Equals(_environmentReader.GetEnvironmentVariable(("TF_BUILD")));
+                || "True".Equals(_environmentReader.GetEnvironmentVariable("TF_BUILD"));
         }
     }
 }

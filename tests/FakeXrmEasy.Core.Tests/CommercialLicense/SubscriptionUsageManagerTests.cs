@@ -1,0 +1,72 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using FakeItEasy;
+using FakeXrmEasy.Abstractions.CommercialLicense;
+using FakeXrmEasy.Core.CommercialLicense;
+using Xunit;
+
+namespace FakeXrmEasy.Core.Tests.CommercialLicense
+{
+    public class SubscriptionUsageManagerTests
+    {
+        private readonly SubscriptionUsageManager _usageManager;
+        private readonly ISubscriptionStorageProvider _subscriptionStorageProvider;
+        private readonly IUserReader _userReader;
+        private const string cUserName = "CurrentDomain\\CurrentUser";
+        
+        public SubscriptionUsageManagerTests()
+        {
+            _subscriptionStorageProvider = A.Fake<ISubscriptionStorageProvider>();
+            _userReader = A.Fake<IUserReader>();
+            A.CallTo(() => _userReader.GetCurrentUserName()).ReturnsLazily(() => cUserName);
+            _usageManager = new SubscriptionUsageManager();
+        }
+        
+        [Fact]
+        public void Should_initialize_new_subscription_usage_data_if_the_provider_returns_null_and_add_current_user()
+        {
+            A.CallTo(() => _subscriptionStorageProvider.Read()).ReturnsLazily(() => null);
+            
+            var usage = _usageManager.ReadAndUpdateUsage(_subscriptionStorageProvider, _userReader);
+            
+            Assert.NotNull(usage);
+            Assert.Single(usage.Users);
+
+            var userInfo = usage.Users.First();
+            Assert.Equal(cUserName, userInfo.UserName);
+            Assert.True(userInfo.LastTimeUsed > DateTime.UtcNow.AddDays(-1));
+
+            A.CallTo(() => _subscriptionStorageProvider.Write(usage))
+                .MustHaveHappened();
+        }
+        
+        [Fact]
+        public void Should_update_last_used_date_if_current_user_already_exists()
+        {
+            A.CallTo(() => _subscriptionStorageProvider.Read()).ReturnsLazily(() => new SubscriptionUsage()
+            {
+                Users = new List<ISubscriptionUserInfo>()
+                {
+                    new SubscriptionUserInfo()
+                    {
+                        UserName = cUserName,
+                        LastTimeUsed = DateTime.UtcNow.AddMonths(-2)
+                    }
+                }
+            });
+            
+            var usage = _usageManager.ReadAndUpdateUsage(_subscriptionStorageProvider, _userReader);
+            
+            Assert.NotNull(usage);
+            Assert.Single(usage.Users);
+
+            var userInfo = usage.Users.First();
+            Assert.Equal(cUserName, userInfo.UserName);
+            Assert.True(userInfo.LastTimeUsed > DateTime.UtcNow.AddDays(-1));
+            
+            A.CallTo(() => _subscriptionStorageProvider.Write(usage))
+                .MustHaveHappened();
+        }
+    }
+}

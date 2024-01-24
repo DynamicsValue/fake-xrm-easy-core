@@ -1,4 +1,5 @@
 using System;
+using FakeXrmEasy.Abstractions.CommercialLicense;
 using FakeXrmEasy.Core.CommercialLicense;
 using FakeXrmEasy.Core.CommercialLicense.Exceptions;
 using Xunit;
@@ -7,17 +8,19 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
 {
     public partial class SubscriptionValidatorTests
     {
+        private ISubscriptionUsage _subscriptionUsage;
+
         [Fact]
         public void Should_return_no_usage_found_exception()
         {
-            _subscriptionValidator.CurrentUsage = null;
+            _subscriptionValidator = new SubscriptionValidator(_defaultEnvironmentReader, null, null);
             Assert.Throws<NoUsageFoundException>(() => _subscriptionValidator.IsUsageValid());
         }
         
         [Fact]
         public void Should_return_consider_upgrading_exception_if_the_number_of_users_exceeds_the_current_subscription()
         {
-            _subscriptionValidator.CurrentUsage = new SubscriptionUsage() //3 valid users
+            _subscriptionUsage = new SubscriptionUsage() //3 valid users
             {
                  Users = new SubscriptionUserInfo[]
                  {
@@ -26,16 +29,19 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
                      new SubscriptionUserInfo() { UserName = "user3", LastTimeUsed = DateTime.UtcNow.AddDays(-3) },
                  }
             };
-            _subscriptionValidator.SubscriptionPlan = new SubscriptionInfo();
-            _subscriptionValidator.SubscriptionPlan.NumberOfUsers = 2;
+            _subscriptionInfo = new SubscriptionInfo()
+            {
+                NumberOfUsers = 2
+            };
 
+            _subscriptionValidator = new SubscriptionValidator(_defaultEnvironmentReader, _subscriptionInfo, _subscriptionUsage);
             Assert.Throws<ConsiderUpgradingPlanException>(() => _subscriptionValidator.IsUsageValid());
         }
         
         [Fact]
         public void Should_not_count_users_where_the_last_time_used_is_greater_than_one_month()
         {
-            _subscriptionValidator.CurrentUsage = new SubscriptionUsage() //3 valid users
+            _subscriptionUsage = new SubscriptionUsage() //3 valid users
             {
                 Users = new SubscriptionUserInfo[]
                 {
@@ -44,16 +50,19 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
                     new SubscriptionUserInfo() { UserName = "user3", LastTimeUsed = DateTime.UtcNow.AddDays(-3) },
                 }
             };
-            _subscriptionValidator.SubscriptionPlan = new SubscriptionInfo();
-            _subscriptionValidator.SubscriptionPlan.NumberOfUsers = 2;
-
+            _subscriptionInfo = new SubscriptionInfo()
+            {
+                NumberOfUsers = 2
+            };
+            
+            _subscriptionValidator = new SubscriptionValidator(_defaultEnvironmentReader, _subscriptionInfo, _subscriptionUsage);
             Assert.True(_subscriptionValidator.IsUsageValid());
         }
         
         [Fact]
         public void Should_return_usage_is_valid_if_it_is_within_the_allowed_range()
         {
-            _subscriptionValidator.CurrentUsage = new SubscriptionUsage() //3 valid users
+            _subscriptionUsage = new SubscriptionUsage() //3 existing valid users
             {
                 Users = new SubscriptionUserInfo[]
                 {
@@ -63,12 +72,36 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
                 }
             };
             
-            _subscriptionValidator.SubscriptionPlan = new SubscriptionInfo
+            _subscriptionInfo = new SubscriptionInfo
             {
                 NumberOfUsers = 3
             };
 
+            _subscriptionValidator = new SubscriptionValidator(_defaultEnvironmentReader, _subscriptionInfo, _subscriptionUsage);
             Assert.True(_subscriptionValidator.IsUsageValid());
+        }
+        
+        [Fact]
+        public void Should_add_current_user_to_usage_if_not_already_there_and_write_back()
+        {
+            _subscriptionUsage = new SubscriptionUsage() //3 valid users
+            {
+                Users = new SubscriptionUserInfo[]
+                {
+                    new SubscriptionUserInfo() { UserName = "user1", LastTimeUsed = DateTime.UtcNow.AddDays(-1) },
+                    new SubscriptionUserInfo() { UserName = "user2", LastTimeUsed = DateTime.UtcNow.AddDays(-10) },
+                    new SubscriptionUserInfo() { UserName = "user3", LastTimeUsed = DateTime.UtcNow.AddDays(-3) },
+                }
+            };
+            
+            _subscriptionInfo = new SubscriptionInfo
+            {
+                NumberOfUsers = 4
+            };
+
+            _subscriptionValidator = new SubscriptionValidator(_defaultEnvironmentReader, _subscriptionInfo, _subscriptionUsage);
+            Assert.True(_subscriptionValidator.IsUsageValid());
+            
         }
         
         [Theory]
@@ -79,12 +112,8 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
             var continuousIntegrationEnvironmentReader = new FakeEnvironmentReader();
             continuousIntegrationEnvironmentReader.SetEnvironmentVariable(envVariableName, envVariableValue);
             
-            var currentSubscription = new SubscriptionValidator(continuousIntegrationEnvironmentReader)
-            {
-                CurrentUsage = null
-            };
-
-            Assert.True(currentSubscription.IsUsageValid());
+            _subscriptionValidator = new SubscriptionValidator(continuousIntegrationEnvironmentReader, null, _subscriptionUsage);
+            Assert.True(_subscriptionValidator.IsUsageValid());
         }
     }
 }
