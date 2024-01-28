@@ -42,14 +42,5 @@ namespace FakeXrmEasy.Core.CommercialLicense
         /// The subscription's end date
         /// </summary>
         public DateTime EndDate { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="licenseKey"></param>
-        internal void FromLicenseKey(string licenseKey)
-        {
-            
-        }
     }
 }
