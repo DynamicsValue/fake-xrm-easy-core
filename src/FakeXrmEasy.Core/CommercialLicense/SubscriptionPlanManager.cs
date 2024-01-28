@@ -8,7 +8,7 @@ namespace FakeXrmEasy.Core.CommercialLicense
 {
     internal class SubscriptionPlanManager
     {
-        private static string GenerateHash(string input)
+        internal string GenerateHash(string input)
         {
             using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
             {

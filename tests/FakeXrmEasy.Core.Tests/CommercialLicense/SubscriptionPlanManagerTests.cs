@@ -21,5 +21,14 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
 
             Assert.Throws<InvalidLicenseKeyException>(() => _subscriptionPlanManager.GetSubscriptionInfoFromKey(invalidKey));
         }
+        
+        [Fact]
+        public void Should_raise_invalid_license_key_exception_even_if_hash_matches_but_subscription_data_is_not_valid()
+        {
+            var invalidKey =
+                "asdasdkjakdhu38768a79aysdaiushdakjshdajshda79878s97d89as7d9a87sda98sdyausydusydausdajbdahsdj";
+
+            Assert.Throws<InvalidLicenseKeyException>(() => _subscriptionPlanManager.GetSubscriptionInfoFromKey($"{invalidKey}{_subscriptionPlanManager.GenerateHash(invalidKey)}"));
+        }
     }
 }
