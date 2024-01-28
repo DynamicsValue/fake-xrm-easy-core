@@ -8,8 +8,11 @@ namespace FakeXrmEasy.Core.CommercialLicense
     {
         internal ISubscriptionUsage _subscriptionUsage;
 
-        internal ISubscriptionUsage ReadAndUpdateUsage(ISubscriptionStorageProvider subscriptionStorageProvider,
-            IUserReader userReader)
+        internal ISubscriptionUsage ReadAndUpdateUsage(
+            ISubscriptionInfo subscriptionInfo,
+            ISubscriptionStorageProvider subscriptionStorageProvider,
+            IUserReader userReader,
+            bool upgradeRequested)
         {
             _subscriptionUsage = subscriptionStorageProvider.Read();
             if (_subscriptionUsage == null)
@@ -35,7 +38,16 @@ namespace FakeXrmEasy.Core.CommercialLicense
             {
                 existingUser.LastTimeUsed = DateTime.UtcNow;
             }
-                
+
+            if (upgradeRequested && _subscriptionUsage.UpgradeInfo == null)
+            {
+                _subscriptionUsage.UpgradeInfo = new SubscriptionUpgradeRequest()
+                {
+                    FirstRequestDate = DateTime.UtcNow,
+                    PreviousNumberOfUsers = subscriptionInfo.NumberOfUsers
+                };
+            }
+            
             subscriptionStorageProvider.Write(_subscriptionUsage);
 
             return _subscriptionUsage;

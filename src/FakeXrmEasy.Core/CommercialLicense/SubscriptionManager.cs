@@ -14,7 +14,10 @@ namespace FakeXrmEasy.Core.CommercialLicense
 
         internal static ISubscriptionUsage _subscriptionUsage;
         internal static readonly object _subscriptionUsageLock = new object();
-        
+
+        internal static bool _renewalRequested = false;
+        internal static bool _upgradeRequested = false;
+
         private static string GenerateHash(string input)
         {
             using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
@@ -68,25 +71,33 @@ namespace FakeXrmEasy.Core.CommercialLicense
             }
         }
 
-        internal static void SetLicense(string licenseKey)
+        private static void SetLicenseKey(string licenseKey)
         {
             lock (_subscriptionInfoLock)
             {
                 if (_subscriptionInfo == null)
                 {
-                    _subscriptionInfo = SubscriptionManager.GetSubscriptionInfoFromKey(licenseKey);
+                    _subscriptionInfo = GetSubscriptionInfoFromKey(licenseKey);
                 }
             }
         }
         
-        internal static void SetSubscriptionUsageStoreProvider(ISubscriptionStorageProvider subscriptionStorageProvider, IUserReader userReader)
+        internal static void SetSubscriptionStorageProvider(ISubscriptionStorageProvider subscriptionStorageProvider, 
+            IUserReader userReader,
+            bool upgradeRequested,
+            bool renewalRequested)
         {
+            SetLicenseKey(subscriptionStorageProvider.GetLicenseKey());
+            
             lock (_subscriptionUsageLock)
             {
                 if (_subscriptionUsage == null)
                 {
+                    _upgradeRequested = upgradeRequested;
+                    _renewalRequested = renewalRequested;
+                    
                     var usageManager = new SubscriptionUsageManager();
-                    _subscriptionUsage = usageManager.ReadAndUpdateUsage(subscriptionStorageProvider, userReader);
+                    _subscriptionUsage = usageManager.ReadAndUpdateUsage(_subscriptionInfo, subscriptionStorageProvider, userReader, _upgradeRequested);
                 }
             }
         }

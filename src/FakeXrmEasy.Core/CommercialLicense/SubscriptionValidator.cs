@@ -13,15 +13,18 @@ namespace FakeXrmEasy.Core.CommercialLicense
         private readonly IEnvironmentReader _environmentReader;
         private readonly ISubscriptionInfo _subscriptionInfo;
         private readonly ISubscriptionUsage _subscriptionUsage;
-
+        private readonly bool _renewalRequested;
+        
         internal SubscriptionValidator(
             IEnvironmentReader environmentReader,
             ISubscriptionInfo subscriptionInfo,
-            ISubscriptionUsage subscriptionUsage)
+            ISubscriptionUsage subscriptionUsage,
+            bool renewalRequested)
         {
             _environmentReader = environmentReader;
             _subscriptionInfo = subscriptionInfo;
             _subscriptionUsage = subscriptionUsage;
+            _renewalRequested = renewalRequested;
         }
         
         /// <summary>
@@ -67,7 +70,17 @@ namespace FakeXrmEasy.Core.CommercialLicense
 
             if (expiryDate < DateTime.UtcNow)
             {
-                throw new SubscriptionExpiredException(expiryDate);
+                if (!_renewalRequested)
+                {
+                    throw new SubscriptionExpiredException(expiryDate);
+                }
+                else
+                {
+                    if (expiryDate.AddMonths(1) < DateTime.UtcNow)
+                    {
+                        throw new RenewalRequestExpiredException(expiryDate);
+                    }
+                }
             }
 
             return true;
@@ -90,7 +103,18 @@ namespace FakeXrmEasy.Core.CommercialLicense
 
             if (currentNumberOfUsers > _subscriptionInfo.NumberOfUsers)
             {
-                throw new ConsiderUpgradingPlanException(currentNumberOfUsers, _subscriptionInfo.NumberOfUsers);
+                if (_subscriptionUsage.UpgradeInfo == null)
+                {
+                    throw new ConsiderUpgradingPlanException(currentNumberOfUsers, _subscriptionInfo.NumberOfUsers);
+                }
+                else
+                {
+                    if (_subscriptionUsage.UpgradeInfo.FirstRequestDate <= DateTime.UtcNow.AddMonths(-1))
+                    {
+                        throw new UpgradeRequestExpiredException(_subscriptionUsage.UpgradeInfo.FirstRequestDate);
+                    }
+                }
+                
             }
             return true;
         }

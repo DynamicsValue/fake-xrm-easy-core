@@ -14,6 +14,7 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
         private readonly ISubscriptionStorageProvider _subscriptionStorageProvider;
         private readonly IUserReader _userReader;
         private const string cUserName = "CurrentDomain\\CurrentUser";
+        private readonly ISubscriptionInfo _subscriptionInfo;
         
         public SubscriptionUsageManagerTests()
         {
@@ -21,6 +22,10 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
             _userReader = A.Fake<IUserReader>();
             A.CallTo(() => _userReader.GetCurrentUserName()).ReturnsLazily(() => cUserName);
             _usageManager = new SubscriptionUsageManager();
+            _subscriptionInfo = new SubscriptionInfo()
+            {
+                NumberOfUsers = 10
+            };
         }
         
         [Fact]
@@ -28,7 +33,7 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
         {
             A.CallTo(() => _subscriptionStorageProvider.Read()).ReturnsLazily(() => null);
             
-            var usage = _usageManager.ReadAndUpdateUsage(_subscriptionStorageProvider, _userReader);
+            var usage = _usageManager.ReadAndUpdateUsage(_subscriptionInfo, _subscriptionStorageProvider, _userReader, false);
             
             Assert.NotNull(usage);
             Assert.Single(usage.Users);
@@ -56,7 +61,7 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
                 }
             });
             
-            var usage = _usageManager.ReadAndUpdateUsage(_subscriptionStorageProvider, _userReader);
+            var usage = _usageManager.ReadAndUpdateUsage(_subscriptionInfo, _subscriptionStorageProvider, _userReader, false);
             
             Assert.NotNull(usage);
             Assert.Single(usage.Users);
@@ -64,6 +69,64 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
             var userInfo = usage.Users.First();
             Assert.Equal(cUserName, userInfo.UserName);
             Assert.True(userInfo.LastTimeUsed > DateTime.UtcNow.AddDays(-1));
+            
+            A.CallTo(() => _subscriptionStorageProvider.Write(usage))
+                .MustHaveHappened();
+        }
+        
+        [Fact]
+        public void Should_add_upgrade_requested_info_upgrade_requested_and_no_previous_upgrade_info_existed()
+        {
+            A.CallTo(() => _subscriptionStorageProvider.Read()).ReturnsLazily(() => null);
+            
+            var usage = _usageManager.ReadAndUpdateUsage(_subscriptionInfo, _subscriptionStorageProvider, _userReader, true);
+            
+            Assert.NotNull(usage);
+            Assert.Single(usage.Users);
+
+            var userInfo = usage.Users.First();
+            Assert.Equal(cUserName, userInfo.UserName);
+            Assert.True(userInfo.LastTimeUsed > DateTime.UtcNow.AddDays(-1));
+
+            var upgradeInfo = usage.UpgradeInfo;
+            Assert.NotNull(upgradeInfo);
+            Assert.Equal(_subscriptionInfo.NumberOfUsers, upgradeInfo.PreviousNumberOfUsers);
+            
+            A.CallTo(() => _subscriptionStorageProvider.Write(usage))
+                .MustHaveHappened();
+        }
+        
+        [Fact]
+        public void Should_not_update_upgrade_info_if_upgrade_info_existed_previously()
+        {
+            var upgradeDate = DateTime.UtcNow.AddMonths(-1);
+            
+            A.CallTo(() => _subscriptionStorageProvider.Read()).ReturnsLazily(() => new SubscriptionUsage()
+            {
+                UpgradeInfo = new SubscriptionUpgradeRequest()
+                {
+                    FirstRequestDate = upgradeDate,
+                    PreviousNumberOfUsers = _subscriptionInfo.NumberOfUsers
+                },
+                Users = new List<ISubscriptionUserInfo>()
+                {
+                    new SubscriptionUserInfo()
+                    {
+                        UserName = cUserName,
+                        LastTimeUsed = DateTime.UtcNow.AddMonths(-2)
+                    }
+                }
+            });
+            
+            var usage = _usageManager.ReadAndUpdateUsage(_subscriptionInfo, _subscriptionStorageProvider, _userReader, true);
+            
+            Assert.NotNull(usage);
+            Assert.Single(usage.Users);
+
+            var upgradeInfo = usage.UpgradeInfo;
+            Assert.NotNull(upgradeInfo);
+            Assert.Equal(_subscriptionInfo.NumberOfUsers, upgradeInfo.PreviousNumberOfUsers);
+            Assert.Equal(upgradeDate, upgradeInfo.FirstRequestDate);
             
             A.CallTo(() => _subscriptionStorageProvider.Write(usage))
                 .MustHaveHappened();

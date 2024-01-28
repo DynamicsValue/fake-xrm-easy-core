@@ -94,7 +94,13 @@ namespace FakeXrmEasy.Middleware
                 var subscriptionInfo = SubscriptionManager._subscriptionInfo;
                 if (subscriptionInfo != null)
                 {
-                    
+                    var subscriptionValidator = new SubscriptionValidator(
+                        new EnvironmentReader(),
+                        SubscriptionManager._subscriptionInfo,
+                        SubscriptionManager._subscriptionUsage,
+                        SubscriptionManager._renewalRequested);
+
+                    subscriptionValidator.IsValid();
                 }
             }
             
@@ -129,24 +135,15 @@ namespace FakeXrmEasy.Middleware
         }
         
         /// <summary>
-        /// Sets the current subscription license key
+        /// Use this method to provide an implementation for a subscription storage provider when you are using a commercial license and have a license key 
         /// </summary>
-        /// <param name="licenseKey">the license key that was provided to you</param>
+        /// <param name="storageProvider">An implementation of a ISubscriptionStorageProvider that is capable of reading and writing subscription usage data as well as your license key</param>
+        /// <param name="upgradeRequested">Set to true if you exceeded the number of users that your current subscription allows and you have already requested an upgrade to DynamicsValue via your organisation's established process</param>
+        /// <param name="renewalRequested">Set to true if your subscription expired and you have already requested an renewal to DynamicsValue via your organisation's established process</param>
         /// <returns></returns>
-        public IMiddlewareBuilder SetLicenseKey(string licenseKey)
+        public IMiddlewareBuilder SetSubscriptionStorageProvider(ISubscriptionStorageProvider storageProvider, bool upgradeRequested = false, bool renewalRequested = false)
         {
-            SubscriptionManager.SetLicense(licenseKey);
-            return this;
-        }
-        
-        /// <summary>
-        /// Sets the subscription storage provider that will be used to read / write subscription usage data
-        /// </summary>
-        /// <param name="storageProvider"></param>
-        /// <returns></returns>
-        public IMiddlewareBuilder SetSubscriptionUsageStorage(ISubscriptionStorageProvider storageProvider)
-        {
-            SubscriptionManager.SetSubscriptionUsageStoreProvider(storageProvider, new UserReader());
+            SubscriptionManager.SetSubscriptionStorageProvider(storageProvider, new UserReader(), upgradeRequested, renewalRequested);
             return this;
         }
     }

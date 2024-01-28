@@ -19,10 +19,16 @@ namespace FakeXrmEasy.Core.CommercialLicense
         /// </summary>
         public ICollection<ISubscriptionUserInfo> Users { get; set; }
 
+        /// <summary>
+        /// Contains info for a requested upgrade
+        /// </summary>
+        public ISubscriptionUpgradeRequest UpgradeInfo { get; set; }
+
         internal SubscriptionUsage()
         {
             Users = new List<ISubscriptionUserInfo>();
             LastTimeChecked = DateTime.UtcNow;
+            UpgradeInfo = null;
         }
     }
 }
