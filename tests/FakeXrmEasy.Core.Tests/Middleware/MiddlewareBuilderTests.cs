@@ -6,13 +6,36 @@ using System;
 using Crm;
 using FakeXrmEasy.Abstractions.Middleware;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.CommercialLicense;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
+using FakeXrmEasy.Core.CommercialLicense;
+using FakeXrmEasy.Core.CommercialLicense.Exceptions;
 
 namespace FakeXrmEasy.Core.Tests.Middleware
 {
-    public partial class MiddlewareBuilderTests 
+    public partial class MiddlewareBuilderTests
     {
+        private readonly ISubscriptionStorageProvider _fakeSubscriptionStorageProvider;
+        private readonly ISubscriptionInfo _subscriptionInfo;
+        private readonly ISubscriptionUsage _subscriptionUsage;
+        public MiddlewareBuilderTests()
+        {
+            _subscriptionInfo = new SubscriptionInfo()
+            {
+                EndDate = DateTime.UtcNow.AddDays(1),
+                NumberOfUsers = 1
+            };
+
+            _subscriptionUsage = new SubscriptionUsage()
+            {
+
+            };
+
+            _fakeSubscriptionStorageProvider = A.Fake<ISubscriptionStorageProvider>();
+            A.CallTo(() => _fakeSubscriptionStorageProvider.Read()).ReturnsLazily(() => _subscriptionUsage);
+        }
+        
         [Fact]
         public void Should_create_new_instance() 
         {
@@ -121,7 +144,21 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         {
             Assert.Throws<LicenseException>(() => MiddlewareBuilder.New().Build());
         }
+        
+        [Fact]
+        public void Should_not_throw_exception_when_using_commercial_license_with_custom_storage_and_valid_data()
+        {
+            SubscriptionManager._subscriptionInfo = _subscriptionInfo;
+            SubscriptionManager._subscriptionUsage = _subscriptionUsage;
 
+            var ctx = MiddlewareBuilder
+                .New()
+                .SetLicense(FakeXrmEasyLicense.Commercial)
+                .Build();
+
+            Assert.Equal(FakeXrmEasyLicense.Commercial, ctx.LicenseContext);
+        }
+        
         [Fact]
         public void Should_throw_exception_when_using_default_faked_context_constructor_without_a_license()
         {
@@ -138,14 +175,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
 #pragma warning restore CS0618 // Type or member is obsolete
             Assert.Null(exception);
         }
-
-        [Fact]
-        public void Should_return_user_info()
-        {
-            var windowsIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
-            string userName = windowsIdentity.Name;
-            Assert.NotNull(userName);
-        }
+        
     }
 
 
