@@ -6,9 +6,11 @@ using FakeXrmEasy.Integrity;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 using FakeItEasy;
+using FakeXrmEasy.Abstractions.CommercialLicense;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
+using FakeXrmEasy.Core.CommercialLicense;
 using FakeXrmEasy.Core.Exceptions;
 
 namespace FakeXrmEasy.Middleware
@@ -87,6 +89,21 @@ namespace FakeXrmEasy.Middleware
                 throw new LicenseException("Please, you need to choose a FakeXrmEasy license. More info at https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/licensing-exception/");
             }
 
+            if (_context.LicenseContext == FakeXrmEasyLicense.Commercial)
+            {
+                var subscriptionInfo = SubscriptionManager._subscriptionInfo;
+                if (subscriptionInfo != null)
+                {
+                    var subscriptionValidator = new SubscriptionValidator(
+                        new EnvironmentReader(),
+                        SubscriptionManager._subscriptionInfo,
+                        SubscriptionManager._subscriptionUsage,
+                        SubscriptionManager._renewalRequested);
+
+                    subscriptionValidator.IsValid();
+                }
+            }
+            
             OrganizationRequestDelegate app = (context, request) => {
                 
                 //return default PullRequestException at the end of the pipeline
@@ -107,13 +124,26 @@ namespace FakeXrmEasy.Middleware
         }
 
         /// <summary>
-        /// 
+        /// FakeXrmEasy can be used under 3 different licences, this method defines the license. More info at: https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/license/
         /// </summary>
         /// <param name="license"></param>
         /// <returns></returns>
         public IMiddlewareBuilder SetLicense(FakeXrmEasyLicense license)
         {
             _context.LicenseContext = license;
+            return this;
+        }
+        
+        /// <summary>
+        /// Use this method to provide an implementation for a subscription storage provider when you are using a commercial license and have a license key 
+        /// </summary>
+        /// <param name="storageProvider">An implementation of a ISubscriptionStorageProvider that is capable of reading and writing subscription usage data as well as your license key</param>
+        /// <param name="upgradeRequested">Set to true if you exceeded the number of users that your current subscription allows and you have already requested an upgrade to DynamicsValue via your organisation's established process</param>
+        /// <param name="renewalRequested">Set to true if your subscription expired and you have already requested an renewal to DynamicsValue via your organisation's established process</param>
+        /// <returns></returns>
+        public IMiddlewareBuilder SetSubscriptionStorageProvider(ISubscriptionStorageProvider storageProvider, bool upgradeRequested = false, bool renewalRequested = false)
+        {
+            SubscriptionManager.SetSubscriptionStorageProvider(storageProvider, new UserReader(), upgradeRequested, renewalRequested);
             return this;
         }
     }
