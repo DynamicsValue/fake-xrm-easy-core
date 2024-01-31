@@ -1,3 +1,9 @@
+## [2.4.0]
+
+## Added
+
+- **Alpha**: Introduced subscription usage monitoring based on customer feedback
+
 ## [2.3.3]
 
 ### Added
