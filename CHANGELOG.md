@@ -4,6 +4,10 @@
 
 - **Alpha**: Introduced subscription usage monitoring based on customer feedback
 
+### Changed
+
+- Remove ReleaseNotes from package description - https://github.com/DynamicsValue/fake-xrm-easy/issues/115
+
 ## [3.3.3]
 
 ### Added
