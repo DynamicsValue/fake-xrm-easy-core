@@ -1,3 +1,5 @@
+using System;
+
 namespace FakeXrmEasy.Core.CommercialLicense
 {
     /// <summary>
@@ -16,7 +18,7 @@ namespace FakeXrmEasy.Core.CommercialLicense
     {
         public string GetCurrentUserName()
         {
-            return System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            return Environment.UserName;
         }
     }
 }

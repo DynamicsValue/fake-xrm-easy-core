@@ -1,3 +1,4 @@
+using System;
 using FakeXrmEasy.Core.CommercialLicense;
 using Xunit;
 
@@ -15,7 +16,7 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
         [Fact]
         public void Should_return_current_user()
         {
-            Assert.Equal(System.Security.Principal.WindowsIdentity.GetCurrent().Name, _userReader.GetCurrentUserName());
+            Assert.Equal(Environment.UserName, _userReader.GetCurrentUserName());
         }
     }
 }
