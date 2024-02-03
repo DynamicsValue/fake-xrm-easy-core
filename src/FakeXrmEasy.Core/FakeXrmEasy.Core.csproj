@@ -129,10 +129,6 @@
     <PropertyGroup>
       <PackageDescription>
 FakeXrmEasy is the open source test automation framework for .net core and the Power Platform. This is the core package containing a configurable middleware, crud operators, and query translation between FetchXml, QueryExpression, CRM LINQ, and QueryByAttribute.
-
-RELEASE NOTES
-------------------
-@(ReleaseNoteLines, '%0a')
       </PackageDescription>
       <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
     </PropertyGroup>
