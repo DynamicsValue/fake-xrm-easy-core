@@ -66,7 +66,7 @@ jobs:
     - name: Build
       run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFrameworks 'all'
       env: 
-        NUGET_USERNAME: DynamicsValue
+        NUGET_USERNAME: ${{github.repository_owner}}
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
   sonar:
@@ -94,7 +94,7 @@ jobs:
         testCommand: dotnet test . --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
         projectName: fake-xrm-easy-core
-        sonarOrganisation: dynamicsvalue
+        sonarOrganisation: ${{ vars.SONAR_ORG_NAME }}
         beginArguments: >
             /d:sonar.verbose="true"
             /d:sonar.qualitygate.wait="true"
@@ -103,7 +103,7 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
-        NUGET_USERNAME: DynamicsValue
+        NUGET_USERNAME: ${{github.repository_owner}}
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
   pack-push:
@@ -127,32 +127,32 @@ jobs:
       - name: Build
         run: pwsh ./build.ps1 -targetFrameworks 'all'
         env: 
-          NUGET_USERNAME: DynamicsValue
+          NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
       - name: Pack Src
         run: pwsh ./pack-src.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
         env: 
-          NUGET_USERNAME: DynamicsValue
+          NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
       - name: Push Src
         run: nuget.exe push .\nupkgs\FakeXrmEasy.Core.*.nupkg -Source ${{ env.source-url }}
         env: 
-          NUGET_USERNAME: DynamicsValue
+          NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_AUTH_TOKEN: ${{ github.token }}
           NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pack Tests
         run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
         env: 
-          NUGET_USERNAME: DynamicsValue
+          NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
       - name: Push Tests
         run: nuget.exe push .\nupkgs\FakeXrmEasy.CoreTests.*.nupkg -Source ${{ env.source-url }}
         env: 
-          NUGET_USERNAME: DynamicsValue
+          NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_AUTH_TOKEN: ${{ github.token }}
           NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

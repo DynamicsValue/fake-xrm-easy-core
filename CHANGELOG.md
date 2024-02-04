@@ -6,7 +6,11 @@
 
 ### Changed
 
+- Set default build configuration in solution file to FAKE_XRM_EASY_9
 - Remove ReleaseNotes from package description - https://github.com/DynamicsValue/fake-xrm-easy/issues/115
+- build.ps1 improvements: do not build project twice (added --no-build) when running dotnet test, do not build again either when packing assemblies either: https://github.com/DynamicsValue/fake-xrm-easy/issues/119
+- Update build scripts to use 'all' target frameworks by default - https://github.com/DynamicsValue/fake-xrm-easy/issues/126
+- Update github actions to use new Sonar environment variables - https://github.com/DynamicsValue/fake-xrm-easy/issues/120
 
 ## [2.3.3]
 
