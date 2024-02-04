@@ -38,7 +38,7 @@ jobs:
     - name: Build
       run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFramework 'all'
       env: 
-        NUGET_USERNAME: DynamicsValue
+        NUGET_USERNAME: ${{github.repository_owner}}
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
   sonar:
@@ -87,11 +87,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          NUGET_USERNAME: DynamicsValue
+          NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"DynamicsValue_fake-xrm-easy-core" /o:"dynamicsvalue" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.verbose="true" /d:sonar.qualitygate.wait="true" /d:sonar.cs.opencover.reportsPaths="coverage/**/coverage.opencover.xml" /d:sonar.coverage.exclusions="tests/**/**"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ vars.SONAR_PROJECT_PREFIX }}_fake-xrm-easy-core" /o:"${{ vars.SONAR_ORG_NAME }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.verbose="true" /d:sonar.qualitygate.wait="true" /d:sonar.cs.opencover.reportsPaths="coverage/**/coverage.opencover.xml" /d:sonar.coverage.exclusions="tests/**/**"
           .\build.ps1 -configuration FAKE_XRM_EASY_9 -targetFrameworks 'all'
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
