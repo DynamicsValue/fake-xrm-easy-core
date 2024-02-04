@@ -153,7 +153,13 @@ namespace FakeXrmEasy.Middleware
         /// <returns></returns>
         public IMiddlewareBuilder SetSubscriptionStorageProvider(ISubscriptionStorageProvider storageProvider, bool upgradeRequested = false, bool renewalRequested = false)
         {
-            SubscriptionManager.SetSubscriptionStorageProvider(storageProvider, new UserReader(), upgradeRequested, renewalRequested);
+            var userReader = new UserReader();
+            Console.WriteLine($"Setting Subscription Storage Provider...");
+            Console.WriteLine($"  -> Running as '{userReader.GetCurrentUserName()}' ...");
+            
+            SubscriptionManager.SetSubscriptionStorageProvider(storageProvider, userReader, upgradeRequested, renewalRequested);
+            
+            Console.WriteLine($"Setting Subscription Storage Provider ok.");
             return this;
         }
 
