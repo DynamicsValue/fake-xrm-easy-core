@@ -48,20 +48,20 @@ if($targetFrameworks -eq "all")
 {
     if($versionSuffix -eq "") 
     {
-        dotnet pack --no-build --no-restore --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -o $tempNupkgFolder $projectPath/$projectName.csproj
+        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -o $tempNupkgFolder $projectPath/$projectName.csproj
     }
     else {
-        dotnet pack --no-build --no-restore --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
+        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
     }
 }
 else 
 {
     if($versionSuffix -eq "") 
     {
-        dotnet pack --no-build --no-restore --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj
+        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj
     }
     else {
-        dotnet pack --no-build --no-restore --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
+        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
     }
 }
 
