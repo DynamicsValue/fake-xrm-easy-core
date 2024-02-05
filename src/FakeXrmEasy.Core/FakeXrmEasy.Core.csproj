@@ -8,7 +8,7 @@
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">net452</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY'">net452</TargetFrameworks>
     <PackageId>FakeXrmEasy.Core</PackageId>
-    <VersionPrefix>2.3.3</VersionPrefix>
+    <VersionPrefix>2.4.0</VersionPrefix>
     <Authors>Jordi Montaña</Authors>
     <Company>Dynamics Value</Company>
     <Title>FakeXrmEasy Core</Title>
@@ -102,22 +102,22 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v2011" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v2011" Version="[2.4.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v2013" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v2013" Version="[2.4.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2015'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v2015" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v2015" Version="[2.4.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_2016'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v2016" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v2016" Version="[2.4.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_365'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v365" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v365" Version="[2.4.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY_9'">
-    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="[2.3.3-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="[2.4.0-*,3.0)" />
   </ItemGroup>
 
   <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
@@ -129,10 +129,6 @@
     <PropertyGroup>
       <PackageDescription>
 FakeXrmEasy is the open source test automation framework for .net core and the Power Platform. This is the core package containing a configurable middleware, crud operators, and query translation between FetchXml, QueryExpression, CRM LINQ, and QueryByAttribute.
-
-RELEASE NOTES
-------------------
-@(ReleaseNoteLines, '%0a')
       </PackageDescription>
       <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
     </PropertyGroup>

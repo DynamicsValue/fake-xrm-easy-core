@@ -1,5 +1,5 @@
 param (
-    [string]$targetFrameworks = "netcoreapp3.1",
+    [string]$targetFrameworks = "all",
     [string]$configuration = "FAKE_XRM_EASY_9",
     [string]$packTests = ""
  )
@@ -35,6 +35,7 @@ Write-Host " -> Cleaning..." -ForegroundColor Yellow
 ./clean.ps1 -folderPath "./tests/FakeXrmEasy.Core.Tests/bin"
 ./clean.ps1 -folderPath "./tests/FakeXrmEasy.Core.Tests/obj"
 
+Write-Host " -> Restoring dependencies: configuration='$($configuration)', targetFramework='$($targetFrameworks)' PackTests=$($packTests)" -ForegroundColor Yellow
 if($targetFrameworks -eq "all")
 {
     dotnet restore --no-cache --force --force-evaluate /p:Configuration=$configuration /p:PackTests=$packTests --packages $restoredPackagesFolder
@@ -48,6 +49,7 @@ if(!($LASTEXITCODE -eq 0)) {
     throw "Error restoring packages"
 }
 
+Write-Host " -> Building: configuration='$($configuration)', targetFramework='$($targetFrameworks)' PackTests=$($packTests)" -ForegroundColor Yellow
 if($targetFrameworks -eq "all")
 {
     dotnet build --configuration $configuration --no-restore /p:PackTests=$packTests
@@ -61,14 +63,15 @@ if(!($LASTEXITCODE -eq 0)) {
     throw "Error during build step"
 }
 
+Write-Host " -> Testing: configuration='$($configuration)', targetFramework='$($targetFrameworks)' PackTests=$($packTests)" -ForegroundColor Yellow
 if($targetFrameworks -eq "all")
 {
-    dotnet test --configuration $configuration --no-restore --verbosity normal /p:PackTests=$packTests --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
+    dotnet test --configuration $configuration --no-build --verbosity normal /p:PackTests=$packTests --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
 
 }
 else 
 {
-    dotnet test --configuration $configuration --no-restore --framework $targetFrameworks --verbosity normal /p:PackTests=$packTests --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
+    dotnet test --configuration $configuration --no-build --framework $targetFrameworks --verbosity normal /p:PackTests=$packTests --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
 }
 
 if(!($LASTEXITCODE -eq 0)) {

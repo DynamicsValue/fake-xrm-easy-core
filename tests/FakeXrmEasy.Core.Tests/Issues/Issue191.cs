@@ -62,7 +62,6 @@ namespace FakeXrmEasy.Core.Tests.Issues
             link2.LinkEntities.Add(link22);
 
             var count2 = _service.RetrieveMultiple(query2).Entities.Count;
-            Console.WriteLine(count2); // returns 1 record
 
             var results = _service.RetrieveMultiple(query2);
             Assert.True(results.Entities[0].Attributes.ContainsKey("child1.contactid"));
