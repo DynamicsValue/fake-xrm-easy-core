@@ -41,6 +41,13 @@ namespace FakeXrmEasy.Core.CommercialLicense
             {
                 if (_subscriptionUsage == null)
                 {
+                    var environmentReader = new EnvironmentReader();
+                    if (environmentReader.IsRunningInContinuousIntegration())
+                    {
+                        _subscriptionUsage = new SubscriptionUsage();
+                        return;
+                    }
+                    
                     _upgradeRequested = upgradeRequested;
                     _renewalRequested = renewalRequested;
                     

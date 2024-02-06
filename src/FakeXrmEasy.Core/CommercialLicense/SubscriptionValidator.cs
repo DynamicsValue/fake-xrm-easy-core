@@ -88,7 +88,7 @@ namespace FakeXrmEasy.Core.CommercialLicense
 
         internal bool IsUsageValid()
         {
-            if (IsRunningInContinuousIntegration())
+            if (_environmentReader.IsRunningInContinuousIntegration())
             {
                 return true;
             }
