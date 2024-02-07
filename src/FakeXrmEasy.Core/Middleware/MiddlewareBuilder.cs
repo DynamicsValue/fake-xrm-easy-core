@@ -91,14 +91,14 @@ namespace FakeXrmEasy.Middleware
 
             if (_context.LicenseContext == FakeXrmEasyLicense.Commercial)
             {
-                var subscriptionInfo = SubscriptionManager._subscriptionInfo;
-                if (subscriptionInfo != null)
+                var subscriptionManager = SubscriptionManager.Instance;
+                if (subscriptionManager.SubscriptionInfo != null)
                 {
                     var subscriptionValidator = new SubscriptionValidator(
                         new EnvironmentReader(),
-                        SubscriptionManager._subscriptionInfo,
-                        SubscriptionManager._subscriptionUsage,
-                        SubscriptionManager._renewalRequested);
+                        subscriptionManager.SubscriptionInfo,
+                        subscriptionManager.SubscriptionUsage,
+                        subscriptionManager.RenewalRequested);
 
                     subscriptionValidator.IsValid();
                 }
@@ -146,8 +146,9 @@ namespace FakeXrmEasy.Middleware
             var userReader = new UserReader();
             Console.WriteLine($"Setting Subscription Storage Provider...");
             Console.WriteLine($"  -> Running as '{userReader.GetCurrentUserName()}' ...");
-            
-            SubscriptionManager.SetSubscriptionStorageProvider(storageProvider, userReader, upgradeRequested, renewalRequested);
+
+            var subscriptionManagerInstance = SubscriptionManager.Instance;
+            subscriptionManagerInstance.SetSubscriptionStorageProvider(storageProvider, userReader, upgradeRequested, renewalRequested);
             
             Console.WriteLine($"Setting Subscription Storage Provider ok.");
             return this;
