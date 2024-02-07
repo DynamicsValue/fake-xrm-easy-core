@@ -1,3 +1,9 @@
+## [2.4.1]
+
+### Changed
+
+- Should not read subscription usage while in a CI build
+
 ## [2.4.0]
 
 ## Added
