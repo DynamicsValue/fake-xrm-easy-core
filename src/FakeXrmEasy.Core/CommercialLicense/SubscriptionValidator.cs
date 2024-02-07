@@ -118,11 +118,5 @@ namespace FakeXrmEasy.Core.CommercialLicense
             }
             return true;
         }
-
-        private bool IsRunningInContinuousIntegration()
-        {
-            return "1".Equals(_environmentReader.GetEnvironmentVariable("FAKE_XRM_EASY_CI"))
-                || "True".Equals(_environmentReader.GetEnvironmentVariable("TF_BUILD"));
-        }
     }
 }

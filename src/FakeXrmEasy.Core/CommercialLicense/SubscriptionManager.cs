@@ -14,7 +14,6 @@ namespace FakeXrmEasy.Core.CommercialLicense
         internal readonly SubscriptionUsageManager _subscriptionUsageManager;
         
         private bool _renewalRequested = false;
-        private bool _upgradeRequested = false;
 
         private static readonly object _subscriptionManagerLock = new object();
         private static SubscriptionManager _instance = null;
@@ -87,10 +86,9 @@ namespace FakeXrmEasy.Core.CommercialLicense
                     return;
                 }
                     
-                _upgradeRequested = upgradeRequested;
                 _renewalRequested = renewalRequested;
                 
-                _subscriptionUsage = _subscriptionUsageManager.ReadAndUpdateUsage(_subscriptionInfo, subscriptionStorageProvider, userReader, _upgradeRequested);
+                _subscriptionUsage = _subscriptionUsageManager.ReadAndUpdateUsage(_subscriptionInfo, subscriptionStorageProvider, userReader, upgradeRequested);
             }
         }
         internal void SetSubscriptionStorageProvider(ISubscriptionStorageProvider subscriptionStorageProvider, 

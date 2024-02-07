@@ -13,8 +13,6 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
     {
         private SubscriptionManager _subscriptionManager;
         private readonly FakeEnvironmentReader _environmentReader;
-        private readonly ISubscriptionInfo _subscriptionInfo;
-        private readonly ISubscriptionUsage _subscriptionUsage;
         private readonly SubscriptionUsageManager _subscriptionUsageManager;
         private readonly ISubscriptionStorageProvider _fakeSubscriptionStorageProvider;
         public SubscriptionManagerTests()
