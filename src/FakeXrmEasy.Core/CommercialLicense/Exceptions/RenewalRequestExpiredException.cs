@@ -7,11 +7,14 @@ namespace FakeXrmEasy.Core.CommercialLicense.Exceptions
     /// </summary>
     public class RenewalRequestExpiredException: Exception
     {
+        private const string _url =
+            "https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/commercial-license/troubleshooting/renewal-request-expired-exception/";
+        
         /// <summary>
         /// Throws an exception where the current subscription expired
         /// </summary>
         /// <param name="expiredOn"></param>
-        public RenewalRequestExpiredException(DateTime expiredOn) : base($"The current subscription expired on '{expiredOn.ToLongDateString()}' and a renewal license was not applied on time. Please request a new subscription license.")
+        public RenewalRequestExpiredException(DateTime expiredOn) : base($"The current subscription expired on '{expiredOn.ToLongDateString()}' and a renewal license was not applied on time. Please request a new subscription license. More info at {_url}.")
         {
             
         }

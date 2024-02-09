@@ -82,6 +82,7 @@ namespace FakeXrmEasy.Core.CommercialLicense
             {
                 if (_environmentReader.IsRunningInContinuousIntegration())
                 {
+                    Console.WriteLine("Running in CI... skipping usage.");
                     _subscriptionUsage = new SubscriptionUsage();
                     return;
                 }
