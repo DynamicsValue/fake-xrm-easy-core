@@ -8,7 +8,7 @@ namespace FakeXrmEasy.Core.CommercialLicense.Exceptions
     public class ConsiderUpgradingPlanException: Exception 
     {
         private const string _url =
-            "https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/commercial-license/troubleshooting/consider-upgrading-exception/";
+            CommercialLicenseTroubleshootingLinks.BaseUrl + "/consider-upgrading-exception/";
         
         /// <summary>
         /// Default constructor
