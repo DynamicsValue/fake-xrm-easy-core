@@ -1,3 +1,10 @@
+## [2.4.2]
+
+### Added
+
+- Added link to docs in exceptions
+- Added some logging in subscription usage for CI builds
+
 ## [2.4.1]
 
 ### Changed
