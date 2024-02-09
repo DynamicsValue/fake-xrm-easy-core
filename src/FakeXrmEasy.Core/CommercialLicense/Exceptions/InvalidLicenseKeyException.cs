@@ -8,7 +8,7 @@ namespace FakeXrmEasy.Core.CommercialLicense.Exceptions
     public class InvalidLicenseKeyException: Exception
     {
         private const string _url =
-            "https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/commercial-license/troubleshooting/invalid-license-key-exception/";
+            CommercialLicenseTroubleshootingLinks.BaseUrl + "/invalid-license-key-exception/";
         
         /// <summary>
         /// Default constructor

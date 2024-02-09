@@ -8,7 +8,7 @@ namespace FakeXrmEasy.Core.CommercialLicense.Exceptions
     public class UpgradeRequestExpiredException: Exception
     {
         private const string _url =
-            "https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/commercial-license/troubleshooting/upgrade-request-expired-exception/";
+            CommercialLicenseTroubleshootingLinks.BaseUrl + "/upgrade-request-expired-exception/";
         
         /// <summary>
         /// Default constructor

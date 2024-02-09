@@ -8,7 +8,7 @@ namespace FakeXrmEasy.Core.CommercialLicense.Exceptions
     public class SubscriptionExpiredException: Exception
     {
         private const string _url =
-            "https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/commercial-license/troubleshooting/subscription-expired-exception/";
+            CommercialLicenseTroubleshootingLinks.BaseUrl + "/subscription-expired-exception/";
         
         /// <summary>
         /// Throws an exception where the current subscription expired

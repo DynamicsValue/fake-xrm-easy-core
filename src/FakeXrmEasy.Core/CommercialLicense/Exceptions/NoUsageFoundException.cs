@@ -8,7 +8,7 @@ namespace FakeXrmEasy.Core.CommercialLicense.Exceptions
     public class NoUsageFoundException: Exception
     {
         private const string _url =
-            "https://dynamicsvalue.github.io/fake-xrm-easy-docs/licensing/commercial-license/troubleshooting/no-usage-found-exception/";
+            CommercialLicenseTroubleshootingLinks.BaseUrl + "/no-usage-found-exception/";
         
         /// <summary>
         /// Default constructor
