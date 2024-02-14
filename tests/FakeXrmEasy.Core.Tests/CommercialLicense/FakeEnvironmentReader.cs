@@ -24,6 +24,12 @@ namespace FakeXrmEasy.Core.Tests.CommercialLicense
             return variableValue;
         }
 
+        public bool IsRunningInContinuousIntegration()
+        {
+            return "1".Equals(GetEnvironmentVariable("FAKE_XRM_EASY_CI"))
+                   || "True".Equals(GetEnvironmentVariable("TF_BUILD"));
+        }
+
         public void SetEnvironmentVariable(string variableName, string variableValue)
         {
             _variables.AddOrUpdate(variableName, variableValue, (key, oldValue) => variableValue);

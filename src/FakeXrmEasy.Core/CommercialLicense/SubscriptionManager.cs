@@ -7,46 +7,101 @@ using FakeXrmEasy.Core.CommercialLicense.Exceptions;
 
 namespace FakeXrmEasy.Core.CommercialLicense
 {
-    internal static class SubscriptionManager
+    internal class SubscriptionManager
     {
-        internal static ISubscriptionInfo _subscriptionInfo;
-        internal static readonly object _subscriptionInfoLock = new object();
-
-        internal static ISubscriptionUsage _subscriptionUsage;
-        internal static readonly object _subscriptionUsageLock = new object();
-
-        internal static bool _renewalRequested = false;
-        internal static bool _upgradeRequested = false;
+        internal ISubscriptionInfo _subscriptionInfo;
+        internal ISubscriptionUsage _subscriptionUsage;
+        internal readonly SubscriptionUsageManager _subscriptionUsageManager;
         
-        private static void SetLicenseKey(string licenseKey)
+        private bool _renewalRequested = false;
+
+        private static readonly object _subscriptionManagerLock = new object();
+        private static SubscriptionManager _instance = null;
+        private readonly IEnvironmentReader _environmentReader;
+        internal SubscriptionManager(IEnvironmentReader environmentReader,
+                                    ISubscriptionInfo subscriptionInfo,
+                                    ISubscriptionUsage subscriptionUsage,
+                                    SubscriptionUsageManager subscriptionUsageManager)
         {
-            lock (_subscriptionInfoLock)
+            _environmentReader = environmentReader;
+            _subscriptionInfo = subscriptionInfo;
+            _subscriptionUsage = subscriptionUsage;
+            _subscriptionUsageManager = subscriptionUsageManager;
+        }
+        
+        internal static SubscriptionManager Instance
+        {
+            get
             {
-                if (_subscriptionInfo == null)
+                lock (_subscriptionManagerLock)
                 {
-                    var subscriptionPlanManager = new SubscriptionPlanManager();
-                    _subscriptionInfo = subscriptionPlanManager.GetSubscriptionInfoFromKey(licenseKey);
+                    if (_instance == null)
+                    {
+                        _instance = new SubscriptionManager(
+                            new EnvironmentReader(), 
+                            null, 
+                            null, 
+                            new SubscriptionUsageManager());
+                    }
                 }
+
+                return _instance;
+            }
+        }
+
+        /// <summary>
+        /// For testing
+        /// </summary>
+        /// <param name="instance"></param>
+        internal static void SetFakeInstance(SubscriptionManager instance)
+        {
+            _instance = instance;
+        }
+        
+        internal ISubscriptionInfo SubscriptionInfo => _subscriptionInfo;
+        internal ISubscriptionUsage SubscriptionUsage => _subscriptionUsage;
+        internal bool RenewalRequested => _renewalRequested;
+        
+        internal void SetLicenseKey(string licenseKey)
+        {
+            if (_subscriptionInfo == null)
+            {
+                var subscriptionPlanManager = new SubscriptionPlanManager();
+                _subscriptionInfo = subscriptionPlanManager.GetSubscriptionInfoFromKey(licenseKey);
             }
         }
         
-        internal static void SetSubscriptionStorageProvider(ISubscriptionStorageProvider subscriptionStorageProvider, 
+        internal void SetSubscriptionStorageProvider_Internal(ISubscriptionStorageProvider subscriptionStorageProvider,
+            IUserReader userReader,
+            bool upgradeRequested,
+            bool renewalRequested)
+
+        {
+            SetLicenseKey(subscriptionStorageProvider.GetLicenseKey());
+            if (_subscriptionUsage == null)
+            {
+                if (_environmentReader.IsRunningInContinuousIntegration())
+                {
+                    Console.WriteLine("Running in CI... skipping usage.");
+                    _subscriptionUsage = new SubscriptionUsage();
+                    return;
+                }
+                    
+                _renewalRequested = renewalRequested;
+                
+                _subscriptionUsage = _subscriptionUsageManager.ReadAndUpdateUsage(_subscriptionInfo, subscriptionStorageProvider, userReader, upgradeRequested);
+            }
+        }
+        internal void SetSubscriptionStorageProvider(ISubscriptionStorageProvider subscriptionStorageProvider, 
             IUserReader userReader,
             bool upgradeRequested,
             bool renewalRequested)
         {
-            SetLicenseKey(subscriptionStorageProvider.GetLicenseKey());
-            
-            lock (_subscriptionUsageLock)
+            lock (_subscriptionManagerLock)
             {
-                if (_subscriptionUsage == null)
-                {
-                    _upgradeRequested = upgradeRequested;
-                    _renewalRequested = renewalRequested;
-                    
-                    var usageManager = new SubscriptionUsageManager();
-                    _subscriptionUsage = usageManager.ReadAndUpdateUsage(_subscriptionInfo, subscriptionStorageProvider, userReader, _upgradeRequested);
-                }
+                SetLicenseKey(subscriptionStorageProvider.GetLicenseKey());
+                SetSubscriptionStorageProvider_Internal(subscriptionStorageProvider, userReader, upgradeRequested,
+                    renewalRequested);
             }
         }
     }

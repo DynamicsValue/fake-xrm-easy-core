@@ -1,3 +1,16 @@
+## [3.4.2]
+
+### Added
+
+- Added link to docs in exceptions
+- Added some logging in subscription usage for CI builds
+
+## [3.4.1]
+
+### Changed
+
+- Should not read subscription usage while in a CI build
+
 ## [3.4.0]
 
 ## Added
