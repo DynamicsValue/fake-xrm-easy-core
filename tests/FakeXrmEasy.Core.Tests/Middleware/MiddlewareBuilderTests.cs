@@ -11,6 +11,7 @@ using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Core.CommercialLicense;
 using FakeXrmEasy.Core.CommercialLicense.Exceptions;
+using FakeXrmEasy.Core.Tests.CommercialLicense;
 
 namespace FakeXrmEasy.Core.Tests.Middleware
 {
@@ -148,12 +149,20 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         [Fact]
         public void Should_not_throw_exception_when_using_commercial_license_with_custom_storage_and_valid_data()
         {
-            SubscriptionManager._subscriptionInfo = _subscriptionInfo;
-            SubscriptionManager._subscriptionUsage = _subscriptionUsage;
-
+            var subscriptionManager = new SubscriptionManager(new FakeEnvironmentReader(), 
+                new SubscriptionInfo()
+                {
+                    NumberOfUsers = 1,
+                    EndDate = DateTime.UtcNow.AddMonths(1)
+                }, null,
+                new SubscriptionUsageManager());
+            
+            SubscriptionManager.SetFakeInstance(subscriptionManager);
+            
             var ctx = MiddlewareBuilder
                 .New()
                 .SetLicense(FakeXrmEasyLicense.Commercial)
+                .SetSubscriptionStorageProvider(new FakeSubscriptionStorageProvider())
                 .Build();
 
             Assert.Equal(FakeXrmEasyLicense.Commercial, ctx.LicenseContext);
