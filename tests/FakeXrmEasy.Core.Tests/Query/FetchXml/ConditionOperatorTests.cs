@@ -2101,18 +2101,8 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
             var today = DateTime.Today;
             var date = today;
 
-            var firstDayOfWeek = (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
-
-            Console.WriteLine($"First day of week={firstDayOfWeek}");
-
-            var dayOfWeek = (int)date.DayOfWeek;
-            Console.WriteLine($"Day of week={dayOfWeek}");
-
             var firstDayOfThisWeek = GetFirstDayOfWeek(date);
-            Console.WriteLine($"First day of this week={firstDayOfThisWeek}");
-            
             var lastDayOfThisWeek = firstDayOfThisWeek.AddDays(6);
-            Console.WriteLine($"last day of this week={lastDayOfThisWeek}");
 
             var ct1 = new Contact() { Id = Guid.NewGuid(), Anniversary = firstDayOfThisWeek }; //Should be returned
             var ct2 = new Contact() { Id = Guid.NewGuid(), Anniversary = lastDayOfThisWeek }; //Should be returned

@@ -1,6 +1,6 @@
 
 param (
-    [string]$targetFrameworks = "net6.0"
+    [string]$targetFrameworks = "all"
 )
 
 

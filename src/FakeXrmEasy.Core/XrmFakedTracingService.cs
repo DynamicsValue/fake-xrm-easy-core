@@ -35,8 +35,6 @@ namespace FakeXrmEasy
             }
             else
             { 
-                Console.WriteLine(format, args);
-
                 _trace.AppendLine(string.Format(format, args));
             };
         }

@@ -1,3 +1,30 @@
+## [3.4.2]
+
+### Added
+
+- Added link to docs in exceptions
+- Added some logging in subscription usage for CI builds
+
+## [3.4.1]
+
+### Changed
+
+- Should not read subscription usage while in a CI build
+
+## [3.4.0]
+
+## Added
+
+- **Alpha**: Introduced subscription usage monitoring based on customer feedback
+
+### Changed
+
+- Set default build configuration in solution file to FAKE_XRM_EASY_9
+- Remove ReleaseNotes from package description - https://github.com/DynamicsValue/fake-xrm-easy/issues/115
+- build.ps1 improvements: do not build project twice (added --no-build) when running dotnet test, do not build again either when packing assemblies either: https://github.com/DynamicsValue/fake-xrm-easy/issues/119
+- Update build scripts to use 'all' target frameworks by default - https://github.com/DynamicsValue/fake-xrm-easy/issues/126
+- Update github actions to use new Sonar environment variables - https://github.com/DynamicsValue/fake-xrm-easy/issues/120
+
 ## [3.3.3]
 
 ### Added
