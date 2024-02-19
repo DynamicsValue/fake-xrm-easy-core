@@ -2358,10 +2358,12 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_EntityName_Attribute_Alias_Execution()
         {
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
+
             Entity e = new Entity("contact")
             {
                 Id = Guid.NewGuid(),
-                ["retrieve"] = "Yes"
+                ["fullname"] = "John Doe"
             };
 
             Entity e2 = new Entity("account")
@@ -2375,10 +2377,10 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
             var fetchXml = @"<fetch top='50' >
                               <entity name='account' >
                                 <filter>
-                                  <condition entityname='mycontact' attribute='retrieve' operator='eq' value='Yes' />
+                                  <condition entityname='mycontact' attribute='fullname' operator='eq' value='John Doe' />
                                 </filter>
                                 <link-entity name='contact' from='contactid' to='contactid' link-type='inner' alias='mycontact' >
-                                  <attribute name='retrieve' />
+                                  <attribute name='fullname' />
                                 </link-entity>
                               </entity>
                             </fetch>";
@@ -2391,10 +2393,12 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_EntityName_Attribute_No_Alias_Execution()
         {
+            _context.EnableProxyTypes(Assembly.GetExecutingAssembly());
+
             Entity e = new Entity("contact")
             {
                 Id = Guid.NewGuid(),
-                ["retrieve"] = "Yes"
+                ["fullname"] = "John Doe"
             };
 
             Entity e2 = new Entity("account")
@@ -2408,10 +2412,10 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
             var fetchXml = @"<fetch top='50' >
                               <entity name='account' >
                                 <filter>
-                                  <condition entityname='contact' attribute='retrieve' operator='eq' value='Yes' />
+                                  <condition entityname='contact' attribute='fullname' operator='eq' value='John Doe' />
                                 </filter>
                                 <link-entity name='contact' from='contactid' to='contactid' link-type='inner'>
-                                  <attribute name='retrieve' />
+                                  <attribute name='fullname' />
                                 </link-entity>
                               </entity>
                             </fetch>";
