@@ -46,12 +46,14 @@ namespace FakeXrmEasy.Middleware.Crud
                 crudMessageExecutors.Add(typeof(AssociateRequest), new AssociateRequestExecutor());
                 crudMessageExecutors.Add(typeof(DisassociateRequest), new DisassociateRequestExecutor());
 
-                crudMessageExecutors.Add(typeof(CreateMultipleRequest), new CreateMultipleRequestExecutor());
-                
                 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
                 crudMessageExecutors.Add(typeof(UpsertRequest), new UpsertRequestExecutor());
                 #endif
 
+                #if FAKE_XRM_EASY_9
+                crudMessageExecutors.Add(typeof(CreateMultipleRequest), new CreateMultipleRequestExecutor());
+                #endif
+                
                 context.SetProperty(crudMessageExecutors);
                 AddFakeCreate(context, service);
                 AddFakeRetrieve(context, service);

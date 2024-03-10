@@ -1,4 +1,5 @@
-﻿using FakeXrmEasy.Abstractions;
+﻿#if FAKE_XRM_EASY_9
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -124,3 +125,4 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
         }
     }
 }
+#endif
