@@ -1,3 +1,7 @@
+## [2.5.0]
+
+- Added support for bulk operations: CreateMultipleRequest
+
 ## [2.4.2]
 
 ### Added

@@ -8,7 +8,7 @@
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">net452</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY'">net452</TargetFrameworks>
     <PackageId>FakeXrmEasy.Core</PackageId>
-    <VersionPrefix>2.4.2</VersionPrefix>
+    <VersionPrefix>2.5.0</VersionPrefix>
     <Authors>Jordi Montaña</Authors>
     <Company>Dynamics Value</Company>
     <Title>FakeXrmEasy Core</Title>
@@ -57,8 +57,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
-    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.27" />
-    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.0.0.5" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.52" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.1.1.45" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_365'">

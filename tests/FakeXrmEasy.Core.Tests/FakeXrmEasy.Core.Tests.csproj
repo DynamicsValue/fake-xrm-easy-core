@@ -64,8 +64,8 @@
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
-    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.27" />
-    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.0.2.4" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.52" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.1.1.45" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
@@ -137,22 +137,22 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY'">
-    <PackageReference Include="FakeXrmEasy.Core.v2011" Version="[2.4.2-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v2011" Version="[2.5.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2013'">
-    <PackageReference Include="FakeXrmEasy.Core.v2013" Version="[2.4.2-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v2013" Version="[2.5.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2015'">
-    <PackageReference Include="FakeXrmEasy.Core.v2015" Version="[2.4.2-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v2015" Version="[2.5.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2016'">
-    <PackageReference Include="FakeXrmEasy.Core.v2016" Version="[2.4.2-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v2016" Version="[2.5.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
-    <PackageReference Include="FakeXrmEasy.Core.v365" Version="[2.4.2-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v365" Version="[2.5.0-*,3.0)" />
   </ItemGroup>
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
-    <PackageReference Include="FakeXrmEasy.Core.v9" Version="[2.4.2-*,3.0)" />
+    <PackageReference Include="FakeXrmEasy.Core.v9" Version="[2.5.0-*,3.0)" />
   </ItemGroup>
   
 
