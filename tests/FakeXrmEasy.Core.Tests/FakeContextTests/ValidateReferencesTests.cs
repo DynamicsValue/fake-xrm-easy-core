@@ -59,7 +59,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
 
             var ex = Assert.Throws<FaultException<OrganizationServiceFault>>(() => _serviceWithIntegrity.Create(entity));
 
-            Assert.Equal($"{entity.LogicalName} With Id = {otherEntity:D} Does Not Exist", ex.Message);
+            Assert.Equal($"{entity.LogicalName} With Ids = {otherEntity:D} Do Not Exist", ex.Message);
         }
 
         [Fact]
@@ -111,7 +111,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
             entity["otherEntity"] = new EntityReference("entity", otherEntityId);
 
             var ex = Assert.Throws<FaultException<OrganizationServiceFault>>(() => _serviceWithIntegrity.Update(entity));
-            Assert.Equal($"{entity.LogicalName} With Id = {otherEntityId:D} Does Not Exist", ex.Message);
+            Assert.Equal($"{entity.LogicalName} With Ids = {otherEntityId:D} Do Not Exist", ex.Message);
         }
 
         [Fact]

@@ -4,6 +4,7 @@ using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
@@ -35,11 +36,19 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 
             ValidateRequest(createMultipleRequest, ctx);
             
-            var response = new CreateMultipleResponse();
+            var records = createMultipleRequest.Targets.Entities;
+            List<Guid> createdIds = new List<Guid>();
             
-            return new CreateResponse()
+            foreach (var record in records)
             {
-                ResponseName = "CreateMultipleResponse"
+                var id = ctx.CreateEntity(record);
+                createdIds.Add(id);
+            }
+
+            return new CreateMultipleResponse()
+            {
+                ResponseName = "CreateMultipleResponse",
+                ["Ids"] = createdIds.ToArray()
             };
         }
 
@@ -100,6 +109,12 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 
         private void ValidateRecord(CreateMultipleRequest request, Entity recordToCreate, IXrmFakedContext ctx)
         {
+            if (!request.Targets.EntityName.Equals(recordToCreate.LogicalName))
+            {
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument,
+                    $"This entity cannot be added to the specified collection. The collection can have entities with PlatformName = {request.Targets.EntityName} while this entity has Platform Name: {recordToCreate.LogicalName}");
+            }
+            
             var exists = ctx.ContainsEntity(recordToCreate.LogicalName, recordToCreate.Id);
             if (exists)
             {

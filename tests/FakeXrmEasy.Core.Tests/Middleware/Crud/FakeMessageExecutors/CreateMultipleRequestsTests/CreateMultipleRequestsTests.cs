@@ -1,10 +1,14 @@
 ﻿#if FAKE_XRM_EASY_9
+using System;
 using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using System.Collections.Generic;
 using System.Reflection;
 using DataverseEntities;
+using FakeXrmEasy.Abstractions.Integrity;
+using FakeXrmEasy.Integrity;
+using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using Account = Crm.Account;
 
@@ -125,6 +129,84 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.CreateMult
 
             var ex = XAssert.ThrowsFaultCode(ErrorCodes.DuplicateRecord, () => _service.Execute(request));
             Assert.Equal("Cannot insert duplicate key.", ex.Detail.Message);
+        }
+        
+        [Fact]
+        public void Should_throw_exception_if_create_multiple_is_called_with_an_entity_record_with_a_logical_name_different_than_the_main_logical_name()
+        {
+            List<Entity> recordsToCreate = new List<Entity>() { new dv_test() };
+
+            var entities = new EntityCollection(recordsToCreate)
+            {
+                EntityName = Account.EntityLogicalName
+            };
+
+            var request = new CreateMultipleRequest()
+            {
+                Targets = entities
+            };
+
+            var ex = XAssert.ThrowsFaultCode(ErrorCodes.InvalidArgument, () => _service.Execute(request));
+            Assert.Equal($"This entity cannot be added to the specified collection. The collection can have entities with PlatformName = {Account.EntityLogicalName} while this entity has Platform Name: {dv_test.EntityLogicalName}", ex.Detail.Message);
+        }
+        
+        [Fact]
+        public void Should_throw_exception_if_create_multiple_is_called_with_non_existing_related_entity_and_integrity_options_is_enabled()
+        {
+            _context.SetProperty<IIntegrityOptions>(new IntegrityOptions());
+            
+            var nonExistingGuid = Guid.NewGuid();
+
+            List<Entity> recordsToCreate = new List<Entity>() {
+                new dv_test()
+                {
+                    dv_accountid = new EntityReference(Account.EntityLogicalName, nonExistingGuid)
+                }
+            };
+
+            var entities = new EntityCollection(recordsToCreate)
+            {
+                EntityName = dv_test.EntityLogicalName
+            };
+
+            var request = new CreateMultipleRequest()
+            {
+                Targets = entities
+            };
+
+            var ex = XAssert.ThrowsFaultCode(ErrorCodes.ObjectDoesNotExist, () => _service.Execute(request));
+            Assert.Equal($"account With Ids = {nonExistingGuid.ToString()} Do Not Exist", ex.Detail.Message);
+        }
+        
+        [Fact]
+        public void Should_create_two_records_with_create_multiple()
+        {
+            var record1 = new dv_test() { Id = Guid.NewGuid() };
+            var record2 = new dv_test() { Id = Guid.NewGuid() };
+
+            List<Entity> recordsToCreate = new List<Entity>() { record1, record2 };
+
+            var entities = new EntityCollection(recordsToCreate)
+            {
+                EntityName = dv_test.EntityLogicalName
+            };
+
+            var request = new CreateMultipleRequest()
+            {
+                Targets = entities
+            };
+
+            var response = _service.Execute(request) as CreateMultipleResponse;
+
+            Assert.Equal(2, response.Ids.Length);
+            Assert.Equal(record1.Id, response.Ids[0]);
+            Assert.Equal(record2.Id, response.Ids[1]);
+
+            var createdRecord1 = _service.Retrieve(dv_test.EntityLogicalName, record1.Id, new ColumnSet(true));
+            var createdRecord2 = _service.Retrieve(dv_test.EntityLogicalName, record2.Id, new ColumnSet(true));
+
+            Assert.NotNull(createdRecord1);
+            Assert.NotNull(createdRecord2);
         }
     }
 }

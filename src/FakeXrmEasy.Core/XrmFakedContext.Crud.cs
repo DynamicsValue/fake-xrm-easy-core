@@ -242,7 +242,7 @@ namespace FakeXrmEasy
                 }
                 else
                 {
-                    throw FakeOrganizationServiceFaultFactory.New($"{er.LogicalName} With Id = {er.Id:D} Does Not Exist");
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.ObjectDoesNotExist, $"{er.LogicalName} With Ids = {er.Id:D} Do Not Exist");
                 }
             }
             return er;
