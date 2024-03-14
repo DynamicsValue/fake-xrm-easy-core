@@ -10,10 +10,12 @@ using System;
 using System.ServiceModel;
 using Xunit;
 using FakeXrmEasy.Abstractions.Enums;
-using Crm;
 using FakeXrmEasy.Extensions;
 using System.Collections.Generic;
+using DataverseEntities;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Account = Crm.Account;
 
 
 namespace FakeXrmEasy.Core.Tests.FakeContextTests
@@ -72,6 +74,27 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
 
             Assert.NotEqual(Guid.Empty, created);
             Assert.Equal(((EntityReference)otherEntityInContext["new_accountId"]).Id, _account.Id);
+        }
+        
+        [Fact]
+        public void Should_throw_exception_if_create_is_called_with_a_non_existing_alternate_key()
+        {
+            var dummy_attribute_name = "dv_dummy_attribute";
+
+            var nonExistingGuid = Guid.NewGuid();
+
+            var entity = new dv_test()
+            {
+                dv_accountid = new EntityReference(Account.EntityLogicalName, dummy_attribute_name, "Microsoft")
+            };
+            
+            var request = new CreateRequest()
+            {
+                Target = entity
+            };
+
+            var ex = XAssert.ThrowsFaultCode(ErrorCodes.InvalidEntityKeyOperation, () => _serviceWithIntegrity.Execute(request));
+            Assert.Equal($"Invalid EntityKey Operation performed : Entity {Account.EntityLogicalName} does not contain an attribute named {dummy_attribute_name}", ex.Detail.Message);
         }
 
         [Fact]

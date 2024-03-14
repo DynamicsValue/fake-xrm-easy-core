@@ -80,14 +80,14 @@ namespace FakeXrmEasy
                             }
                             if (validate)
                             {
-                                throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault() { Message = $"{record.LogicalName} with the specified Alternate Keys Does Not Exist"});
+                                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidEntityKeyOperation, $"Invalid EntityKey Operation performed : Entity {record.LogicalName} does not contain an attribute named {record.KeyAttributes.First().Key}");
                             }
                         }
                     }
                 }
                 if (validate)
                 {
-                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidEntityKeyOperation, $"Invalid EntityKey Operation performed : Entity {record.LogicalName} does not contain any key attributes");
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidEntityKeyOperation, $"Invalid EntityKey Operation performed : Entity {record.LogicalName} does not contain an attribute named {record.KeyAttributes.First().Key}");
                 }
             }
 #endif          
