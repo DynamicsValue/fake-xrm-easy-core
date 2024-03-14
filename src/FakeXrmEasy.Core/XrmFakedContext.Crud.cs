@@ -87,7 +87,7 @@ namespace FakeXrmEasy
                 }
                 if (validate)
                 {
-                    throw new InvalidOperationException($"The requested key attributes do not exist for the entity {record.LogicalName}");
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidEntityKeyOperation, $"Invalid EntityKey Operation performed : Entity {record.LogicalName} does not contain any key attributes");
                 }
             }
 #endif          

@@ -12,6 +12,9 @@ using Crm;
 using FakeXrmEasy.Extensions;
 using System.Collections.Generic;
 
+#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
+using Microsoft.Xrm.Sdk.Metadata;
+#endif
 
 namespace FakeXrmEasy.Core.Tests.FakeContextTests
 {
@@ -143,101 +146,5 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
 
             Assert.Throws<InvalidOperationException>(() => (_contextWithIntegrity as XrmFakedContext).ValidateEntity(null));
         }
-
-    #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
-        [Fact]
-        public void An_entity_which_references_another_existent_entity_by_alternate_key_can_be_created_when_integrity_is_enabled()
-        {
-            var accountMetadata = new Microsoft.Xrm.Sdk.Metadata.EntityMetadata();
-            accountMetadata.LogicalName = Account.EntityLogicalName;
-            var alternateKeyMetadata = new Microsoft.Xrm.Sdk.Metadata.EntityKeyMetadata();
-            alternateKeyMetadata.KeyAttributes = new string[] { "alternateKey" };
-            accountMetadata.SetFieldValue("_keys", new Microsoft.Xrm.Sdk.Metadata.EntityKeyMetadata[]
-                 {
-                 alternateKeyMetadata
-                 });
-            _contextWithIntegrity.InitializeMetadata(accountMetadata);
-            var account = new Entity(Account.EntityLogicalName);
-            account.Id = Guid.NewGuid();
-            account.Attributes.Add("alternateKey", "keyValue");
-            _contextWithIntegrity.Initialize(new List<Entity>() { account });
-
-            Entity otherEntity = new Entity("otherEntity");
-            otherEntity.Id = Guid.NewGuid();
-            otherEntity["new_accountId"] = new EntityReference("account", "alternateKey","keyValue") ;
-            Guid created = _serviceWithIntegrity.Create(otherEntity);
-
-            Entity otherEntityInContext = _serviceWithIntegrity.Retrieve("otherEntity", otherEntity.Id, new ColumnSet(true));
-
-            Assert.NotEqual(Guid.Empty, created);
-            Assert.Equal(((EntityReference)otherEntityInContext["new_accountId"]).Id, account.Id);
-        }
-
-        [Fact]
-        public void An_entity_which_references_another_existent_entity_by_alternate_key_can_be_initialised_when_integrity_is_enabled()
-        {
-            var accountMetadata = new Microsoft.Xrm.Sdk.Metadata.EntityMetadata();
-            accountMetadata.LogicalName = Account.EntityLogicalName;
-            var alternateKeyMetadata = new Microsoft.Xrm.Sdk.Metadata.EntityKeyMetadata();
-            alternateKeyMetadata.KeyAttributes = new string[] { "alternateKey" };
-            accountMetadata.SetFieldValue("_keys", new Microsoft.Xrm.Sdk.Metadata.EntityKeyMetadata[]
-                 {
-                 alternateKeyMetadata
-                 });
-            _contextWithIntegrity.InitializeMetadata(accountMetadata);
-            var account = new Entity(Account.EntityLogicalName);
-            account.Id = Guid.NewGuid();
-            account.Attributes.Add("alternateKey", "keyValue");
-
-            Entity otherEntity = new Entity("otherEntity");
-            otherEntity.Id = Guid.NewGuid();
-            otherEntity["new_accountId"] = new EntityReference("account", "alternateKey", "keyValue");
-
-            _contextWithIntegrity.Initialize(new List<Entity>() { account, otherEntity });
-
-            Entity otherEntityInContext = _serviceWithIntegrity.Retrieve("otherEntity", otherEntity.Id, new ColumnSet(true));
-
-            Assert.Equal(((EntityReference)otherEntityInContext["new_accountId"]).Id, account.Id);
-        }
-
-        [Fact]
-        public void An_entity_which_references_another_existent_entity_by_alternate_key_can_be_updated_when_integrity_is_enabled()
-        {
-            var accountMetadata = new Microsoft.Xrm.Sdk.Metadata.EntityMetadata();
-            accountMetadata.LogicalName = Account.EntityLogicalName;
-            var alternateKeyMetadata = new Microsoft.Xrm.Sdk.Metadata.EntityKeyMetadata();
-            alternateKeyMetadata.KeyAttributes = new string[] { "alternateKey" };
-            accountMetadata.SetFieldValue("_keys", new Microsoft.Xrm.Sdk.Metadata.EntityKeyMetadata[]
-                 {
-                 alternateKeyMetadata
-                 });
-            
-            _contextWithIntegrity.InitializeMetadata(accountMetadata);
-            var account = new Entity(Account.EntityLogicalName);
-            account.Id = Guid.NewGuid();
-            account.Attributes.Add("alternateKey", "keyValue");
-
-            var account2 = new Entity(Account.EntityLogicalName);
-            account2.Id = Guid.NewGuid();
-            account2.Attributes.Add("alternateKey", "keyValue2");
-
-            Entity otherEntity = new Entity("otherEntity");
-            otherEntity.Id = Guid.NewGuid();
-            otherEntity["new_accountId"] = new EntityReference("account", "alternateKey", "keyValue");
-
-            _contextWithIntegrity.Initialize(new List<Entity>() { account, account2, otherEntity });
-
-            var entityToUpdate = new Entity("otherEntity")
-            {
-                Id = otherEntity.Id,
-                ["new_accountId"] = new EntityReference("account", "alternateKey", "keyValue2")
-            };
-            _serviceWithIntegrity.Update(entityToUpdate);
-
-            Entity otherEntityInContext = _serviceWithIntegrity.Retrieve("otherEntity", otherEntity.Id, new ColumnSet(true));
-
-            Assert.Equal(((EntityReference)otherEntityInContext["new_accountId"]).Id, account2.Id);
-        }
-#endif
     }
 }

@@ -179,6 +179,36 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.CreateMult
         }
         
         [Fact]
+        public void Should_throw_exception_if_create_multiple_is_called_with_a_non_existing_alternate_key()
+        {
+            _context.SetProperty<IIntegrityOptions>(new IntegrityOptions());
+            
+            var dummy_attribute_name = "dv_dummy_attribute";
+
+            var nonExistingGuid = Guid.NewGuid();
+
+            List<Entity> recordsToCreate = new List<Entity>() {
+                new dv_test()
+                {
+                    dv_accountid = new EntityReference(Account.EntityLogicalName, dummy_attribute_name, "Microsoft")
+                }
+            };
+
+            var entities = new EntityCollection(recordsToCreate)
+            {
+                EntityName = dv_test.EntityLogicalName
+            };
+
+            var request = new CreateMultipleRequest()
+            {
+                Targets = entities
+            };
+
+            var ex = XAssert.ThrowsFaultCode(ErrorCodes.InvalidEntityKeyOperation, () => _service.Execute(request));
+            Assert.Equal($"Invalid EntityKey Operation performed : Entity {Account.EntityLogicalName} does not contain an attribute named {dummy_attribute_name}", ex.Detail.Message);
+        }
+        
+        [Fact]
         public void Should_create_two_records_with_create_multiple()
         {
             var record1 = new dv_test() { Id = Guid.NewGuid() };
