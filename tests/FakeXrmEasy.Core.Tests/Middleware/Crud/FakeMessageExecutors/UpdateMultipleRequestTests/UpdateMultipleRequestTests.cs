@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -347,7 +348,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.UpdateMult
 
             Assert.Equal("Record 1", updatedRecord1["dv_string"]);
             Assert.Equal("Record 2", updatedRecord2["dv_string"]);
-
         }
     }
 }
+#endif
