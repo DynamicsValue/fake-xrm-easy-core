@@ -52,6 +52,7 @@ namespace FakeXrmEasy.Middleware.Crud
 
                 #if FAKE_XRM_EASY_9
                 crudMessageExecutors.Add(typeof(CreateMultipleRequest), new CreateMultipleRequestExecutor());
+                crudMessageExecutors.Add(typeof(UpdateMultipleRequest), new UpdateMultipleRequestExecutor());
                 #endif
                 
                 context.SetProperty(crudMessageExecutors);

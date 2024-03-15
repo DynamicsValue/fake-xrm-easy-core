@@ -192,7 +192,7 @@ namespace FakeXrmEasy.Metadata
             return (T)Attribute.GetCustomAttribute(member, typeof(T));
         }
 
-        private static AttributeMetadata CreateAttributeMetadata(Type propertyType)
+        internal static AttributeMetadata CreateAttributeMetadata(Type propertyType)
         {
             if (typeof(string) == propertyType)
             {
@@ -286,6 +286,11 @@ namespace FakeXrmEasy.Metadata
             else if (typeof(OptionSetValueCollection).IsAssignableFrom(propertyType))
             {
                 return new MultiSelectPicklistAttributeMetadata();
+            }
+            else if (typeof(object) == propertyType)
+            {
+
+                return new FileAttributeMetadata();
             }
 #endif
             else
