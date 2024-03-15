@@ -14,6 +14,7 @@ namespace FakeXrmEasy.Core.Tests.Metadata
             _typesTestType = new Type[] { typeof(dv_test) };
         }
         
+        #if FAKE_XRM_EASY_9
         [Fact]
         public void Should_generate_file_type()
         {
@@ -21,5 +22,6 @@ namespace FakeXrmEasy.Core.Tests.Metadata
             Assert.NotNull(attributeMetadata);
             Assert.IsType<FileAttributeMetadata>(attributeMetadata);
         }
+        #endif
     }
 }
