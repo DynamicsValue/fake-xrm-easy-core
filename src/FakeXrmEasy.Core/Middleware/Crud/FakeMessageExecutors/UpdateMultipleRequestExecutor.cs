@@ -65,30 +65,6 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             }
         }
 
-        private void ValidateEntityName(UpdateMultipleRequest request, IXrmFakedContext ctx)
-        {
-            var targets = request.Targets;
-            if (ctx.ProxyTypesAssemblies.Any())
-            {
-                var earlyBoundType = ctx.FindReflectedType(targets.EntityName);
-                if (earlyBoundType == null)
-                {
-                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.QueryBuilderNoEntity,
-                        $"The entity with a name = '{targets.EntityName}' with namemapping = 'Logical' was not found in the MetadataCache.");
-                }
-            }
-
-            if (ctx.CreateMetadataQuery().Any())
-            {
-                var entityMetadata = ctx.CreateMetadataQuery().FirstOrDefault(m => m.LogicalName == targets.EntityName);
-                if (entityMetadata == null)
-                {
-                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.QueryBuilderNoEntity,
-                        $"The entity with a name = '{targets.EntityName}' with namemapping = 'Logical' was not found in the MetadataCache.");
-                }
-            }
-        }
-
         private void ValidateRecords(UpdateMultipleRequest request, IXrmFakedContext ctx)
         {
             var records = request.Targets.Entities;
@@ -129,7 +105,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
         private void ValidateRequest(UpdateMultipleRequest request, IXrmFakedContext ctx)
         {
             ValidateRequiredParameters(request, ctx);
-            ValidateEntityName(request, ctx);
+            BulkOperationsCommon.ValidateEntityName(request.Targets.EntityName, ctx);
             ValidateRecords(request, ctx);
         }
 
