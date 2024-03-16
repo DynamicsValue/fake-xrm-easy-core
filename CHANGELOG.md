@@ -6,9 +6,9 @@
 - Added support for bulk operations: CreateMultipleRequest, UpdateMultipleRequest
 - Added new exception to make the initialization of entity records with attributes with a null entity reference more obvious (thanks Betim) - https://github.com/DynamicsValue/fake-xrm-easy/issues/107
 
-
 ### Changed
 
+- Resolves referencing EntityAlias or EntityName in conditions inside nested filters of a LinkedEntity (thanks Temmy) - https://github.com/DynamicsValue/fake-xrm-easy/issues/63
 - Resolves Resolving entity references by Alternate Keys when EntityMetadata is used that doesn't have any Keys. - https://github.com/DynamicsValue/fake-xrm-easy/issues/138
 
 ## [2.4.2]

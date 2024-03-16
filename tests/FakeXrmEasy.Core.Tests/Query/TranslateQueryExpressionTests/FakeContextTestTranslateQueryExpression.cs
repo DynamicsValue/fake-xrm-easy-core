@@ -10,7 +10,7 @@ using Xunit;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Query;
 
-namespace FakeXrmEasy.Core.Tests
+namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
 {
     public class FakeContextTestTranslateQueryExpression: FakeXrmEasyTestsBase
     {
