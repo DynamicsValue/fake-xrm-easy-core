@@ -11,7 +11,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.UpdateMultipleRequestTests
+namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.BulkOperations
 {
     public class UpdateMultipleRequestTests: FakeXrmEasyTestsBase
     {

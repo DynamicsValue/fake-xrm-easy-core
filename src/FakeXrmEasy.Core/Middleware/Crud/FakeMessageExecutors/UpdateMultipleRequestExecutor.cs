@@ -37,10 +37,12 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             ValidateRequest(updateMultipleRequest, ctx);
             
             var records = updateMultipleRequest.Targets.Entities;
+
+            var service = ctx.GetOrganizationService();
             
             foreach (var record in records)
             {
-                ctx.UpdateEntity(record);
+                service.Update(record);
             }
 
             return new UpdateMultipleResponse()

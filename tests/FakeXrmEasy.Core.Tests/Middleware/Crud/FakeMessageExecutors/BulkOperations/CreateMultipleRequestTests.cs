@@ -12,7 +12,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 using Account = Crm.Account;
 
-namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.CreateMultipleRequestTests
+namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.BulkOperations
 {
     public class CreateMultipleRequestTests : FakeXrmEasyTestsBase
     {

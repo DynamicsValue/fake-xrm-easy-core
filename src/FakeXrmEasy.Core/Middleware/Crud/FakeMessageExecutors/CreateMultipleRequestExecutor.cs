@@ -38,10 +38,12 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             
             var records = createMultipleRequest.Targets.Entities;
             List<Guid> createdIds = new List<Guid>();
+
+            var service = ctx.GetOrganizationService();
             
             foreach (var record in records)
             {
-                var id = ctx.CreateEntity(record);
+                var id = service.Create(record);
                 createdIds.Add(id);
             }
 
