@@ -48,6 +48,8 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.UpsertMult
         [InlineData("asdasdasd")]
         public void Should_throw_exception_if_upsert_multiple_is_called_with_invalid_entity_name(string entityLogicalName)
         {
+            _context.InitializeMetadata(Assembly.GetAssembly(typeof(dv_test)));
+            
             List<Entity> recordsToUpsert = new List<Entity>();
 
             var entities = new EntityCollection(recordsToUpsert)
@@ -229,6 +231,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.UpsertMult
         public void Should_throw_exception_if_upsert_multiple_is_called_with_a_non_existing_single_alternate_key()
         {
             _context.InitializeMetadata(Assembly.GetAssembly(typeof(dv_test)));
+            _context.SetProperty<IIntegrityOptions>(new IntegrityOptions());
             
             var dummy_attribute_name = "dv_dummy_attribute";
 
@@ -259,6 +262,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.UpsertMult
         public void Should_throw_exception_if_upsert_multiple_is_called_with_a_non_existing_multiple_alternate_key()
         {
             _context.InitializeMetadata(Assembly.GetAssembly(typeof(dv_test)));
+            _context.SetProperty<IIntegrityOptions>(new IntegrityOptions());
             
             var dummy_attribute_name1 = "dv_dummy_attribute1";
             var dummy_attribute_name2 = "dv_dummy_attribute2";
