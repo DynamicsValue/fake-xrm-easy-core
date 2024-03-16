@@ -300,12 +300,24 @@ namespace FakeXrmEasy
                 throw new InvalidOperationException("The entities parameter must be not null");
             }
 
-            foreach (var e in entities)
+             foreach (var e in entities)
             {
+                ValidateEntityReferences(e);
                 AddEntityWithDefaults(e, true);
             }
 
             Initialised = true;
+        }
+
+        private void ValidateEntityReferences(Entity e)
+        {
+            foreach (var item in e.Attributes)
+            {
+                if (item.Value is EntityReference entityReference && String.IsNullOrEmpty(entityReference.LogicalName))
+                {
+                    throw new Exception($"Broken EntityReference record during Initialize() for column '{item.Key}' of a '{e.LogicalName}' record.");
+                }
+            }
         }
 
         /// <summary>
