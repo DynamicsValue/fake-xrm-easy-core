@@ -65,6 +65,10 @@ namespace FakeXrmEasy
                 if (Db.ContainsTableMetadata(record.LogicalName))
                 {
                     var entityMetadata = Db.GetTableMetadata(record.LogicalName);
+                    if (entityMetadata.Keys == null && validate)
+                    {
+                        throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidEntityKeyOperation, $"Invalid EntityKey Operation performed : Entity {record.LogicalName} does not contain an attribute named {record.KeyAttributes.First().Key}");
+                    }
                     foreach (var key in entityMetadata.Keys)
                     {
                         if (record.KeyAttributes.Keys.Count == key.KeyAttributes.Length && key.KeyAttributes.All(x => record.KeyAttributes.Keys.Contains(x)))

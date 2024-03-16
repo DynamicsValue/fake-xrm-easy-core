@@ -5,6 +5,10 @@
 - Added FileAttributeMetadata support to MetadataGenerator 
 - Added support for bulk operations: CreateMultipleRequest, UpdateMultipleRequest
 
+### Changed
+
+- Resolves Resolving entity references by Alternate Keys when EntityMetadata is used that doesn't have any Keys. - https://github.com/DynamicsValue/fake-xrm-easy/issues/138
+
 ## [2.4.2]
 
 ### Added

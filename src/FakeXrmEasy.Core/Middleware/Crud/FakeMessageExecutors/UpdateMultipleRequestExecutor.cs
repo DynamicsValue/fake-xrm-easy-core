@@ -10,7 +10,7 @@ using System.Linq;
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
     /// <summary>
-    /// CreateMultipleRequest Executor
+    /// UpdateMultipleRequest Executor
     /// </summary>
     public class UpdateMultipleRequestExecutor : IFakeMessageExecutor
     {
