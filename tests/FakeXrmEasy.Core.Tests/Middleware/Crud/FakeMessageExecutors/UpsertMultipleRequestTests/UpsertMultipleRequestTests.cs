@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -338,3 +339,4 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.UpsertMult
         }
     }
 }
+#endif
