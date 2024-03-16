@@ -69,7 +69,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
                     "System.ArgumentException: The value of the parameter 'Targets' cannot be null or empty.");
             }
         }
-        private void ValidateRecords(UpsertMultipleRequest request, IXrmFakedContext ctx)
+        private void ValidateRecords(UpsertMultipleRequest request)
         {
             var records = request.Targets.Entities;
             if (records.Count == 0)
@@ -80,11 +80,11 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 
             foreach (var record in records)
             {
-                ValidateRecord(request, record, ctx);
+                ValidateRecord(request, record);
             }
         }
 
-        private void ValidateRecord(UpsertMultipleRequest request, Entity recordToCreate, IXrmFakedContext ctx)
+        private void ValidateRecord(UpsertMultipleRequest request, Entity recordToCreate)
         {
             if (!request.Targets.EntityName.Equals(recordToCreate.LogicalName))
             {
@@ -97,7 +97,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
         {
             ValidateRequiredParameters(request);
             BulkOperationsCommon.ValidateEntityName(request.Targets.EntityName, ctx);
-            ValidateRecords(request, ctx);
+            ValidateRecords(request);
         }
 
         /// <summary>

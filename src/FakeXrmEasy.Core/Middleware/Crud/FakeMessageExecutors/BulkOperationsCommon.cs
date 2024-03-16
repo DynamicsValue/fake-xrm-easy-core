@@ -3,7 +3,7 @@ using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
-    internal class BulkOperationsCommon
+    internal static class BulkOperationsCommon
     {
         internal static void ValidateEntityName(string collectionEntityName, IXrmFakedContext ctx)
         {
