@@ -54,7 +54,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             };
         }
 
-        private void ValidateRequiredParameters(UpsertMultipleRequest request, IXrmFakedContext ctx)
+        private void ValidateRequiredParameters(UpsertMultipleRequest request)
         {
             if (request.Targets == null)
             {
@@ -95,7 +95,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 
         private void ValidateRequest(UpsertMultipleRequest request, IXrmFakedContext ctx)
         {
-            ValidateRequiredParameters(request, ctx);
+            ValidateRequiredParameters(request);
             BulkOperationsCommon.ValidateEntityName(request.Targets.EntityName, ctx);
             ValidateRecords(request, ctx);
         }
