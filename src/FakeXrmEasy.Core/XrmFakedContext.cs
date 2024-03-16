@@ -19,6 +19,7 @@ using System.Linq;
 using System.Reflection;
 
 using System.Runtime.CompilerServices;
+using FakeXrmEasy.Core.Exceptions;
 
 [assembly: InternalsVisibleTo("FakeXrmEasy.Core.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c124cb50761165a765adf6078bde555a7c5a2b692ed6e6ec9df0bd7d20da69170bae9bf95e874fa50995cc080af404ccad36515fa509c4ea6599a0502c1642db254a293e023c47c79ce69889c6ba921d124d896d87f0baaa9ea1d87b28589ffbe7b08492606bacef19dc4bc4cefb0d525be63ee722b02dc8c79688a7a8f623a2")]
 
@@ -300,7 +301,7 @@ namespace FakeXrmEasy
                 throw new InvalidOperationException("The entities parameter must be not null");
             }
 
-             foreach (var e in entities)
+            foreach (var e in entities)
             {
                 ValidateEntityReferences(e);
                 AddEntityWithDefaults(e, true);
@@ -313,9 +314,9 @@ namespace FakeXrmEasy
         {
             foreach (var item in e.Attributes)
             {
-                if (item.Value is EntityReference entityReference && String.IsNullOrEmpty(entityReference.LogicalName))
+                if (item.Value is EntityReference entityReference && string.IsNullOrEmpty(entityReference.LogicalName))
                 {
-                    throw new Exception($"Broken EntityReference record during Initialize() for column '{item.Key}' of a '{e.LogicalName}' record.");
+                    throw new NullLogicalNameEntityReferenceException(e, item.Key);
                 }
             }
         }

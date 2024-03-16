@@ -4,6 +4,8 @@
 
 - Added FileAttributeMetadata support to MetadataGenerator 
 - Added support for bulk operations: CreateMultipleRequest, UpdateMultipleRequest
+- Added new exception to make the initialization of entity records with attributes with a null entity reference more obvious (thanks Betim) - https://github.com/DynamicsValue/fake-xrm-easy/issues/107
+
 
 ### Changed
 

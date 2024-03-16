@@ -321,7 +321,7 @@ namespace FakeXrmEasy.Core.Tests
         }
 
         [Fact]
-        public void Should_return_error_if_contains_broken_entityreference()
+        public void Should_return_error_if_contains_an_entity_reference_with_a_null_logical_name()
         {
             var contact = new Contact()
             {
@@ -331,7 +331,7 @@ namespace FakeXrmEasy.Core.Tests
                 ParentCustomerId = new EntityReference("", Guid.NewGuid())
             };
 
-            Assert.Throws<Exception>(() => _context.Initialize(contact));
+            Assert.Throws<NullLogicalNameEntityReferenceException>(() => _context.Initialize(contact));
         }
 
         [Fact]
