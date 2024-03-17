@@ -42,7 +42,7 @@ namespace FakeXrmEasy.Query
                 expOrValues = Expression.Or(expOrValues, Expression.Call(
                     Expression.Constant(regex),
                     typeof(Regex).GetMethod("IsMatch", new Type[] { typeof(string) }),
-                    convertedValueToStrAndToLower) //Linq2CRM adds the percentage value to be executed as a LIKE operator, here we are replacing it to just use the appropiate method
+                    convertedValueToStrAndToLower) //Linq2CRM adds the percentage value to be executed as a LIKE operator, here we are replacing it to just use the appropriate method
                 );
             }
 
@@ -53,7 +53,15 @@ namespace FakeXrmEasy.Query
 
         private static string ConvertToRegexDefinition(string value)
         {
-            return value.Replace("\\", "\\\\").Replace("(", "\\(").Replace("{", "\\{").Replace(".", "\\.").Replace("*", "\\*").Replace("+", "\\+").Replace("?", "\\?").Replace("%", ".*").Replace("_", ".");
+            return value.Replace("\\", "\\\\")
+                .Replace("(", "\\(")
+                .Replace("{", "\\{")
+                .Replace(".", "\\.")
+                .Replace("*", "\\*")
+                .Replace("+", "\\+")
+                .Replace("?", "\\?")
+                .Replace("%", ".*")
+                .Replace("_", ".");
         }
     }
 }

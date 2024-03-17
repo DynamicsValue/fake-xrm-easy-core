@@ -142,6 +142,5 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
 
             Assert.Empty(_service.RetrieveMultiple(qe).Entities);
         }
-        
     }
 }
