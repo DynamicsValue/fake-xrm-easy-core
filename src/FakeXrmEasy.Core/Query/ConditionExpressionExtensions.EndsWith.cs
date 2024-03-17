@@ -10,7 +10,7 @@ namespace FakeXrmEasy.Query
         {
             var c = tc.CondExpression;
 
-            //Append a ´%´at the end of each condition value
+            //Append a ´%´at the beginning of each condition value
             var computedCondition = new ConditionExpression(c.AttributeName, c.Operator, c.Values.Select(x => "%" + x.ToString()).ToList());
             var typedComputedCondition = new TypedConditionExpression(computedCondition);
             typedComputedCondition.AttributeType = tc.AttributeType;

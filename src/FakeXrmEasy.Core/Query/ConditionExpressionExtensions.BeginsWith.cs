@@ -14,8 +14,7 @@ namespace FakeXrmEasy.Query
             var computedCondition = new ConditionExpression(c.AttributeName, c.Operator, c.Values.Select(x => x.ToString() + "%").ToList());
             var typedComputedCondition = new TypedConditionExpression(computedCondition);
             typedComputedCondition.AttributeType = tc.AttributeType;
-
-            // Perhaps we are introducing some problems by converting a StartsWith to a Like Operator?
+            
             return typedComputedCondition.ToLikeExpression(getAttributeValueExpr, containsAttributeExpr);
         }
     }
