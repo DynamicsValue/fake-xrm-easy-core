@@ -219,10 +219,12 @@ namespace FakeXrmEasy.Query
                     break;
 
                 case ConditionOperator.In:
+                    ValidateInConditionValues(c, entity.Name ?? qe.EntityName);
                     operatorExpression = c.ToInExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.NotIn:
+                    ValidateInConditionValues(c, entity.Name ?? qe.EntityName);
                     operatorExpression = Expression.Not(c.ToInExpression(getNonBasicValueExpr, containsAttributeExpression));
                     break;
 
@@ -324,9 +326,15 @@ namespace FakeXrmEasy.Query
 
         }
 
-        
-
-        
-
+        private static void ValidateInConditionValues(TypedConditionExpression c, string name)
+        {
+            foreach (object value in c.CondExpression.Values)
+            {
+                if (value is Array)
+                {
+                    throw new Exception($"Condition for attribute '{name}.numberofemployees': expected argument(s) of a different type but received '{value.GetType()}'.");
+                }                
+            }
+        }
     }
 }

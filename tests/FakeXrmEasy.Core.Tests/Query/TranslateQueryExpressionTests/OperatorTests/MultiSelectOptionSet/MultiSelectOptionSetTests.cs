@@ -243,9 +243,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_in_operator_returns_exact_matches_for_single_int_array_right_hand_side()
         {
-            
-
-            
             _service.Create(new Contact { FirstName = "1,2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2,3", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } });
@@ -254,7 +251,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
 
             var qe = new QueryExpression("contact");
             qe.ColumnSet = new ColumnSet(new[] { "firstname" });
-            qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.In, new[] { 2 });
+            qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.In, new object[] { 2 });
 
             var entities = _service.RetrieveMultiple(qe).Entities;
 
@@ -265,9 +262,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_in_operator_returns_exact_matches_for_int_array_right_hand_side()
         {
-            
-
-            
             _service.Create(new Contact { FirstName = "1,2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2,3", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } });
@@ -276,7 +270,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
 
             var qe = new QueryExpression("contact");
             qe.ColumnSet = new ColumnSet(new[] { "firstname" });
-            qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.In, new[] { 2, 3 });
+            qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.In, new object[] { 2, 3 });
 
             var entities = _service.RetrieveMultiple(qe).Entities;
 
@@ -287,9 +281,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_in_operator_returns_exact_matches_for_out_of_order_int_array_right_hand_side()
         {
-            
-
-            
             _service.Create(new Contact { FirstName = "1,2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2,3", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } });
@@ -298,7 +289,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
 
             var qe = new QueryExpression("contact");
             qe.ColumnSet = new ColumnSet(new[] { "firstname" });
-            qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.In, new[] { 3, 1, 2 });
+            qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.In, new object[] { 3, 1, 2 });
 
             var entities = _service.RetrieveMultiple(qe).Entities;
 
@@ -309,9 +300,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_in_operator_returns_exact_matches_for_out_of_order_int_params_right_hand_side()
         {
-            
-
-            
             _service.Create(new Contact { FirstName = "1,2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2,3", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } });
@@ -331,9 +319,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_in_operator_returns_exact_matches_for_string_array_right_hand_side()
         {
-            
-
-            
             _service.Create(new Contact { FirstName = "1,2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2,3", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } });
@@ -396,10 +381,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
 
         [Fact]
         public void When_executing_a_query_expression_notin_operator_excludes_exact_matches_for_int_array_right_hand_side()
-        {
-            
-
-            
+        {            
             _service.Create(new Contact { FirstName = "1,2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(1), new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2) } });
             _service.Create(new Contact { FirstName = "2,3", new_MultiSelectAttribute = new OptionSetValueCollection() { new OptionSetValue(2), new OptionSetValue(3) } });
@@ -408,7 +390,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
 
             var qe = new QueryExpression("contact");
             qe.ColumnSet = new ColumnSet(new[] { "firstname" });
-            qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.NotIn, new[] { 2, 3 });
+            qe.Criteria.AddCondition("new_multiselectattribute", ConditionOperator.NotIn, new object[] { 2, 3 });
 
             var entities = _service.RetrieveMultiple(qe).Entities;
 
