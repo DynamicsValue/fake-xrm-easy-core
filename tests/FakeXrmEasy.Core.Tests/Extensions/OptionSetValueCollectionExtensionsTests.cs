@@ -13,6 +13,12 @@ namespace FakeXrmEasy.Core.Tests.Extensions
     public class OptionSetValueCollectionExtensionsTests
     {
         [Fact]
+        public void Should_convert_to_null_if_null()
+        {
+            Assert.Null(OptionSetValueCollectionExtensions.ConvertToHashSetOfInt(null, true));
+        }
+
+        [Fact]
         public void Should_convert_to_a_hash_of_int_from_an_option_set_value_collection()
         {
             var optionSetValueCollection = new OptionSetValueCollection()

@@ -21,6 +21,8 @@ namespace FakeXrmEasy.Extensions
         /// <returns></returns>
         public static HashSet<int> ConvertToHashSetOfInt(this object input, bool isOptionSetValueCollectionAccepted)
         {
+            if (input == null) return null;
+            
             var set = new HashSet<int>();
 
             var faultReason = $"The formatter threw an exception while trying to deserialize the message: There was an error while trying to deserialize parameter" +
