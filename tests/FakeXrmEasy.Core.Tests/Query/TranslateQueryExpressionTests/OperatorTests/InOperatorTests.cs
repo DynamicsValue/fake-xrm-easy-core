@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9 
 using System;
 using DataverseEntities;
 using FakeXrmEasy.Abstractions;
@@ -107,3 +108,4 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         }
     }
 }
+#endif
