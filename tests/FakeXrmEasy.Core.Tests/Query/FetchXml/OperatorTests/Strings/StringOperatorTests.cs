@@ -132,7 +132,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
             Assert.Equal("Alice", collection.Entities[0]["nickname"]);
         }
 
@@ -178,7 +178,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
             Assert.Equal("Alice", collection.Entities[0]["nickname"]);
         }
 
@@ -225,7 +225,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
            
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
-            Assert.Equal(1, collection.Entities.Count);
+            Assert.Single(collection.Entities);
             Assert.Equal("Alice", collection.Entities[0]["nickname"]);
         }
 

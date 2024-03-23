@@ -14,7 +14,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_begins_with_operator_is_case_insensitive()
         {
-
             _service.Create(new Contact { FirstName = "Jimmy" });
 
             var qe = new QueryExpression("contact");
@@ -26,9 +25,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_ends_with_operator_is_case_insensitive()
         {
-            
-
-            
             _service.Create(new Contact { FirstName = "JimmY" });
 
             var qe = new QueryExpression("contact");
@@ -51,7 +47,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_with_endswith_operator_right_result_is_returned()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
 
@@ -71,7 +66,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_with_beginswith_operator_right_result_is_returned()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "1 Contact"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "2 Contact"; contact2["firstname"] = "First 2";
 
@@ -91,7 +85,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_with_contains_operator_right_result_is_returned()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "1 Contact"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "2 Contact"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Other"; contact3["firstname"] = "First 2";
@@ -157,7 +150,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_with_greaterthan_operator_right_result_is_returned()
         {
-            
             var ct1 = new Contact() { Id = Guid.NewGuid(), NickName = "Al" };
             var ct2 = new Contact() { Id = Guid.NewGuid(), NickName = "Bob" };
             var ct3 = new Contact() { Id = Guid.NewGuid(), NickName = "Charlie" };
@@ -179,7 +171,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTes
         [Fact]
         public void When_executing_a_query_expression_with_greaterthanorequal_operator_right_result_is_returned()
         {
-            
             var ct1 = new Contact() { Id = Guid.NewGuid(), NickName = "Al" };
             var ct2 = new Contact() { Id = Guid.NewGuid(), NickName = "Bob" };
             var ct3 = new Contact() { Id = Guid.NewGuid(), NickName = "Charlie" };

@@ -132,7 +132,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
         [Fact]
         public void When_executing_a_query_expression_join_with_orphans_these_are_not_returned()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3";
@@ -216,7 +215,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
         [Fact]
         public void When_executing_a_query_expression_with_an_attribute_in_columnset_that_doesnt_exists_no_value_is_returned_with_dynamic_entities()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
 
             var account = new Entity("account") { Id = Guid.NewGuid() };
@@ -239,7 +237,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
         [Fact]
         public void When_executing_a_query_expression_with_an_attribute_in_columnset_that_doesnt_exists_exception_is_raised_with_early_bound_entities()
         {
-            
             var contact1 = new Contact() { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
 
             var account = new Account() { Id = Guid.NewGuid() };
@@ -254,14 +251,12 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "this attribute doesnt exists!" });
 
-            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(_context).ToList());
-            Assert.Equal(exception.Detail.ErrorCode, (int)ErrorCodes.QueryBuilderNoAttribute);
+            XAssert.ThrowsFaultCode(ErrorCodes.QueryBuilderNoAttribute, () => qe.ToQueryable(_context).ToList());
         }
 
         [Fact]
         public void When_executing_a_query_expression_with_an_attribute_in_columnset_in_a_linked_entity_that_doesnt_exists_descriptive_exception_is_thrown()
         {
-            
             var contact1 = new Contact() { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Contact() { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Contact() { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -290,14 +285,12 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
             //We only select fullname and parentcustomerid, firstname should not be included
             qe.ColumnSet = new ColumnSet(new string[] { "this attribute doesnt exists!" });
 
-            var exception = Assert.Throws<FaultException<OrganizationServiceFault>>(() => qe.ToQueryable(_context).ToList());
-            Assert.Equal(exception.Detail.ErrorCode, (int)ErrorCodes.QueryBuilderNoAttribute);
+            XAssert.ThrowsFaultCode(ErrorCodes.QueryBuilderNoAttribute, () => qe.ToQueryable(_context).ToList());
         }
 
         [Fact]
         public void When_executing_a_query_expression_with_all_attributes_all_of_them_are_returned()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -341,7 +334,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
         [Fact]
         public void When_executing_a_query_expression_without_columnset_no_attributes_are_returned()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -381,7 +373,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
         [Fact]
         public void When_executing_a_query_expression_with_a_columnset_in_a_linkedentity_attribute_is_returned_with_a_prefix()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
@@ -426,7 +417,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
         [Fact]
         public void When_executing_a_query_expression_with_a_columnset_in_a_linkedentity_attribute_is_returned_with_an_alias()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
             var contact3 = new Entity("contact") { Id = Guid.NewGuid() }; contact3["fullname"] = "Contact 3"; contact3["firstname"] = "First 3";
