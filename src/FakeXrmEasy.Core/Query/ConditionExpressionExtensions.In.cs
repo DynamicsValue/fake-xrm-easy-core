@@ -29,14 +29,11 @@ namespace FakeXrmEasy.Query
             {
                 foreach (object value in c.Values)
                 {
-                    if (value is Array)
-                    {
-                    }
-                    else
+                    if (!(value is Array))
                     {
                         expOrValues = Expression.Or(expOrValues, Expression.Equal(
-                                    tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, value),
-                                    TypeCastExpressions.GetAppropiateTypedValueAndType(value, tc.AttributeType)));
+                            tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, value),
+                            TypeCastExpressions.GetAppropiateTypedValueAndType(value, tc.AttributeType)));
                     }
                 }
             }

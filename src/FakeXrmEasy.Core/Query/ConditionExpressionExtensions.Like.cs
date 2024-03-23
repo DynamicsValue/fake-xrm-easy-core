@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace FakeXrmEasy.Query
@@ -19,25 +20,25 @@ namespace FakeXrmEasy.Query
             {
                 //convert a like into a regular expression
                 string input = value.ToString();
-                string result = "^";
+                StringBuilder regExBuilder = new StringBuilder("^");
                 int lastMatch = 0;
                 var regex = new Regex("([^\\[]*)(\\[[^\\]]*\\])", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
                 foreach (Match match in regex.Matches(input))
                 {
                     if (match.Groups[1].Success)
                     {
-                        result += ConvertToRegexDefinition(match.Groups[1].Value);
+                        regExBuilder.Append(ConvertToRegexDefinition(match.Groups[1].Value));
                     }
-                    result += match.Groups[2].Value.Replace("\\", "\\\\");
+                    regExBuilder.Append(match.Groups[2].Value.Replace("\\", "\\\\"));
                     lastMatch = match.Index + match.Length;
                 }
                 if (input.Length != lastMatch)
                 {
-                    result += ConvertToRegexDefinition(input.Substring(lastMatch));
+                    regExBuilder.Append(ConvertToRegexDefinition(input.Substring(lastMatch)));
                 }
-                result += "$";
+                regExBuilder.Append("$");
 
-                regex = new Regex(result, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                regex = new Regex(regExBuilder.ToString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
                 expOrValues = Expression.Or(expOrValues, Expression.Call(
                     Expression.Constant(regex),
