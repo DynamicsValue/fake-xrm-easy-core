@@ -32,8 +32,26 @@ namespace FakeXrmEasy.Extensions
         /// <returns></returns>
         public static bool IsOptionSetValueCollection(this Type t)
         {
-            var nullableType = Nullable.GetUnderlyingType(t);
-            return t == typeof(OptionSetValueCollection);
+            var isActualOptionSetValueCollection = t == typeof(OptionSetValueCollection);
+            var typeIsConvertibleToOptionSetValueCollection = false;
+            if (t.IsGenericType)
+            {
+                var genericTypeArguments = t.GenericTypeArguments;
+                if (genericTypeArguments.Length == 1 && genericTypeArguments[0].IsEnum)
+                {
+                    typeIsConvertibleToOptionSetValueCollection = true;
+                }
+            }
+            else if (t.IsArray)
+            {
+                var elementType = t.GetElementType();
+                if (elementType.IsEnum)
+                {
+                    typeIsConvertibleToOptionSetValueCollection = true;
+                }
+            }
+
+            return isActualOptionSetValueCollection || typeIsConvertibleToOptionSetValueCollection;
         }
 #endif
 

@@ -1,5 +1,6 @@
 #if FAKE_XRM_EASY_9
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
@@ -18,7 +19,7 @@ namespace FakeXrmEasy.Extensions
         /// <param name="input"></param>
         /// <param name="isOptionSetValueCollectionAccepted"></param>
         /// <returns></returns>
-        public static HashSet<int> ConvertToHashSetOfInt(object input, bool isOptionSetValueCollectionAccepted)
+        public static HashSet<int> ConvertToHashSetOfInt(this object input, bool isOptionSetValueCollectionAccepted)
         {
             var set = new HashSet<int>();
 
@@ -29,6 +30,8 @@ namespace FakeXrmEasy.Extensions
                 $"Consider changing the implementation of the ResolveName method on your DataContractResolver to return a non-null value for name " +
                 $"'{input?.GetType()}' and namespace 'http://schemas.microsoft.com/xrm/2011/Contracts'.'.  Please see InnerException for more details.";
 
+            var type = input.GetType();
+            
             if (input is int)
             {
                 set.Add((int)input);
@@ -73,6 +76,21 @@ namespace FakeXrmEasy.Extensions
             else if (isOptionSetValueCollectionAccepted && input is OptionSetValueCollection)
             {
                 set.UnionWith((input as OptionSetValueCollection).Select(osv => osv.Value));
+            }
+            else if (typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                if (type.IsGenericType)
+                {
+                    var genericTypeArguments = type.GenericTypeArguments;
+                    if (genericTypeArguments.Length == 1 && genericTypeArguments[0].IsEnum)
+                    {
+                        var enumerator = (input as IEnumerable).GetEnumerator();
+                        while (enumerator.MoveNext())
+                        {
+                            set.Add((int)enumerator.Current);
+                        }
+                    }
+                }
             }
             else
             {

@@ -24,7 +24,7 @@ namespace FakeXrmEasy.Query
             {
                 var cEntityName = sEntityName;
                 //Create a new typed expression 
-                var typedConditionExpression = new TypedConditionExpression(c);
+                var typedConditionExpression = new TypedConditionExpression(c, qe);
                 typedConditionExpression.IsOuter = bIsOuter;
 
                 string sAttributeName = c.AttributeName;
@@ -97,49 +97,20 @@ namespace FakeXrmEasy.Query
                 entity,
                 "Attributes"
                 );
-
-
-            //If the attribute comes from a joined entity, then we need to access the attribute from the join
-            //But the entity name attribute only exists >= 2013
-#if FAKE_XRM_EASY_2013 || FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
-            string attributeName = "";
-
-            //Do not prepend the entity name if the EntityLogicalName is the same as the QueryExpression main logical name
-
-            if (!string.IsNullOrWhiteSpace(c.CondExpression.EntityName) && !c.CondExpression.EntityName.Equals(qe.EntityName))
-            {
-                attributeName = c.CondExpression.EntityName + "." + c.CondExpression.AttributeName;
-            }
-            else
-                attributeName = c.CondExpression.AttributeName;
-
+            
+            string attributeName = c.GetAttributeName();
             Expression containsAttributeExpression = Expression.Call(
                 attributesProperty,
                 typeof(AttributeCollection).GetMethod("ContainsKey", new Type[] { typeof(string) }),
                 Expression.Constant(attributeName)
-                );
+            );
 
             Expression getAttributeValueExpr = Expression.Property(
-                            attributesProperty, "Item",
-                            Expression.Constant(attributeName, typeof(string))
-                            );
-#else
-            Expression containsAttributeExpression = Expression.Call(
-                attributesProperty,
-                typeof(AttributeCollection).GetMethod("ContainsKey", new Type[] { typeof(string) }),
-                Expression.Constant(c.CondExpression.AttributeName)
-                );
-
-            Expression getAttributeValueExpr = Expression.Property(
-                            attributesProperty, "Item",
-                            Expression.Constant(c.CondExpression.AttributeName, typeof(string))
-                            );
-#endif
-
-
+                attributesProperty, "Item",
+                Expression.Constant(attributeName, typeof(string))
+            );
 
             Expression getNonBasicValueExpr = getAttributeValueExpr;
-
             Expression operatorExpression = null;
 
             switch (c.CondExpression.Operator)
@@ -332,7 +303,8 @@ namespace FakeXrmEasy.Query
             {
                 if (value is Array)
                 {
-                    throw new Exception($"Condition for attribute '{name}.numberofemployees': expected argument(s) of a different type but received '{value.GetType()}'.");
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument,
+                        $"Condition for attribute '{name}.{c.GetAttributeName()}': expected argument(s) of a different type but received '{value.GetType()}'.");
                 }                
             }
         }

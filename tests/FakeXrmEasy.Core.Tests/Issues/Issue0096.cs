@@ -1,7 +1,8 @@
-﻿using Microsoft.Xrm.Sdk.Query;
+﻿using FakeXrmEasy.Abstractions;
+using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 
-namespace FakeXrmEasy.Tests.Issues
+namespace FakeXrmEasy.Core.Tests.Issues
 {
     public class Issue0096 : FakeXrmEasyTestsBase
     {
@@ -12,7 +13,7 @@ namespace FakeXrmEasy.Tests.Issues
             query.TopCount = 2;
             query.Criteria.AddCondition("numberofemployees", ConditionOperator.In, new int[] { 0, 1 });
 
-            var ex = Record.Exception(() => _service.RetrieveMultiple(query));
+            var ex = XAssert.ThrowsFaultCode(ErrorCodes.InvalidArgument, () => _service.RetrieveMultiple(query));
             Assert.NotNull(ex);
             Assert.Equal("Condition for attribute 'account.numberofemployees': expected argument(s) of a different type but received 'System.Int32[]'.", ex.Message);
         }

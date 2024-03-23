@@ -15,7 +15,7 @@ namespace FakeXrmEasy.Query
             BinaryExpression expOrValues = Expression.Or(Expression.Constant(false), Expression.Constant(false));
 
 #if FAKE_XRM_EASY_9
-            if (tc.AttributeType == typeof(OptionSetValueCollection))
+            if (tc.AttributeType?.IsOptionSetValueCollection() == true)
             {
                 var leftHandSideExpression = tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, null);
                 var rightHandSideExpression = Expression.Constant(OptionSetValueCollectionExtensions.ConvertToHashSetOfInt(c.Values, isOptionSetValueCollectionAccepted: false));
@@ -31,12 +31,6 @@ namespace FakeXrmEasy.Query
                 {
                     if (value is Array)
                     {
-                        //foreach (var a in ((Array)value))
-                        //{
-                        //    expOrValues = Expression.Or(expOrValues, Expression.Equal(
-                        //        tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, a),
-                        //        TypeCastExpressions.GetAppropiateTypedValueAndType(a, tc.AttributeType)));
-                        //}
                     }
                     else
                     {
