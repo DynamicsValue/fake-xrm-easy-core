@@ -11,7 +11,7 @@ namespace FakeXrmEasy.Query
     /// <summary>
     /// A condition expression with a decorated type of the attribute in the condition expression
     /// </summary>
-    public class TypedConditionExpression
+    internal class TypedConditionExpression
     {
         /// <summary>
         /// The QueryExpression to which this condition belongs
@@ -37,7 +37,8 @@ namespace FakeXrmEasy.Query
         /// Creates a TypedConditionExpression from an existing ConditionExpression with no attribute type information
         /// </summary>
         /// <param name="c"></param>
-        public TypedConditionExpression(ConditionExpression c, QueryExpression qe)
+        /// <param name="qe"></param>
+        internal TypedConditionExpression(ConditionExpression c, QueryExpression qe)
         {
             IsOuter = false;
             CondExpression = c;
