@@ -212,7 +212,46 @@ namespace FakeXrmEasy.Metadata
             }
             else if (propertyType.IsGenericType)
             {
-                Type genericType = propertyType.GetGenericArguments().FirstOrDefault();
+                return CreateAttributeMetadataFromGenericType(propertyType);
+            }
+            else if (typeof(BooleanManagedProperty) == propertyType)
+            {
+                var booleanManaged = new BooleanAttributeMetadata();
+                booleanManaged.SetSealedPropertyValue("AttributeType", AttributeTypeCode.ManagedProperty);
+                return booleanManaged;
+            }
+#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
+            else if (typeof(Guid) == propertyType)
+            {
+                return new UniqueIdentifierAttributeMetadata();
+            }
+#endif
+#if !FAKE_XRM_EASY
+            else if (typeof(byte[]) == propertyType)
+            {
+
+                return new ImageAttributeMetadata();
+            }
+#endif
+#if FAKE_XRM_EASY_9
+            else if (typeof(OptionSetValueCollection).IsAssignableFrom(propertyType))
+            {
+                return new MultiSelectPicklistAttributeMetadata();
+            }
+            else if (typeof(object) == propertyType)
+            {
+                return new FileAttributeMetadata();
+            }
+#endif
+            else
+            {
+                throw new Exception($"Type {propertyType.Name} has not been mapped to an AttributeMetadata.");
+            }
+        }
+
+        internal static AttributeMetadata CreateAttributeMetadataFromGenericType(Type propertyType)
+        {
+            Type genericType = propertyType.GetGenericArguments().FirstOrDefault();
                 if (propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
                     if (typeof(int) == genericType)
@@ -262,43 +301,7 @@ namespace FakeXrmEasy.Metadata
                 {
                     throw new Exception($"Type {propertyType.Name}{genericType?.Name} has not been mapped to an AttributeMetadata.");
                 }
-            }
-            else if (typeof(BooleanManagedProperty) == propertyType)
-            {
-                var booleanManaged = new BooleanAttributeMetadata();
-                booleanManaged.SetSealedPropertyValue("AttributeType", AttributeTypeCode.ManagedProperty);
-                return booleanManaged;
-            }
-#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
-            else if (typeof(Guid) == propertyType)
-            {
-                return new UniqueIdentifierAttributeMetadata();
-            }
-#endif
-#if !FAKE_XRM_EASY
-            else if (typeof(byte[]) == propertyType)
-            {
-
-                return new ImageAttributeMetadata();
-            }
-#endif
-#if FAKE_XRM_EASY_9
-            else if (typeof(OptionSetValueCollection).IsAssignableFrom(propertyType))
-            {
-                return new MultiSelectPicklistAttributeMetadata();
-            }
-            else if (typeof(object) == propertyType)
-            {
-
-                return new FileAttributeMetadata();
-            }
-#endif
-            else
-            {
-                throw new Exception($"Type {propertyType.Name} has not been mapped to an AttributeMetadata.");
-            }
         }
-
         private static OneToManyRelationshipMetadata CreateOneToManyRelationshipMetadata(Type referencingEntity, 
                                                         PropertyInfo referencingAttribute, 
                                                         Type referencedEntity, 
