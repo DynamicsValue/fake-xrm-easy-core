@@ -9,7 +9,7 @@ namespace FakeXrmEasy.Query
     /// <summary>
     /// 
     /// </summary>
-    public static class TypeCastExpressionExtensions
+    internal static partial class TypeCastExpressionExtensions
     {
         internal static Expression GetAppropriateCastExpressionBasedOnType(this Type t, Expression input, object value)
         {
@@ -61,123 +61,6 @@ namespace FakeXrmEasy.Query
             return GetAppropriateCastExpressionBasedOnValueInherentType(input, value); //Dynamic / late bound entities
         }
 
-        internal static Expression GetAppropriateCastExpressionBasedGuid(Expression input)
-        {
-            var getIdFromEntityReferenceExpr = Expression.Call(Expression.TypeAs(input, typeof(EntityReference)),
-                typeof(EntityReference).GetMethod("get_Id"));
-
-            return Expression.Condition(
-                Expression.TypeIs(input, typeof(EntityReference)),  //If input is an entity reference, compare the Guid against the Id property
-                Expression.Convert(
-                    getIdFromEntityReferenceExpr,
-                    typeof(Guid)),
-                Expression.Condition(Expression.TypeIs(input, typeof(Guid)),  //If any other case, then just compare it as a Guid directly
-                    Expression.Convert(input, typeof(Guid)),
-                    Expression.Constant(Guid.Empty, typeof(Guid))));
-        }
-
-
-        internal static Expression GetAppropriateCastExpressionBasedOnEntityReference(Expression input, object value)
-        {
-            Guid guid;
-            if (value is string && !Guid.TryParse((string)value, out guid))
-            {
-                var getNameFromEntityReferenceExpr = Expression.Call(Expression.TypeAs(input, typeof(EntityReference)),
-                    typeof(EntityReference).GetMethod("get_Name"));
-
-                return Expression.Condition(Expression.TypeIs(input, typeof(EntityReference)),
-                    Expression.Convert(getNameFromEntityReferenceExpr, typeof(string)),
-                    Expression.Constant(string.Empty, typeof(string))).ToCaseInsensitiveExpression();
-            }
-
-            var getIdFromEntityReferenceExpr = Expression.Call(Expression.TypeAs(input, typeof(EntityReference)),
-                typeof(EntityReference).GetMethod("get_Id"));
-
-            return Expression.Condition(
-                Expression.TypeIs(input, typeof(EntityReference)),  //If input is an entity reference, compare the Guid against the Id property
-                Expression.Convert(
-                    getIdFromEntityReferenceExpr,
-                    typeof(Guid)),
-                Expression.Condition(Expression.TypeIs(input, typeof(Guid)),  //If any other case, then just compare it as a Guid directly
-                    Expression.Convert(input, typeof(Guid)),
-                    Expression.Constant(Guid.Empty, typeof(Guid))));
-
-        }
-
-        internal static Expression GetAppropriateCastExpressionBasedOnInt(Expression input)
-        {
-            return Expression.Condition(
-                        Expression.TypeIs(input, typeof(OptionSetValue)),
-                                            Expression.Convert(
-                                                Expression.Call(Expression.TypeAs(input, typeof(OptionSetValue)),
-                                                        typeof(OptionSetValue).GetMethod("get_Value")),
-                                                        typeof(int)),
-                                                    Expression.Convert(input, typeof(int)));
-        }
-
-        internal static Expression GetAppropriateCastExpressionBasedOnDecimal(Expression input)
-        {
-            return Expression.Condition(
-                        Expression.TypeIs(input, typeof(Money)),
-                                Expression.Convert(
-                                    Expression.Call(Expression.TypeAs(input, typeof(Money)),
-                                            typeof(Money).GetMethod("get_Value")),
-                                            typeof(decimal)),
-                           Expression.Condition(Expression.TypeIs(input, typeof(decimal)),
-                                        Expression.Convert(input, typeof(decimal)),
-                                        Expression.Constant(0.0M)));
-
-        }
-
-        internal static Expression GetAppropriateCastExpressionBasedOnBoolean(Expression input)
-        {
-            return Expression.Condition(
-                        Expression.TypeIs(input, typeof(BooleanManagedProperty)),
-                                Expression.Convert(
-                                    Expression.Call(Expression.TypeAs(input, typeof(BooleanManagedProperty)),
-                                            typeof(BooleanManagedProperty).GetMethod("get_Value")),
-                                            typeof(bool)),
-                           Expression.Condition(Expression.TypeIs(input, typeof(bool)),
-                                        Expression.Convert(input, typeof(bool)),
-                                        Expression.Constant(false)));
-
-        }
-
-        internal static Expression GetAppropriateCastExpressionBasedOnStringAndType(Expression input, object value, Type attributeType)
-        {
-            var defaultStringExpression = GetAppropriateCastExpressionDefault(input, value).ToCaseInsensitiveExpression();
-
-            int iValue;
-            if (attributeType.IsOptionSet() && int.TryParse(value.ToString(), out iValue))
-            {
-                return Expression.Condition(Expression.TypeIs(input, typeof(OptionSetValue)),
-                    GetAppropriateCastExpressionBasedOnInt(input).ToStringExpression<Int32>(),
-                    defaultStringExpression
-                );
-            }
-
-            return defaultStringExpression;
-        }
-
-        internal static Expression GetAppropriateCastExpressionBasedOnDateTime(Expression input, object value)
-        {
-            // Convert to DateTime if string
-            DateTime _;
-            if (value is DateTime || value is string && DateTime.TryParse(value.ToString(), out _))
-            {
-                return Expression.Convert(input, typeof(DateTime));
-            }
-
-            return input; // return directly
-        }
-
-#if FAKE_XRM_EASY_9
-        internal static Expression GetAppropriateCastExpressionBasedOnOptionSetValueCollection(Expression input)
-        {
-            return Expression.Call(typeof(OptionSetValueCollectionExtensions).GetMethod("ConvertToHashSetOfInt"), input, Expression.Constant(true));
-        }
-#endif
-
         internal static Expression GetAppropriateCastExpressionDefault(Expression input, object value)
         {
             return Expression.Convert(input, value.GetType());  //Default type conversion
@@ -199,29 +82,6 @@ namespace FakeXrmEasy.Query
             }
             return GetAppropriateCastExpressionDefault(input, value); //any other type
         }
-
-        internal static Expression GetAppropriateCastExpressionBasedOnString(Expression input, object value)
-        {
-            var defaultStringExpression = GetAppropriateCastExpressionDefault(input, value).ToCaseInsensitiveExpression();
-
-            DateTime dtDateTimeConversion;
-            if (DateTime.TryParse(value.ToString(), out dtDateTimeConversion))
-            {
-                return Expression.Convert(input, typeof(DateTime));
-            }
-
-            int iValue;
-            if (int.TryParse(value.ToString(), out iValue))
-            {
-                return Expression.Condition(Expression.TypeIs(input, typeof(OptionSetValue)),
-                    GetAppropriateCastExpressionBasedOnInt(input).ToStringExpression<Int32>(),
-                    defaultStringExpression
-                );
-            }
-
-            return defaultStringExpression;
-        }
-
 
         internal static Expression GetAppropriateTypedValue(object value)
         {
