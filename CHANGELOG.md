@@ -13,6 +13,8 @@
 - Resolves referencing EntityAlias or EntityName in conditions inside nested filters of a LinkedEntity (thanks Temmy) - https://github.com/DynamicsValue/fake-xrm-easy/issues/63
 - Resolves Resolving entity references by Alternate Keys when EntityMetadata doesn't have any Keys. - https://github.com/DynamicsValue/fake-xrm-easy/issues/138
 - Resolves an issue where a ConditionExpression with an In operator should to not take array of integers as an input, but instead separate values (thanks Ben and Betim) - https://github.com/DynamicsValue/fake-xrm-easy/issues/96
+- Resolves filtering Money attributes by an integer value (thanks Ben and Betim) - https://github.com/DynamicsValue/fake-xrm-easy/issues/64
+
 
 ## [2.4.2]
 
