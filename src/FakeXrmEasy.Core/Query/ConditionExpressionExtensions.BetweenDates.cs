@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
-    public static partial class ConditionExpressionExtensions
+    internal static partial class ConditionExpressionExtensions
     {
         /// <summary>
         /// Takes a condition expression which needs translating into a 'between two dates' expression and works out the relevant dates

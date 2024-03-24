@@ -9,11 +9,11 @@ namespace FakeXrmEasy.Query
     /// <summary>
     /// 
     /// </summary>
-    public static class TypeCastExpressions
+    public static class TypeCastExpressionExtensions
     {
-        internal static Expression GetAppropiateCastExpressionBasedOnType(this Type t, Expression input, object value)
+        internal static Expression GetAppropriateCastExpressionBasedOnType(this Type t, Expression input, object value)
         {
-            var typedExpression = t.GetAppropiateCastExpressionBasedOnAttributeTypeOrValue(input, value);
+            var typedExpression = t.GetAppropriateCastExpressionBasedOnAttributeTypeOrValue(input, value);
 
             //Now, any value (entity reference, string, int, etc,... could be wrapped in an AliasedValue object
             //So let's add this
@@ -21,14 +21,14 @@ namespace FakeXrmEasy.Query
                                             typeof(AliasedValue).GetMethod("get_Value"));
 
             var exp = Expression.Condition(Expression.TypeIs(input, typeof(AliasedValue)),
-                    t.GetAppropiateCastExpressionBasedOnAttributeTypeOrValue(getValueFromAliasedValueExp, value),
+                    t.GetAppropriateCastExpressionBasedOnAttributeTypeOrValue(getValueFromAliasedValueExp, value),
                     typedExpression //Not an aliased value
                 );
 
             return exp;
         }
 
-        internal static Expression GetAppropiateCastExpressionBasedOnAttributeTypeOrValue(this Type attributeType, Expression input, object value)
+        internal static Expression GetAppropriateCastExpressionBasedOnAttributeTypeOrValue(this Type attributeType, Expression input, object value)
         {
             if (attributeType != null)
             {
@@ -37,31 +37,31 @@ namespace FakeXrmEasy.Query
                     attributeType = Nullable.GetUnderlyingType(attributeType);
                 }
                 if (attributeType == typeof(Guid))
-                    return GetAppropiateCastExpressionBasedGuid(input);
+                    return GetAppropriateCastExpressionBasedGuid(input);
                 if (attributeType == typeof(EntityReference))
-                    return GetAppropiateCastExpressionBasedOnEntityReference(input, value);
+                    return GetAppropriateCastExpressionBasedOnEntityReference(input, value);
                 if (attributeType == typeof(int) || attributeType == typeof(Nullable<int>) || attributeType.IsOptionSet())
-                    return GetAppropiateCastExpressionBasedOnInt(input);
+                    return GetAppropriateCastExpressionBasedOnInt(input);
                 if (attributeType == typeof(decimal) || attributeType == typeof(Money))
-                    return GetAppropiateCastExpressionBasedOnDecimal(input);
+                    return GetAppropriateCastExpressionBasedOnDecimal(input);
                 if (attributeType == typeof(bool) || attributeType == typeof(BooleanManagedProperty))
-                    return GetAppropiateCastExpressionBasedOnBoolean(input);
+                    return GetAppropriateCastExpressionBasedOnBoolean(input);
                 if (attributeType == typeof(string))
-                    return GetAppropiateCastExpressionBasedOnStringAndType(input, value, attributeType);
+                    return GetAppropriateCastExpressionBasedOnStringAndType(input, value, attributeType);
                 if (attributeType.IsDateTime())
-                    return GetAppropiateCastExpressionBasedOnDateTime(input, value);
+                    return GetAppropriateCastExpressionBasedOnDateTime(input, value);
 #if FAKE_XRM_EASY_9
                 if (attributeType.IsOptionSetValueCollection())
-                    return GetAppropiateCastExpressionBasedOnOptionSetValueCollection(input);
+                    return GetAppropriateCastExpressionBasedOnOptionSetValueCollection(input);
 #endif
 
-                return GetAppropiateCastExpressionDefault(input, value); //any other type
+                return GetAppropriateCastExpressionDefault(input, value); //any other type
             }
 
-            return GetAppropiateCastExpressionBasedOnValueInherentType(input, value); //Dynamic / late bound entities
+            return GetAppropriateCastExpressionBasedOnValueInherentType(input, value); //Dynamic / late bound entities
         }
 
-        internal static Expression GetAppropiateCastExpressionBasedGuid(Expression input)
+        internal static Expression GetAppropriateCastExpressionBasedGuid(Expression input)
         {
             var getIdFromEntityReferenceExpr = Expression.Call(Expression.TypeAs(input, typeof(EntityReference)),
                 typeof(EntityReference).GetMethod("get_Id"));
@@ -77,7 +77,7 @@ namespace FakeXrmEasy.Query
         }
 
 
-        internal static Expression GetAppropiateCastExpressionBasedOnEntityReference(Expression input, object value)
+        internal static Expression GetAppropriateCastExpressionBasedOnEntityReference(Expression input, object value)
         {
             Guid guid;
             if (value is string && !Guid.TryParse((string)value, out guid))
@@ -104,7 +104,7 @@ namespace FakeXrmEasy.Query
 
         }
 
-        internal static Expression GetAppropiateCastExpressionBasedOnInt(Expression input)
+        internal static Expression GetAppropriateCastExpressionBasedOnInt(Expression input)
         {
             return Expression.Condition(
                         Expression.TypeIs(input, typeof(OptionSetValue)),
@@ -115,7 +115,7 @@ namespace FakeXrmEasy.Query
                                                     Expression.Convert(input, typeof(int)));
         }
 
-        internal static Expression GetAppropiateCastExpressionBasedOnDecimal(Expression input)
+        internal static Expression GetAppropriateCastExpressionBasedOnDecimal(Expression input)
         {
             return Expression.Condition(
                         Expression.TypeIs(input, typeof(Money)),
@@ -129,7 +129,7 @@ namespace FakeXrmEasy.Query
 
         }
 
-        internal static Expression GetAppropiateCastExpressionBasedOnBoolean(Expression input)
+        internal static Expression GetAppropriateCastExpressionBasedOnBoolean(Expression input)
         {
             return Expression.Condition(
                         Expression.TypeIs(input, typeof(BooleanManagedProperty)),
@@ -143,15 +143,15 @@ namespace FakeXrmEasy.Query
 
         }
 
-        internal static Expression GetAppropiateCastExpressionBasedOnStringAndType(Expression input, object value, Type attributeType)
+        internal static Expression GetAppropriateCastExpressionBasedOnStringAndType(Expression input, object value, Type attributeType)
         {
-            var defaultStringExpression = GetAppropiateCastExpressionDefault(input, value).ToCaseInsensitiveExpression();
+            var defaultStringExpression = GetAppropriateCastExpressionDefault(input, value).ToCaseInsensitiveExpression();
 
             int iValue;
             if (attributeType.IsOptionSet() && int.TryParse(value.ToString(), out iValue))
             {
                 return Expression.Condition(Expression.TypeIs(input, typeof(OptionSetValue)),
-                    GetAppropiateCastExpressionBasedOnInt(input).ToStringExpression<Int32>(),
+                    GetAppropriateCastExpressionBasedOnInt(input).ToStringExpression<Int32>(),
                     defaultStringExpression
                 );
             }
@@ -159,7 +159,7 @@ namespace FakeXrmEasy.Query
             return defaultStringExpression;
         }
 
-        internal static Expression GetAppropiateCastExpressionBasedOnDateTime(Expression input, object value)
+        internal static Expression GetAppropriateCastExpressionBasedOnDateTime(Expression input, object value)
         {
             // Convert to DateTime if string
             DateTime _;
@@ -172,37 +172,37 @@ namespace FakeXrmEasy.Query
         }
 
 #if FAKE_XRM_EASY_9
-        internal static Expression GetAppropiateCastExpressionBasedOnOptionSetValueCollection(Expression input)
+        internal static Expression GetAppropriateCastExpressionBasedOnOptionSetValueCollection(Expression input)
         {
             return Expression.Call(typeof(OptionSetValueCollectionExtensions).GetMethod("ConvertToHashSetOfInt"), input, Expression.Constant(true));
         }
 #endif
 
-        internal static Expression GetAppropiateCastExpressionDefault(Expression input, object value)
+        internal static Expression GetAppropriateCastExpressionDefault(Expression input, object value)
         {
             return Expression.Convert(input, value.GetType());  //Default type conversion
         }
 
-        internal static Expression GetAppropiateCastExpressionBasedOnValueInherentType(Expression input, object value)
+        internal static Expression GetAppropriateCastExpressionBasedOnValueInherentType(Expression input, object value)
         {
             if (value is Guid || value is EntityReference)
-                return GetAppropiateCastExpressionBasedGuid(input); //Could be compared against an EntityReference
+                return GetAppropriateCastExpressionBasedGuid(input); //Could be compared against an EntityReference
             if (value is int || value is OptionSetValue)
-                return GetAppropiateCastExpressionBasedOnInt(input); //Could be compared against an OptionSet
+                return GetAppropriateCastExpressionBasedOnInt(input); //Could be compared against an OptionSet
             if (value is decimal || value is Money)
-                return GetAppropiateCastExpressionBasedOnDecimal(input); //Could be compared against a Money
+                return GetAppropriateCastExpressionBasedOnDecimal(input); //Could be compared against a Money
             if (value is bool)
-                return GetAppropiateCastExpressionBasedOnBoolean(input); //Could be a BooleanManagedProperty
+                return GetAppropriateCastExpressionBasedOnBoolean(input); //Could be a BooleanManagedProperty
             if (value is string)
             {
-                return GetAppropiateCastExpressionBasedOnString(input, value);
+                return GetAppropriateCastExpressionBasedOnString(input, value);
             }
-            return GetAppropiateCastExpressionDefault(input, value); //any other type
+            return GetAppropriateCastExpressionDefault(input, value); //any other type
         }
 
-        internal static Expression GetAppropiateCastExpressionBasedOnString(Expression input, object value)
+        internal static Expression GetAppropriateCastExpressionBasedOnString(Expression input, object value)
         {
-            var defaultStringExpression = GetAppropiateCastExpressionDefault(input, value).ToCaseInsensitiveExpression();
+            var defaultStringExpression = GetAppropriateCastExpressionDefault(input, value).ToCaseInsensitiveExpression();
 
             DateTime dtDateTimeConversion;
             if (DateTime.TryParse(value.ToString(), out dtDateTimeConversion))
@@ -214,7 +214,7 @@ namespace FakeXrmEasy.Query
             if (int.TryParse(value.ToString(), out iValue))
             {
                 return Expression.Condition(Expression.TypeIs(input, typeof(OptionSetValue)),
-                    GetAppropiateCastExpressionBasedOnInt(input).ToStringExpression<Int32>(),
+                    GetAppropriateCastExpressionBasedOnInt(input).ToStringExpression<Int32>(),
                     defaultStringExpression
                 );
             }
@@ -223,8 +223,7 @@ namespace FakeXrmEasy.Query
         }
 
 
-
-        internal static Expression GetAppropiateTypedValue(object value)
+        internal static Expression GetAppropriateTypedValue(object value)
         {
             //Basic types conversions
             //Special case => datetime is sent as a string
@@ -258,10 +257,10 @@ namespace FakeXrmEasy.Query
             return Expression.Constant(value);
         }
 
-        internal static Expression GetAppropiateTypedValueAndType(object value, Type attributeType)
+        internal static Expression GetAppropriateTypedValueAndType(object value, Type attributeType)
         {
             if (attributeType == null)
-                return GetAppropiateTypedValue(value);
+                return GetAppropriateTypedValue(value);
 
             if (Nullable.GetUnderlyingType(attributeType) != null)
             {
@@ -320,7 +319,7 @@ namespace FakeXrmEasy.Query
             return Expression.Constant(value);
         }
 
-        internal static Type GetAppropiateTypeForValue(object value)
+        internal static Type GetAppropriateTypeForValue(object value)
         {
             //Basic types conversions
             //Special case => datetime is sent as a string

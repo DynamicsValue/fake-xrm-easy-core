@@ -310,6 +310,15 @@ namespace FakeXrmEasy
             Initialised = true;
         }
 
+        /// <summary>
+        /// Initializes the context with a single entity record
+        /// </summary>
+        /// <param name="entity">Entity record that will be used to initialize the In-Memory context</param>
+        public void Initialize(Entity entity)
+        {
+            this.Initialize(new List<Entity>() { entity });
+        }
+        
         private void ValidateEntityReferences(Entity e)
         {
             foreach (var item in e.Attributes)
@@ -319,15 +328,6 @@ namespace FakeXrmEasy
                     throw new NullLogicalNameEntityReferenceException(e, item.Key);
                 }
             }
-        }
-
-        /// <summary>
-        /// Initializes the context with a single entity record
-        /// </summary>
-        /// <param name="entity">Entity record that will be used to initialize the In-Memory context</param>
-        public void Initialize(Entity entity)
-        {
-            this.Initialize(new List<Entity>() { entity });
         }
 
         /// <summary>

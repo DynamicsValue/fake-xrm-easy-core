@@ -14,7 +14,7 @@ namespace FakeXrmEasy.Query
     /// <summary>
     /// 
     /// </summary>
-    public static class FetchXmlExtensions
+    internal static class FetchXmlExtensions
     {
         /// <summary>
         /// 
@@ -22,7 +22,7 @@ namespace FakeXrmEasy.Query
         /// <param name="fetchXml"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static QueryExpression ToQueryExpression(this string fetchXml, IXrmFakedContext context)
+        internal static QueryExpression ToQueryExpression(this string fetchXml, IXrmFakedContext context)
         {
             var xlDoc = fetchXml.ToXmlDocument();
             return xlDoc.ToQueryExpression(context);
@@ -93,7 +93,7 @@ namespace FakeXrmEasy.Query
         /// <param name="fetchXml"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static XDocument ToXmlDocument(this string fetchXml)
+        internal static XDocument ToXmlDocument(this string fetchXml)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace FakeXrmEasy.Query
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="UnknownAggregateFunctionException"></exception>
-        public static List<Entity> Aggregate(this List<Entity> resultOfQuery, XrmFakedContext ctx, XDocument xmlDoc)
+        internal static List<Entity> Aggregate(this List<Entity> resultOfQuery, XrmFakedContext ctx, XDocument xmlDoc)
         {
             // Validate that <all-attributes> is not present,
             // that all attributes have groupby or aggregate, and an alias,

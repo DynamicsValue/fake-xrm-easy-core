@@ -10,7 +10,7 @@ using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Query
 {
-    public static partial class ConditionExpressionExtensions
+    internal static partial class ConditionExpressionExtensions
     {
         internal static BinaryExpression TranslateMultipleConditionExpressions(this List<ConditionExpression> conditions, QueryExpression qe, IXrmFakedContext context, string sEntityName, LogicalOperator op, ParameterExpression entity, bool bIsOuter)
         {

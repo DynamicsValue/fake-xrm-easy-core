@@ -5,13 +5,13 @@ using System.Text.RegularExpressions;
 
 namespace FakeXrmEasy.Query
 {
-    public static partial class ConditionExpressionExtensions
+    internal static partial class ConditionExpressionExtensions
     {
         internal static Expression ToLikeExpression(this TypedConditionExpression tc, Expression getAttributeValueExpr, Expression containsAttributeExpr)
         {
             var c = tc.CondExpression;
             BinaryExpression expOrValues = Expression.Or(Expression.Constant(false), Expression.Constant(false));
-            Expression convertedValueToStr = Expression.Convert(tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, c.Values[0]), typeof(string));
+            Expression convertedValueToStr = Expression.Convert(tc.AttributeType.GetAppropriateCastExpressionBasedOnType(getAttributeValueExpr, c.Values[0]), typeof(string));
 
             Expression convertedValueToStrAndToLower = convertedValueToStr.ToCaseInsensitiveExpression();
 

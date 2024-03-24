@@ -26,7 +26,6 @@ namespace FakeXrmEasy.Core.Tests.Issues
             _context.Initialize(new List<Entity> { salesOrderDetail });
         }
 
-        // This test currently fails
         [Fact]
         public void When_Querying_A_Money_Attribute_Using_An_Integer_Value_It_Should_Not_Fail()
         {
@@ -37,7 +36,7 @@ namespace FakeXrmEasy.Core.Tests.Issues
 
             Assert.Equal(entities[0].Id, salesOrderDetail.Id);
         }
-        // This test currently passes
+        
         [Fact]
         public void When_Querying_A_Money_Attribute_Using_A_Money_Value_It_Should_Not_Fail()
         {
