@@ -294,6 +294,14 @@ namespace FakeXrmEasy.Query
                     return Expression.Constant(value, typeof(string)).ToCaseInsensitiveExpression();
                 }
             }
+            else if (value is int)
+            {
+                if (attributeType.IsMoney())
+                {
+                    return Expression.Constant(((int)value)*1m, typeof(decimal));
+                }
+                return Expression.Constant(value);
+            }
             else if (value is EntityReference)
             {
                 var cast = (value as EntityReference).Id;
