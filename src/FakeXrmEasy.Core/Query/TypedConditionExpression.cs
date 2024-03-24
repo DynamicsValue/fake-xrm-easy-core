@@ -11,18 +11,23 @@ namespace FakeXrmEasy.Query
     /// <summary>
     /// A condition expression with a decorated type of the attribute in the condition expression
     /// </summary>
-    public class TypedConditionExpression
+    internal class TypedConditionExpression
     {
+        /// <summary>
+        /// The QueryExpression to which this condition belongs
+        /// </summary>
+        internal QueryExpression QueryExpression { get; set; }
+        
         /// <summary>
         /// The original condition expression
         /// </summary>
-        public ConditionExpression CondExpression { get; set; }
+        internal ConditionExpression CondExpression { get; set; }
  
         /// <summary>
         /// The attribute type of the condition expression, if known (i.e. was generated via a strongly-typed generation tool)
         /// </summary>
-        public Type AttributeType { get; set; }
-
+        internal Type AttributeType { get; set; }
+        
         /// <summary>
         /// True if the condition came from a left outer join, in which case should be applied only if not null
         /// </summary>
@@ -32,10 +37,12 @@ namespace FakeXrmEasy.Query
         /// Creates a TypedConditionExpression from an existing ConditionExpression with no attribute type information
         /// </summary>
         /// <param name="c"></param>
-        public TypedConditionExpression(ConditionExpression c)
+        /// <param name="qe"></param>
+        internal TypedConditionExpression(ConditionExpression c, QueryExpression qe)
         {
             IsOuter = false;
             CondExpression = c;
+            QueryExpression = qe;
         }
 
         internal void ValidateSupportedTypedExpression()
@@ -93,6 +100,30 @@ namespace FakeXrmEasy.Query
             }
 
             return conditionValue;
+        }
+
+        /// <summary>
+        /// Returns the attribute name that participates in this condition expression
+        /// </summary>
+        /// <returns></returns>
+        internal string GetAttributeName()
+        {
+            string attributeName = "";
+            //If the attribute comes from a joined entity, then we need to access the attribute from the join
+            //But the entity name attribute only exists >= 2013
+#if FAKE_XRM_EASY_2013 || FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+            //Do not prepend the entity name if the EntityLogicalName is the same as the QueryExpression main logical name
+
+            if (!string.IsNullOrWhiteSpace(CondExpression.EntityName) && !CondExpression.EntityName.Equals(QueryExpression.EntityName))
+            {
+                attributeName = CondExpression.EntityName + "." + CondExpression.AttributeName;
+            }
+            else
+                attributeName = CondExpression.AttributeName;
+#else
+          attributeName = CondExpression.AttributeName;          
+#endif
+            return attributeName;
         }
     }
 }

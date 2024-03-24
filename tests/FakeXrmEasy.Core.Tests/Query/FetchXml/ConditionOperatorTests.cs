@@ -152,7 +152,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Ne()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -176,7 +175,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Neq()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -196,59 +194,10 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
             Assert.Equal(ConditionOperator.NotEqual, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
         }
-
-        [Fact]
-        public void FetchXml_Operator_Like()
-        {
-            
-            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-                              <entity name='contact'>
-                                    <attribute name='fullname' />
-                                    <attribute name='telephone1' />
-                                    <attribute name='contactid' />
-                                        <filter type='and'>
-                                            <condition attribute='fullname' operator='like' value='%Messi%' />
-                                        </filter>
-                                  </entity>
-                            </fetch>";
-
-            var query = fetchXml.ToQueryExpression(_context);
-
-            Assert.True(query.Criteria != null);
-            Assert.Single(query.Criteria.Conditions);
-            Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
-            Assert.Equal(ConditionOperator.Contains, query.Criteria.Conditions[0].Operator);
-            Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
-        }
-
-        [Fact]
-        public void FetchXml_Operator_Like_As_BeginsWith()
-        {
-            
-            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-                              <entity name='contact'>
-                                    <attribute name='fullname' />
-                                    <attribute name='telephone1' />
-                                    <attribute name='contactid' />
-                                        <filter type='and'>
-                                            <condition attribute='fullname' operator='like' value='Messi%' />
-                                        </filter>
-                                  </entity>
-                            </fetch>";
-
-            var query = fetchXml.ToQueryExpression(_context);
-
-            Assert.True(query.Criteria != null);
-            Assert.Single(query.Criteria.Conditions);
-            Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
-            Assert.Equal(ConditionOperator.BeginsWith, query.Criteria.Conditions[0].Operator);
-            Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
-        }
-
+        
         [Fact]
         public void FetchXml_Operator_BeginsWith()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -272,7 +221,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotBeginWith()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -292,35 +240,10 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
             Assert.Equal(ConditionOperator.DoesNotBeginWith, query.Criteria.Conditions[0].Operator);
             Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
         }
-
-        [Fact]
-        public void FetchXml_Operator_Like_As_EndsWith()
-        {
-            
-            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-                              <entity name='contact'>
-                                    <attribute name='fullname' />
-                                    <attribute name='telephone1' />
-                                    <attribute name='contactid' />
-                                        <filter type='and'>
-                                            <condition attribute='fullname' operator='like' value='%Messi' />
-                                        </filter>
-                                  </entity>
-                            </fetch>";
-
-            var query = fetchXml.ToQueryExpression(_context);
-
-            Assert.True(query.Criteria != null);
-            Assert.Single(query.Criteria.Conditions);
-            Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
-            Assert.Equal(ConditionOperator.EndsWith, query.Criteria.Conditions[0].Operator);
-            Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
-        }
-
+        
         [Fact]
         public void FetchXml_Operator_EndsWith()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -344,7 +267,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotEndWith()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -366,81 +288,8 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         }
 
         [Fact]
-        public void FetchXml_Operator_NotLike()
-        {
-            
-            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-                              <entity name='contact'>
-                                    <attribute name='fullname' />
-                                    <attribute name='telephone1' />
-                                    <attribute name='contactid' />
-                                        <filter type='and'>
-                                            <condition attribute='fullname' operator='not-like' value='%Messi%' />
-                                        </filter>
-                                  </entity>
-                            </fetch>";
-
-            var query = fetchXml.ToQueryExpression(_context);
-
-            Assert.True(query.Criteria != null);
-            Assert.Single(query.Criteria.Conditions);
-            Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
-            Assert.Equal(ConditionOperator.DoesNotContain, query.Criteria.Conditions[0].Operator);
-            Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
-        }
-
-        [Fact]
-        public void FetchXml_Operator_NotLike_As_Not_BeginWith()
-        {
-            
-            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-                              <entity name='contact'>
-                                    <attribute name='fullname' />
-                                    <attribute name='telephone1' />
-                                    <attribute name='contactid' />
-                                        <filter type='and'>
-                                            <condition attribute='fullname' operator='not-like' value='Messi%' />
-                                        </filter>
-                                  </entity>
-                            </fetch>";
-
-            var query = fetchXml.ToQueryExpression(_context);
-
-            Assert.True(query.Criteria != null);
-            Assert.Single(query.Criteria.Conditions);
-            Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
-            Assert.Equal(ConditionOperator.DoesNotBeginWith, query.Criteria.Conditions[0].Operator);
-            Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
-        }
-
-        [Fact]
-        public void FetchXml_Operator_NotLike_As_Not_EndWith()
-        {
-            
-            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
-                              <entity name='contact'>
-                                    <attribute name='fullname' />
-                                    <attribute name='telephone1' />
-                                    <attribute name='contactid' />
-                                        <filter type='and'>
-                                            <condition attribute='fullname' operator='not-like' value='%Messi' />
-                                        </filter>
-                                  </entity>
-                            </fetch>";
-
-            var query = fetchXml.ToQueryExpression(_context);
-
-            Assert.True(query.Criteria != null);
-            Assert.Single(query.Criteria.Conditions);
-            Assert.Equal("fullname", query.Criteria.Conditions[0].AttributeName);
-            Assert.Equal(ConditionOperator.DoesNotEndWith, query.Criteria.Conditions[0].Operator);
-            Assert.Equal("Messi", query.Criteria.Conditions[0].Values[0].ToString());
-        }
-
-        [Fact]
         public void FetchXml_Operator_In()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -468,7 +317,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotIn()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -525,7 +373,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotIn_MultiSelectOptionSet()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -554,7 +401,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Null()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -578,7 +424,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_NotNull()
         {
-            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
@@ -602,7 +447,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Gt_Translation()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -615,9 +459,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
                                         </filter>
                                   </entity>
                             </fetch>";
-
-
-
+            
             var query = fetchXml.ToQueryExpression(_context);
 
             Assert.True(query.Criteria != null);
@@ -630,8 +472,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Gt_Execution()
         {
-            
-
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='address1_longitude' />
@@ -646,7 +486,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
             var ct3 = new Contact() { Id = Guid.NewGuid(), Address1_Longitude = 1.2345 };
             _context.Initialize(new[] { ct1, ct2, ct3 });
             
-
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
@@ -656,7 +495,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Ge_Translation()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -682,7 +520,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Months_Translation()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -708,7 +545,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Months_Execution()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -736,7 +572,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMonths(-3) }; //Should be returned
             _context.Initialize(new[] { ct1, ct2, ct3 });
             
-
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
@@ -748,7 +583,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Minutes_Translation()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -774,7 +608,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Minutes_Execution()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -802,7 +635,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
             var ct3 = new Contact() { Id = Guid.NewGuid(), Anniversary = date.AddMinutes(-3) }; //Should be returned
             _context.Initialize(new[] { ct1, ct2, ct3 });
             
-
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
@@ -813,7 +645,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Hours_Translation()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -839,7 +670,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Hours_Execution()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -878,7 +708,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Days_Translation()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -904,7 +733,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Days_Execution()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -943,7 +771,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Older_Than_X_Weeks_Translation()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -2581,7 +2408,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Last_X_Days_Execution()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
@@ -2971,7 +2797,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Next_X_Years_Translation()
         {
-            
             _context.EnableProxyTypes(Assembly.GetAssembly(typeof(Contact)));
 
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>

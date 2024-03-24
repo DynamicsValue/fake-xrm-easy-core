@@ -3,7 +3,7 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.FakeContextTests.QueryTranslationTests
+namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
 {
     public class ProjectionTests : FakeXrmEasyTestsBase
     {

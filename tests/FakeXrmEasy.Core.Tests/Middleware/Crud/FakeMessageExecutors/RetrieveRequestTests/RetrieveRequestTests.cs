@@ -1170,8 +1170,8 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveRe
                 ColumnSet = new ColumnSet(allColumns: true)
             };
 
-            var exception = Assert.Throws<InvalidOperationException>(() => _service.Execute(request));
-            Assert.Equal($"The requested key attributes do not exist for the entity {Account.EntityLogicalName}", exception.Message);
+            var exception = XAssert.ThrowsFaultCode(ErrorCodes.InvalidEntityKeyOperation,() => _service.Execute(request));
+            Assert.Equal($"Invalid EntityKey Operation performed : Entity {Account.EntityLogicalName} does not contain an attribute named alternateKey", exception.Message);
         }
 #endif 
     }

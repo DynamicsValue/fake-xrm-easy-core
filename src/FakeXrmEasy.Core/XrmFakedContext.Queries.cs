@@ -164,7 +164,7 @@ namespace FakeXrmEasy
                 return injectedType;
             }
 
-            if (attributeInfo.PropertyType.FullName.EndsWith("Enum") || attributeInfo.PropertyType.BaseType.FullName.EndsWith("Enum"))
+            if (attributeInfo.PropertyType.FullName.EndsWith("Enum") || attributeInfo.PropertyType.BaseType?.FullName.EndsWith("Enum") == true)
             {
                 return typeof(int);
             }

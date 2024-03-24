@@ -38,6 +38,7 @@ namespace FakeXrmEasy.Middleware.Crud
                 //Get Crud Message Executors
                 var crudMessageExecutors = new CrudMessageExecutors();
                 crudMessageExecutors.Add(typeof(CreateRequest), new CreateRequestExecutor());
+                
                 crudMessageExecutors.Add(typeof(RetrieveMultipleRequest), new RetrieveMultipleRequestExecutor());
                 crudMessageExecutors.Add(typeof(RetrieveRequest), new RetrieveRequestExecutor());
                 crudMessageExecutors.Add(typeof(UpdateRequest), new UpdateRequestExecutor());
@@ -49,6 +50,12 @@ namespace FakeXrmEasy.Middleware.Crud
                 crudMessageExecutors.Add(typeof(UpsertRequest), new UpsertRequestExecutor());
                 #endif
 
+                #if FAKE_XRM_EASY_9
+                crudMessageExecutors.Add(typeof(CreateMultipleRequest), new CreateMultipleRequestExecutor());
+                crudMessageExecutors.Add(typeof(UpdateMultipleRequest), new UpdateMultipleRequestExecutor());
+                crudMessageExecutors.Add(typeof(UpsertMultipleRequest), new UpsertMultipleRequestExecutor());
+                #endif
+                
                 context.SetProperty(crudMessageExecutors);
                 AddFakeCreate(context, service);
                 AddFakeRetrieve(context, service);

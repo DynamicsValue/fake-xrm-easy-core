@@ -5,7 +5,7 @@ using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Query
 {
-    public static partial class ConditionExpressionExtensions
+    internal static partial class ConditionExpressionExtensions
     {
         internal static Expression ToLessThanExpression(this TypedConditionExpression tc, Expression getAttributeValueExpr, Expression containsAttributeExpr)
         {
@@ -20,7 +20,7 @@ namespace FakeXrmEasy.Query
             {
                 return tc.ToLessThanStringExpression(getAttributeValueExpr, containsAttributeExpr);
             }
-            else if (TypeCastExpressions.GetAppropiateTypeForValue(c.Values[0]) == typeof(string))
+            else if (TypeCastExpressionExtensions.GetAppropriateTypeForValue(c.Values[0]) == typeof(string))
             {
                 return tc.ToLessThanStringExpression(getAttributeValueExpr, containsAttributeExpr);
             }
@@ -29,13 +29,13 @@ namespace FakeXrmEasy.Query
                 BinaryExpression expOrValues = Expression.Or(Expression.Constant(false), Expression.Constant(false));
                 foreach (object value in c.Values)
                 {
-                    var leftHandSideExpression = tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, value);
+                    var leftHandSideExpression = tc.AttributeType.GetAppropriateCastExpressionBasedOnType(getAttributeValueExpr, value);
                     var transformedExpression = leftHandSideExpression.TransformValueBasedOnOperator(tc.CondExpression.Operator);
 
                     expOrValues = Expression.Or(expOrValues,
                             Expression.LessThan(
                                 transformedExpression,
-                                TypeCastExpressions.GetAppropiateTypedValueAndType(value, tc.AttributeType).TransformValueBasedOnOperator(tc.CondExpression.Operator)));
+                                TypeCastExpressionExtensions.GetAppropriateTypedValueAndType(value, tc.AttributeType).TransformValueBasedOnOperator(tc.CondExpression.Operator)));
                 }
                 return Expression.AndAlso(
                                 containsAttributeExpr,
@@ -59,10 +59,10 @@ namespace FakeXrmEasy.Query
             BinaryExpression expOrValues = Expression.Or(Expression.Constant(false), Expression.Constant(false));
             foreach (object value in c.Values)
             {
-                var leftHandSideExpression = tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, value);
+                var leftHandSideExpression = tc.AttributeType.GetAppropriateCastExpressionBasedOnType(getAttributeValueExpr, value);
                 var transformedLeftHandSideExpression = leftHandSideExpression.TransformValueBasedOnOperator(tc.CondExpression.Operator);
 
-                var rightHandSideExpression = TypeCastExpressions.GetAppropiateTypedValueAndType(value, tc.AttributeType).TransformValueBasedOnOperator(tc.CondExpression.Operator);
+                var rightHandSideExpression = TypeCastExpressionExtensions.GetAppropriateTypedValueAndType(value, tc.AttributeType).TransformValueBasedOnOperator(tc.CondExpression.Operator);
 
                 var compareToMethodCall = transformedLeftHandSideExpression.ToCompareToExpression<string>(rightHandSideExpression);
 
