@@ -42,7 +42,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             
             foreach (var record in records)
             {
-                service.Update(record);
+                ctx.UpdateEntity(record);
             }
 
             return new UpdateMultipleResponse()

@@ -43,7 +43,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             
             foreach (var record in records)
             {
-                var id = service.Create(record);
+                var id = ctx.CreateEntity(record);
                 createdIds.Add(id);
             }
 
