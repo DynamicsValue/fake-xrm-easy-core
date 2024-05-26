@@ -41,9 +41,23 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 
             var service = ctx.GetOrganizationService();
             
-            foreach (var record in records)
+            foreach (var record in records) 
             {
-                var response = service.Execute(new UpsertRequest() { Target = record }) as UpsertResponse;
+                UpsertResponse response = null; 
+                if (ctx.ContainsEntity(record.LogicalName, record.Id))
+                {
+                    ctx.UpdateEntity(record);
+                    response = new UpsertResponse();
+                    response.Results.Add("RecordCreated", false);
+                    response.Results.Add("Target", new EntityReference(record.LogicalName, record.Id));
+                }
+                else
+                {
+                    var id = ctx.CreateEntity(record);
+                    response = new UpsertResponse();
+                    response.Results.Add("RecordCreated", true);
+                    response.Results.Add("Target", new EntityReference(record.LogicalName, id));
+                }
                 results.Add(response);
             }
 
