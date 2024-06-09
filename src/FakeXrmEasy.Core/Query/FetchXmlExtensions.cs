@@ -12,17 +12,17 @@ using Microsoft.Xrm.Sdk.Query;
 namespace FakeXrmEasy.Query
 {
     /// <summary>
-    /// 
+    /// Extensions for FetchXml manipulation
     /// </summary>
-    internal static class FetchXmlExtensions
+    public static class FetchXmlExtensions
     {
         /// <summary>
-        /// 
+        /// Converts a string fetchXml into a query expression
         /// </summary>
         /// <param name="fetchXml"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal static QueryExpression ToQueryExpression(this string fetchXml, IXrmFakedContext context)
+        public static QueryExpression ToQueryExpression(this string fetchXml, IXrmFakedContext context)
         {
             var xlDoc = fetchXml.ToXmlDocument();
             return xlDoc.ToQueryExpression(context);
