@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Xunit;
 using FakeXrmEasy.Query;
 
-namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests.OperatorTests.DateTimes
+namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.OperatorTests.DateTimes
 {
     public class DateTimeOperatorsTests: FakeXrmEasyTestsBase
     {

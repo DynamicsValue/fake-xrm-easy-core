@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
+namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
 {
     public class FormattedValuesTests: FakeXrmEasyTestsBase
     {
