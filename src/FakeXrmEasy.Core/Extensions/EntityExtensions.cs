@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
@@ -212,7 +213,7 @@ namespace FakeXrmEasy.Extensions
         }
 
         /// <summary>
-        /// 
+        /// Clones an attribute value to make sure the object reference in memory is different to the original attribute present in the In-Memory database
         /// </summary>
         /// <param name="attributeValue"></param>
         /// <param name="context"></param>
@@ -310,6 +311,26 @@ namespace FakeXrmEasy.Extensions
                 var original = (attributeValue as OptionSetValueCollection);
                 var copy = new OptionSetValueCollection(original.ToArray());
                 return copy;
+            }
+            else if (typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                if (type.IsGenericType)
+                {
+                    var genericTypeArguments = type.GenericTypeArguments;
+                    if (genericTypeArguments.Length == 1 && genericTypeArguments[0].IsEnum)
+                    {
+                        //MultiOption set value
+                        return (attributeValue as IEnumerable).Copy();
+                    }
+                }
+                else if (type.IsArray)
+                {
+                    var elementType = type.GetElementType();
+                    if (elementType.IsEnum)
+                    {
+                        return attributeValue.Copy();
+                    }
+                }
             }
 #endif
             else if (type == typeof(int) || type == typeof(Int64))

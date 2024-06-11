@@ -1,3 +1,22 @@
+
+## [3.5.0]
+
+### Added
+
+- Added FileAttributeMetadata support to MetadataGenerator 
+- Added support for bulk operations: CreateMultipleRequest, UpdateMultipleRequest, UpsertMultipleRequest - https://github.com/DynamicsValue/fake-xrm-easy/issues/122
+- Added new exception to make the initialization of entity records with attributes with a null entity reference more obvious (thanks Betim) - https://github.com/DynamicsValue/fake-xrm-easy/issues/107
+- Add support for OptionSetValueCollection attributes when they are generated as an IEnumerable<TEnum> (using EBG or pac modelbuilder) - https://github.com/DynamicsValue/fake-xrm-easy/issues/140
+- Added extended wildcard support for the Like operator (thanks Betim) - https://github.com/DynamicsValue/fake-xrm-easy/issues/139
+
+### Changed
+
+- Improves exception message when an early bound type was not generated - https://github.com/DynamicsValue/fake-xrm-easy/issues/145 
+- Resolves referencing EntityAlias or EntityName in conditions inside nested filters of a LinkedEntity (thanks Temmy) - https://github.com/DynamicsValue/fake-xrm-easy/issues/63
+- Resolves Resolving entity references by Alternate Keys when EntityMetadata doesn't have any Keys. - https://github.com/DynamicsValue/fake-xrm-easy/issues/138
+- Resolves an issue where a ConditionExpression with an In operator should to not take array of integers as an input, but instead separate values (thanks Ben and Betim) - https://github.com/DynamicsValue/fake-xrm-easy/issues/96
+- Resolves filtering Money attributes by an integer value (thanks Ben and Betim) - https://github.com/DynamicsValue/fake-xrm-easy/issues/64
+
 ## [3.4.2]
 
 ### Added

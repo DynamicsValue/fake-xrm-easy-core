@@ -284,10 +284,10 @@ namespace FakeXrmEasy.Core.Tests
         }
 
         [Fact]
-        public void Should_return_entity_by_id() 
+        public void Should_return_entity_by_id()
         {
-            var contact = new Contact() 
-            { 
+            var contact = new Contact()
+            {
                 Id = Guid.NewGuid(),
                 FirstName = "Steve",
                 LastName = "Vai"
@@ -297,27 +297,41 @@ namespace FakeXrmEasy.Core.Tests
             var retrievedContact = _context.GetEntityById<Contact>(contact.Id);
             Assert.Equal(contact.Id, retrievedContact.Id);
             Assert.Equal(contact.FirstName, retrievedContact.FirstName);
-            Assert.Equal(contact.LastName, retrievedContact.LastName);   
+            Assert.Equal(contact.LastName, retrievedContact.LastName);
         }
 
         [Fact]
         public void Should_return_error_if_entity_logical_name_doesnt_exists() 
         {
-            Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("doesNotExist", Guid.NewGuid())); 
+            Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("doesNotExist", Guid.NewGuid()));
         }
 
         [Fact]
-        public void Should_return_error_if_entity_id_does_not_exists() 
+        public void Should_return_error_if_entity_id_does_not_exists()
         {
-            var contact = new Contact() 
-            { 
+            var contact = new Contact()
+            {
                 Id = Guid.NewGuid(),
                 FirstName = "Steve",
                 LastName = "Vai"
             };
             _context.Initialize(contact);
 
-            Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("contact", Guid.NewGuid())); 
+            Assert.Throws<InvalidOperationException>(() =>_context.GetEntityById("contact", Guid.NewGuid()));
+        }
+
+        [Fact]
+        public void Should_return_error_if_contains_an_entity_reference_with_a_null_logical_name()
+        {
+            var contact = new Contact()
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Steve",
+                LastName = "Vai",
+                ParentCustomerId = new EntityReference("", Guid.NewGuid())
+            };
+
+            Assert.Throws<NullLogicalNameEntityReferenceException>(() => _context.Initialize(contact));
         }
 
         [Fact]

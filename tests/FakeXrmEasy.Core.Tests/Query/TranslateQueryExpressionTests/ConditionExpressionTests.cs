@@ -8,11 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
+namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
 {
     public class ConditionExpressionTests: FakeXrmEasyTestsBase
     {
-
         [Fact]
         public void When_executing_a_query_expression_with_an_unsupported_exception_is_thrown()
         {
@@ -136,7 +135,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_executing_a_query_expression_equals_operator_is_case_insensitive()
         {
-            
             _service.Create(new Contact { FirstName = "Jimmy" });
 
             var qe = new QueryExpression("contact");
@@ -144,8 +142,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
 
             Assert.Single(_service.RetrieveMultiple(qe).Entities);
         }
-
-
+        
         [Fact]
         public void When_executing_a_query_expression_attributes_returned_are_case_sensitive()
         {

@@ -65,6 +65,10 @@ namespace FakeXrmEasy
                 if (Db.ContainsTableMetadata(record.LogicalName))
                 {
                     var entityMetadata = Db.GetTableMetadata(record.LogicalName);
+                    if (entityMetadata.Keys == null && validate)
+                    {
+                        throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidEntityKeyOperation, $"Invalid EntityKey Operation performed : Entity {record.LogicalName} does not contain an attribute named {record.KeyAttributes.First().Key}");
+                    }
                     foreach (var key in entityMetadata.Keys)
                     {
                         if (record.KeyAttributes.Keys.Count == key.KeyAttributes.Length && key.KeyAttributes.All(x => record.KeyAttributes.Keys.Contains(x)))
@@ -80,14 +84,14 @@ namespace FakeXrmEasy
                             }
                             if (validate)
                             {
-                                throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault() { Message = $"{record.LogicalName} with the specified Alternate Keys Does Not Exist"});
+                                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidEntityKeyOperation, $"Invalid EntityKey Operation performed : Entity {record.LogicalName} does not contain an attribute named {record.KeyAttributes.First().Key}");
                             }
                         }
                     }
                 }
                 if (validate)
                 {
-                    throw new InvalidOperationException($"The requested key attributes do not exist for the entity {record.LogicalName}");
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidEntityKeyOperation, $"Invalid EntityKey Operation performed : Entity {record.LogicalName} does not contain an attribute named {record.KeyAttributes.First().Key}");
                 }
             }
 #endif          
@@ -242,7 +246,7 @@ namespace FakeXrmEasy
                 }
                 else
                 {
-                    throw FakeOrganizationServiceFaultFactory.New($"{er.LogicalName} With Id = {er.Id:D} Does Not Exist");
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.ObjectDoesNotExist, $"{er.LogicalName} With Ids = {er.Id:D} Do Not Exist");
                 }
             }
             return er;

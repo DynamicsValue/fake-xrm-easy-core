@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
-    public static partial class ConditionExpressionExtensions
+    internal static partial class ConditionExpressionExtensions
     {
         internal static Expression ToEqualExpression(this TypedConditionExpression c, IXrmFakedContext context, Expression getAttributeValueExpr, Expression containsAttributeExpr)
         {
@@ -42,18 +42,18 @@ namespace FakeXrmEasy.Query
             if (unaryOperatorValue != null)
             {
                 //c.Values empty in this case
-                var leftHandSideExpression = c.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, unaryOperatorValue);
+                var leftHandSideExpression = c.AttributeType.GetAppropriateCastExpressionBasedOnType(getAttributeValueExpr, unaryOperatorValue);
                 var transformedExpression = leftHandSideExpression.TransformValueBasedOnOperator(c.CondExpression.Operator);
 
                 expOrValues = Expression.Equal(transformedExpression,
-                                TypeCastExpressions.GetAppropiateTypedValueAndType(unaryOperatorValue, c.AttributeType));
+                    TypeCastExpressionExtensions.GetAppropriateTypedValueAndType(unaryOperatorValue, c.AttributeType));
             }
 #if FAKE_XRM_EASY_9
             else if (c.AttributeType == typeof(OptionSetValueCollection))
             {
                 var conditionValue = c.GetSingleConditionValue();
 
-                var leftHandSideExpression = c.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, conditionValue);
+                var leftHandSideExpression = c.AttributeType.GetAppropriateCastExpressionBasedOnType(getAttributeValueExpr, conditionValue);
                 var rightHandSideExpression = Expression.Constant(OptionSetValueCollectionExtensions.ConvertToHashSetOfInt(conditionValue, isOptionSetValueCollectionAccepted: false));
 
                 expOrValues = Expression.Equal(
@@ -65,12 +65,12 @@ namespace FakeXrmEasy.Query
             {
                 foreach (object value in c.CondExpression.Values)
                 {
-                    var leftHandSideExpression = c.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, value);
+                    var leftHandSideExpression = c.AttributeType.GetAppropriateCastExpressionBasedOnType(getAttributeValueExpr, value);
                     var transformedExpression = leftHandSideExpression.TransformValueBasedOnOperator(c.CondExpression.Operator);
 
                     expOrValues = Expression.Or(expOrValues, 
                                     Expression.Equal(transformedExpression,
-                                                    TypeCastExpressions.GetAppropiateTypedValueAndType(value, c.AttributeType)
+                                        TypeCastExpressionExtensions.GetAppropriateTypedValueAndType(value, c.AttributeType)
                                                                     .TransformValueBasedOnOperator(c.CondExpression.Operator)));
 
 

@@ -5,7 +5,7 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
 {
-    public static partial class ConditionExpressionExtensions
+    internal static partial class ConditionExpressionExtensions
     {
         internal static Expression ToOlderThanExpression(this TypedConditionExpression tc, Expression getAttributeValueExpr, Expression containsAttributeExpr)
         {
@@ -55,8 +55,8 @@ namespace FakeXrmEasy.Query
         internal static Expression ToOlderThanExpression(this TypedConditionExpression tc, Expression getAttributeValueExpr, Expression containsAttributeExpr, DateTime olderThanDate)
         {
             var lessThanExpression = Expression.LessThan(
-                            tc.AttributeType.GetAppropiateCastExpressionBasedOnType(getAttributeValueExpr, olderThanDate),
-                            TypeCastExpressions.GetAppropiateTypedValueAndType(olderThanDate, tc.AttributeType));
+                            tc.AttributeType.GetAppropriateCastExpressionBasedOnType(getAttributeValueExpr, olderThanDate),
+                            TypeCastExpressionExtensions.GetAppropriateTypedValueAndType(olderThanDate, tc.AttributeType));
 
             return Expression.AndAlso(containsAttributeExpr,
                             Expression.AndAlso(Expression.NotEqual(getAttributeValueExpr, Expression.Constant(null)),

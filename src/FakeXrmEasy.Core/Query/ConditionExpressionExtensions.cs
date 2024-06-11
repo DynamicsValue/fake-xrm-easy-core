@@ -10,7 +10,7 @@ using FakeXrmEasy.Abstractions.Exceptions;
 
 namespace FakeXrmEasy.Query
 {
-    public static partial class ConditionExpressionExtensions
+    internal static partial class ConditionExpressionExtensions
     {
         internal static BinaryExpression TranslateMultipleConditionExpressions(this List<ConditionExpression> conditions, QueryExpression qe, IXrmFakedContext context, string sEntityName, LogicalOperator op, ParameterExpression entity, bool bIsOuter)
         {
@@ -24,7 +24,7 @@ namespace FakeXrmEasy.Query
             {
                 var cEntityName = sEntityName;
                 //Create a new typed expression 
-                var typedConditionExpression = new TypedConditionExpression(c);
+                var typedConditionExpression = new TypedConditionExpression(c, qe);
                 typedConditionExpression.IsOuter = bIsOuter;
 
                 string sAttributeName = c.AttributeName;
@@ -97,49 +97,20 @@ namespace FakeXrmEasy.Query
                 entity,
                 "Attributes"
                 );
-
-
-            //If the attribute comes from a joined entity, then we need to access the attribute from the join
-            //But the entity name attribute only exists >= 2013
-#if FAKE_XRM_EASY_2013 || FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
-            string attributeName = "";
-
-            //Do not prepend the entity name if the EntityLogicalName is the same as the QueryExpression main logical name
-
-            if (!string.IsNullOrWhiteSpace(c.CondExpression.EntityName) && !c.CondExpression.EntityName.Equals(qe.EntityName))
-            {
-                attributeName = c.CondExpression.EntityName + "." + c.CondExpression.AttributeName;
-            }
-            else
-                attributeName = c.CondExpression.AttributeName;
-
+            
+            string attributeName = c.GetAttributeName();
             Expression containsAttributeExpression = Expression.Call(
                 attributesProperty,
                 typeof(AttributeCollection).GetMethod("ContainsKey", new Type[] { typeof(string) }),
                 Expression.Constant(attributeName)
-                );
+            );
 
             Expression getAttributeValueExpr = Expression.Property(
-                            attributesProperty, "Item",
-                            Expression.Constant(attributeName, typeof(string))
-                            );
-#else
-            Expression containsAttributeExpression = Expression.Call(
-                attributesProperty,
-                typeof(AttributeCollection).GetMethod("ContainsKey", new Type[] { typeof(string) }),
-                Expression.Constant(c.CondExpression.AttributeName)
-                );
-
-            Expression getAttributeValueExpr = Expression.Property(
-                            attributesProperty, "Item",
-                            Expression.Constant(c.CondExpression.AttributeName, typeof(string))
-                            );
-#endif
-
-
+                attributesProperty, "Item",
+                Expression.Constant(attributeName, typeof(string))
+            );
 
             Expression getNonBasicValueExpr = getAttributeValueExpr;
-
             Expression operatorExpression = null;
 
             switch (c.CondExpression.Operator)
@@ -159,6 +130,9 @@ namespace FakeXrmEasy.Query
                     break;
 
                 case ConditionOperator.BeginsWith:
+                    operatorExpression = c.ToBeginsWithExpression(getNonBasicValueExpr, containsAttributeExpression);
+                    break; 
+
                 case ConditionOperator.Like:
                     operatorExpression = c.ToLikeExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
@@ -176,10 +150,19 @@ namespace FakeXrmEasy.Query
                     break;
 
                 case ConditionOperator.DoesNotBeginWith:
+                    operatorExpression = Expression.Not(c.ToBeginsWithExpression(getNonBasicValueExpr, containsAttributeExpression));
+                    break;
+
                 case ConditionOperator.DoesNotEndWith:
+                    operatorExpression = Expression.Not(c.ToEndsWithExpression(getNonBasicValueExpr, containsAttributeExpression));
+                    break;
+
                 case ConditionOperator.NotLike:
-                case ConditionOperator.DoesNotContain:
                     operatorExpression = Expression.Not(c.ToLikeExpression(getNonBasicValueExpr, containsAttributeExpression));
+                    break;
+
+                case ConditionOperator.DoesNotContain:
+                    operatorExpression = Expression.Not(c.ToContainsExpression(getNonBasicValueExpr, containsAttributeExpression));
                     break;
 
                 case ConditionOperator.Null:
@@ -207,10 +190,12 @@ namespace FakeXrmEasy.Query
                     break;
 
                 case ConditionOperator.In:
+                    ValidateInConditionValues(c, entity.Name ?? qe.EntityName);
                     operatorExpression = c.ToInExpression(getNonBasicValueExpr, containsAttributeExpression);
                     break;
 
                 case ConditionOperator.NotIn:
+                    ValidateInConditionValues(c, entity.Name ?? qe.EntityName);
                     operatorExpression = Expression.Not(c.ToInExpression(getNonBasicValueExpr, containsAttributeExpression));
                     break;
 
@@ -312,9 +297,16 @@ namespace FakeXrmEasy.Query
 
         }
 
-        
-
-        
-
+        private static void ValidateInConditionValues(TypedConditionExpression c, string name)
+        {
+            foreach (object value in c.CondExpression.Values)
+            {
+                if (value is Array)
+                {
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidArgument,
+                        $"Condition for attribute '{name}.{c.GetAttributeName()}': expected argument(s) of a different type but received '{value.GetType()}'.");
+                }                
+            }
+        }
     }
 }

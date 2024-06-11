@@ -66,6 +66,5 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.QueryTests
             Assert.Single(_collection.Entities);
             Assert.Equal(Guid.Parse(_resource2Id), _collection.Entities[0].Id);
         }
-
     }
 }

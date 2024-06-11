@@ -6,14 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
+namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
 {
     public class FilterExpressionTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void When_executing_a_query_expression_with_2_filters_combined_with_an_or_filter_right_result_is_returned()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
 
@@ -40,7 +39,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_executing_a_query_expression_with_1_filters_combined_with_1_condition_and_or_filter_right_result_is_returned()
         {
-            
             var contact1 = new Entity("contact") { Id = Guid.NewGuid() }; contact1["fullname"] = "Contact 1"; contact1["firstname"] = "First 1";
             var contact2 = new Entity("contact") { Id = Guid.NewGuid() }; contact2["fullname"] = "Contact 2"; contact2["firstname"] = "First 2";
 
