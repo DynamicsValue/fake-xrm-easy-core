@@ -13,7 +13,7 @@ namespace FakeXrmEasy.Core.Db
     internal class InMemoryDb
     {
         /// <summary>
-        /// A collection of tables indexed by its logical name
+        /// A collection of tables indexed by their logical name
         /// </summary>
         protected internal Dictionary<string, InMemoryTable> _tables;
 

@@ -1,5 +1,6 @@
 #if FAKE_XRM_EASY_9
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
@@ -18,17 +19,21 @@ namespace FakeXrmEasy.Extensions
         /// <param name="input"></param>
         /// <param name="isOptionSetValueCollectionAccepted"></param>
         /// <returns></returns>
-        public static HashSet<int> ConvertToHashSetOfInt(object input, bool isOptionSetValueCollectionAccepted)
+        public static HashSet<int> ConvertToHashSetOfInt(this object input, bool isOptionSetValueCollectionAccepted)
         {
-            HashSet<int> set = null;
+            if (input == null) return null;
+            
+            var set = new HashSet<int>();
 
             var faultReason = $"The formatter threw an exception while trying to deserialize the message: There was an error while trying to deserialize parameter" +
                 $" http://schemas.microsoft.com/xrm/2011/Contracts/Services:query. The InnerException message was 'Error in line 1 position 8295. Element " +
                 $"'http://schemas.microsoft.com/2003/10/Serialization/Arrays:anyType' contains data from a type that maps to the name " +
-                $"'http://schemas.microsoft.com/xrm/2011/Contracts:{input?.GetType()}'. The deserializer has no knowledge of any type that maps to this name. " +
+                $"'http://schemas.microsoft.com/xrm/2011/Contracts:{input.GetType()}'. The deserializer has no knowledge of any type that maps to this name. " +
                 $"Consider changing the implementation of the ResolveName method on your DataContractResolver to return a non-null value for name " +
-                $"'{input?.GetType()}' and namespace 'http://schemas.microsoft.com/xrm/2011/Contracts'.'.  Please see InnerException for more details.";
+                $"'{input.GetType()}' and namespace 'http://schemas.microsoft.com/xrm/2011/Contracts'.'.  Please see InnerException for more details.";
 
+            var type = input.GetType();
+            
             if (input is int)
             {
                 set = new HashSet<int>(new int[] {(int)input});
@@ -73,6 +78,21 @@ namespace FakeXrmEasy.Extensions
             else if (isOptionSetValueCollectionAccepted && input is OptionSetValueCollection)
             {
                 set = new HashSet<int>((input as OptionSetValueCollection).Select(osv => osv.Value));
+            }
+            else if (typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                if (type.IsGenericType)
+                {
+                    var genericTypeArguments = type.GenericTypeArguments;
+                    if (genericTypeArguments.Length == 1 && genericTypeArguments[0].IsEnum)
+                    {
+                        var enumerator = (input as IEnumerable).GetEnumerator();
+                        while (enumerator.MoveNext())
+                        {
+                            set.Add((int)enumerator.Current);
+                        }
+                    }
+                }
             }
             else
             {

@@ -21,7 +21,7 @@ namespace FakeXrmEasy.Query
         /// <param name="qe"></param>
         /// <param name="sAlias"></param>
         /// <returns></returns>
-        public static string GetEntityNameFromAlias(this QueryExpression qe, string sAlias)
+        internal static string GetEntityNameFromAlias(this QueryExpression qe, string sAlias)
         {
             if (sAlias == null)
                 return qe.EntityName;
@@ -44,7 +44,7 @@ namespace FakeXrmEasy.Query
         /// </summary>
         /// <param name="qe">Query Expression</param>
         /// <returns></returns>
-        public static QueryExpression Clone(this QueryExpression qe)
+        internal static QueryExpression Clone(this QueryExpression qe)
         {
             return qe.Copy();
         }
@@ -55,7 +55,7 @@ namespace FakeXrmEasy.Query
         /// <param name="qe"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public static IQueryable<Entity> ToQueryable(this QueryExpression qe, IXrmFakedContext context)
+        internal static IQueryable<Entity> ToQueryable(this QueryExpression qe, IXrmFakedContext context)
         {
             if (qe == null) return null;
 
@@ -66,7 +66,6 @@ namespace FakeXrmEasy.Query
 
             //Start form the root entity and build a LINQ query to execute the query against the In-Memory context:
             context.EnsureEntityNameExistsInMetadata(qe.EntityName);
-
 
             IQueryable<Entity> query = null;
 
