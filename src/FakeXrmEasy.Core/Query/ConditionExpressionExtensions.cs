@@ -35,7 +35,14 @@ namespace FakeXrmEasy.Query
 
 #if FAKE_XRM_EASY_2013 || FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
                     if (c.EntityName != null)
+                    {
                         cEntityName = qe.GetEntityNameFromAlias(c.EntityName);
+                        if (c.AttributeName.IndexOf(".") >= 0)
+                        {
+                            sAttributeName = c.AttributeName.Split('.')[1];
+                            c.AttributeName = sAttributeName;
+                        }
+                    }
                     else
                     {
                         if (c.AttributeName.IndexOf(".") >= 0)
