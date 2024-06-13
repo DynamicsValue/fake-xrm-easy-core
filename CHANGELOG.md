@@ -1,3 +1,9 @@
+## [2.5.1]
+
+### Changed
+
+- Resolves exception when searching attribute type that contains an alias in query expressions with linked entities - https://github.com/DynamicsValue/fake-xrm-easy/issues/151
+
 ## [2.5.0]
 
 ### Added
