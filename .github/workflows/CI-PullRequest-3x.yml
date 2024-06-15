@@ -9,7 +9,7 @@ on:
       - '*.txt'
 
 env: 
-  dotnet-version: 6.0.407
+  dotnet-version: 3.1.201
   source-url: "https://nuget.pkg.github.com/${{github.repository_owner}}/index.json"
 
 jobs:
@@ -45,7 +45,7 @@ jobs:
     strategy:
       fail-fast: false 
       matrix: 
-        configuration: ['FAKE_XRM_EASY_9', 'FAKE_XRM_EASY_365', 'FAKE_XRM_EASY_2016','FAKE_XRM_EASY_2015','FAKE_XRM_EASY_2013']
+        configuration: ['FAKE_XRM_EASY_9', 'FAKE_XRM_EASY_365', 'FAKE_XRM_EASY_2016','FAKE_XRM_EASY_2015','FAKE_XRM_EASY_2013','FAKE_XRM_EASY']
 
     runs-on: windows-latest
 
@@ -88,10 +88,10 @@ jobs:
       run: dotnet nuget enable source github 
 
     - name: Quality Gate
-      uses: DynamicsValue/dotnet-sonarscanner@v2.4.7
+      uses: DynamicsValue/dotnet-sonarscanner@v2.3
       with:
-        buildCommand: dotnet build . --configuration 'FAKE_XRM_EASY_9' --framework net6.0
-        testCommand: dotnet test . --configuration 'FAKE_XRM_EASY_9' --framework net6.0 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
+        buildCommand: dotnet build . --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1
+        testCommand: dotnet test . --configuration 'FAKE_XRM_EASY_9' --framework netcoreapp3.1 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
         projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
         projectName: fake-xrm-easy-core
         sonarOrganisation: ${{ vars.SONAR_ORG_NAME }}
