@@ -12,7 +12,6 @@ using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Messages;
 using FakeXrmEasy.Permissions;
 using FakeXrmEasy.Services;
-using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
@@ -156,8 +155,6 @@ namespace FakeXrmEasy
             _fakeTracingService = new XrmFakedTracingService();
             _properties = new Dictionary<string, object>();
             _service = A.Fake<IOrganizationService>();
-            _serviceAsync = A.Fake<IOrganizationServiceAsync>();
-            _serviceAsync2 = A.Fake<IOrganizationServiceAsync2>();
 
             _builder = MiddlewareBuilder
                         .New(this)
@@ -186,8 +183,6 @@ namespace FakeXrmEasy
             _fakeTracingService = new XrmFakedTracingService();
             _properties = new Dictionary<string, object>();
             _service = A.Fake<IOrganizationService>();
-            _serviceAsync = A.Fake<IOrganizationServiceAsync>();
-            _serviceAsync2 = A.Fake<IOrganizationServiceAsync2>();
             
             Init();
         }
