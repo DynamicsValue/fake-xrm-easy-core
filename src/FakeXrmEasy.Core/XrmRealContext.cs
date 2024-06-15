@@ -17,7 +17,7 @@ using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
 
 #if FAKE_XRM_EASY_NETCORE
-using Microsoft.Powerplatform.Cds.Client;
+using Microsoft.PowerPlatform.Dataverse.Client;
 #elif FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
 using Microsoft.Xrm.Tooling.Connector;
 #else 
@@ -34,14 +34,24 @@ namespace FakeXrmEasy
     public class XrmRealContext : IXrmRealContext
     {
         /// <summary>
-        /// 
+        /// The current license context
         /// </summary>
         public FakeXrmEasyLicense? LicenseContext { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string ConnectionStringName { get; set; } = "fakexrmeasy-connection";
+        private readonly string _connectionString;
+
+        /// <summary>
+        /// Reference to an actual IOrganizationService
+        /// </summary>
+        protected IOrganizationService _service;
+
+        /// <summary>
+        /// Reference to an IOrganizationService instance without cancellation tokens
+        /// </summary>
+        protected IOrganizationServiceAsync _serviceAsync;
 
         /// <summary>
         /// Use these user to impersonate calls
@@ -56,7 +66,7 @@ namespace FakeXrmEasy
         /// <summary>
         /// Internal reference to an IOrganizationService.
         /// </summary>
-        protected IOrganizationService _service;
+        protected IOrganizationServiceAsync2 _serviceAsync2;
 
         /// <summary>
         /// A fake tracing service if one is needed
@@ -66,20 +76,12 @@ namespace FakeXrmEasy
         private Dictionary<string, object> _properties;
 
         /// <summary>
-        /// A default constructor that will use a connection string with name fakexrmeasy-connection to establish a real connection to an environment for integration testing purposes
+        /// A constructor that will use connection string
         /// </summary>
-        public XrmRealContext()
+        /// <param name="connectionString"></param>
+        public XrmRealContext(string connectionString)
         {
-            Init();
-        }
-
-        /// <summary>
-        /// A constructor that will use a different connection string name
-        /// </summary>
-        /// <param name="connectionStringName"></param>
-        public XrmRealContext(string connectionStringName)
-        {
-            ConnectionStringName = connectionStringName;
+            _connectionString = connectionString;
             Init();
         }
 
@@ -87,9 +89,13 @@ namespace FakeXrmEasy
         /// Creates an XrmRealContext that uses the specified IOrganizationService interface
         /// </summary>
         /// <param name="organizationService"></param>
-        public XrmRealContext(IOrganizationService organizationService)
+        /// <param name="serviceAsync"></param>
+        /// <param name="serviceAsync2"></param>
+        public XrmRealContext(IOrganizationService organizationService, IOrganizationServiceAsync serviceAsync = null, IOrganizationServiceAsync2 serviceAsync2 = null)
         {
             _service = organizationService;
+            _serviceAsync = serviceAsync;
+            _serviceAsync2 = serviceAsync2;
             Init();
         }
 
@@ -104,7 +110,7 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Returns true if the property exists in this XrmRealContext
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -114,7 +120,7 @@ namespace FakeXrmEasy
         }
         
         /// <summary>
-        /// 
+        /// Returns a property from this XrmRealContext
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -130,7 +136,7 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Sets a property to this XrmRealContext
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="property"></param>
@@ -165,32 +171,45 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Returns an IOrganizationServiceAsync instance that uses the underlying connectionString, without cancellation tokens
+        /// </summary>
+        /// <returns></returns>
+        public IOrganizationServiceAsync GetAsyncOrganizationService()
+        {
+            if (_serviceAsync != null)
+                return _serviceAsync;
+
+            _serviceAsync = GetOrgService();
+            return _serviceAsync;
+        }
+
+        /// <summary>
+        /// Returns an IOrganizationServiceAsync instance that uses the underlying connectionString, with cancellation tokens
+        /// </summary>
+        /// <returns></returns>
+        public IOrganizationServiceAsync2 GetAsyncOrganizationService2()
+        {
+            if (_serviceAsync2 != null)
+                return _serviceAsync2;
+
+            _serviceAsync2 = GetOrgService();
+            return _serviceAsync2;
+        }
+
+        /// <summary>
+        /// Internal method to retrieve an instance of an organization service
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        protected IOrganizationService GetOrgService()
+        protected ServiceClient GetOrgService()
         {
-            var connection = ConfigurationManager.ConnectionStrings[ConnectionStringName];
-
-            // In case of missing connection string in configuration,
-            // use ConnectionStringName as an explicit connection string
-            var connectionString = connection == null ? ConnectionStringName : connection.ConnectionString;
-
-            if (string.IsNullOrWhiteSpace(connectionString))
+            if (string.IsNullOrWhiteSpace(_connectionString))
             {
-                throw new Exception("The ConnectionStringName property must be either a connection string or a connection string name");
+                throw new Exception("The ConnectionString property is null or empty");
             }
 
-            // Connect to the CRM web service using a connection string.
-#if FAKE_XRM_EASY_NETCORE
-            var client = new CdsServiceClient(connectionString);
-#elif FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
-            var client = new CrmServiceClient(connectionString);
-#else
-            CrmConnection crmConnection = CrmConnection.Parse(connectionString);
-            var client = new OrganizationService(crmConnection);
-#endif
+            // Connect to the Dataverse with a connection string.
+            var client = new ServiceClient(_connectionString);
             return client;
         }
 
