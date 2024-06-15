@@ -1,18 +1,19 @@
-﻿using Crm;
-using FakeXrmEasy.Abstractions.Exceptions;
+﻿using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataverseEntities;
 using Xunit;
+using Account = Crm.Account;
+using Contact = Crm.Contact;
 
-namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
+namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
 {
     public class ConditionExpressionTests: FakeXrmEasyTestsBase
     {
-
         [Fact]
         public void When_executing_a_query_expression_with_an_unsupported_exception_is_thrown()
         {
@@ -136,7 +137,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
         [Fact]
         public void When_executing_a_query_expression_equals_operator_is_case_insensitive()
         {
-            
             _service.Create(new Contact { FirstName = "Jimmy" });
 
             var qe = new QueryExpression("contact");
@@ -144,8 +144,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
 
             Assert.Single(_service.RetrieveMultiple(qe).Entities);
         }
-
-
+        
         [Fact]
         public void When_executing_a_query_expression_attributes_returned_are_case_sensitive()
         {
@@ -233,6 +232,75 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.TranslateQueryExpressionTests
             var result = _service.RetrieveMultiple(query).Entities;
 
             Assert.Single(result);
+        }
+
+        [Fact]
+        public void Should_remove_the_alias_part_when_searching_for_a_reflected_attribute_type_in_a_condition_with_an_alias()
+        {
+            var account1 = new Account()
+            {
+                Id = Guid.NewGuid(), Name = "1 Test", AccountCategoryCode = new OptionSetValue(1)
+            };
+            var account2 = new Account()
+            {
+                Id = Guid.NewGuid(), Name = "2 Test", AccountCategoryCode = new OptionSetValue(2)
+            };
+
+            var contact1 = new Contact()
+            {
+                Id = Guid.NewGuid(),
+                ParentCustomerId = account1.ToEntityReference()
+            };
+            
+            var contact2 = new Contact()
+            {
+                Id = Guid.NewGuid(),
+                ParentCustomerId = account1.ToEntityReference()
+            };
+            
+            var contact3 = new Contact()
+            {
+                Id = Guid.NewGuid(),
+                ParentCustomerId = account2.ToEntityReference()
+            };
+            
+            _context.Initialize((new List<Entity>()
+            {
+                account1, account2, contact1, contact2, contact3
+            }));
+            
+            QueryExpression qex = new QueryExpression(Contact.EntityLogicalName)
+            {
+                ColumnSet = new ColumnSet(true)
+            };
+            
+            qex.LinkEntities.Add(new LinkEntity
+            {
+                EntityAlias = Account.EntityLogicalName,
+                LinkFromEntityName = Contact.EntityLogicalName,
+                LinkToEntityName = Account.EntityLogicalName,
+                LinkFromAttributeName = "parentcustomerid",
+                LinkToAttributeName = "accountid",
+                JoinOperator = JoinOperator.Inner,
+                LinkCriteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(
+                            entityName: Account.EntityLogicalName,
+                            attributeName: "accountcategorycode",
+                            conditionOperator: ConditionOperator.Equal,
+                            value: 1
+                        )
+                    }
+                }
+            });
+
+            var collection = _service.RetrieveMultiple(qex);
+            Assert.Equal(2, collection.Entities.Count);
+            
+            Assert.Equal(contact1.Id, collection.Entities[0].Id);
+            Assert.Equal(contact2.Id, collection.Entities[1].Id);
         }
 
 #endif

@@ -169,6 +169,15 @@ namespace FakeXrmEasy.Query
                         var entityAlias = !string.IsNullOrEmpty(le.EntityAlias) ? le.EntityAlias : le.LinkToEntityName;
                         ce.AttributeName = entityAlias + "." + ce.AttributeName;
                     }
+                    
+                    foreach (var currentFe in fe.Filters)
+                    {
+                        foreach (var ce in currentFe.Conditions)
+                        {
+                            var entityAlias = !string.IsNullOrEmpty(le.EntityAlias) ? le.EntityAlias : le.LinkToEntityName;
+                            ce.AttributeName = entityAlias + "." + ce.AttributeName;
+                        }
+                    }
                 }
             }
 

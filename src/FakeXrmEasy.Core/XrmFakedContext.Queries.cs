@@ -115,6 +115,7 @@ namespace FakeXrmEasy
                 var subClassType = assembly.GetTypes()
                     .Where(t => typeof(Entity).IsAssignableFrom(t))
                     .Where(t => t.GetCustomAttributes(typeof(EntityLogicalNameAttribute), true).Length > 0)
+                    .Where(t => t.GetField("EntityTypeCode") != null)
                     .Where(t => t.GetField("EntityTypeCode").GetValue(null).Equals(entityTypeCode))
                     .FirstOrDefault();
 
@@ -164,7 +165,7 @@ namespace FakeXrmEasy
                 return injectedType;
             }
 
-            if (attributeInfo.PropertyType.FullName.EndsWith("Enum") || attributeInfo.PropertyType.BaseType.FullName.EndsWith("Enum"))
+            if (attributeInfo.PropertyType.FullName.EndsWith("Enum") || attributeInfo.PropertyType.BaseType?.FullName.EndsWith("Enum") == true)
             {
                 return typeof(int);
             }

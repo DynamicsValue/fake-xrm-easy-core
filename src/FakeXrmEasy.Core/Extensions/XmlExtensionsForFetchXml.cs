@@ -550,32 +550,9 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     break;
                 case "like":
                     op = ConditionOperator.Like;
-
-                    if (value != null)
-                    {
-                        if (value.StartsWith("%") && !value.EndsWith("%"))
-                            op = ConditionOperator.EndsWith;
-                        else if (!value.StartsWith("%") && value.EndsWith("%"))
-                            op = ConditionOperator.BeginsWith;
-                        else if (value.StartsWith("%") && value.EndsWith("%"))
-                            op = ConditionOperator.Contains;
-
-                        value = value.Replace("%", "");
-                    }
                     break;
                 case "not-like":
-                    op = ConditionOperator.NotLike;
-                    if (value != null)
-                    {
-                        if (value.StartsWith("%") && !value.EndsWith("%"))
-                            op = ConditionOperator.DoesNotEndWith;
-                        else if (!value.StartsWith("%") && value.EndsWith("%"))
-                            op = ConditionOperator.DoesNotBeginWith;
-                        else if (value.StartsWith("%") && value.EndsWith("%"))
-                            op = ConditionOperator.DoesNotContain;
-
-                        value = value.Replace("%", "");
-                    }
+                    op = ConditionOperator.NotLike;                  
                     break;
                 case "gt":
                     op = ConditionOperator.GreaterThan;
@@ -999,7 +976,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
 
             if (bIsNumeric || bIsDateTime)
             {
-                throw new Exception("When using arithmetic values in Fetch a ProxyTypesAssembly must be used in order to know which types to cast values to.");
+                throw new Exception($"When using arithmetic values in a condition of attribute '{sAttributeName}' of entity '{sEntityName}' in a Fetch a ProxyTypesAssembly must be used in order to know which types to cast values to. If you are using early bound types, please make sure the early bound type was generated for entity '{sEntityName}'");
             }
 
             //Default value

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.Query.QueryExpressionTests
+namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
 {
     public class TopCountTests : FakeXrmEasyTestsBase
     {
