@@ -1,3 +1,9 @@
+## [2.5.2]
+
+### Changed
+
+- Adds implementation of RelatedEntities in Update message , before it was implemented only for Create - https://github.com/DynamicsValue/fake-xrm-easy/issues/154
+
 ## [2.5.1]
 
 ### Changed
