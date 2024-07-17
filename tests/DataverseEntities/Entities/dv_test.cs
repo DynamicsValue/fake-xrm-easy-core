@@ -1152,6 +1152,22 @@ namespace DataverseEntities
 		}
 		
 		/// <summary>
+		/// N:N dv_test_Contact_Contact
+		/// </summary>
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dv_test_Contact_Contact")]
+		public System.Collections.Generic.IEnumerable<DataverseEntities.Contact> dv_test_Contact_Contact
+		{
+			get
+			{
+				return this.GetRelatedEntities<DataverseEntities.Contact>("dv_test_Contact_Contact", null);
+			}
+			set
+			{
+				this.SetRelatedEntities<DataverseEntities.Contact>("dv_test_Contact_Contact", null, value);
+			}
+		}
+		
+		/// <summary>
 		/// N:1 dv_account_dv_test_393
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_customerid")]

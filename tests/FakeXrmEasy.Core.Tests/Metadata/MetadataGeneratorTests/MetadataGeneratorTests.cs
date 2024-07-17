@@ -2,7 +2,6 @@
 using FakeXrmEasy.Metadata;
 using System;
 using System.Linq;
-using System.Reflection;
 using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.Metadata
