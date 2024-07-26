@@ -1,3 +1,9 @@
+## [2.5.2]
+
+### Added
+
+- **Alpha**: Initial support for AboveOrEqual in ConditionExpressions
+
 ## [2.5.1]
 
 ### Changed

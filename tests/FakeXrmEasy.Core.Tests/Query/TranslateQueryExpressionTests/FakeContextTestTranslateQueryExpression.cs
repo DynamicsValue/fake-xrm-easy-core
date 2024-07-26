@@ -875,5 +875,42 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
             Assert.Single(invoiceDetails.Entities);
             Assert.Equal(invoicedetail02.Id, invoiceDetails.Entities[0].Id);
         }
+
+        [Fact]
+        public void When_excecuting_a_queryexpression_with_aboveorequal_all_records_inhierarchy_are_returned ()
+        {
+            Entity parentAccount = new Entity("account");
+            parentAccount.Id = Guid.NewGuid();
+            parentAccount.Attributes.Add("name", "Parent Account");
+
+            Entity childAccount = new Entity("account");
+            childAccount.Id = Guid.NewGuid();
+            childAccount.Attributes.Add("name", "Child Account");
+            childAccount.Attributes.Add("parentaccountid", new EntityReference("account", parentAccount.Id));
+
+            _context.AddRelationship("account_parent_account", new FakeXrmEasy.Abstractions.XrmFakedRelationship
+            {
+                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany,
+                IsHierarchical = true,
+                Entity1LogicalName = "account",
+                Entity1Attribute = "accountid",
+                Entity2LogicalName = "account",
+                Entity2Attribute = "parentaccountid"
+            });
+
+            _service.Create(parentAccount);
+            _service.Create(childAccount);
+
+            QueryExpression query = new QueryExpression { EntityName = "account", ColumnSet = new ColumnSet(true) };
+            query.Criteria.AddCondition("accountid", ConditionOperator.AboveOrEqual, childAccount.Id);
+
+            var result = _service.RetrieveMultiple(query);
+
+            foreach (var item in result.Entities)
+            {
+                Assert.NotNull(item.LogicalName);
+            }
+        }
+
     }
 }

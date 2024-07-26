@@ -7,6 +7,7 @@ using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Extensions;
 using System;
 using FakeXrmEasy.Abstractions.Exceptions;
+using FakeXrmEasy.Core.Query;
 
 namespace FakeXrmEasy.Query
 {
@@ -285,6 +286,12 @@ namespace FakeXrmEasy.Query
 
                 case ConditionOperator.DoesNotContainValues:
                     operatorExpression = Expression.Not(c.ToContainsValuesExpression(getNonBasicValueExpr, containsAttributeExpression));
+                    break;
+#endif
+
+#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+                case ConditionOperator.AboveOrEqual:
+                    operatorExpression = c.ToAboveOrEqualExpression(getNonBasicValueExpr, containsAttributeExpression, context);
                     break;
 #endif
 
