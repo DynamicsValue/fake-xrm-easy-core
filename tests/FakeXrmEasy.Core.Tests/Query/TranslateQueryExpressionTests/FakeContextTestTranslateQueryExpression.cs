@@ -876,6 +876,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
             Assert.Equal(invoicedetail02.Id, invoiceDetails.Entities[0].Id);
         }
 
+#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
         [Fact]
         public void When_executing_a_queryexpression_with_aboveorequal_all_records_in_hierarchy_are_returned()
         {
@@ -922,5 +923,6 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
                 Assert.True(item.Id == childAccount.Id || item.Id == parentAccount.Id || item.Id == parentParentAccount.Id);
             }            
         }
+#endif
     }
 }
