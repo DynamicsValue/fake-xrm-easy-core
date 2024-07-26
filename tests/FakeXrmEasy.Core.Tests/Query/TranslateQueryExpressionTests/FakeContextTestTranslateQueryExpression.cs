@@ -877,18 +877,24 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
         }
 
         [Fact]
-        public void When_excecuting_a_queryexpression_with_aboveorequal_all_records_inhierarchy_are_returned ()
+        public void When_executing_a_queryexpression_with_aboveorequal_all_records_in_hierarchy_are_returned()
         {
+            Entity parentParentAccount = new Entity("account");
+            parentParentAccount.Id = Guid.NewGuid();
+            parentParentAccount.Attributes.Add("name", "Parent Parent Account");
+
             Entity parentAccount = new Entity("account");
             parentAccount.Id = Guid.NewGuid();
             parentAccount.Attributes.Add("name", "Parent Account");
+            parentAccount.Attributes.Add("parentaccountid", new EntityReference("account", parentParentAccount.Id));
 
             Entity childAccount = new Entity("account");
             childAccount.Id = Guid.NewGuid();
             childAccount.Attributes.Add("name", "Child Account");
             childAccount.Attributes.Add("parentaccountid", new EntityReference("account", parentAccount.Id));
 
-            _context.AddRelationship("account_parent_account", new FakeXrmEasy.Abstractions.XrmFakedRelationship
+            //Important step to specify the hierarchical relation ship.
+            _context.AddRelationship("account_parent_account", new XrmFakedRelationship
             {
                 RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany,
                 IsHierarchical = true,
@@ -898,6 +904,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
                 Entity2Attribute = "parentaccountid"
             });
 
+            _service.Create(parentParentAccount);
             _service.Create(parentAccount);
             _service.Create(childAccount);
 
@@ -906,11 +913,14 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
 
             var result = _service.RetrieveMultiple(query);
 
+            Assert.NotNull(result);
+            Assert.NotNull(result.Entities);
+            Assert.True(result.Entities.Count == 3);
+
             foreach (var item in result.Entities)
             {
-                Assert.NotNull(item.LogicalName);
-            }
+                Assert.True(item.Id == childAccount.Id || item.Id == parentAccount.Id || item.Id == parentParentAccount.Id);
+            }            
         }
-
     }
 }

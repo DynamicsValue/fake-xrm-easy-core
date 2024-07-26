@@ -24,24 +24,35 @@ namespace FakeXrmEasy.Core.Query
                 return tc.ToEqualExpression(context, getAttributeValueExpr, containsAttributeExpr);
             }
 
-            //TODO recursive magic to get parent records from hierarchie
+            //Retrieve the hierarchical relationship to determine the parent attribute
             var hierarchicalRelationship = context.Relationships.FirstOrDefault(r => r.IsHierarchical && r.Entity1LogicalName.Equals(entityLogicalName) && r.Entity1Attribute.Equals(c.AttributeName));
+            
+            //Retrieve initial record from the hierarchical tree
+            var currentRecord = context.CreateQuery(entityLogicalName).FirstOrDefault(e => ((Guid)e.Attributes[c.AttributeName]) == ((Guid)c.Values[0]));
+            if(currentRecord == null)
+            {
+                return tc.ToEqualExpression(context, getAttributeValueExpr, containsAttributeExpr);
+            }
 
-            var currentRecord = context.CreateQuery(entityLogicalName).FirstOrDefault(e => ((Guid)e.Attributes[c.AttributeName]) == ((Guid)c.Values[0]));            
-            RetrieveParentEntity(context, hierarchicalRelationship, currentRecord);            
+            //Iterrate through parents via the relationship attributes to walk through the entire hierarchy and build a list of identifiers of the nodes in the hierarchy.
+            RetrieveParentEntity(context, hierarchicalRelationship, currentRecord, c.Values);
 
-            return tc.ToEqualExpression(context, getAttributeValueExpr, containsAttributeExpr);
+            return tc.ToInExpression(getAttributeValueExpr, containsAttributeExpr);
         }
 
-        private static void RetrieveParentEntity(IXrmFakedContext context, XrmFakedRelationship hierarchicalRelationship, Entity currentRecord)
+        private static void RetrieveParentEntity(IXrmFakedContext context, XrmFakedRelationship hierarchicalRelationship, Entity currentRecord, DataCollection<object> values)
         {
-            if (currentRecord == null || !currentRecord.Attributes.ContainsKey(hierarchicalRelationship.Entity2Attribute) || currentRecord.Attributes[hierarchicalRelationship.Entity2Attribute] == null)
+            if (!currentRecord.Attributes.ContainsKey(hierarchicalRelationship.Entity2Attribute) || currentRecord.Attributes[hierarchicalRelationship.Entity2Attribute] == null)
             {
                 return;
             }
 
             var parentRecord = context.CreateQuery(hierarchicalRelationship.Entity1LogicalName).FirstOrDefault(e => ((Guid)e.Attributes[hierarchicalRelationship.Entity1Attribute]) == ((EntityReference)currentRecord.Attributes[hierarchicalRelationship.Entity2Attribute]).Id);
-            RetrieveParentEntity(context, hierarchicalRelationship, parentRecord);            
+            if (parentRecord != null)
+            {
+                values.Add(parentRecord.Id);
+                RetrieveParentEntity(context, hierarchicalRelationship, parentRecord, values);
+            }
         }
     }
 }
