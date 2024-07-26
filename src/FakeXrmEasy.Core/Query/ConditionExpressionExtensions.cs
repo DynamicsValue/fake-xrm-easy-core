@@ -7,7 +7,6 @@ using Microsoft.Xrm.Sdk;
 using FakeXrmEasy.Extensions;
 using System;
 using FakeXrmEasy.Abstractions.Exceptions;
-using FakeXrmEasy.Core.Query;
 
 namespace FakeXrmEasy.Query
 {

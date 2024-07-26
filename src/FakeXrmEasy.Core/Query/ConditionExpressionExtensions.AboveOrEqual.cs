@@ -1,16 +1,12 @@
-﻿using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Extensions;
+﻿#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FakeXrmEasy.Core.Query
+namespace FakeXrmEasy.Query
 {
     internal static partial class ConditionExpressionExtensions    
     {
@@ -56,3 +52,4 @@ namespace FakeXrmEasy.Core.Query
         }
     }
 }
+#endif
