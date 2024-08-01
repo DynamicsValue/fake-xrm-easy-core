@@ -12,6 +12,7 @@ using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
 using FakeXrmEasy.Core.CommercialLicense;
 using FakeXrmEasy.Core.Exceptions;
+using FakeXrmEasy.Core.FileStorage;
 
 namespace FakeXrmEasy.Middleware
 {
@@ -64,6 +65,7 @@ namespace FakeXrmEasy.Middleware
         private void AddDefaults()
         {
             _context.SetProperty<IIntegrityOptions>(new IntegrityOptions() {  ValidateEntityReferences = false });
+            _context.SetProperty<IFileStorageSettings>(new FileStorageSettings());
         }
 
         /// <summary>

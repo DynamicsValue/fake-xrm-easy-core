@@ -7,7 +7,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.Metadata
 {
-    public class CreateRelationshipTests
+    public class CreateRelationshipTests: FakeXrmEasyTestsBase
     {
         /*
          
@@ -57,7 +57,7 @@ namespace FakeXrmEasy.Core.Tests.Metadata
         [Fact]
         public void Should_return_self_referential_relationship_from_one_early_bound_type()
         {
-            var entityMetadata = MetadataGenerator.FromType(typeof(Account));
+            var entityMetadata = MetadataGenerator.FromType(typeof(Account), _context);
             
             var oneToMany =
                 entityMetadata.OneToManyRelationships.FirstOrDefault(rel => rel.SchemaName.Equals(SELF_REFERENTIAL_RELATIONSHIP_NAME));
@@ -83,8 +83,8 @@ namespace FakeXrmEasy.Core.Tests.Metadata
         [Fact]
         public void Should_return_entity_metadata_with_one_to_many_and_many_to_one_relationships()
         {
-	        var accountEntityMetadata = MetadataGenerator.FromType(typeof(Account));
-	        var contactEntityMetadata = MetadataGenerator.FromType(typeof(Contact));
+	        var accountEntityMetadata = MetadataGenerator.FromType(typeof(Account), _context);
+	        var contactEntityMetadata = MetadataGenerator.FromType(typeof(Contact), _context);
 
 	        AssertMasterRelationship(accountEntityMetadata);
 	        AssertContactsRelationship(accountEntityMetadata, contactEntityMetadata);
@@ -93,8 +93,8 @@ namespace FakeXrmEasy.Core.Tests.Metadata
         [Fact]
         public void Should_return_entity_metadata_with_many_to_many_relationships()
         {
-	        var testEntityMetadata = MetadataGenerator.FromType(typeof(dv_test));
-	        var contactEntityMetadata = MetadataGenerator.FromType(typeof(Contact));
+	        var testEntityMetadata = MetadataGenerator.FromType(typeof(dv_test), _context);
+	        var contactEntityMetadata = MetadataGenerator.FromType(typeof(Contact), _context);
 	        
 	        AssertManyToManyRelationship(testEntityMetadata, contactEntityMetadata);
         }

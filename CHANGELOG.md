@@ -1,4 +1,8 @@
-## [2.5.2]
+## [2.6.0]
+
+### Added
+
+- Added default max file size for file and image uploads - https://github.com/DynamicsValue/fake-xrm-easy/issues/157
 
 ### Changed
 

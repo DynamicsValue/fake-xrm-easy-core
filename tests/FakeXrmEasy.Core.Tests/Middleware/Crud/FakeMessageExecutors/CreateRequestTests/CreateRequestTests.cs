@@ -190,7 +190,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequ
         
 
         [Fact]
-        public void Shouldnt_store_references_to_variables_but_actual_clones()
+        public void Should_not_store_references_to_variables_but_actual_clones()
         {
             //create an account and then retrieve it with no changes
             Entity newAccount = new Entity("account");

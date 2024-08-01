@@ -6,25 +6,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Core.Extensions;
+using FakeXrmEasy.Core.FileStorage;
 
 namespace FakeXrmEasy.Metadata
 {
     internal static class MetadataGenerator
     {
-        public static IEnumerable<EntityMetadata> FromEarlyBoundEntities(Assembly earlyBoundEntitiesAssembly)
+        public static IEnumerable<EntityMetadata> FromEarlyBoundEntities(Assembly earlyBoundEntitiesAssembly, IXrmFakedContext context)
         {
             var types = earlyBoundEntitiesAssembly.GetTypes();
-            return FromTypes(types);
+            return FromTypes(types, context);
         }
 
-        internal static IEnumerable<EntityMetadata> FromTypes(Type[] types)
+        internal static IEnumerable<EntityMetadata> FromTypes(Type[] types, IXrmFakedContext context)
         {
             var entityMetadatas = new List<EntityMetadata>();
 
             foreach (var possibleEarlyBoundEntity in types)
             {
-                var metadata = FromType(possibleEarlyBoundEntity);
+                var metadata = FromType(possibleEarlyBoundEntity, context);
                 if(metadata != null)
                     entityMetadatas.Add(metadata);
             }
@@ -32,7 +34,7 @@ namespace FakeXrmEasy.Metadata
             return entityMetadatas;
         }
 
-        internal static EntityMetadata FromType(Type possibleEarlyBoundEntity)
+        internal static EntityMetadata FromType(Type possibleEarlyBoundEntity, IXrmFakedContext context)
         {
             EntityLogicalNameAttribute entityLogicalNameAttribute = GetCustomAttribute<EntityLogicalNameAttribute>(possibleEarlyBoundEntity);
             if (entityLogicalNameAttribute == null) return null;
@@ -60,7 +62,7 @@ namespace FakeXrmEasy.Metadata
             var relationshipMetadataProperties = possibleEarlyBoundEntity.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                                 .Where(x => Attribute.IsDefined(x, typeof(RelationshipSchemaNameAttribute)));
 
-            var attributeMetadatas = PopulateAttributeProperties(metadata, attributeMetadataProperties);
+            var attributeMetadatas = PopulateAttributeProperties(metadata, attributeMetadataProperties, context);
             if (attributeMetadatas.Any())
             {
                 metadata.SetSealedPropertyValue("Attributes", attributeMetadatas.ToArray());
@@ -83,13 +85,13 @@ namespace FakeXrmEasy.Metadata
             return metadata;
         }
 
-        private static List<AttributeMetadata> PopulateAttributeProperties(EntityMetadata metadata, IEnumerable<PropertyInfo> properties)
+        private static List<AttributeMetadata> PopulateAttributeProperties(EntityMetadata metadata, IEnumerable<PropertyInfo> properties, IXrmFakedContext context)
         {
             List<AttributeMetadata> attributeMetadatas = new List<AttributeMetadata>();
 
             foreach (var property in properties)
             {
-                var attributeMetadata = PopulateAttributeProperty(metadata, property);
+                var attributeMetadata = PopulateAttributeProperty(metadata, property, context);
                 if (attributeMetadata != null)
                 {
                     attributeMetadatas.Add(attributeMetadata);
@@ -127,7 +129,7 @@ namespace FakeXrmEasy.Metadata
             return allRelationships;
         }
 
-        private static AttributeMetadata PopulateAttributeProperty(EntityMetadata metadata, PropertyInfo property)
+        private static AttributeMetadata PopulateAttributeProperty(EntityMetadata metadata, PropertyInfo property, IXrmFakedContext context)
         {
             var attributeLogicalNameAttribute = GetCustomAttribute<AttributeLogicalNameAttribute>(property);
 #if !FAKE_XRM_EASY
@@ -152,7 +154,7 @@ namespace FakeXrmEasy.Metadata
             }
             else
             {
-                attributeMetadata = CreateAttributeMetadata(property.PropertyType);
+                attributeMetadata = CreateAttributeMetadata(property.PropertyType, context);
             }
 
             attributeMetadata.SetFieldValue("_entityLogicalName", metadata.LogicalName);
@@ -207,8 +209,10 @@ namespace FakeXrmEasy.Metadata
             return (T)Attribute.GetCustomAttribute(member, typeof(T));
         }
 
-        internal static AttributeMetadata CreateAttributeMetadata(Type propertyType)
+        internal static AttributeMetadata CreateAttributeMetadata(Type propertyType, IXrmFakedContext context)
         {
+            var fileStorageSettings = context.GetProperty<IFileStorageSettings>();
+            
             if (typeof(string) == propertyType)
             {
                 return new StringAttributeMetadata();
@@ -244,8 +248,10 @@ namespace FakeXrmEasy.Metadata
 #if !FAKE_XRM_EASY
             else if (typeof(byte[]) == propertyType)
             {
-
-                return new ImageAttributeMetadata();
+                return new ImageAttributeMetadata()
+                {
+                    MaxSizeInKB = fileStorageSettings.ImageMaxSizeInKB
+                };
             }
 #endif
 #if FAKE_XRM_EASY_9
@@ -255,7 +261,10 @@ namespace FakeXrmEasy.Metadata
             }
             else if (typeof(object) == propertyType)
             {
-                return new FileAttributeMetadata();
+                return new FileAttributeMetadata()
+                {
+                    MaxSizeInKB = fileStorageSettings.MaxSizeInKB
+                };
             }
 #endif
             else

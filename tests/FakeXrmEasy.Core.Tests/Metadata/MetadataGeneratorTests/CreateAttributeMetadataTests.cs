@@ -6,7 +6,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.Metadata
 {
-    public class CreateAttributeMetadataTests
+    public class CreateAttributeMetadataTests: FakeXrmEasyTestsBase
     {
         private readonly Type[] _typesTestType;
         public CreateAttributeMetadataTests()
@@ -18,7 +18,7 @@ namespace FakeXrmEasy.Core.Tests.Metadata
         [Fact]
         public void Should_generate_file_type()
         {
-            var attributeMetadata = MetadataGenerator.CreateAttributeMetadata(typeof(object));
+            var attributeMetadata = MetadataGenerator.CreateAttributeMetadata(typeof(object), _context);
             Assert.NotNull(attributeMetadata);
             Assert.IsType<FileAttributeMetadata>(attributeMetadata);
         }
