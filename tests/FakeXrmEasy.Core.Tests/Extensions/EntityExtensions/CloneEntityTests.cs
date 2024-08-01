@@ -45,6 +45,7 @@ namespace FakeXrmEasy.Core.Tests.Extensions
             Assert.Equal(_earlyBoundSource.GetType(), clone.GetType());
         }
 
+        #if FAKE_XRM_EASY_9
         [Fact]
         public void Should_clone_related_entities()
         {
@@ -85,5 +86,7 @@ namespace FakeXrmEasy.Core.Tests.Extensions
             Assert.Equal(relatedEntity2.Id, clonedRelatedEntity2.Id);
             Assert.Equal(relatedEntity2.LogicalName, clonedRelatedEntity2.LogicalName);
         }
+        #endif
+        
     }
 }

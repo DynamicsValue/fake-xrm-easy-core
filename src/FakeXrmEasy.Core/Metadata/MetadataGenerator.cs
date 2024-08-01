@@ -248,10 +248,15 @@ namespace FakeXrmEasy.Metadata
 #if !FAKE_XRM_EASY
             else if (typeof(byte[]) == propertyType)
             {
-                return new ImageAttributeMetadata()
+                #if FAKE_XRM_EASY_9
+                return new ImageAttributeMetadata();
                 {
                     MaxSizeInKB = fileStorageSettings.ImageMaxSizeInKB
                 };
+                #else
+                return new ImageAttributeMetadata();
+                #endif
+                
             }
 #endif
 #if FAKE_XRM_EASY_9

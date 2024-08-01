@@ -542,6 +542,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if FAKE_XRM_EASY_9
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_file")]
 		public object dv_file
 		{
@@ -550,6 +551,7 @@ namespace DataverseEntities
 				return this.GetAttributeValue<object>("dv_file");
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_file_name")]
 		public string dv_file_Name
