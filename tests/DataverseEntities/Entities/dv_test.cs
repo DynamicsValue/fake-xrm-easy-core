@@ -582,6 +582,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if !FAKE_XRM_EASY
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_image")]
 		public byte[] dv_image
 		{
@@ -594,6 +595,7 @@ namespace DataverseEntities
 				this.SetAttributeValue("dv_image", value);
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_image_timestamp")]
 		public System.Nullable<long> dv_image_Timestamp
