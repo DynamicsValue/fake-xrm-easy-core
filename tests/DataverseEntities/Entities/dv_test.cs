@@ -542,6 +542,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if FAKE_XRM_EASY_9
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_file")]
 		public object dv_file
 		{
@@ -550,6 +551,7 @@ namespace DataverseEntities
 				return this.GetAttributeValue<object>("dv_file");
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_file_name")]
 		public string dv_file_Name
@@ -580,6 +582,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if !FAKE_XRM_EASY
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_image")]
 		public byte[] dv_image
 		{
@@ -592,6 +595,7 @@ namespace DataverseEntities
 				this.SetAttributeValue("dv_image", value);
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_image_timestamp")]
 		public System.Nullable<long> dv_image_Timestamp
@@ -1148,6 +1152,22 @@ namespace DataverseEntities
 			get
 			{
 				return this.GetAttributeValue<System.Nullable<long>>("versionnumber");
+			}
+		}
+		
+		/// <summary>
+		/// N:N dv_test_Contact_Contact
+		/// </summary>
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dv_test_Contact_Contact")]
+		public System.Collections.Generic.IEnumerable<DataverseEntities.Contact> dv_test_Contact_Contact
+		{
+			get
+			{
+				return this.GetRelatedEntities<DataverseEntities.Contact>("dv_test_Contact_Contact", null);
+			}
+			set
+			{
+				this.SetRelatedEntities<DataverseEntities.Contact>("dv_test_Contact_Contact", null, value);
 			}
 		}
 		

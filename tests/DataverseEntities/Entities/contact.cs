@@ -2434,6 +2434,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if !FAKE_XRM_EASY
 		/// <summary>
 		/// Shows the default image for the record.
 		/// </summary>
@@ -2451,6 +2452,7 @@ namespace DataverseEntities
 				this.OnPropertyChanged("EntityImage");
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("entityimage_timestamp")]
 		public System.Nullable<long> EntityImage_Timestamp
@@ -3772,6 +3774,22 @@ namespace DataverseEntities
 				this.OnPropertyChanging("Contact_Tasks");
 				this.SetRelatedEntities<DataverseEntities.Task>("Contact_Tasks", null, value);
 				this.OnPropertyChanged("Contact_Tasks");
+			}
+		}
+		
+		/// <summary>
+		/// N:N dv_test_Contact_Contact
+		/// </summary>
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dv_test_Contact_Contact")]
+		public System.Collections.Generic.IEnumerable<DataverseEntities.dv_test> dv_test_Contact_Contact
+		{
+			get
+			{
+				return this.GetRelatedEntities<DataverseEntities.dv_test>("dv_test_Contact_Contact", null);
+			}
+			set
+			{
+				this.SetRelatedEntities<DataverseEntities.dv_test>("dv_test_Contact_Contact", null, value);
 			}
 		}
 		

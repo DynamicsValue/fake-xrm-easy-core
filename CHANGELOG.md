@@ -1,3 +1,14 @@
+## [2.6.0]
+
+### Added
+
+- Added default max file size for file and image uploads - https://github.com/DynamicsValue/fake-xrm-easy/issues/157
+
+### Changed
+
+- Resolves issue in MetadataGenerator where relationship properties were generated in the wrong order, also generates ManyToMany relationship properties - https://github.com/DynamicsValue/fake-xrm-easy/issues/135
+- Adds implementation of RelatedEntities in Update message , before it was implemented only for Create - https://github.com/DynamicsValue/fake-xrm-easy/issues/154
+
 ## [2.5.1]
 
 ### Changed

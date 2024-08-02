@@ -59,7 +59,7 @@ namespace FakeXrmEasy
         /// <param name="earlyBoundEntitiesAssembly"></param>
         public void InitializeMetadata(Assembly earlyBoundEntitiesAssembly)
         {
-            IEnumerable<EntityMetadata> entityMetadatas = MetadataGenerator.FromEarlyBoundEntities(earlyBoundEntitiesAssembly);
+            IEnumerable<EntityMetadata> entityMetadatas = MetadataGenerator.FromEarlyBoundEntities(earlyBoundEntitiesAssembly, this);
             if (entityMetadatas.Any())
             {
                 this.InitializeMetadata(entityMetadatas);

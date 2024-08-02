@@ -106,5 +106,12 @@ namespace FakeXrmEasy.Extensions
 
             return attributeInfo;
         }
+
+        public static string GetPrimaryIdFieldName(this Type earlyBoundType)
+        {
+            return earlyBoundType.GetProperties()
+                .FirstOrDefault(p => p.Name == "Id")
+                .GetCustomAttribute<AttributeLogicalNameAttribute>().LogicalName;
+        }
     }
 }
