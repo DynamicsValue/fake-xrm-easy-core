@@ -20,6 +20,7 @@ using System.Reflection;
 
 using System.Runtime.CompilerServices;
 using FakeXrmEasy.Core.Exceptions;
+using FakeXrmEasy.Core.FileStorage.Db;
 
 [assembly: InternalsVisibleTo("FakeXrmEasy.Core.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c124cb50761165a765adf6078bde555a7c5a2b692ed6e6ec9df0bd7d20da69170bae9bf95e874fa50995cc080af404ccad36515fa509c4ea6599a0502c1642db254a293e023c47c79ce69889c6ba921d124d896d87f0baaa9ea1d87b28589ffbe7b08492606bacef19dc4bc4cefb0d525be63ee722b02dc8c79688a7a8f623a2")]
 
@@ -70,6 +71,11 @@ namespace FakeXrmEasy
         /// </summary>
         internal InMemoryDb Db { get; set; }
 
+        /// <summary>
+        /// Internal In-Memory File Storage
+        /// </summary>
+        internal InMemoryFileDb FileDb { get; set; }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -194,7 +200,8 @@ namespace FakeXrmEasy
 
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
             Db = new InMemoryDb();
-
+            FileDb = new InMemoryFileDb();
+            
             _relationships = new Dictionary<string, XrmFakedRelationship>();
 
             EntityInitializerService = new DefaultEntityInitializerService();

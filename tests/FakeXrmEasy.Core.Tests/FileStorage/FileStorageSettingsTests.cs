@@ -7,7 +7,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.FileStorage
 {
-    public class FileStorageTests: FakeXrmEasyTestsBase
+    public class FileStorageSettingsTests: FakeXrmEasyTestsBase
     {
         [Fact]
         public void Should_return_default_max_file_size()
