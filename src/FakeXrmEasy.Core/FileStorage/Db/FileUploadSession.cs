@@ -9,7 +9,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
     /// </summary>
     internal class FileUploadSession
     {
-        private ConcurrentDictionary<string, FileBlock> _fileBlocks;
+        private readonly ConcurrentDictionary<string, FileBlock> _fileBlocks;
         
         internal string FileUploadSessionId { get; set; }
         internal FileUploadProperties Properties { get; set; }
