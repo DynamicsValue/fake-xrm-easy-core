@@ -2,6 +2,7 @@
 
 ### Added
 
+- Added new InMemoryFileDb implementation to support file and image storage - https://github.com/DynamicsValue/fake-xrm-easy/issues/157
 - Added default max file size for file and image uploads - https://github.com/DynamicsValue/fake-xrm-easy/issues/157
 
 ### Changed
