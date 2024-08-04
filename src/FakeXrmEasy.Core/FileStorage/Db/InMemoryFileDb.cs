@@ -2,8 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.UI.WebControls;
-using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {

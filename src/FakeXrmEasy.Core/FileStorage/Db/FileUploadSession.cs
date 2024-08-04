@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Crm.Sdk.Messages;
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {
@@ -20,12 +19,12 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             _fileBlocks = new ConcurrentDictionary<string, FileBlock>();
         }
 
-        internal void AddFileBlock(UploadBlockRequest uploadBlockRequest)
+        internal void AddFileBlock(UploadBlockProperties uploadBlockProperties)
         {
-            var existed = _fileBlocks.TryAdd(uploadBlockRequest.BlockId, new FileBlock()
+            var existed = _fileBlocks.TryAdd(uploadBlockProperties.BlockId, new FileBlock()
             {
-                BlockId = uploadBlockRequest.BlockId,
-                Content = uploadBlockRequest.BlockData
+                BlockId = uploadBlockProperties.BlockId,
+                Content = uploadBlockProperties.BlockContents
             });
         }
 

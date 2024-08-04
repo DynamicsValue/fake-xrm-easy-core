@@ -1,6 +1,6 @@
 using System;
+using FakeXrmEasy.Core.FileStorage;
 using FakeXrmEasy.Core.FileStorage.Db;
-using Microsoft.Crm.Sdk.Messages;
 using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.FileStorage.Db
@@ -24,10 +24,10 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
         public void Should_add_new_block_to_existing_session()
         {
             var blockId = Guid.NewGuid().ToString();
-            _session.AddFileBlock(new UploadBlockRequest()
+            _session.AddFileBlock(new UploadBlockProperties()
             {
                 BlockId = blockId,
-                BlockData = new byte[] { 1, 2, 3, 4 },
+                BlockContents = new byte[] { 1, 2, 3, 4 },
                 FileContinuationToken = _session.FileUploadSessionId
             });
 
