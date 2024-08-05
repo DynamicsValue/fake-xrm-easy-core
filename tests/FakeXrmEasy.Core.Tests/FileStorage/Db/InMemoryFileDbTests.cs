@@ -89,14 +89,6 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             var fileContinuationToken = _fileDb.InitFileUploadSession(_fileUploadProperties);
             var fileUploadSession = _fileDb.GetFileUploadSession(fileContinuationToken);
 
-            var fileBlockProperties = new UploadBlockProperties()
-            {
-                BlockId = Guid.NewGuid().ToString(),
-                BlockContents = new byte[] { 1, 2, 3, 4 }
-            };
-            
-            fileUploadSession.AddFileBlock(fileBlockProperties);
-
             var blockIds = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
             Parallel.ForEach(blockIds, (blockId) =>
