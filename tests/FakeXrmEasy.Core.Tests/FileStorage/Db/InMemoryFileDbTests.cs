@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using DataverseEntities;
 using FakeXrmEasy.Core.FileStorage;
 using FakeXrmEasy.Core.FileStorage.Db;
@@ -81,6 +82,60 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             Assert.Equal(commitProperties.MimeType, createdFile.MimeType);
             Assert.Equal(new byte[] { 1, 2, 3, 4 }, createdFile.Content);
         }
-        
+
+        [Fact]
+        public void Should_init_and_upload_multiple_blocks_concurrently_and_commit_file()
+        {
+            var fileContinuationToken = _fileDb.InitFileUploadSession(_fileUploadProperties);
+            var fileUploadSession = _fileDb.GetFileUploadSession(fileContinuationToken);
+
+            var fileBlockProperties = new UploadBlockProperties()
+            {
+                BlockId = Guid.NewGuid().ToString(),
+                BlockContents = new byte[] { 1, 2, 3, 4 }
+            };
+            
+            fileUploadSession.AddFileBlock(fileBlockProperties);
+
+            var blockIds = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+            Parallel.ForEach(blockIds, (blockId) =>
+            {
+                fileUploadSession.AddFileBlock(new UploadBlockProperties()
+                {
+                    BlockId = blockId.ToString(),
+                    BlockContents = new byte[] { 
+                        Convert.ToByte(10 + blockId), 
+                        Convert.ToByte(20 + blockId), 
+                        Convert.ToByte(30 + blockId),
+                        Convert.ToByte(40 + blockId)
+                    }
+                });
+            });
+            
+            var commitProperties = new CommitFileUploadSessionProperties()
+            {
+                FileUploadSessionId = fileContinuationToken,
+                FileName = "Output.pdf",
+                MimeType = "application/pdf",
+                BlockIdsListSequence = blockIds.Select(id => id.ToString()).ToArray()
+            };
+
+            _fileDb.CommitFileUploadSession(commitProperties);
+
+            var allFiles = _fileDb.GetAllFiles();
+            
+            Assert.Single(allFiles);
+
+            var createdFile = allFiles.FirstOrDefault();
+            
+            for (var i = 0; i < 10; i++)
+            {
+                Assert.Equal(Convert.ToByte(10 + i + 1), createdFile.Content[i * 4]);
+                Assert.Equal(Convert.ToByte(20 + i + 1), createdFile.Content[i * 4 + 1]);
+                Assert.Equal(Convert.ToByte(30 + i + 1), createdFile.Content[i * 4 + 2]);
+                Assert.Equal(Convert.ToByte(40 + i + 1), createdFile.Content[i * 4 + 3]);
+            }
+        }
     }
 }
