@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using DataverseEntities;
 using FakeXrmEasy.Core.FileStorage;
 using FakeXrmEasy.Core.FileStorage.Db;
@@ -27,6 +28,7 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
         public void Should_create_an_empty_in_memory_file_db()
         {
             Assert.Empty(_fileDb.GetAllFileUploadSessions());
+            Assert.Empty(_fileDb.GetAllFiles());
         }
         
         [Fact]
@@ -45,6 +47,40 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             Assert.Equal(_fileUploadProperties.FileAttributeName, fileUploadSession.Properties.FileAttributeName);
         }
 
+        [Fact]
+        public void Should_init_and_commit_file()
+        {
+            var fileContinuationToken = _fileDb.InitFileUploadSession(_fileUploadProperties);
+            var fileUploadSession = _fileDb.GetFileUploadSession(fileContinuationToken);
+
+            var fileBlockProperties = new UploadBlockProperties()
+            {
+                BlockId = Guid.NewGuid().ToString(),
+                BlockContents = new byte[] { 1, 2, 3, 4 }
+            };
+            
+            fileUploadSession.AddFileBlock(fileBlockProperties);
+
+            var commitProperties = new CommitFileUploadSessionProperties()
+            {
+                FileUploadSessionId = fileContinuationToken,
+                FileName = "Output.pdf",
+                MimeType = "application/pdf",
+                BlockIdsListSequence = new[] { fileBlockProperties.BlockId }
+            };
+
+            _fileDb.CommitFileUploadSession(commitProperties);
+
+            var allFiles = _fileDb.GetAllFiles();
+            
+            Assert.Single(allFiles);
+
+            var createdFile = allFiles.FirstOrDefault();
+            
+            Assert.Equal(commitProperties.FileName, createdFile.FileName);
+            Assert.Equal(commitProperties.MimeType, createdFile.MimeType);
+            Assert.Equal(new byte[] { 1, 2, 3, 4 }, createdFile.Content);
+        }
         
     }
 }
