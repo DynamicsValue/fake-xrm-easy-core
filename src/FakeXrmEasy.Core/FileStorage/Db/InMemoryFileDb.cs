@@ -68,7 +68,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
                 //throw
             }
             
-            lock(fileUploadSession.FileUploadSessionId)
+            lock(fileUploadSession._fileUploadSessionLock)
             {
                 var fileAttachment = fileUploadSession.ToFileAttachment(commitProperties);
                 fileAttachment.Id = Guid.NewGuid().ToString();

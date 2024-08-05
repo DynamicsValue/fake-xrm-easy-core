@@ -15,6 +15,8 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         internal string FileUploadSessionId { get; set; }
         internal FileUploadProperties Properties { get; set; }
 
+        internal readonly object _fileUploadSessionLock = new object();
+        
         internal FileUploadSession()
         {
             _fileBlocks = new ConcurrentDictionary<string, FileBlock>();
@@ -27,15 +29,18 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         /// <exception cref="DuplicateFileBlockException"></exception>
         internal void AddFileBlock(UploadBlockProperties uploadBlockProperties)
         {
-            var addedSuccessfully = _fileBlocks.TryAdd(uploadBlockProperties.BlockId, new FileBlock()
+            lock (_fileUploadSessionLock)
             {
-                BlockId = uploadBlockProperties.BlockId,
-                Content = uploadBlockProperties.BlockContents
-            });
+                var addedSuccessfully = _fileBlocks.TryAdd(uploadBlockProperties.BlockId, new FileBlock()
+                {
+                    BlockId = uploadBlockProperties.BlockId,
+                    Content = uploadBlockProperties.BlockContents
+                });
 
-            if (!addedSuccessfully)
-            {
-                throw new DuplicateFileBlockException(uploadBlockProperties.BlockId, FileUploadSessionId);
+                if (!addedSuccessfully)
+                {
+                    throw new DuplicateFileBlockException(uploadBlockProperties.BlockId, FileUploadSessionId);
+                }
             }
         }
 
