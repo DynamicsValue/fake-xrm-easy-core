@@ -56,8 +56,8 @@ namespace FakeXrmEasy.Core.Tests.Issues
         {
             _lateBoundContact["address1_longitude"] = 1.2345;
             _context.Initialize(_lateBoundContact);
-            _context.InitializeMetadata(_contactMetadata)
-                ;
+            _context.InitializeMetadata(_contactMetadata);
+            
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='fullname' />
