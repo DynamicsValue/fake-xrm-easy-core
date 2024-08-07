@@ -899,6 +899,26 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return !OperatorsNotToConvertArray.Contains(conditionOperator);
         }
 
+        internal static object GetConditionExpressionBasedOnAttributeType(Type attributeType, string value, string sEntityName, string sAttributeName, ConditionOperator op)
+        {
+            try
+            {
+                if (ValueNeedsConverting(op))
+                {
+                    return GetValueBasedOnType(attributeType, value);
+                }
+
+                else
+                {
+                    return int.Parse(value);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(string.Format("When trying to parse value for entity {0} and attribute {1}: {2}", sEntityName, sAttributeName, e.Message));
+            }
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -920,23 +940,16 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     var attributeType = ctx.FindReflectedAttributeType(reflectedType, sEntityName, sAttributeName);
                     if (attributeType != null)
                     {
-                        try
-                        {
-                            if (ValueNeedsConverting(op))
-                            {
-                                return GetValueBasedOnType(attributeType, value);
-                            }
-
-                            else
-                            {
-                                return int.Parse(value);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            throw new Exception(string.Format("When trying to parse value for entity {0} and attribute {1}: {2}", sEntityName, sAttributeName, e.Message));
-                        }
+                        return GetConditionExpressionBasedOnAttributeType(attributeType, value, sEntityName, sAttributeName, op);
                     }
+                }
+            }
+            else
+            {
+                var injectedAttributeType = ctx.FindAttributeTypeInInjectedMetadata(sEntityName, sAttributeName);
+                if (injectedAttributeType != null)
+                {
+                    return GetConditionExpressionBasedOnAttributeType(injectedAttributeType, value, sEntityName, sAttributeName, op);
                 }
             }
 
