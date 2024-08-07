@@ -118,7 +118,7 @@ namespace FakeXrmEasy.Core.Tests.Issues
         [Fact]
         public void Should_return_contact_when_using_injected_lookup_metadata()
         {
-            var otherContact = new Entity("contact", Guid.NewGuid());
+            var otherContact = new Entity("contact") { Id = Guid.NewGuid() };
             _lateBoundContact["parentcontactid"] = otherContact.ToEntityReference();
             
             _context.Initialize(_lateBoundContact);
