@@ -7,6 +7,7 @@ using Microsoft.Xrm.Sdk;
 using System.Globalization;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Exceptions;
+using FakeXrmEasy.Core.Exceptions.Query.FetchXml;
 
 namespace FakeXrmEasy.Extensions.FetchXml
 {
@@ -976,7 +977,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
 
             if (bIsNumeric || bIsDateTime)
             {
-                throw new Exception($"When using arithmetic values in a condition of attribute '{sAttributeName}' of entity '{sEntityName}' in a Fetch a ProxyTypesAssembly must be used in order to know which types to cast values to. If you are using early bound types, please make sure the early bound type was generated for entity '{sEntityName}'");
+                throw new ArithmeticTypeConversionException(sEntityName, sAttributeName);
             }
 
             //Default value
