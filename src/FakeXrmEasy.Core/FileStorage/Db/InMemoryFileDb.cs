@@ -2,6 +2,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using FakeXrmEasy.Core.Db;
+using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {
@@ -9,15 +11,19 @@ namespace FakeXrmEasy.Core.FileStorage.Db
     {
         private readonly ConcurrentDictionary<string, FileUploadSession> _uncommittedFileUploads;
         private readonly ConcurrentDictionary<string, FileAttachment> _files;
-
-        internal InMemoryFileDb()
+        private readonly InMemoryDb _db;
+        
+        internal InMemoryFileDb(InMemoryDb db)
         {
+            _db = db;
             _uncommittedFileUploads = new ConcurrentDictionary<string, FileUploadSession>();
             _files = new ConcurrentDictionary<string, FileAttachment>();
         }
 
         public string InitFileUploadSession(FileUploadProperties fileUploadProperties)
         {
+            ValidateEntityReference(fileUploadProperties);
+            
             string fileContinuationToken = Guid.NewGuid().ToString();
             _uncommittedFileUploads.GetOrAdd(fileContinuationToken, new FileUploadSession()
             {
@@ -27,6 +33,14 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             return fileContinuationToken;
         }
 
+        private void ValidateEntityReference(FileUploadProperties fileUploadProperties)
+        {
+            if (!_db.ContainsEntityRecord(fileUploadProperties.Target.LogicalName, fileUploadProperties.Target.Id))
+            {
+                throw new RecordNotFoundException(fileUploadProperties.Target);
+            }
+        }
+        
         public FileUploadSession GetFileUploadSession(string fileUploadSessionId)
         {
             FileUploadSession session = null;
@@ -65,7 +79,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
                 _uncommittedFileUploads.TryGetValue(commitProperties.FileUploadSessionId, out fileUploadSession);
             if (!exists)
             {
-                //throw
+                throw new FileTokenContinuationNotFoundException(commitProperties.FileUploadSessionId);
             }
             
             lock(fileUploadSession._fileUploadSessionLock)
@@ -76,7 +90,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
                 var addedSuccessfully = _files.TryAdd(fileAttachment.Id, fileAttachment);
                 if (!addedSuccessfully)
                 {
-                    //throw, no need to rollback anything
+                    throw new CouldNotCommitFileException(commitProperties.FileUploadSessionId);
                 }
                 
                 var removedOk = _uncommittedFileUploads.TryRemove(fileUploadSession.FileUploadSessionId,

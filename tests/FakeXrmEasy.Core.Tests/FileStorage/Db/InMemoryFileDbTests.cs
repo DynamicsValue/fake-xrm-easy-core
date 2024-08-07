@@ -2,8 +2,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DataverseEntities;
+using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Core.FileStorage;
 using FakeXrmEasy.Core.FileStorage.Db;
+using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
 using Microsoft.Xrm.Sdk;
 using Xunit;
 
@@ -11,15 +13,24 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
 {
     public class InMemoryFileDbTests
     {
+        private readonly InMemoryDb _db;
         private readonly InMemoryFileDb _fileDb;
         private readonly FileUploadProperties _fileUploadProperties;
+        private readonly Entity _entity;
         
         public InMemoryFileDbTests()
         {
-            _fileDb = new InMemoryFileDb();
+            _db = new InMemoryDb();
+            _fileDb = new InMemoryFileDb(_db);
+
+            _entity = new Entity(dv_test.EntityLogicalName)
+            {
+                Id = Guid.NewGuid()
+            };
+            
             _fileUploadProperties = new FileUploadProperties()
             {
-                Target = new EntityReference(dv_test.EntityLogicalName, Guid.NewGuid()),
+                Target = _entity.ToEntityReference(),
                 FileName = "FileName.pdf",
                 FileAttributeName = "dv_file"
             };
@@ -33,8 +44,15 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
         }
         
         [Fact]
+        public void Should_throw_exception_if_a_file_upload_session_is_initiated_for_a_non_existing_record()
+        {
+            Assert.Throws<RecordNotFoundException>( () => _fileDb.InitFileUploadSession(_fileUploadProperties));
+        }
+        
+        [Fact]
         public void Should_init_and_store_file_upload_session()
         {
+            _db.AddEntityRecord(_entity);
             var fileContinuationToken = _fileDb.InitFileUploadSession(_fileUploadProperties);
 
             var fileUploadSession = _fileDb.GetFileUploadSession(fileContinuationToken);
@@ -51,6 +69,7 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
         [Fact]
         public void Should_init_and_commit_file()
         {
+            _db.AddEntityRecord(_entity);
             var fileContinuationToken = _fileDb.InitFileUploadSession(_fileUploadProperties);
             var fileUploadSession = _fileDb.GetFileUploadSession(fileContinuationToken);
 
@@ -86,6 +105,7 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
         [Fact]
         public void Should_init_and_upload_multiple_blocks_concurrently_and_commit_file()
         {
+            _db.AddEntityRecord(_entity);
             var fileContinuationToken = _fileDb.InitFileUploadSession(_fileUploadProperties);
             var fileUploadSession = _fileDb.GetFileUploadSession(fileContinuationToken);
 
@@ -128,6 +148,24 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
                 Assert.Equal(Convert.ToByte(30 + i + 1), createdFile.Content[i * 4 + 2]);
                 Assert.Equal(Convert.ToByte(40 + i + 1), createdFile.Content[i * 4 + 3]);
             }
+            
+            //Uncommited session is removed
+            Assert.Null(_fileDb.GetFileUploadSession(fileContinuationToken));
+        }
+
+        [Fact]
+        public void Should_throw_exception_if_file_upload_session_does_not_exist_when_commiting_a_file_upload_session()
+        {
+            _db.AddEntityRecord(_entity);
+            var commitProperties = new CommitFileUploadSessionProperties()
+            {
+                FileUploadSessionId = "asdasdasd",
+                FileName = "Output.pdf",
+                MimeType = "application/pdf",
+                BlockIdsListSequence = new string[] {}
+            };
+            Assert.Throws<FileTokenContinuationNotFoundException>(() =>
+                _fileDb.CommitFileUploadSession(commitProperties));
         }
     }
 }

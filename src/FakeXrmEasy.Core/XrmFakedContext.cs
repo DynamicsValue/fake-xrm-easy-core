@@ -200,7 +200,7 @@ namespace FakeXrmEasy
 
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
             Db = new InMemoryDb();
-            FileDb = new InMemoryFileDb();
+            FileDb = new InMemoryFileDb(Db);
             
             _relationships = new Dictionary<string, XrmFakedRelationship>();
 
