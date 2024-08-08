@@ -100,6 +100,21 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             Assert.Equal(commitProperties.FileName, createdFile.FileName);
             Assert.Equal(commitProperties.MimeType, createdFile.MimeType);
             Assert.Equal(new byte[] { 1, 2, 3, 4 }, createdFile.Content);
+            
+            //Uncommited session is removed
+            Assert.Null(_fileDb.GetFileUploadSession(fileContinuationToken));
+            
+            //File attribute is updated with file id and file name
+            var entityAfter = _db.GetTable(_entity.LogicalName).GetById(_entity.Id);
+            Assert.Equal(createdFile.Id, entityAfter[_fileUploadProperties.FileAttributeName]);
+            Assert.Equal(createdFile.FileName, entityAfter[$"{_fileUploadProperties.FileAttributeName}_name"]);
+            
+            //New file attachment record is created
+            var fileAttachment = _db
+                .GetTable(InMemoryFileDb.FILE_ATTACHMENT_TABLE_NAME)
+                .GetById(new Guid(createdFile.Id));
+            
+            Assert.NotNull(fileAttachment);
         }
 
         [Fact]
@@ -148,9 +163,6 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
                 Assert.Equal(Convert.ToByte(30 + i + 1), createdFile.Content[i * 4 + 2]);
                 Assert.Equal(Convert.ToByte(40 + i + 1), createdFile.Content[i * 4 + 3]);
             }
-            
-            //Uncommited session is removed
-            Assert.Null(_fileDb.GetFileUploadSession(fileContinuationToken));
         }
 
         [Fact]

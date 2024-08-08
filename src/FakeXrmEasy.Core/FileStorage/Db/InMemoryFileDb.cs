@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
+using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {
@@ -12,6 +13,8 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         private readonly ConcurrentDictionary<string, FileUploadSession> _uncommittedFileUploads;
         private readonly ConcurrentDictionary<string, FileAttachment> _files;
         private readonly InMemoryDb _db;
+
+        internal const string FILE_ATTACHMENT_TABLE_NAME = "fileattachment";
         
         internal InMemoryFileDb(InMemoryDb db)
         {
@@ -101,8 +104,32 @@ namespace FakeXrmEasy.Core.FileStorage.Db
                     _files.TryRemove(fileAttachment.Id, out var removedFileAttachment);
                 }
 
+                SaveFileAttachment(fileUploadSession, fileAttachment);
+                
                 return fileAttachment.Id;
             }
+        }
+
+        private void SaveFileAttachment(FileUploadSession fileUploadSession, FileAttachment fileAttachment)
+        {
+            //Add file attachment
+            if (!_db.ContainsTable(FILE_ATTACHMENT_TABLE_NAME))
+            {
+                InMemoryTable fileAttachmentTable;
+                _db.AddTable(FILE_ATTACHMENT_TABLE_NAME, out fileAttachmentTable);
+            }
+                
+            var filesTable = _db.GetTable(FILE_ATTACHMENT_TABLE_NAME);
+            filesTable.Add(new Entity(FILE_ATTACHMENT_TABLE_NAME)
+            {
+                Id = new Guid(fileAttachment.Id)
+            });
+                
+            //Update associated record
+            var table = _db.GetTable(fileUploadSession.Properties.Target.LogicalName);
+            var record = table.GetById(fileUploadSession.Properties.Target.Id);
+            record[fileUploadSession.Properties.FileAttributeName] = fileAttachment.Id;
+            record[$"{fileUploadSession.Properties.FileAttributeName}_name"] = fileAttachment.FileName;
         }
     }
 }
