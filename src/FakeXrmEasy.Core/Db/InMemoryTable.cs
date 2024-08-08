@@ -126,5 +126,14 @@ namespace FakeXrmEasy.Core.Db
         {
             _metadata._entityMetadata = entityMetadata.Copy();
         }
+
+        /// <summary>
+        /// Returns the entity metadata associated to this column
+        /// </summary>
+        /// <returns></returns>
+        protected internal EntityMetadata GetEntityMetadata()
+        {
+            return _metadata._entityMetadata;
+        }
     }
 }

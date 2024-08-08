@@ -5,6 +5,7 @@ using System.Linq;
 using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {
@@ -90,6 +91,10 @@ namespace FakeXrmEasy.Core.FileStorage.Db
                 var fileAttachment = fileUploadSession.ToFileAttachment(commitProperties);
                 fileAttachment.Id = Guid.NewGuid().ToString();
 
+                #if FAKE_XRM_EASY_9
+                ValidateMaxFileSize(fileUploadSession, fileAttachment);
+                #endif
+                
                 var addedSuccessfully = _files.TryAdd(fileAttachment.Id, fileAttachment);
                 if (!addedSuccessfully)
                 {
@@ -110,6 +115,36 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             }
         }
 
+        #if FAKE_XRM_EASY_9
+        private void ValidateMaxFileSize(FileUploadSession fileUploadSession, FileAttachment fileAttachment)
+        {
+            var tableLogicalName = fileUploadSession.Properties.Target.LogicalName;
+            var table = _db.GetTable(tableLogicalName);
+            var entityMetadata = table.GetEntityMetadata();
+            if (entityMetadata == null)
+            {
+                return;
+            }
+
+            var attributeMetadata =
+                entityMetadata.Attributes.FirstOrDefault(a =>
+                    a.LogicalName == fileUploadSession.Properties.FileAttributeName);
+
+            if (attributeMetadata == null)
+            {
+                return;
+            }
+
+            var fileAttributeMetadata = attributeMetadata as FileAttributeMetadata;
+
+            if ((decimal) fileAttachment.Content.Length / 1024 > fileAttributeMetadata.MaxSizeInKB)
+            {
+                throw new MaxSizeExceededException(tableLogicalName, fileUploadSession.Properties.FileAttributeName,
+                    fileAttributeMetadata.MaxSizeInKB.Value);
+            }
+        }
+        #endif
+        
         private void SaveFileAttachment(FileUploadSession fileUploadSession, FileAttachment fileAttachment)
         {
             //Add file attachment

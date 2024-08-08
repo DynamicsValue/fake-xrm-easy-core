@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataverseEntities;
@@ -6,7 +7,9 @@ using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Core.FileStorage;
 using FakeXrmEasy.Core.FileStorage.Db;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
+using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.FileStorage.Db
@@ -17,12 +20,13 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
         private readonly InMemoryFileDb _fileDb;
         private readonly FileUploadProperties _fileUploadProperties;
         private readonly Entity _entity;
-        
         public InMemoryFileDbTests()
         {
             _db = new InMemoryDb();
             _fileDb = new InMemoryFileDb(_db);
 
+            SetMetadata();
+            
             _entity = new Entity(dv_test.EntityLogicalName)
             {
                 Id = Guid.NewGuid()
@@ -34,6 +38,31 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
                 FileName = "FileName.pdf",
                 FileAttributeName = "dv_file"
             };
+        }
+        
+        private void SetMetadata()
+        {
+            _db.AddTable(dv_test.EntityLogicalName, out var table);
+
+            #if FAKE_XRM_EASY_9
+            
+            var fileAttributeMetadata = new FileAttributeMetadata()
+            {
+                LogicalName = "dv_file"
+            };
+            fileAttributeMetadata.MaxSizeInKB = 1; //1 KB
+            var tableEntityMetadata = new EntityMetadata()
+            {
+                LogicalName = dv_test.EntityLogicalName
+            };
+            tableEntityMetadata.SetAttributeCollection(new List<AttributeMetadata>()
+            {
+                fileAttributeMetadata  
+            });
+            table.SetMetadata(tableEntityMetadata);
+            
+            #endif
+            
         }
         
         [Fact]
@@ -116,7 +145,41 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             
             Assert.NotNull(fileAttachment);
         }
+        
+        #if FAKE_XRM_EASY_9
+        [Fact]
+        public void Should_throw_exception_if_file_exceeds_size()
+        {
+            _db.AddEntityRecord(_entity);
+            var fileContinuationToken = _fileDb.InitFileUploadSession(_fileUploadProperties);
+            var fileUploadSession = _fileDb.GetFileUploadSession(fileContinuationToken);
 
+            var blob = new byte[1025]; //edge case where it exceeds 1 byte
+            for (var i = 0; i < 1025; i++)
+            {
+                blob[i] = (byte)(i % 254);
+            }
+                
+            var fileBlockProperties = new UploadBlockProperties()
+            {
+                BlockId = Guid.NewGuid().ToString(),
+                BlockContents = blob
+            };
+            
+            fileUploadSession.AddFileBlock(fileBlockProperties);
+
+            var commitProperties = new CommitFileUploadSessionProperties()
+            {
+                FileUploadSessionId = fileContinuationToken,
+                FileName = "Output.pdf",
+                MimeType = "application/pdf",
+                BlockIdsListSequence = new[] { fileBlockProperties.BlockId }
+            };
+
+            Assert.Throws<MaxSizeExceededException>(() => _fileDb.CommitFileUploadSession(commitProperties));
+        }
+        #endif
+        
         [Fact]
         public void Should_init_and_upload_multiple_blocks_concurrently_and_commit_file()
         {
