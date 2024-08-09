@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
+using FakeXrmEasy.Core.FileStorage.Upload;
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {

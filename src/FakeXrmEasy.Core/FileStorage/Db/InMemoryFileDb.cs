@@ -4,15 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
+using FakeXrmEasy.Core.FileStorage.Download;
+using FakeXrmEasy.Core.FileStorage.Upload;
 using Microsoft.Xrm.Sdk;
+#if FAKE_XRM_EASY_9
 using Microsoft.Xrm.Sdk.Metadata;
+#endif
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {
-    internal class InMemoryFileDb : IInMemoryFileDbInternal
+    internal class InMemoryFileDb : IInMemoryFileDbUploader, IInMemoryFileDbDownloader
     {
         private readonly ConcurrentDictionary<string, FileUploadSession> _uncommittedFileUploads;
         private readonly ConcurrentDictionary<string, FileAttachment> _files;
+        private readonly ConcurrentDictionary<string, FileDownloadSession> _fileDownloadSessions;
         private readonly InMemoryDb _db;
 
         internal const string FILE_ATTACHMENT_TABLE_NAME = "fileattachment";
@@ -22,11 +27,12 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             _db = db;
             _uncommittedFileUploads = new ConcurrentDictionary<string, FileUploadSession>();
             _files = new ConcurrentDictionary<string, FileAttachment>();
+            _fileDownloadSessions = new ConcurrentDictionary<string, FileDownloadSession>();
         }
 
         public string InitFileUploadSession(FileUploadProperties fileUploadProperties)
         {
-            ValidateEntityReference(fileUploadProperties);
+            ValidateEntityReference(fileUploadProperties.Target);
             
             string fileContinuationToken = Guid.NewGuid().ToString();
             _uncommittedFileUploads.GetOrAdd(fileContinuationToken, new FileUploadSession()
@@ -37,11 +43,11 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             return fileContinuationToken;
         }
 
-        private void ValidateEntityReference(FileUploadProperties fileUploadProperties)
+        private void ValidateEntityReference(EntityReference entityReference)
         {
-            if (!_db.ContainsEntityRecord(fileUploadProperties.Target.LogicalName, fileUploadProperties.Target.Id))
+            if (!_db.ContainsEntityRecord(entityReference.LogicalName, entityReference.Id))
             {
-                throw new RecordNotFoundException(fileUploadProperties.Target);
+                throw new RecordNotFoundException(entityReference);
             }
         }
         
@@ -62,11 +68,22 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             return _uncommittedFileUploads.Values.ToList();
         }
 
-        public List<FileAttachment> GetAllFiles()
+        #region Internal File Manipulation
+        internal List<FileAttachment> GetAllFiles()
         {
             return _files.Values.ToList();
         }
 
+        internal void AddFile(FileAttachment fileAttachment)
+        {
+            var wasAdded = _files.TryAdd(fileAttachment.Id, fileAttachment);
+            if (!wasAdded)
+            {
+                throw new CouldNotAddFileException();
+            }
+        }
+        #endregion
+        
         /// <summary>
         /// 
         /// </summary>
@@ -76,6 +93,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             return _files.Values.AsQueryable();
         }
 
+        #region Upload
         public string CommitFileUploadSession(CommitFileUploadSessionProperties commitProperties)
         {
             FileUploadSession fileUploadSession;
@@ -166,5 +184,65 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             record[fileUploadSession.Properties.FileAttributeName] = fileAttachment.Id;
             record[$"{fileUploadSession.Properties.FileAttributeName}_name"] = fileAttachment.FileName;
         }
+
+        #endregion
+        
+        #region Download
+        public string InitFileDownloadSession(FileDownloadProperties fileDownloadProperties)
+        {
+            ValidateEntityReference(fileDownloadProperties.Target);
+            var file = CheckFileExists(fileDownloadProperties);
+            
+            string fileContinuationToken = Guid.NewGuid().ToString();
+            _fileDownloadSessions.GetOrAdd(fileContinuationToken, new FileDownloadSession()
+            {
+                FileDownloadSessionId = fileContinuationToken,
+                Properties = new FileDownloadProperties(fileDownloadProperties),
+                File = file
+            });
+            return fileContinuationToken;
+        }
+
+        private FileAttachment CheckFileExists(FileDownloadProperties fileDownloadProperties)
+        {
+            var entityReference = fileDownloadProperties.Target;
+            var record = _db.GetTable(entityReference.LogicalName).GetById(entityReference.Id);
+            if (!record.Attributes.ContainsKey(fileDownloadProperties.FileAttributeName))
+            {
+                throw new FileToDownloadNotFoundException(entityReference, fileDownloadProperties.FileAttributeName);
+            }
+
+            var fileId = (string)record[fileDownloadProperties.FileAttributeName];
+
+            var exists = _files.TryGetValue(fileId, out var file);
+            if (!exists)
+            {
+                throw new FileToDownloadNotFoundException(entityReference, fileDownloadProperties.FileAttributeName);
+            }
+            return file;
+        }
+        
+        public FileDownloadSession GetFileDownloadSession(string fileDownloadSessionId)
+        {
+            FileDownloadSession session = null;
+            var exists = _fileDownloadSessions.TryGetValue(fileDownloadSessionId, out session);
+            if (exists)
+            {
+                return session;
+            }
+
+            return null;
+        }
+
+        public List<FileDownloadSession> GetAllFileDownloadSessions()
+        {
+            return _fileDownloadSessions.Values.ToList();
+        }
+
+        public byte[] DownloadFileBlock(DownloadBlockProperties uploadBlockProperties)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

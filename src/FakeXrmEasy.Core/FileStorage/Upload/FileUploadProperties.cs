@@ -1,7 +1,6 @@
-using FakeXrmEasy.Core.FileStorage.Db;
 using Microsoft.Xrm.Sdk;
 
-namespace FakeXrmEasy.Core.FileStorage
+namespace FakeXrmEasy.Core.FileStorage.Upload
 {
     /// <summary>
     /// Properties needed to initialize a file upload
@@ -12,7 +11,7 @@ namespace FakeXrmEasy.Core.FileStorage
         public string FileAttributeName { get; set; }
         public string FileName { get; set; }
 
-        public FileUploadProperties()
+        internal FileUploadProperties()
         {
             
         }
@@ -21,7 +20,7 @@ namespace FakeXrmEasy.Core.FileStorage
         /// Copy constructor
         /// </summary>
         /// <param name="other"></param>
-        public FileUploadProperties(FileUploadProperties other)
+        internal FileUploadProperties(FileUploadProperties other)
         {
             if (other.Target != null)
             {

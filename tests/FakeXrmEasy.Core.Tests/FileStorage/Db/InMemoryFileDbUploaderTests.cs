@@ -1,26 +1,29 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataverseEntities;
 using FakeXrmEasy.Core.Db;
-using FakeXrmEasy.Core.FileStorage;
 using FakeXrmEasy.Core.FileStorage.Db;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
-using FakeXrmEasy.Extensions;
+using FakeXrmEasy.Core.FileStorage.Upload;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Metadata;
 using Xunit;
+
+#if FAKE_XRM_EASY_9
+using System.Collections.Generic;
+using FakeXrmEasy.Extensions;
+using Microsoft.Xrm.Sdk.Metadata;
+#endif
 
 namespace FakeXrmEasy.Core.Tests.FileStorage.Db
 {
-    public class InMemoryFileDbTests
+    public class InMemoryFileDbUploaderTests
     {
         private readonly InMemoryDb _db;
         private readonly InMemoryFileDb _fileDb;
         private readonly FileUploadProperties _fileUploadProperties;
         private readonly Entity _entity;
-        public InMemoryFileDbTests()
+        public InMemoryFileDbUploaderTests()
         {
             _db = new InMemoryDb();
             _fileDb = new InMemoryFileDb(_db);

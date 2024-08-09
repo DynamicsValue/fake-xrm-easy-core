@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using FakeXrmEasy.Core.FileStorage.Upload;
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {
-    internal interface IInMemoryFileDbInternal
+    internal interface IInMemoryFileDbUploader
     {
         /// <summary>
         /// Inits a file upload session against this InMemoryFileDb

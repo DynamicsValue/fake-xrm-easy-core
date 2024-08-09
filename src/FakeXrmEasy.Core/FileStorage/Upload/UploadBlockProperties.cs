@@ -1,4 +1,4 @@
-namespace FakeXrmEasy.Core.FileStorage
+namespace FakeXrmEasy.Core.FileStorage.Upload
 {
     internal interface IUploadBlockProperties
     {
