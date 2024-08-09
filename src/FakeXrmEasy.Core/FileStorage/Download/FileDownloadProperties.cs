@@ -16,10 +16,7 @@ namespace FakeXrmEasy.Core.FileStorage.Download
         {
             if (other.Target != null)
             {
-                Target = new EntityReference(other.Target.LogicalName)
-                {
-                    Id = other.Target.Id
-                };
+                Target = new EntityReference(other.Target.LogicalName, other.Target.Id);
             }
 
             FileAttributeName = other.FileAttributeName;
