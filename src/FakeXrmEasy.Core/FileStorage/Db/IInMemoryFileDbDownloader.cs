@@ -11,6 +11,6 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         
         List<FileDownloadSession> GetAllFileDownloadSessions();
 
-        byte[] DownloadFileBlock(DownloadBlockProperties uploadBlockProperties);
+        byte[] DownloadFileBlock(DownloadBlockProperties downloadBlockProperties);
     }
 }
