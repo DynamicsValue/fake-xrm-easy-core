@@ -7,7 +7,11 @@ namespace FakeXrmEasy.Core.FileStorage.Db.Exceptions
     /// </summary>
     public class CouldNotCommitFileException: Exception
     {
-        public CouldNotCommitFileException(string fileUploadContinuationToken) : base($"The file associated to continuation token '{fileUploadContinuationToken}' could not be committed due to an unknown error")
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="fileUploadContinuationToken"></param>
+        internal CouldNotCommitFileException(string fileUploadContinuationToken) : base($"The file associated to continuation token '{fileUploadContinuationToken}' could not be committed due to an unknown error")
         {
             
         }

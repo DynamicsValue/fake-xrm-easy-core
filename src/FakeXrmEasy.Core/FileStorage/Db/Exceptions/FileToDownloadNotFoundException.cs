@@ -13,7 +13,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db.Exceptions
         /// </summary>
         /// <param name="entityReference">An entity reference of the record</param>
         /// <param name="fileAttributeName">The column where a file was not found</param>
-        public FileToDownloadNotFoundException(EntityReference entityReference, string fileAttributeName) 
+        internal FileToDownloadNotFoundException(EntityReference entityReference, string fileAttributeName) 
             : base($"A file was not found for record with logical name '{entityReference.LogicalName}' and Id '{entityReference.Id.ToString()}' in column '{fileAttributeName}'")
         {
             

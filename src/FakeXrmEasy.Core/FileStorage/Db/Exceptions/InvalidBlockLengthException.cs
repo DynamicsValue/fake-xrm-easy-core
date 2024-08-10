@@ -10,7 +10,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db.Exceptions
         /// <summary>
         /// Default constructor
         /// </summary>
-        public InvalidBlockLengthException() : base($"The BlockLength property must be greater than zero.")
+        internal InvalidBlockLengthException() : base($"The BlockLength property must be greater than zero.")
         {
             
         }

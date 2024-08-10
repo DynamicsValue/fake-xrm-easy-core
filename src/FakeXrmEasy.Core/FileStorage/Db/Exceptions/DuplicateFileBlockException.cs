@@ -12,7 +12,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db.Exceptions
         /// </summary>
         /// <param name="blockId">The block Id that already existed</param>
         /// <param name="fileUploadSessionId">The Id of the FileUploadSession where that block existed</param>
-        public DuplicateFileBlockException(string blockId, string fileUploadSessionId) : base($"A block was already uploaded with Id {blockId} against the current file continuation token: {fileUploadSessionId}")
+        internal DuplicateFileBlockException(string blockId, string fileUploadSessionId) : base($"A block was already uploaded with Id {blockId} against the current file continuation token: {fileUploadSessionId}")
         {
             
         }

@@ -8,7 +8,11 @@ namespace FakeXrmEasy.Core.FileStorage.Db.Exceptions
     /// </summary>
     public class RecordNotFoundException: Exception
     {
-        public RecordNotFoundException(EntityReference reference) : base($"The entity reference record for logical name '{reference.LogicalName}' and '{reference.Id}' does not exist.")
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="reference"></param>
+        internal RecordNotFoundException(EntityReference reference) : base($"The entity reference record for logical name '{reference.LogicalName}' and '{reference.Id}' does not exist.")
         {
             
         }
