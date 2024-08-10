@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.Xrm.Sdk;
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {
@@ -7,5 +8,6 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         List<FileAttachment> GetAllFiles();
         void AddFile(FileAttachment fileAttachment);
         void DeleteFile(string fileId);
+        List<FileAttachment> GetFilesForTarget(EntityReference target);
     }
 }

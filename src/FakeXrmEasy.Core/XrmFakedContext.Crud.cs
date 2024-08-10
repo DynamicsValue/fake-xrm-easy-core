@@ -174,8 +174,31 @@ namespace FakeXrmEasy
                     _service.Execute(request);
                 }
             }
+            
+            DeleteAssociatedFiles(e);
         }
 
+        /// <summary>
+        /// Deletes any associated files to an entity that has their file attributes as null
+        /// </summary>
+        /// <param name="e"></param>
+        private void DeleteAssociatedFiles(Entity e)
+        {
+            var associatedFiles = FileDb.GetFilesForTarget(e.ToEntityReference());
+            
+            foreach (var updatedAttribute in e.Attributes.Keys)
+            {
+                if (e[updatedAttribute] == null)
+                {
+                    var associatedFile = associatedFiles.FirstOrDefault(f => f.AttributeName.Equals(updatedAttribute));
+                    if (associatedFile != null)
+                    {
+                        FileDb.DeleteFile(associatedFile.Id);
+                    }
+                }
+            }
+        }
+        
         /// <summary>
         /// Returns an entity record by logical name and primary key
         /// </summary>

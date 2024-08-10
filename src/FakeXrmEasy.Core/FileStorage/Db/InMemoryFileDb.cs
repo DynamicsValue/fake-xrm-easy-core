@@ -98,6 +98,15 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             entity[file.AttributeName] = null;
             table.Replace(entity);
         }
+
+        public List<FileAttachment> GetFilesForTarget(EntityReference target)
+        {
+            return _files.Values.Where
+                    (f => 
+                        f.Target.LogicalName.Equals(target.LogicalName) && 
+                        f.Target.Id.Equals(target.Id))
+                .ToList();
+        }
         #endregion
         
         /// <summary>
