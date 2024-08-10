@@ -17,7 +17,8 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
         private readonly FileDownloadProperties _fileDownloadProperties;
         private readonly Entity _entity;
         private readonly FileAttachment _file;
-            
+        private readonly DownloadBlockProperties _downloadBlockProperties;
+        
         public InMemoryFileDbDownloaderTests()
         {
             _db = new InMemoryDb();
@@ -42,6 +43,11 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
                 Target = _entity.ToEntityReference(),
                 AttributeName = "dv_file",
                 Content = new byte[] { 1, 2, 3, 4 }
+            };
+
+            _downloadBlockProperties = new DownloadBlockProperties()
+            {
+                FileDownloadSessionId = ""
             };
         }
         
@@ -92,6 +98,75 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             Assert.Equal(_fileDownloadProperties.FileAttributeName, fileDownloadSession.Properties.FileAttributeName);
             Assert.Equal(_fileDownloadProperties.Target.LogicalName, _entity.LogicalName);
             Assert.Equal(_fileDownloadProperties.Target.Id, _entity.Id);
+        }
+
+        [Fact]
+        public void Should_throw_file_token_continuation_not_found_exception()
+        {
+            _downloadBlockProperties.FileDownloadSessionId = "invalid id";
+            Assert.Throws<FileTokenContinuationNotFoundException>(() =>
+                _fileDb.DownloadFileBlock(_downloadBlockProperties));
+        }
+        
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-23456)]
+        public void Should_throw_invalid_length_exception(long blockLength)
+        {
+            _fileDb.AddFile(_file);
+            
+            _entity[_fileDownloadProperties.FileAttributeName] = _file.Id;
+            _db.AddEntityRecord(_entity);
+            
+            var fileContinuationToken = _fileDb.InitFileDownloadSession(_fileDownloadProperties);
+            Assert.NotNull(fileContinuationToken);
+            
+            _downloadBlockProperties.FileDownloadSessionId = fileContinuationToken;
+            _downloadBlockProperties.BlockLength = blockLength;
+            Assert.Throws<InvalidBlockLengthException>(() => _fileDb.DownloadFileBlock(_downloadBlockProperties));
+        }
+        
+        [Theory]
+        [InlineData(-1, 2)]
+        [InlineData(0, 5)] 
+        [InlineData(2, 25)]
+        [InlineData(4, 2)]
+        public void Should_throw_invalid_offset_exception_if_exceeds_file_length(long offset, long blockLength)
+        {
+            _fileDb.AddFile(_file);
+            
+            _entity[_fileDownloadProperties.FileAttributeName] = _file.Id;
+            _db.AddEntityRecord(_entity);
+            
+            var fileContinuationToken = _fileDb.InitFileDownloadSession(_fileDownloadProperties);
+            Assert.NotNull(fileContinuationToken);
+            
+            _downloadBlockProperties.FileDownloadSessionId = fileContinuationToken;
+            _downloadBlockProperties.Offset = offset;
+            _downloadBlockProperties.BlockLength = blockLength;
+            Assert.Throws<InvalidOffsetException>(() => _fileDb.DownloadFileBlock(_downloadBlockProperties));
+        }
+        
+        [Theory]
+        [InlineData(0, 4)]
+        [InlineData(1, 3)] 
+        [InlineData(3, 1)]
+        public void Should_download_a_valid_file_block(long offset, long blockLength)
+        {
+            _fileDb.AddFile(_file);
+            
+            _entity[_fileDownloadProperties.FileAttributeName] = _file.Id;
+            _db.AddEntityRecord(_entity);
+            
+            var fileContinuationToken = _fileDb.InitFileDownloadSession(_fileDownloadProperties);
+            Assert.NotNull(fileContinuationToken);
+            
+            _downloadBlockProperties.FileDownloadSessionId = fileContinuationToken;
+            _downloadBlockProperties.Offset = offset;
+            _downloadBlockProperties.BlockLength = blockLength;
+            var data = _fileDb.DownloadFileBlock(_downloadBlockProperties);
+            
+            Assert.Equal(blockLength, data.Length);
         }
     }
 }

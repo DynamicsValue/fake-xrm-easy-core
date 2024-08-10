@@ -239,9 +239,36 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             return _fileDownloadSessions.Values.ToList();
         }
 
-        public byte[] DownloadFileBlock(DownloadBlockProperties uploadBlockProperties)
+        public byte[] DownloadFileBlock(DownloadBlockProperties downloadBlockProperties)
         {
-            throw new NotImplementedException();
+            var fileDownloadSession = GetFileDownloadSession(downloadBlockProperties.FileDownloadSessionId);
+            if (fileDownloadSession == null)
+            {
+                throw new FileTokenContinuationNotFoundException(downloadBlockProperties.FileDownloadSessionId);
+            }
+
+            if (downloadBlockProperties.BlockLength <= 0)
+            {
+                throw new InvalidBlockLengthException();
+            }
+
+            if (downloadBlockProperties.Offset < 0)
+            {
+                throw new InvalidOffsetException(downloadBlockProperties, fileDownloadSession.File.Content.Length);
+            }
+
+            if (downloadBlockProperties.BlockLength + downloadBlockProperties.Offset >
+                fileDownloadSession.File.Content.Length)
+            {
+                throw new InvalidOffsetException(downloadBlockProperties, fileDownloadSession.File.Content.Length);
+            }
+
+            var data = new byte[downloadBlockProperties.BlockLength];
+            
+            Array.Copy(fileDownloadSession.File.Content, downloadBlockProperties.Offset, data,
+                0, downloadBlockProperties.BlockLength);
+
+            return data;
         }
         #endregion
     }
