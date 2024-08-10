@@ -13,7 +13,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Core.FileStorage.Db
 {
-    internal class InMemoryFileDb : IInMemoryFileDbUploader, IInMemoryFileDbDownloader
+    internal class InMemoryFileDb : IInMemoryFileDbUploader, IInMemoryFileDbDownloader, IInMemoryFileDbInternal
     {
         private readonly ConcurrentDictionary<string, FileUploadSession> _uncommittedFileUploads;
         private readonly ConcurrentDictionary<string, FileAttachment> _files;
@@ -69,17 +69,26 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         }
 
         #region Internal File Manipulation
-        internal List<FileAttachment> GetAllFiles()
+        public List<FileAttachment> GetAllFiles()
         {
             return _files.Values.ToList();
         }
 
-        internal void AddFile(FileAttachment fileAttachment)
+        public void AddFile(FileAttachment fileAttachment)
         {
             var wasAdded = _files.TryAdd(fileAttachment.Id, fileAttachment);
             if (!wasAdded)
             {
                 throw new CouldNotAddFileException();
+            }
+        }
+
+        public void DeleteFile(string fileId)
+        {
+            var wasDeleted = _files.TryRemove(fileId, out var file);
+            if (!wasDeleted)
+            {
+                throw new CouldNotDeleteFileException(fileId);
             }
         }
         #endregion
