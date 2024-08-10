@@ -12,6 +12,8 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
 {
     public class DeleteFileTests
     {
+        private const string FILE_ATTRIBUTE_NAME = "dv_file";
+        
         private readonly InMemoryDb _db;
         private readonly InMemoryFileDb _fileDb;
         private readonly Entity _entity;
@@ -24,7 +26,7 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             
             _entity = new Entity(dv_test.EntityLogicalName)
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
             };
             
             _file = new FileAttachment()
@@ -33,9 +35,11 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
                 MimeType = "application/pdf",
                 FileName = "TestFile.pdf",
                 Target = _entity.ToEntityReference(),
-                AttributeName = "dv_file",
+                AttributeName = FILE_ATTRIBUTE_NAME,
                 Content = new byte[] { 1, 2, 3, 4 }
             };
+
+            _entity[FILE_ATTRIBUTE_NAME] = _file.Id;
         }
 
         [Fact]
@@ -53,10 +57,15 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
         [Fact]
         public void Should_delete_an_existing_file()
         {
+            _db.AddEntityRecord(_entity);
             _fileDb.AddFile(_file);
+            
             _fileDb.DeleteFile(_file.Id);
             
             Assert.Empty(_fileDb.GetAllFiles());
+
+            var entityAfter = _db.GetTable(_entity.LogicalName).GetById(_entity.Id);
+            Assert.Null(entityAfter[_file.AttributeName]);
         }
     }
 }

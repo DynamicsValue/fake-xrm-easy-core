@@ -90,6 +90,13 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             {
                 throw new CouldNotDeleteFileException(fileId);
             }
+            
+            //Set file attribute to null
+            var entityReference = file.Target;
+            var table = _db.GetTable(entityReference.LogicalName);
+            var entity = table.GetById(entityReference.Id);
+            entity[file.AttributeName] = null;
+            table.Replace(entity);
         }
         #endregion
         
