@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
@@ -21,7 +22,12 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         private readonly InMemoryDb _db;
 
         internal const string FILE_ATTACHMENT_TABLE_NAME = "fileattachment";
+        private const string ORGANIZATION_TABLE_NAME = "organization";
         
+        private const string BLOCKED_ATTACHMENTS_FIELD_NAME = "blockedattachments";
+        private const string BLOCKED_MIME_TYPES_FIELD_NAME = "blockedmimetypes";
+        private const string ALLOWED_MIME_TYPES_FIELD_NAME = "allowedmimetypes";
+
         internal InMemoryFileDb(InMemoryDb db)
         {
             _db = db;
@@ -76,6 +82,18 @@ namespace FakeXrmEasy.Core.FileStorage.Db
 
         public void AddFile(FileAttachment fileAttachment)
         {
+            var orgFileSettings = GetOrganizationFileSettings();
+
+            if (IsFileExtensionBlocked(fileAttachment.FileName, orgFileSettings))
+            {
+                throw new BlockedAttachmentException(fileAttachment.FileName);
+            }
+
+            if (!IsMimeTypeAllowed(fileAttachment.MimeType, orgFileSettings))
+            {
+                throw new BlockedMimeTypeException(fileAttachment.FileName, fileAttachment.MimeType);
+            }
+            
             var wasAdded = _files.TryAdd(fileAttachment.Id, fileAttachment);
             if (!wasAdded)
             {
@@ -107,7 +125,109 @@ namespace FakeXrmEasy.Core.FileStorage.Db
                         f.Target.Id.Equals(target.Id))
                 .ToList();
         }
+
+        public OrganizationFileSettings GetOrganizationFileSettings()
+        {
+            var orgFileSettings = new OrganizationFileSettings();
+
+            var exists = GetOrgBlockedAttachments(out var orgBlockedAttachments);
+            if (exists)
+            {
+                orgFileSettings.BlockedAttachments = orgBlockedAttachments;
+            }
+
+            exists = GetOrgAllowedMimeTypes(out var allowedMimeTypes);
+            if (exists)
+            {
+                orgFileSettings.AllowedMimeTypes = allowedMimeTypes;
+            }
+            
+            exists = GetOrgBlockedMimeTypes(out var blockedMimeTypes);
+            if (exists)
+            {
+                orgFileSettings.BlockedMimeTypes = blockedMimeTypes;
+            }
+            return orgFileSettings;
+        }
+
+        private Entity GetOrganization()
+        {
+            if (!_db.ContainsTable(ORGANIZATION_TABLE_NAME))
+            {
+                return null;
+            }
+
+            var orgTable = _db.GetTable(ORGANIZATION_TABLE_NAME);
+            return orgTable.Rows.FirstOrDefault();
+        }
+        
+        private bool GetOrgBlockedAttachments(out string[] blockedAttachments)
+        {
+            return TryGetOrganizationFileSetting(BLOCKED_ATTACHMENTS_FIELD_NAME, out blockedAttachments);
+        }
+
+        private bool GetOrgAllowedMimeTypes(out string[] allowedMimeTypes)
+        {
+            return TryGetOrganizationFileSetting(ALLOWED_MIME_TYPES_FIELD_NAME, out allowedMimeTypes);
+        }
+        
+        private bool GetOrgBlockedMimeTypes(out string[] blockedMimeTypes)
+        {
+            return TryGetOrganizationFileSetting(BLOCKED_MIME_TYPES_FIELD_NAME, out blockedMimeTypes);
+        }
+        
+        private bool TryGetOrganizationFileSetting(string settingFieldName, out string[] fileSetting)
+        {
+            bool exists = false;
+            var organization = GetOrganization();
+            if (organization == null)
+            {
+                fileSetting = new string[] { };
+                return exists;
+            }
+
+            if (organization.Contains(settingFieldName))
+            {
+                exists = true;
+                var fileSettingAttributeValue = (string)organization[settingFieldName];
+                if (string.IsNullOrWhiteSpace(fileSettingAttributeValue))
+                {
+                    fileSetting = new string[] { };
+                    return exists;
+                }
+                fileSetting = OrganizationFileSettings.FromCommaSeparated(fileSettingAttributeValue);
+            }
+            else
+            {
+                fileSetting = new string[] { };
+            }
+
+            return exists;
+        }
+
+        public bool IsFileExtensionBlocked(string fileName, OrganizationFileSettings fileSettings)
+        {
+            var extension = new FileInfo(fileName).Extension.Substring(1); //ignore the dot
+            return fileSettings.BlockedAttachments.Contains(extension);
+        }
+        
+        public bool IsMimeTypeAllowed(string mimeType, OrganizationFileSettings fileSettings)
+        {
+            if (fileSettings.AllowedMimeTypes.Length > 0)
+            {
+                return fileSettings.AllowedMimeTypes.Contains(mimeType);
+            }
+            
+            if (fileSettings.BlockedMimeTypes.Length > 0)
+            {
+                return !fileSettings.BlockedMimeTypes.Contains(mimeType);
+            }
+            
+            return true;
+        }
+        
         #endregion
+        
         
         /// <summary>
         /// 

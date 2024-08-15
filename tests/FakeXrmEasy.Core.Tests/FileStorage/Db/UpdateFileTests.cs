@@ -56,5 +56,22 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             
             Assert.Empty(_fileDb.GetAllFiles());
         }
+        
+        [Fact]
+        public void Should_keep_file_when_updating_another_attribute_to_null()
+        {
+            _fileDb.AddFile(_file);
+            _context.Initialize(_entity);
+
+            var entityToUpdate = new Entity(_entity.LogicalName)
+            {
+                Id = _entity.Id,
+                ["dv_name"] = null
+            };
+            
+            _service.Update(entityToUpdate);
+            
+            Assert.Single(_fileDb.GetAllFiles());
+        }
     }
 }
