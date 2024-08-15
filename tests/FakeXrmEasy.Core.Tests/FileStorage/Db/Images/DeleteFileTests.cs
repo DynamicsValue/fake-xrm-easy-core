@@ -8,11 +8,11 @@ using Microsoft.Xrm.Sdk;
 using Xunit;
 using FileAttachment = FakeXrmEasy.Core.FileStorage.Db.FileAttachment;
 
-namespace FakeXrmEasy.Core.Tests.FileStorage.Db
+namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Images
 {
     public class DeleteFileTests
     {
-        private const string FILE_ATTRIBUTE_NAME = "dv_file";
+        private const string IMAGE_ATTRIBUTE_NAME = "dv_image";
         
         private readonly InMemoryDb _db;
         private readonly InMemoryFileDb _fileDb;
@@ -23,7 +23,7 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
         {
             _db = new InMemoryDb();
             _fileDb = new InMemoryFileDb(_db);
-            
+
             _entity = new Entity(dv_test.EntityLogicalName)
             {
                 Id = Guid.NewGuid(),
@@ -32,14 +32,14 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             _file = new FileAttachment()
             {
                 Id = Guid.NewGuid().ToString(),
-                MimeType = "application/pdf",
-                FileName = "TestFile.pdf",
+                MimeType = "image/png",
+                FileName = "MyImage.png",
                 Target = _entity.ToEntityReference(),
-                AttributeName = FILE_ATTRIBUTE_NAME,
+                AttributeName = IMAGE_ATTRIBUTE_NAME,
                 Content = new byte[] { 1, 2, 3, 4 }
             };
 
-            _entity[FILE_ATTRIBUTE_NAME] = _file.Id;
+            _entity[IMAGE_ATTRIBUTE_NAME] = _file.Id;
         }
 
         [Fact]

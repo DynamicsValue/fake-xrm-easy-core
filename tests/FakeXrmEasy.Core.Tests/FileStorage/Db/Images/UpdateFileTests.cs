@@ -6,7 +6,7 @@ using Microsoft.Xrm.Sdk;
 using Xunit;
 using FileAttachment = FakeXrmEasy.Core.FileStorage.Db.FileAttachment;
 
-namespace FakeXrmEasy.Core.Tests.FileStorage.Db
+namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Images
 {
     public class UpdateFileTests: FakeXrmEasyTestsBase
     {
@@ -30,8 +30,8 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db
             _file = new FileAttachment()
             {
                 Id = Guid.NewGuid().ToString(),
-                MimeType = "application/pdf",
-                FileName = "TestFile.pdf",
+                MimeType = "image/png",
+                FileName = "MyImage.png",
                 Target = _entity.ToEntityReference(),
                 AttributeName = FILE_ATTRIBUTE_NAME,
                 Content = new byte[] { 1, 2, 3, 4 }

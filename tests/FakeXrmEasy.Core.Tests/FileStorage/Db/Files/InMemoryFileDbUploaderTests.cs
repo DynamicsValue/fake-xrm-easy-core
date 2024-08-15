@@ -15,7 +15,7 @@ using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk.Metadata;
 #endif
 
-namespace FakeXrmEasy.Core.Tests.FileStorage.Db
+namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
 {
     public class InMemoryFileDbUploaderTests
     {

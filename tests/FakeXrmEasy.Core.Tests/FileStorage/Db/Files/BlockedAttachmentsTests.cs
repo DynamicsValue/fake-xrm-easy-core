@@ -9,7 +9,7 @@ using Microsoft.Xrm.Sdk;
 using Xunit;
 using FileAttachment = FakeXrmEasy.Core.FileStorage.Db.FileAttachment;
 
-namespace FakeXrmEasy.Core.Tests.FileStorage.Db
+namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
 {
     public class BlockedAttachmentsTests: FakeXrmEasyTestsBase
     {

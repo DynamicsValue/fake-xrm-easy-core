@@ -1,11 +1,10 @@
 using System;
-using FakeXrmEasy.Core.FileStorage;
 using FakeXrmEasy.Core.FileStorage.Db;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
 using FakeXrmEasy.Core.FileStorage.Upload;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.FileStorage.Db
+namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
 {
     public class FileUploadSessionTests
     {

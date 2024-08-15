@@ -298,13 +298,24 @@ namespace FakeXrmEasy.Core.FileStorage.Db
                 return;
             }
 
-            var fileAttributeMetadata = attributeMetadata as FileAttributeMetadata;
-
-            if ((decimal) fileAttachment.Content.Length / 1024 > fileAttributeMetadata.MaxSizeInKB)
+            if (attributeMetadata is FileAttributeMetadata fileAttributeMetadata)
             {
-                throw new MaxSizeExceededException(tableLogicalName, fileUploadSession.Properties.FileAttributeName,
-                    fileAttributeMetadata.MaxSizeInKB.Value);
+                if ((decimal) fileAttachment.Content.Length / 1024 > fileAttributeMetadata.MaxSizeInKB)
+                {
+                    throw new MaxSizeExceededException(tableLogicalName, fileUploadSession.Properties.FileAttributeName,
+                        fileAttributeMetadata.MaxSizeInKB.Value);
+                }
             }
+            
+            if (attributeMetadata is ImageAttributeMetadata imageAttributeMetadata)
+            {
+                if ((decimal) fileAttachment.Content.Length / 1024 > imageAttributeMetadata.MaxSizeInKB)
+                {
+                    throw new MaxSizeExceededException(tableLogicalName, fileUploadSession.Properties.FileAttributeName,
+                        imageAttributeMetadata.MaxSizeInKB.Value);
+                }
+            }
+            
         }
         #endif
         
