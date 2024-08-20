@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System;
 using System.Collections.Generic;
 using DataverseEntities;
@@ -92,3 +93,4 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
         }
     }
 }
+#endif
