@@ -27,7 +27,7 @@ namespace FakeXrmEasy
             
             if (FilesInitialized)
             {
-                throw new Exception("Initialize should be called only once per unit test execution and XrmFakedContext instance.");
+                throw new AlreadyInitializedFilesException();
             }
             
             foreach (var file in files)

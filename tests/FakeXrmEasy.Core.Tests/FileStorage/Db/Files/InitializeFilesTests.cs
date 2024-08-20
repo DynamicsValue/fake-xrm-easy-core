@@ -91,6 +91,15 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
             var allFiles = _fileDb.GetAllFiles();
             Assert.Single(allFiles);
         }
+        
+        [Fact]
+        public void Should_throw_exception_if_initialize_files_is_called_twice()
+        {
+            _context.InitializeMetadata(_entityMetadata);
+            _context.Initialize(_entity);
+            _context.InitializeFiles(new [] { _file });
+            Assert.Throws<AlreadyInitializedFilesException>(() => _context.InitializeFiles(new [] { _file }));
+        }
     }
 }
 #endif
