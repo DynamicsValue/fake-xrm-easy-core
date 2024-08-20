@@ -127,7 +127,6 @@ namespace FakeXrmEasy.Core.FileStorage.Db
                     (f => 
                         f.Target.LogicalName.Equals(target.LogicalName) && 
                         f.Target.Id.Equals(target.Id))
-                .Select(f => f as IFileAttachment)
                 .ToList();
         }
 
@@ -303,22 +302,19 @@ namespace FakeXrmEasy.Core.FileStorage.Db
                 return;
             }
 
-            if (attributeMetadata is FileAttributeMetadata fileAttributeMetadata)
+            if (attributeMetadata is FileAttributeMetadata fileAttributeMetadata 
+                && (decimal) fileAttachment.Content.Length / 1024 > fileAttributeMetadata.MaxSizeInKB)
             {
-                if ((decimal) fileAttachment.Content.Length / 1024 > fileAttributeMetadata.MaxSizeInKB)
-                {
-                    throw new MaxSizeExceededException(tableLogicalName, fileUploadSession.Properties.FileAttributeName,
-                        fileAttributeMetadata.MaxSizeInKB.Value);
-                }
+                throw new MaxSizeExceededException(tableLogicalName, fileUploadSession.Properties.FileAttributeName,
+                    fileAttributeMetadata.MaxSizeInKB.Value);
             }
             
-            if (attributeMetadata is ImageAttributeMetadata imageAttributeMetadata)
+            if (attributeMetadata is ImageAttributeMetadata imageAttributeMetadata &&
+                (decimal) fileAttachment.Content.Length / 1024 > imageAttributeMetadata.MaxSizeInKB)
             {
-                if ((decimal) fileAttachment.Content.Length / 1024 > imageAttributeMetadata.MaxSizeInKB)
-                {
-                    throw new MaxSizeExceededException(tableLogicalName, fileUploadSession.Properties.FileAttributeName,
-                        imageAttributeMetadata.MaxSizeInKB.Value);
-                }
+
+                throw new MaxSizeExceededException(tableLogicalName, fileUploadSession.Properties.FileAttributeName,
+                    imageAttributeMetadata.MaxSizeInKB.Value);
             }
             
         }
