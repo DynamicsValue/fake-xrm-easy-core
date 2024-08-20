@@ -113,9 +113,12 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             //Set file attribute to null
             var entityReference = file.Target;
             var table = _db.GetTable(entityReference.LogicalName);
-            var entity = table.GetById(entityReference.Id);
-            entity[file.AttributeName] = null;
-            table.Replace(entity);
+            if (table.Contains(entityReference.Id))
+            {
+                var entity = table.GetById(entityReference.Id);
+                entity[file.AttributeName] = null;
+                table.Replace(entity);
+            }
         }
 
         public List<IFileAttachment> GetFilesForTarget(EntityReference target)

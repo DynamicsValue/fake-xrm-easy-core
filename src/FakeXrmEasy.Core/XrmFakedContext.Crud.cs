@@ -175,14 +175,14 @@ namespace FakeXrmEasy
                 }
             }
             
-            DeleteAssociatedFiles(e);
+            DeleteAssociatedFilesAfterUpdate(e);
         }
 
         /// <summary>
         /// Deletes any associated files to an entity that has their file attributes as null
         /// </summary>
         /// <param name="e"></param>
-        private void DeleteAssociatedFiles(Entity e)
+        private void DeleteAssociatedFilesAfterUpdate(Entity e)
         {
             var associatedFiles = FileDb.GetFilesForTarget(e.ToEntityReference());
             
@@ -196,6 +196,20 @@ namespace FakeXrmEasy
                         FileDb.DeleteFile(associatedFile.Id);
                     }
                 }
+            }
+        }
+        
+        /// <summary>
+        /// Deletes any associated files after a Delete message
+        /// </summary>
+        /// <param name="er">The entity reference that was deleted</param>
+        private void DeleteAssociatedFiles(EntityReference er)
+        {
+            var associatedFiles = FileDb.GetFilesForTarget(er);
+            
+            foreach (var associatedFile in associatedFiles)
+            {
+                FileDb.DeleteFile(associatedFile.Id);
             }
         }
         
@@ -338,6 +352,8 @@ namespace FakeXrmEasy
                 // Entity found => remove entity
                 var table = Db.GetTable(er.LogicalName);
                 table.Remove(er.Id);
+
+                DeleteAssociatedFiles(er);
             }
             else
             {
