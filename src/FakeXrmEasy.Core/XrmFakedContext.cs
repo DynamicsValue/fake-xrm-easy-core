@@ -19,6 +19,7 @@ using System.Linq;
 using System.Reflection;
 
 using System.Runtime.CompilerServices;
+using FakeXrmEasy.Abstractions.FileStorage;
 using FakeXrmEasy.Core.Exceptions;
 using FakeXrmEasy.Core.FileStorage.Db;
 
@@ -62,10 +63,20 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Flag to determine if InitializeMetadata has been called
         /// </summary>
-        protected internal bool Initialised { get; set; }
+        protected internal bool MetadataInitialized { get; set; }
+        
+        /// <summary>
+        /// Flag to check if the context has been already initialised
+        /// </summary>
+        protected internal bool Initialized { get; set; }
 
+        /// <summary>
+        /// Flag to check if the FileDb has been already initialised
+        /// </summary>
+        protected internal bool FilesInitialized { get; set; }
+        
         /// <summary>
         /// Internal In-Memory Database
         /// </summary>
@@ -217,6 +228,10 @@ namespace FakeXrmEasy
             _proxyTypesAssemblies = new List<Assembly>();
 
             GetOrganizationService();
+
+            Initialized = false;
+            MetadataInitialized = false;
+            FilesInitialized = false;
         }
 
         
@@ -298,7 +313,7 @@ namespace FakeXrmEasy
         /// <param name="entities"></param>
         public virtual void Initialize(IEnumerable<Entity> entities)
         {
-            if (Initialised)
+            if (Initialized)
             {
                 throw new Exception("Initialize should be called only once per unit test execution and XrmFakedContext instance.");
             }
@@ -314,7 +329,7 @@ namespace FakeXrmEasy
                 AddEntityWithDefaults(e, true);
             }
 
-            Initialised = true;
+            Initialized = true;
         }
 
         /// <summary>
@@ -325,6 +340,8 @@ namespace FakeXrmEasy
         {
             this.Initialize(new List<Entity>() { entity });
         }
+
+
         
         private void ValidateEntityReferences(Entity e)
         {

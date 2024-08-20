@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FakeXrmEasy.Abstractions.FileStorage;
 using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
 using FakeXrmEasy.Core.FileStorage.Download;
@@ -17,7 +18,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
     internal class InMemoryFileDb : IInMemoryFileDbUploader, IInMemoryFileDbDownloader, IInMemoryFileDbInternal
     {
         private readonly ConcurrentDictionary<string, FileUploadSession> _uncommittedFileUploads;
-        private readonly ConcurrentDictionary<string, FileAttachment> _files;
+        private readonly ConcurrentDictionary<string, IFileAttachment> _files;
         private readonly ConcurrentDictionary<string, FileDownloadSession> _fileDownloadSessions;
         private readonly InMemoryDb _db;
 
@@ -32,7 +33,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         {
             _db = db;
             _uncommittedFileUploads = new ConcurrentDictionary<string, FileUploadSession>();
-            _files = new ConcurrentDictionary<string, FileAttachment>();
+            _files = new ConcurrentDictionary<string, IFileAttachment>();
             _fileDownloadSessions = new ConcurrentDictionary<string, FileDownloadSession>();
         }
 
@@ -75,12 +76,12 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         }
 
         #region Internal File Manipulation
-        public List<FileAttachment> GetAllFiles()
+        public List<IFileAttachment> GetAllFiles()
         {
             return _files.Values.ToList();
         }
 
-        public void AddFile(FileAttachment fileAttachment)
+        public void AddFile(IFileAttachment fileAttachment)
         {
             var orgFileSettings = GetOrganizationFileSettings();
 
@@ -117,12 +118,13 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             table.Replace(entity);
         }
 
-        public List<FileAttachment> GetFilesForTarget(EntityReference target)
+        public List<IFileAttachment> GetFilesForTarget(EntityReference target)
         {
             return _files.Values.Where
                     (f => 
                         f.Target.LogicalName.Equals(target.LogicalName) && 
                         f.Target.Id.Equals(target.Id))
+                .Select(f => f as IFileAttachment)
                 .ToList();
         }
 
@@ -233,7 +235,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         /// 
         /// </summary>
         /// <returns></returns>
-        public IQueryable<FileAttachment> CreateQuery()
+        public IQueryable<IFileAttachment> CreateQuery()
         {
             return _files.Values.AsQueryable();
         }
@@ -359,7 +361,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             return fileContinuationToken;
         }
 
-        private FileAttachment CheckFileExists(FileDownloadProperties fileDownloadProperties)
+        private IFileAttachment CheckFileExists(FileDownloadProperties fileDownloadProperties)
         {
             var entityReference = fileDownloadProperties.Target;
             var record = _db.GetTable(entityReference.LogicalName).GetById(entityReference.Id);

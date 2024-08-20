@@ -1,16 +1,18 @@
 using System;
+using System.Collections.Generic;
 using DataverseEntities;
 using FakeXrmEasy.Core.Db;
 using FakeXrmEasy.Core.FileStorage.Db;
 using FakeXrmEasy.Core.FileStorage.Db.Exceptions;
-using FakeXrmEasy.Core.FileStorage.Download;
+using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using Xunit;
 using FileAttachment = FakeXrmEasy.Core.FileStorage.Db.FileAttachment;
 
 namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
 {
-    public class DeleteFileTests: FakeXrmEasyTestsBase
+    public class InitializeFilesTests: FakeXrmEasyTestsBase
     {
         private const string FILE_ATTRIBUTE_NAME = "dv_file";
         
@@ -19,7 +21,9 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
         private readonly Entity _entity;
         private readonly FileAttachment _file;
 
-        public DeleteFileTests()
+        private readonly EntityMetadata _entityMetadata;
+        
+        public InitializeFilesTests()
         {
             _db = (_context as XrmFakedContext).Db;
             _fileDb = (_context as XrmFakedContext).FileDb;
@@ -40,6 +44,21 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
             };
 
             _entity[FILE_ATTRIBUTE_NAME] = _file.Id;
+            
+            var fileAttributeMetadata = new FileAttributeMetadata()
+            {
+                LogicalName = "dv_file"
+            };
+            fileAttributeMetadata.MaxSizeInKB = 1; //1 KB
+            
+            _entityMetadata = new EntityMetadata()
+            {
+                LogicalName = dv_test.EntityLogicalName
+            };
+            _entityMetadata.SetAttributeCollection(new List<AttributeMetadata>()
+            {
+                fileAttributeMetadata  
+            });
         }
 
         [Fact]
@@ -49,36 +68,27 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
         }
         
         [Fact]
-        public void Should_throw_exception_when_a_file_doesnt_exists()
+        public void Should_throw_exception_if_initialize_metadata_is_not_called_before_initialize_files()
         {
-            Assert.Throws<CouldNotDeleteFileException>(() => _fileDb.DeleteFile("invalid id"));
+            Assert.Throws<InitializeMetadataNotCalledException>(() => _context.InitializeFiles(new [] { _file }));
         }
         
         [Fact]
-        public void Should_delete_an_existing_file()
+        public void Should_throw_exception_if_initialize_is_not_called_before_initialize_files()
         {
-            _db.AddEntityRecord(_entity);
-            _fileDb.AddFile(_file);
-            
-            _fileDb.DeleteFile(_file.Id);
-            
-            Assert.Empty(_fileDb.GetAllFiles());
-
-            var entityAfter = _db.GetTable(_entity.LogicalName).GetById(_entity.Id);
-            Assert.Null(entityAfter[_file.AttributeName]);
+            _context.InitializeMetadata(_entityMetadata);
+            Assert.Throws<InitializeNotCalledException>(() => _context.InitializeFiles(new [] { _file }));
         }
         
-        /*
         [Fact]
-        public void Should_delete_file_when_the_associated_record_is_deleted()
+        public void Should_init_file()
         {
+            _context.InitializeMetadata(_entityMetadata);
             _context.Initialize(_entity);
-            _fileDb.AddFile(_file);
-            
-            _service.Delete(_entity.LogicalName, _entity.Id);
-            
-            Assert.Empty(_fileDb.GetAllFiles());
+            _context.InitializeFiles(new [] { _file });
+
+            var allFiles = _fileDb.GetAllFiles();
+            Assert.Single(allFiles);
         }
-        */
     }
 }
