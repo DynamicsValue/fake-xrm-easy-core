@@ -42,6 +42,8 @@ namespace FakeXrmEasy
                 }
                 Db.AddOrUpdateMetadata(eMetadata.LogicalName, eMetadata);
             }
+
+            MetadataInitialized = true;
         }
 
         /// <summary>
@@ -50,11 +52,11 @@ namespace FakeXrmEasy
         /// <param name="entityMetadata"></param>
         public void InitializeMetadata(EntityMetadata entityMetadata)
         {
-            this.InitializeMetadata(new List<EntityMetadata>() { entityMetadata });
+            InitializeMetadata(new List<EntityMetadata>() { entityMetadata });
         }
 
         /// <summary>
-        /// 
+        /// Initializes Metadata from an early bound assembly
         /// </summary>
         /// <param name="earlyBoundEntitiesAssembly"></param>
         public void InitializeMetadata(Assembly earlyBoundEntitiesAssembly)
@@ -62,8 +64,9 @@ namespace FakeXrmEasy
             IEnumerable<EntityMetadata> entityMetadatas = MetadataGenerator.FromEarlyBoundEntities(earlyBoundEntitiesAssembly, this);
             if (entityMetadatas.Any())
             {
-                this.InitializeMetadata(entityMetadatas);
+                InitializeMetadata(entityMetadatas);
             }
+            MetadataInitialized = true;
         }
 
         /// <summary>
