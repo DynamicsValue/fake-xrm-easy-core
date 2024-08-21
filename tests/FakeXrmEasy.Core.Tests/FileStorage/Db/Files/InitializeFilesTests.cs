@@ -90,6 +90,9 @@ namespace FakeXrmEasy.Core.Tests.FileStorage.Db.Files
 
             var allFiles = _fileDb.GetAllFiles();
             Assert.Single(allFiles);
+
+            var singleFile = _fileDb.GetFileById(_file.Id);
+            Assert.NotNull(singleFile);
         }
         
         [Fact]
