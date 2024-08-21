@@ -76,6 +76,12 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         }
 
         #region Internal File Manipulation
+        public IFileAttachment GetFileById(string fileId)
+        {
+            _files.TryGetValue(fileId, out var file);
+            return file;
+        }
+        
         public List<IFileAttachment> GetAllFiles()
         {
             return _files.Values.ToList();
@@ -234,7 +240,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         
         
         /// <summary>
-        /// 
+        /// Creates a query to query files by ay criteria
         /// </summary>
         /// <returns></returns>
         public IQueryable<IFileAttachment> CreateQuery()
