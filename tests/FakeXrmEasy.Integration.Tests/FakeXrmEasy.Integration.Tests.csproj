@@ -7,31 +7,34 @@
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2015'">net452</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY_2013'">net452</TargetFrameworks>
     <TargetFrameworks Condition="'$(Configuration)'=='FAKE_XRM_EASY'">net452</TargetFrameworks>
-    <PackageId>FakeXrmEasy.Core</PackageId>
+
+    <IsPackable>true</IsPackable>
+
+    <PackageId>FakeXrmEasy.IntegrationTests</PackageId>
     <VersionPrefix>2.6.0</VersionPrefix>
     <Authors>Jordi Montaña</Authors>
-    <Company>Dynamics Value</Company>
-    <Title>FakeXrmEasy Core</Title>
-    <Copyright>(c) 2021 Dynamics Value</Copyright>
+    <Company>Dynamics Value S.L.</Company>
+    <Title>Internal Unit test suite for FakeXrmEasy.Core package</Title>
+    <PackageDescription>FakeXrmEasy is the open source test automation framework for .net core and the Power Platform / Dataverse. This is an internal package for regression testing purposes.</PackageDescription>
+    <Copyright>(c) 2021 DynamicsValue S.L.</Copyright>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageReleaseNotes>Please write release notes in CHANGELOG.md</PackageReleaseNotes>
     <PackageIcon>FakeXrmEasyLogo_128x128.png</PackageIcon>
-    <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform;fakexrmeasy</PackageTags>
+    <PackageTags>dynamics;crm;365;unit testing;xrm;mock;mocking;fake;fakes;cds;common data service;power platform</PackageTags>
     <RepositoryUrl>https://github.com/DynamicsValue/fake-xrm-easy-core</RepositoryUrl>
+
     <Configurations>FAKE_XRM_EASY_9;FAKE_XRM_EASY_365;FAKE_XRM_EASY_2016;FAKE_XRM_EASY_2015;FAKE_XRM_EASY_2013;FAKE_XRM_EASY</Configurations>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
     <AssemblyOriginatorKeyFile>..\..\fakexrmeasy.snk</AssemblyOriginatorKeyFile>
-		<SignAssembly>True</SignAssembly>
+    <SignAssembly>True</SignAssembly>
     <PublicSign Condition="'$(OS)'=='Unix'">true</PublicSign>
-    <SonarQubeTestProject>False</SonarQubeTestProject>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="../../LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
     <None Include="../../FakeXrmEasyLogo_128x128.png" Pack="true" PackagePath="/" />
   </ItemGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
     <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY;FXE_V2</DefineConstants>
   </PropertyGroup>
@@ -56,25 +59,34 @@
     <DefineConstants>DEBUG;TRACE;FAKE_XRM_EASY_9;FXE_V2</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataverseEntities\DataverseEntities.csproj" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.52" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.1.1.45" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="[8.2.0.2,9.0)" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="[8.2.0.1,9.0)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net452' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="[8.2.0.1,9.0)" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="[8.2.0.1,9.0)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net452' And '$(Configuration)'=='FAKE_XRM_EASY_2016'">
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="[8.1.0.2,8.2)" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="[8.1.0.2,8.2)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net452' And '$(Configuration)'=='FAKE_XRM_EASY_2015'">
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="[7.1.1,8.0)" />
     <PackageReference Include="Microsoft.CrmSdk.Extensions" Version="[7.1.0.1,8.0)" />
+    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="[7.0.0.1,8.0)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net452' And '$(Configuration)'=='FAKE_XRM_EASY_2013'">
@@ -94,6 +106,11 @@
 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="[6.0.0,7.0)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.console" Version="2.4.1" />
+    <PackageReference Include="coverlet.collector" Version="1.2.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
@@ -115,17 +132,28 @@
     <PackageReference Include="FakeXrmEasy.Abstractions.v9" Version="[2.6.0-*,3.0)" />
   </ItemGroup>
 
-  <Target Name="PreparePackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
-    <Message Text="Value of MSBuildProjectDirectory = '$(MSBuildProjectDirectory)'" />
-    <ReadLinesFromFile File="$(MSBuildProjectDirectory)/../../CHANGELOG.md">
-      <Output TaskParameter="Lines" ItemName="ReleaseNoteLines" />
-    </ReadLinesFromFile>
-    <Message Text="Value of Lines read = '@(ReleaseNoteLines, '%0a')'" />
-    <PropertyGroup>
-      <PackageDescription>
-FakeXrmEasy is the open source test automation framework for .net core and the Power Platform. This is the core package containing a configurable middleware, crud operators, and query translation between FetchXml, QueryExpression, CRM LINQ, and QueryByAttribute.
-      </PackageDescription>
-      <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
-    </PropertyGroup>
-  </Target>
+  <ItemGroup Condition="'$(PackTests)' == ''">
+    <ProjectReference Include="..\..\src\FakeXrmEasy.Core\FakeXrmEasy.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY'">
+    <PackageReference Include="FakeXrmEasy.Core.v2011" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2013'">
+    <PackageReference Include="FakeXrmEasy.Core.v2013" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2015'">
+    <PackageReference Include="FakeXrmEasy.Core.v2015" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2016'">
+    <PackageReference Include="FakeXrmEasy.Core.v2016" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
+    <PackageReference Include="FakeXrmEasy.Core.v365" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
+    <PackageReference Include="FakeXrmEasy.Core.v9" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+
+
 </Project>
