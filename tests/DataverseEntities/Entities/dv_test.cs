@@ -368,6 +368,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if FAKE_XRM_EASY_9
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_choice_multiple")]
 		public virtual System.Collections.Generic.IEnumerable<dv_test_dv_choice_multiple> dv_choice_multiple
 		{
@@ -380,6 +381,8 @@ namespace DataverseEntities
 				this.SetAttributeValue("dv_choice_multiple", EntityOptionSetEnum.GetMultiEnum(this, "dv_choice_multiple", value));
 			}
 		}
+		
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_choice_multiplename")]
 		public string dv_choice_multipleName
