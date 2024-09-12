@@ -62,6 +62,10 @@
   <ItemGroup>
     <ProjectReference Include="..\DataverseEntities\DataverseEntities.csproj" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(IsPacking)' == ''">
+    <ProjectReference Include="..\..\src\FakeXrmEasy.Core\FakeXrmEasy.Core.csproj" />
+  </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
     <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.52" />
@@ -106,18 +110,12 @@
 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="[6.0.0,7.0)" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
     <PackageReference Include="xunit.runner.console" Version="2.4.1" />
     <PackageReference Include="coverlet.collector" Version="1.2.1" />
   </ItemGroup>
-
-  <ItemGroup Condition="'$(IsPacking)' == ''">
-    <ProjectReference Include="..\..\src\FakeXrmEasy.Core\FakeXrmEasy.Core.csproj" />
-  </ItemGroup>
-  
-
   
   <ItemGroup Condition="'$(Configuration)'=='FAKE_XRM_EASY'">
     <PackageReference Include="FakeXrmEasy.Abstractions.v2011" Version="[2.6.0-*,3.0)" />
@@ -144,6 +142,25 @@
     <PackageReference Condition="'$(IsPacking)' == 'true'" Include="FakeXrmEasy.Core.v9" Version="[2.6.0-*,3.0)" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(IsPacking)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY'">
+    <PackageReference Include="FakeXrmEasy.Core.v2011" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsPacking)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2013'">
+    <PackageReference Include="FakeXrmEasy.Core.v2013" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsPacking)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2015'">
+    <PackageReference Include="FakeXrmEasy.Core.v2015" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsPacking)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_2016'">
+    <PackageReference Include="FakeXrmEasy.Core.v2016" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsPacking)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_365'">
+    <PackageReference Include="FakeXrmEasy.Core.v365" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsPacking)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
+    <PackageReference Include="FakeXrmEasy.Core.v9" Version="[2.6.0-*,3.0)" />
+  </ItemGroup>
+  
   <ItemGroup Condition="'$(PackTests)' == ''">
     <ProjectReference Include="..\..\src\FakeXrmEasy.Integration\FakeXrmEasy.Integration.csproj" />
   </ItemGroup>

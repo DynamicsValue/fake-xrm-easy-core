@@ -3,7 +3,7 @@ using FakeXrmEasy.Abstractions.Exceptions;
 using System;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.XrmRealContextTests
+namespace FakeXrmEasy.Integration.Tests.XrmRealContextTests
 {
     public class XrmRealContextTests: FakeXrmEasyTestsBase
     {
