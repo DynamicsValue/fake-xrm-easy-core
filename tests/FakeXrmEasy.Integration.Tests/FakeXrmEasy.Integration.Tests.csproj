@@ -134,6 +134,7 @@
 
   <ItemGroup Condition="'$(PackTests)' == ''">
     <ProjectReference Include="..\..\src\FakeXrmEasy.Core\FakeXrmEasy.Core.csproj" />
+    <ProjectReference Include="..\..\src\FakeXrmEasy.Integration\FakeXrmEasy.Integration.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(PackTests)' == 'true' And '$(Configuration)'=='FAKE_XRM_EASY'">
