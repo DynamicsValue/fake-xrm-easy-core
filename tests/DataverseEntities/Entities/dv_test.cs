@@ -564,6 +564,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if FAKE_XRM_EASY_9 
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_file")]
 		public object dv_file
 		{
@@ -588,6 +589,7 @@ namespace DataverseEntities
 				}
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_float")]
 		public System.Nullable<double> dv_float
