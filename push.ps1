@@ -1,6 +1,6 @@
 param (
     [string]$packageSource = "local-packages",
-    [string]$packagePrefix = "FakeXrmEasy.Abstractions"
+    [string]$packagePrefix = "FakeXrmEasy.Core"
  )
 
 Write-Host "Running with packageSource '$($packageSource)'..."

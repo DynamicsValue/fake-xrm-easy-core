@@ -3,7 +3,7 @@ param (
     [string]$targetFrameworks = "netcoreapp3.1",
     [string]$packageIdPrefix = "",
     [string]$projectName = "",
-    [string]$projectPath = "",    
+    [string]$projectPath = ""   
  )
 
 Write-Host "Running with versionSuffix '$($versionSuffix)'..."

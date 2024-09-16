@@ -32,12 +32,8 @@ else
 Write-Host " -> Cleaning..." -ForegroundColor Yellow
 ./clean.ps1 -folderPath "./src/FakeXrmEasy.Core/bin"
 ./clean.ps1 -folderPath "./src/FakeXrmEasy.Core/obj"
-./clean.ps1 -folderPath "./src/FakeXrmEasy.Integration/bin"
-./clean.ps1 -folderPath "./src/FakeXrmEasy.Integration/obj"
 ./clean.ps1 -folderPath "./tests/FakeXrmEasy.Core.Tests/bin"
 ./clean.ps1 -folderPath "./tests/FakeXrmEasy.Core.Tests/obj"
-./clean.ps1 -folderPath "./tests/FakeXrmEasy.Integration.Tests/bin"
-./clean.ps1 -folderPath "./tests/FakeXrmEasy.Integration.Tests/obj"
 
 Write-Host " -> Restoring dependencies: configuration='$($configuration)', targetFramework='$($targetFrameworks)' PackTests=$($packTests)" -ForegroundColor Yellow
 if($targetFrameworks -eq "all")

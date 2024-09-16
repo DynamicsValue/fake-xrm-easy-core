@@ -1,6 +1,6 @@
 param (
     [string]$versionSuffix = "",
-    [string]$targetFrameworks = "netcoreapp3.1",
+    [string]$targetFrameworks = "netcoreapp3.1"
  )
 
 Write-Host "Running with versionSuffix '$($versionSuffix)'..."
