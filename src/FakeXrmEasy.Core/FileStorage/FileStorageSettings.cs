@@ -1,5 +1,8 @@
 namespace FakeXrmEasy.Core.FileStorage
 {
+    /// <summary>
+    /// Sets default file and image storage settings
+    /// </summary>
     public interface IFileStorageSettings
     {
         /// <summary>
@@ -12,6 +15,10 @@ namespace FakeXrmEasy.Core.FileStorage
         /// </summary>
         int ImageMaxSizeInKB { get; set; }
     }
+    
+    /// <summary>
+    /// Sets default file and image storage settings
+    /// </summary>
     public class FileStorageSettings: IFileStorageSettings
     {
         

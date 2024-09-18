@@ -7,6 +7,7 @@
 
 ### Changed
 
+- **BREAKING CHANGE**: This will **only** affect you if you use XrmRealContext class. Moved XrmRealContext to a separate FakeXrmEasy.Integration package to remove dependency on XrmTooling - https://github.com/DynamicsValue/fake-xrm-easy/issues/160
 - Resolves an issue in FetchXml queries when using arithmetic values and no early bound assemblies are used. It will now read from injected metadata in absence of proxy type assemblies - https://github.com/DynamicsValue/fake-xrm-easy/issues/158 
 - Resolves issue in MetadataGenerator where relationship properties were generated in the wrong order, also generates ManyToMany relationship properties - https://github.com/DynamicsValue/fake-xrm-easy/issues/135
 - Adds implementation of RelatedEntities in Update message , before it was implemented only for Create - https://github.com/DynamicsValue/fake-xrm-easy/issues/154

@@ -36,7 +36,7 @@ jobs:
       run: dotnet nuget enable source github
       
     - name: Build
-      run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFramework 'all'
+      run: pwsh ./build.ps1 -configuration ${{matrix.configuration}} -targetFrameworks 'all'
       env: 
         NUGET_USERNAME: ${{github.repository_owner}}
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
