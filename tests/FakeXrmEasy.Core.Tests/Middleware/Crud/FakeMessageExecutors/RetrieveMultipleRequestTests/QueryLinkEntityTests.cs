@@ -1127,5 +1127,101 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMu
             // this fails (entity2Value is "value")
             Assert.Null(entity2Value);
         }
+
+        [Fact]
+        public void Should_Find_Record_With_Associations_When_Exists_Join_Is_Used()
+        {
+            // Arrange
+            Entity account = new Entity("account", Guid.NewGuid());
+
+            Entity contact = new Entity("contact", Guid.NewGuid())
+            {
+                ["parentcustomerid"] = account.ToEntityReference(),
+            };
+            List<Entity> entities = new List<Entity>()
+            {
+                account, contact
+            };
+
+            _context.Initialize(entities);
+
+            QueryExpression queryExpression = new QueryExpression("account");
+            queryExpression.ColumnSet = new ColumnSet(true);
+
+            LinkEntity contactQuery = queryExpression.AddLink("contact", "accountid", "parentcustomerid");
+            contactQuery.JoinOperator = JoinOperator.Exists;
+            contactQuery.EntityAlias = "c";
+            
+            // Act
+            EntityCollection results = _service.RetrieveMultiple(queryExpression);
+            
+            // Assert
+            Assert.Single(results.Entities);
+        }
+        
+        
+        [Fact]
+        public void Should_Not_Find_Record_Without_Associations_When_Exists_Join_Is_Used()
+        {
+            // Arrange
+            Entity account = new Entity("account", Guid.NewGuid());
+
+            Entity contact = new Entity("contact", Guid.NewGuid());
+            List<Entity> entities = new List<Entity>()
+            {
+                account, contact
+            };
+
+            _context.Initialize(entities);
+
+            QueryExpression queryExpression = new QueryExpression("account");
+            queryExpression.ColumnSet = new ColumnSet(true);
+
+            LinkEntity contactQuery = queryExpression.AddLink("contact", "accountid", "parentcustomerid");
+            contactQuery.JoinOperator = JoinOperator.Exists;
+            contactQuery.EntityAlias = "c";
+            
+            // Act
+            EntityCollection result = _service.RetrieveMultiple(queryExpression);
+            
+            // Assert
+            Assert.Empty(result.Entities);
+        }
+
+        [Fact]
+        public void Should_Return_Only_Outer_Record_When_Exists_Join_Is_Used()
+        {
+            // Arrange
+            Entity account = new Entity("account", Guid.NewGuid());
+
+            Entity contact = new Entity("contact", Guid.NewGuid())
+            {
+                ["parentcustomerid"] = account.ToEntityReference(),
+                ["firstname"] = "firstname"
+            };
+            List<Entity> entities = new List<Entity>()
+            {
+                account, contact
+            };
+
+            _context.Initialize(entities);
+
+            QueryExpression queryExpression = new QueryExpression("account");
+            queryExpression.ColumnSet = new ColumnSet(true);
+
+            LinkEntity contactQuery = queryExpression.AddLink("contact", "accountid", "parentcustomerid");
+            contactQuery.JoinOperator = JoinOperator.Exists;
+            contactQuery.EntityAlias = "c";
+            contactQuery.Columns = new ColumnSet(true);
+            
+            // Act
+            EntityCollection result = _service.RetrieveMultiple(queryExpression);
+            
+            // Assert
+            Assert.Single(result.Entities);
+            
+            Entity outerRecord = result.Entities.First();
+            Assert.Null(outerRecord.GetAttributeValue<AliasedValue>("c.firstname"));
+        }
     }
 }
