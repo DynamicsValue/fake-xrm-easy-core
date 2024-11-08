@@ -1,3 +1,9 @@
+## [2.7.0]
+
+### Added
+
+- Added support for link entities that use the `Exists` join operator - https://github.com/DynamicsValue/fake-xrm-easy/issues/141
+
 ## [2.6.0]
 
 ### Added

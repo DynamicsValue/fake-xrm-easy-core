@@ -25,6 +25,7 @@
 		<SignAssembly>True</SignAssembly>
     <PublicSign Condition="'$(OS)'=='Unix'">true</PublicSign>
     <SonarQubeTestProject>False</SonarQubeTestProject>
+    <Version>2.7.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
