@@ -87,8 +87,16 @@ namespace FakeXrmEasy.Query
                                                             , (x, y) => x.outerEl
                                                                             .JoinAttributes(y, new ColumnSet(true), leAlias, context));
 
-
                     break;
+#if FAKE_XRM_EASY_9
+                case JoinOperator.Exists:
+                    // This is most likely not the most performant implementation, but it is probably the closest match
+                    // to the generated sql query, which will be a correlated subquery.
+                    query = query.Where(outerEl => 
+                        inner.Any(innerEl => 
+                            outerEl.KeySelector(linkFromAlias, context).Equals(innerEl.KeySelector(le.LinkToAttributeName, context))));
+                    break;
+#endif
                 default: //This shouldn't be reached as there are only 3 types of Join...
                     throw UnsupportedExceptionFactory.New(context.LicenseContext.Value, string.Format("The join operator {0} is currently not supported. ", le.JoinOperator));
 
