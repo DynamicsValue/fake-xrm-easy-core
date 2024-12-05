@@ -109,52 +109,110 @@ namespace FakeXrmEasy
             {
                 throw new InvalidOperationException("The entity must not be null");
             }
-            e = e.Clone(e.GetType());
-            var reference = e.ToEntityReferenceWithKeyAttributes();
-            e.Id = GetRecordUniqueId(reference);
+            var clone = e.Clone(e.GetType());
+            var reference = clone.ToEntityReferenceWithKeyAttributes();
+            clone.Id = GetRecordUniqueId(reference);
 
             // Update specific validations: The entity record must exist in the context
-            if (ContainsEntity(e.LogicalName, e.Id))
+            if (!ContainsEntity(clone.LogicalName, clone.Id))
             {
-                var integrityOptions = GetProperty<IIntegrityOptions>();
+                throw FakeOrganizationServiceFaultFactory.New($"{clone.LogicalName} with Id {clone.Id} Does Not Exist");
+            }
+            
+            var integrityOptions = GetProperty<IIntegrityOptions>();
 
-                var table = Db.GetTable(e.LogicalName);
+            var table = Db.GetTable(e.LogicalName);
 
-                // Add as many attributes to the entity as the ones received (this will keep existing ones)
-                var cachedEntity = table.GetById(e.Id);
-                foreach (var sAttributeName in e.Attributes.Keys.ToList())
+            // Add as many attributes to the entity as the ones received (this will keep existing ones)
+            var cachedEntity = table.GetById(clone.Id);
+            foreach (var sAttributeName in clone.Attributes.Keys.ToList())
+            {
+                var attribute = clone[sAttributeName];
+                if (attribute == null)
                 {
-                    var attribute = e[sAttributeName];
-                    if (attribute == null)
-                    {
-                        cachedEntity.Attributes.Remove(sAttributeName);
-                    }
-                    else if (attribute is DateTime)
-                    {
-                        cachedEntity[sAttributeName] = ConvertToUtc((DateTime)e[sAttributeName]);
-                    }
-                    else
-                    {
-                        if (attribute is EntityReference && integrityOptions.ValidateEntityReferences)
-                        {
-                            var target = (EntityReference)e[sAttributeName];
-                            attribute = ResolveEntityReference(target);
-                        }
-                        cachedEntity[sAttributeName] = attribute;
-                    }
+                    cachedEntity.Attributes.Remove(sAttributeName);
                 }
+                else if (attribute is DateTime)
+                {
+                    cachedEntity[sAttributeName] = ConvertToUtc((DateTime)clone[sAttributeName]);
+                }
+                else
+                {
+                    if (attribute is EntityReference && integrityOptions.ValidateEntityReferences)
+                    {
+                        var target = (EntityReference) clone[sAttributeName];
+                        attribute = ResolveEntityReference(target);
+                    }
+                    cachedEntity[sAttributeName] = attribute;
+                }
+            }
 
-                // Update ModifiedOn
-                cachedEntity["modifiedon"] = DateTime.UtcNow;
-                cachedEntity["modifiedby"] = CallerProperties.CallerId;
-            }
-            else
+            // Update ModifiedOn
+            cachedEntity["modifiedon"] = DateTime.UtcNow;
+            cachedEntity["modifiedby"] = CallerProperties.CallerId;
+
+            if (clone.RelatedEntities.Count > 0)
             {
-                // The entity record was not found, return a CRM-ish update error message
-                throw FakeOrganizationServiceFaultFactory.New($"{e.LogicalName} with Id {e.Id} Does Not Exist");
+                foreach (var relationshipSet in clone.RelatedEntities)
+                {
+                    var relationship = relationshipSet.Key;
+
+                    var entityReferenceCollection = new EntityReferenceCollection();
+
+                    foreach (var relatedEntity in relationshipSet.Value.Entities)
+                    {
+                        UpdateEntity(relatedEntity);
+                        entityReferenceCollection.Add(new EntityReference(relatedEntity.LogicalName, relatedEntity.Id));
+                    }
+
+                    var request = new AssociateRequest
+                    {
+                        Target = clone.ToEntityReference(),
+                        Relationship = relationship,
+                        RelatedEntities = entityReferenceCollection
+                    };
+                    _service.Execute(request);
+                }
             }
+            
+            DeleteAssociatedFilesAfterUpdate(e);
         }
 
+        /// <summary>
+        /// Deletes any associated files to an entity that has their file attributes as null
+        /// </summary>
+        /// <param name="e"></param>
+        private void DeleteAssociatedFilesAfterUpdate(Entity e)
+        {
+            var associatedFiles = FileDb.GetFilesForTarget(e.ToEntityReference());
+            
+            foreach (var updatedAttribute in e.Attributes.Keys)
+            {
+                if (e[updatedAttribute] == null)
+                {
+                    var associatedFile = associatedFiles.FirstOrDefault(f => f.AttributeName.Equals(updatedAttribute));
+                    if (associatedFile != null)
+                    {
+                        FileDb.DeleteFile(associatedFile.Id);
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Deletes any associated files after a Delete message
+        /// </summary>
+        /// <param name="er">The entity reference that was deleted</param>
+        private void DeleteAssociatedFiles(EntityReference er)
+        {
+            var associatedFiles = FileDb.GetFilesForTarget(er);
+            
+            foreach (var associatedFile in associatedFiles)
+            {
+                FileDb.DeleteFile(associatedFile.Id);
+            }
+        }
+        
         /// <summary>
         /// Returns an entity record by logical name and primary key
         /// </summary>
@@ -294,6 +352,8 @@ namespace FakeXrmEasy
                 // Entity found => remove entity
                 var table = Db.GetTable(er.LogicalName);
                 table.Remove(er.Id);
+
+                DeleteAssociatedFiles(er);
             }
             else
             {
@@ -392,9 +452,9 @@ namespace FakeXrmEasy
 
             AddEntityWithDefaults(clone, false);
 
-            if (e.RelatedEntities.Count > 0)
+            if (clone.RelatedEntities.Count > 0)
             {
-                foreach (var relationshipSet in e.RelatedEntities)
+                foreach (var relationshipSet in clone.RelatedEntities)
                 {
                     var relationship = relationshipSet.Key;
 
