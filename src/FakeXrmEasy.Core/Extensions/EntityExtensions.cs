@@ -679,6 +679,8 @@ namespace FakeXrmEasy.Extensions
             return result;
         }
 
+        
+#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
         /// <summary>
         /// Checks if there is a combination of attributes that matches the specified key, and so, it returns it. Returns null otherwise
         /// </summary>
@@ -700,6 +702,7 @@ namespace FakeXrmEasy.Extensions
             return null;
         }
 
+#endif
         
     }
 }

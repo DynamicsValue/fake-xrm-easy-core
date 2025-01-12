@@ -1,3 +1,4 @@
+#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
 using System;
 using System.Linq;
 using DataverseEntities;
@@ -108,3 +109,4 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequ
         }
     }
 }
+#endif

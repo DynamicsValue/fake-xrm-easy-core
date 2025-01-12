@@ -1,3 +1,4 @@
+#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
 using System.Linq;
 using DataverseEntities;
 using FakeXrmEasy.Extensions;
@@ -45,3 +46,4 @@ namespace FakeXrmEasy.Core.Tests.Extensions
         }
     }
 }
+#endif

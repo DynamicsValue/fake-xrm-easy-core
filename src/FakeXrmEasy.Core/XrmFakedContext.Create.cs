@@ -18,6 +18,8 @@ namespace FakeXrmEasy
 
         private void ValidateAlternateKeysForCreate(Entity e, bool isUpsert)
         {
+            
+            #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
             //1 check if entity metadata has any keys
             //2 for each key, check if there are matching attribute values
             //3 throw exception if there is any match
@@ -54,6 +56,7 @@ namespace FakeXrmEasy
                 throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.DuplicateRecordEntityKey, 
                     $"A record that has the attribute values {keyLabel} already exists. The entity key {keyLabel} Key requires that this set of attributes contains unique values. Select unique values and try again.");
             }
+            #endif
         }
         
         /// <summary>

@@ -1,3 +1,4 @@
+#if !FAKE_XRM_EASY && ! FAKE_XRM_EASY_2013  
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Core.Extensions
@@ -24,3 +25,4 @@ namespace FakeXrmEasy.Core.Extensions
         }
     }
 }
+#endif

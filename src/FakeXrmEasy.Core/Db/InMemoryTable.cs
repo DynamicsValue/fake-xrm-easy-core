@@ -109,6 +109,38 @@ namespace FakeXrmEasy.Core.Db
             return _rows[key];
         }
 
+        
+        
+        /// <summary>
+        /// Returns an IEnumerable of all rows in the current table
+        /// </summary>
+        protected internal IEnumerable<Entity> Rows
+        {
+            get
+            {
+                return _rows.Values;
+            }
+        }
+
+        /// <summary>
+        /// Sets the current metadata for this table
+        /// </summary>
+        /// <param name="entityMetadata"></param>
+        protected internal void SetMetadata(EntityMetadata entityMetadata)
+        {
+            _metadata._entityMetadata = entityMetadata.Copy();
+        }
+
+        /// <summary>
+        /// Returns the entity metadata associated to this column
+        /// </summary>
+        /// <returns></returns>
+        protected internal EntityMetadata GetEntityMetadata()
+        {
+            return _metadata._entityMetadata;
+        }
+
+        #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 
         /// <summary>
         /// Checks if there is a matching record that matches the alternate key provided.
         /// </summary>
@@ -153,36 +185,7 @@ namespace FakeXrmEasy.Core.Db
 
             return null;
         }
-        
-        /// <summary>
-        /// Returns an IEnumerable of all rows in the current table
-        /// </summary>
-        protected internal IEnumerable<Entity> Rows
-        {
-            get
-            {
-                return _rows.Values;
-            }
-        }
-
-        /// <summary>
-        /// Sets the current metadata for this table
-        /// </summary>
-        /// <param name="entityMetadata"></param>
-        protected internal void SetMetadata(EntityMetadata entityMetadata)
-        {
-            _metadata._entityMetadata = entityMetadata.Copy();
-        }
-
-        /// <summary>
-        /// Returns the entity metadata associated to this column
-        /// </summary>
-        /// <returns></returns>
-        protected internal EntityMetadata GetEntityMetadata()
-        {
-            return _metadata._entityMetadata;
-        }
-
+#endif
         
     }
 }
