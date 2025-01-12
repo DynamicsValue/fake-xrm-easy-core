@@ -50,7 +50,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             else
             {
                 recordCreated = true;
-                entityId = service.Create(upsertRequest.Target);
+                entityId = ctx.CreateEntity(upsertRequest.Target, isUpsert: true);
             }
 
             var result = new UpsertResponse();

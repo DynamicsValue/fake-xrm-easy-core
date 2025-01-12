@@ -6,6 +6,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FakeXrmEasy.Extensions;
 
 namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 {
@@ -44,16 +45,17 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             foreach (var record in records) 
             {
                 UpsertResponse response = null; 
-                if (ctx.ContainsEntity(record.LogicalName, record.Id))
+                var entityId = ctx.GetRecordUniqueId(record.ToEntityReferenceWithKeyAttributes(), validate: false);
+                if (ctx.ContainsEntity(record.LogicalName, entityId))
                 {
                     ctx.UpdateEntity(record);
                     response = new UpsertResponse();
                     response.Results.Add("RecordCreated", false);
-                    response.Results.Add("Target", new EntityReference(record.LogicalName, record.Id));
+                    response.Results.Add("Target", new EntityReference(record.LogicalName, entityId));
                 }
                 else
                 {
-                    var id = ctx.CreateEntity(record);
+                    var id = ctx.CreateEntity(record, isUpsert: true);
                     response = new UpsertResponse();
                     response.Results.Add("RecordCreated", true);
                     response.Results.Add("Target", new EntityReference(record.LogicalName, id));

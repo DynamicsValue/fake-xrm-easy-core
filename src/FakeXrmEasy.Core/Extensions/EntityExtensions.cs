@@ -678,5 +678,28 @@ namespace FakeXrmEasy.Extensions
 #endif
             return result;
         }
+
+        /// <summary>
+        /// Checks if there is a combination of attributes that matches the specified key, and so, it returns it. Returns null otherwise
+        /// </summary>
+        /// <param name="e">The entity record that might have key values that match the key</param>
+        /// <param name="key">The entity key metadata to be used for matching</param>
+        /// <returns></returns>
+        public static KeyAttributeCollection ToAlternateKeyAttributeCollection(this Entity e, EntityKeyMetadata key)
+        {
+            if (key.KeyAttributes.All(k => e.Attributes.ContainsKey(k)))
+            {
+                var keyAttributeValues = new KeyAttributeCollection();
+                foreach (var k in key.KeyAttributes)
+                {
+                    keyAttributeValues.Add(k, e[k]);
+                }
+                return keyAttributeValues;
+            }
+
+            return null;
+        }
+
+        
     }
 }
