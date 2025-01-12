@@ -76,7 +76,7 @@ namespace FakeXrmEasy
                             if (Db.ContainsTable(record.LogicalName))
                             {
                                 var table = Db.GetTable(record.LogicalName);
-                                var matchedRecord = table.Rows.SingleOrDefault(x => record.KeyAttributes.All(k => x.Attributes.ContainsKey(k.Key) && x.Attributes[k.Key] != null && x.Attributes[k.Key].Equals(k.Value)));
+                                var matchedRecord = table.GetByKeyAttributeCollection(record.KeyAttributes);
                                 if (matchedRecord != null)
                                 {
                                     return matchedRecord.Id;
@@ -387,7 +387,7 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Performs basic validation of the entity record which is common across all CRUD operations
         /// </summary>
         /// <param name="e"></param>
         /// <exception cref="InvalidOperationException"></exception>
@@ -403,81 +403,10 @@ namespace FakeXrmEasy
             {
                 throw new InvalidOperationException("The LogicalName property must not be empty");
             }
-
-            if (e.Id == Guid.Empty)
-            {
-                throw new InvalidOperationException("The Id property must not be empty");
-            }
+            
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public Guid CreateEntity(Entity e)
-        {
-            if (e == null)
-            {
-                throw new InvalidOperationException("The entity must not be null");
-            }
-
-            var clone = e.Clone(e.GetType());
-
-            if (clone.Id == Guid.Empty)
-            {
-                clone.Id = Guid.NewGuid(); // Add default guid if none present
-            }
-
-            // Hack for Dynamic Entities where the Id property doesn't populate the "entitynameid" primary key
-            var primaryKeyAttribute = $"{e.LogicalName}id";
-            if (!clone.Attributes.ContainsKey(primaryKeyAttribute))
-            {
-                clone[primaryKeyAttribute] = clone.Id;
-            }
-
-            ValidateEntity(clone);
-
-            // Create specific validations
-            if (clone.Id != Guid.Empty && ContainsEntity(clone.LogicalName, clone.Id))
-            {
-                throw new InvalidOperationException($"There is already a record of entity {clone.LogicalName} with id {clone.Id}, can't create with this Id.");
-            }
-
-            if(clone.Attributes.ContainsKey("statecode"))
-            {
-                clone["statecode"] = new OptionSetValue(0);  //Always active by default regardless of value on Create
-            }
-
-            AddEntityWithDefaults(clone, false);
-
-            if (clone.RelatedEntities.Count > 0)
-            {
-                foreach (var relationshipSet in clone.RelatedEntities)
-                {
-                    var relationship = relationshipSet.Key;
-
-                    var entityReferenceCollection = new EntityReferenceCollection();
-
-                    foreach (var relatedEntity in relationshipSet.Value.Entities)
-                    {
-                        var relatedId = CreateEntity(relatedEntity);
-                        entityReferenceCollection.Add(new EntityReference(relatedEntity.LogicalName, relatedId));
-                    }
-
-                    var request = new AssociateRequest
-                    {
-                        Target = clone.ToEntityReference(),
-                        Relationship = relationship,
-                        RelatedEntities = entityReferenceCollection
-                    };
-                    _service.Execute(request);
-                }
-            }
-
-            return clone.Id;
-        }
+        
 
         /// <summary>
         /// Adds an entity record to the in-memory database with some default values for out of the box attributes

@@ -327,6 +327,10 @@ namespace FakeXrmEasy
 
             foreach (var e in entities)
             {
+                if (e.Id == Guid.Empty)
+                {
+                    throw new InvalidOperationException("The Id property must not be empty");
+                }
                 ValidateEntityReferences(e);
                 AddEntityWithDefaults(e, true);
             }
