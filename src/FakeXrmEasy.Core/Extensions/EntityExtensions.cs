@@ -367,28 +367,78 @@ namespace FakeXrmEasy.Extensions
             cloned.Id = e.Id;
             cloned.LogicalName = e.LogicalName;
 
-            if (e.FormattedValues != null)
+            CloneEntity(e, cloned, context);
+
+            return cloned;
+        }
+
+        /// <summary>
+        /// Clones source entity data into cloned entity
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="cloned"></param>
+        /// <param name="context">The IXrmFakedContext where the source Entity lives, if any</param>
+        internal static void CloneEntity(Entity source, Entity cloned, IXrmFakedContext context = null)
+        {
+            if (source.FormattedValues != null)
             {
                 var formattedValues = new FormattedValueCollection();
-                foreach (var key in e.FormattedValues.Keys)
-                    formattedValues.Add(key, e.FormattedValues[key]);
+                foreach (var key in source.FormattedValues.Keys)
+                    formattedValues.Add(key, source.FormattedValues[key]);
 
                 cloned.Inject("FormattedValues", formattedValues);
             }
 
-            foreach (var attKey in e.Attributes.Keys)
+            foreach (var attKey in source.Attributes.Keys)
             {
-                cloned[attKey] = e[attKey] != null ? CloneAttribute(e[attKey], context) : null;
+                cloned[attKey] = source[attKey] != null ? CloneAttribute(source[attKey], context) : null;
             }
 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
-            foreach (var attKey in e.KeyAttributes.Keys)
+            foreach (var attKey in source.KeyAttributes.Keys)
             {
-                cloned.KeyAttributes[attKey] = e.KeyAttributes[attKey] != null ? CloneAttribute(e.KeyAttributes[attKey]) : null;
+                cloned.KeyAttributes[attKey] = source.KeyAttributes[attKey] != null ? CloneAttribute(source.KeyAttributes[attKey]) : null;
             }
 #endif
-            return cloned;
+            foreach (var relatedEntityKeyValuePair in source.RelatedEntities)
+            {
+                var relationShip = CloneRelationship(relatedEntityKeyValuePair.Key);
+                var newKeyValuePair = new KeyValuePair<Relationship, EntityCollection>(relationShip,
+                    CloneEntityCollection(relatedEntityKeyValuePair.Value));
+                cloned.RelatedEntities.Add(newKeyValuePair);
+            }
         }
 
+        /// <summary>
+        /// Clones an entire EntityCollection
+        /// </summary>
+        /// <param name="entityCollection">The source entity collection to clone</param>
+        /// <param name="context">A reference to an in-memory context</param>
+        /// <returns></returns>
+        internal static EntityCollection CloneEntityCollection(EntityCollection entityCollection, IXrmFakedContext context = null)
+        {
+            var listOfClones = new List<Entity>();
+
+            foreach (var source in entityCollection.Entities)
+            {
+                listOfClones.Add(source.Clone(context));
+            }
+
+            return new EntityCollection(listOfClones);
+        }
+
+        /// <summary>
+        /// Clones an existing relationship object
+        /// </summary>
+        /// <param name="relationShip"></param>
+        /// <returns></returns>
+        internal static Relationship CloneRelationship(Relationship relationShip)
+        {
+            return new Relationship(relationShip.SchemaName)
+            {
+                PrimaryEntityRole = relationShip.PrimaryEntityRole
+            };
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -416,26 +466,8 @@ namespace FakeXrmEasy.Extensions
             cloned.Id = e.Id;
             cloned.LogicalName = e.LogicalName;
 
-            if (e.FormattedValues != null)
-            {
-                var formattedValues = new FormattedValueCollection();
-                foreach (var key in e.FormattedValues.Keys)
-                    formattedValues.Add(key, e.FormattedValues[key]);
-
-                cloned.Inject("FormattedValues", formattedValues);
-            }
-
-            foreach (var attKey in e.Attributes.Keys)
-            {
-                cloned[attKey] = e[attKey] != null ? CloneAttribute(e[attKey], context) : null;
-            }
-
-#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
-            foreach (var attKey in e.KeyAttributes.Keys)
-            {
-                cloned.KeyAttributes[attKey] = e.KeyAttributes[attKey] != null ? CloneAttribute(e.KeyAttributes[attKey]) : null;
-            }
-#endif
+            CloneEntity(e, cloned, context);
+            
             return cloned;
         }
 
@@ -646,5 +678,31 @@ namespace FakeXrmEasy.Extensions
 #endif
             return result;
         }
+
+        
+#if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013
+        /// <summary>
+        /// Checks if there is a combination of attributes that matches the specified key, and so, it returns it. Returns null otherwise
+        /// </summary>
+        /// <param name="e">The entity record that might have key values that match the key</param>
+        /// <param name="key">The entity key metadata to be used for matching</param>
+        /// <returns></returns>
+        public static KeyAttributeCollection ToAlternateKeyAttributeCollection(this Entity e, EntityKeyMetadata key)
+        {
+            if (key.KeyAttributes.All(k => e.Attributes.ContainsKey(k)))
+            {
+                var keyAttributeValues = new KeyAttributeCollection();
+                foreach (var k in key.KeyAttributes)
+                {
+                    keyAttributeValues.Add(k, e[k]);
+                }
+                return keyAttributeValues;
+            }
+
+            return null;
+        }
+
+#endif
+        
     }
 }

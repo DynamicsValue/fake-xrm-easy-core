@@ -35,6 +35,6 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 ## License
 -------------------
 
-Please see [LICENSE.txt](https://github.com/DynamicsValue/fake-xrm-easy/blob/main/LICENSE.txt).
+Please see [LICENSE.txt](https://github.com/DynamicsValue/fake-xrm-easy/blob/master/LICENSE.txt).
 
 License questions? Please see our [License FAQ](https://github.com/DynamicsValue/licence-agreements/blob/main/FakeXrmEasy/FAQ.md).

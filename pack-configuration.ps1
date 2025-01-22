@@ -1,6 +1,6 @@
 param (
     [string]$versionSuffix = "",
-    [string]$targetFrameworks = "net6.0",
+    [string]$targetFrameworks = "netcoreapp3.1",
     [string]$configuration = "FAKE_XRM_EASY_9",
     [string]$projectName = "FakeXrmEasy.Core",
     [string]$projectPath = "src/FakeXrmEasy.Core",
@@ -48,20 +48,20 @@ if($targetFrameworks -eq "all")
 {
     if($versionSuffix -eq "") 
     {
-        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -o $tempNupkgFolder $projectPath/$projectName.csproj
+        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:IsPacking="true" -o $tempNupkgFolder $projectPath/$projectName.csproj
     }
     else {
-        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
+        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:IsPacking="true" -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
     }
 }
 else 
 {
     if($versionSuffix -eq "") 
     {
-        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj
+        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:IsPacking="true" -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj
     }
     else {
-        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
+        dotnet pack --no-build --configuration $configuration -p:PackageID=$packageId -p:Title=$packageId -p:PackTests=$packTests -p:IsPacking="true" -p:TargetFrameworks=$targetFrameworks -o $tempNupkgFolder $projectPath/$projectName.csproj --version-suffix $versionSuffix
     }
 }
 
