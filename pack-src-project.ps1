@@ -1,6 +1,6 @@
 param (
     [string]$versionSuffix = "",
-    [string]$targetFrameworks = "netcoreapp3.1",
+    [string]$targetFrameworks = "net6.0",
     [string]$packageIdPrefix = "",
     [string]$projectName = "",
     [string]$projectPath = ""   
@@ -12,7 +12,7 @@ $tempNupkgFolder = './nupkgs'
 
 Write-Host "Packing All Configurations for project $($projectName)" -ForegroundColor Green
 
- if($targetFrameworks -eq "netcoreapp3.1")
+ if($targetFrameworks -eq "net6.0")
  {
     ./pack-configuration.ps1 -targetFramework $targetFrameworks -projectName $projectName -projectPath $projectPath -packageIdPrefix $packageIdPrefix -versionSuffix $versionSuffix -configuration "FAKE_XRM_EASY_365" 
     ./pack-configuration.ps1 -targetFramework $targetFrameworks -projectName $projectName -projectPath $projectPath -packageIdPrefix $packageIdPrefix -versionSuffix $versionSuffix -configuration "FAKE_XRM_EASY_9" 
