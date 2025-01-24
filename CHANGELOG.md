@@ -107,6 +107,7 @@
 ## [3.1.2]
 
 - Bump dataverse dependency to production ready version 1.0.1
+
 ## [3.1.1]
 
 ### Changed
