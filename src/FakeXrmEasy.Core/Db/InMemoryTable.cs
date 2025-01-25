@@ -3,6 +3,8 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using FakeXrmEasy.Abstractions;
 
 namespace FakeXrmEasy.Core.Db
 {
@@ -107,6 +109,8 @@ namespace FakeXrmEasy.Core.Db
             return _rows[key];
         }
 
+        
+        
         /// <summary>
         /// Returns an IEnumerable of all rows in the current table
         /// </summary>
@@ -126,5 +130,62 @@ namespace FakeXrmEasy.Core.Db
         {
             _metadata._entityMetadata = entityMetadata.Copy();
         }
+
+        /// <summary>
+        /// Returns the entity metadata associated to this column
+        /// </summary>
+        /// <returns></returns>
+        protected internal EntityMetadata GetEntityMetadata()
+        {
+            return _metadata._entityMetadata;
+        }
+
+        #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 
+        /// <summary>
+        /// Checks if there is a matching record that matches the alternate key provided.
+        /// </summary>
+        /// <param name="key">The metadata of the Alternate Key</param>
+        /// <param name="key">The key values</param>
+        /// <returns></returns>
+        protected internal Entity GetByKeyAttributeCollection(KeyAttributeCollection keyAttributeValues)
+        {
+            return Rows.FirstOrDefault(row => keyAttributeValues.All(k => row.Attributes.ContainsKey(k.Key) && row.Attributes[k.Key] != null && row.Attributes[k.Key].Equals(k.Value)));
+        }
+
+
+        /// <summary>
+        /// Checks if the record exists using any of the alternate keys currently present in metadata, and if so, returns the matched key metadata
+        /// </summary>
+        /// <param name="record">The record whose attribute values will be used for searching</param>
+        /// <returns>The record that matches one of the entity key metadata, null if none found otherwise</returns>
+        protected internal Entity GetByAlternateKeys(Entity record, out EntityKeyMetadata matchedKeyMetadata)
+        {
+            matchedKeyMetadata = null;
+            var entityMetadata = _metadata._entityMetadata;
+
+            var keyMetadata = entityMetadata?.Keys;
+            if (keyMetadata == null)
+            {
+                return null;
+            }
+
+            foreach (var key in keyMetadata)
+            {
+                var keyAttributes = record.ToAlternateKeyAttributeCollection(key);
+                if (keyAttributes != null)
+                {
+                    var matchedRecord = GetByKeyAttributeCollection(keyAttributes);
+                    if (matchedRecord != null)
+                    {
+                        matchedKeyMetadata = key;
+                        return matchedRecord.Clone();
+                    }
+                }
+            }
+
+            return null;
+        }
+#endif
+        
     }
 }

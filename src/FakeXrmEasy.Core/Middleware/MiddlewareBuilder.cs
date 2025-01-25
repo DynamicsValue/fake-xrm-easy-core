@@ -6,15 +6,16 @@ using FakeXrmEasy.Integrity;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 using FakeItEasy;
+using Microsoft.Xrm.Sdk.Query;
+using Microsoft.PowerPlatform.Dataverse.Client;
+using System.Threading;
 using FakeXrmEasy.Abstractions.CommercialLicense;
 using FakeXrmEasy.Abstractions.Integrity;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.Abstractions.Exceptions;
-using Microsoft.Xrm.Sdk.Query;
-using Microsoft.PowerPlatform.Dataverse.Client;
-using System.Threading;
 using FakeXrmEasy.Core.CommercialLicense;
 using FakeXrmEasy.Core.Exceptions;
+using FakeXrmEasy.Core.FileStorage;
 
 namespace FakeXrmEasy.Middleware
 {
@@ -67,6 +68,7 @@ namespace FakeXrmEasy.Middleware
         private void AddDefaults()
         {
             _context.SetProperty<IIntegrityOptions>(new IntegrityOptions() {  ValidateEntityReferences = false });
+            _context.SetProperty<IFileStorageSettings>(new FileStorageSettings());
         }
 
         /// <summary>
@@ -129,7 +131,7 @@ namespace FakeXrmEasy.Middleware
             var serviceAsync2 = _context.GetAsyncOrganizationService2();
             AddOrganizationServiceAsyncFake(serviceAsync2);
             AddOrganizationServiceAsyncFake2(serviceAsync2);
-
+            
             return _context;
         }
 
@@ -163,7 +165,7 @@ namespace FakeXrmEasy.Middleware
             Console.WriteLine($"Setting Subscription Storage Provider ok.");
             return this;
         }
-
+        
         private void AddOrganizationServiceAsyncFake(IOrganizationServiceAsync serviceAsync)
         {
             var service = _context.GetOrganizationService();
@@ -251,7 +253,7 @@ namespace FakeXrmEasy.Middleware
             A.CallTo(() => serviceAsync.DisassociateAsync(A<string>._, A<Guid>._, A<Relationship>._, A<EntityReferenceCollection>._, A<CancellationToken>._))
                 .Invokes((string entityLogicalName, Guid id, Relationship relationship, EntityReferenceCollection entityRefCollection, CancellationToken token) 
                     => service.Disassociate(entityLogicalName, id, relationship, entityRefCollection ));
-            
+
         }
     }
 }

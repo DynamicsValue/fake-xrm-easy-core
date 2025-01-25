@@ -349,6 +349,39 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.BulkOperat
             Assert.Equal("Record 1", updatedRecord1["dv_string"]);
             Assert.Equal("Record 2", updatedRecord2["dv_string"]);
         }
+        
+        [Fact]
+        public void Should_throw_exception_in_update_multiple_when_using_an_alternate_key_without_a_primary_key()
+        {
+            var guid1 = _service.Create(new dv_test(){ dv_code = "C0001"});
+            var guid2 = _service.Create(new dv_test() { dv_code = "C0002"});
+
+            List<Entity> recordsToUpdate = new List<Entity>() 
+            { 
+                new dv_test()
+                {
+                    dv_code = "C0001",
+                    dv_string = "Record 1"
+                }, 
+                new dv_test() {
+                    dv_code = "C0002",
+                    dv_string = "Record 2"
+                } 
+            };
+
+            var entities = new EntityCollection(recordsToUpdate)
+            {
+                EntityName = dv_test.EntityLogicalName
+            };
+
+            var request = new UpdateMultipleRequest()
+            {
+                Targets = entities
+            };
+
+            var ex = XAssert.ThrowsFaultCode(ErrorCodes.ObjectDoesNotExist, () => _service.Execute(request));
+            Assert.Equal($"Entity Id must be specified for Operation", ex.Detail.Message);
+        }
     }
 }
 #endif
