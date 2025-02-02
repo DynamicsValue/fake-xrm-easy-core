@@ -36,19 +36,19 @@ namespace FakeXrmEasy.Extensions
             
             if (input is int)
             {
-                set = new HashSet<int>(new int[] {(int)input});
+                set.Add((int)input);
             }
             else if (input is string)
             {
-                set = new HashSet<int>(new int[] { int.Parse(input as string) });
+                set.Add(int.Parse(input as string));
             }
             else if (input is int[])
             {
-                set = new HashSet<int>(input as int[]);
+                set.UnionWith(input as int[]);
             }
             else if (input is string[])
             {
-                set = new HashSet<int>((input as string[]).Select(s => int.Parse(s)));
+                set.UnionWith((input as string[]).Select(s => int.Parse(s)));
             }
             else if (input is DataCollection<object>)
             {
@@ -56,19 +56,19 @@ namespace FakeXrmEasy.Extensions
 
                 if (collection.All(o => o is int))
                 {
-                    set = new HashSet<int>(collection.Cast<int>());
+                    set.UnionWith(collection.Cast<int>());
                 }
                 else if (collection.All(o => o is string))
                 {
-                    set = new HashSet<int>(collection.Select(o => int.Parse(o as string)));
+                    set.UnionWith(collection.Select(o => int.Parse(o as string)));
                 }
                 else if (collection.Count == 1 && collection[0] is int[])
                 {
-                    set = new HashSet<int>(collection[0] as int[]);
+                    set.UnionWith(collection[0] as int[]);
                 }
                 else if (collection.Count == 1 && collection[0] is string[])
                 {
-                    set = new HashSet<int>((collection[0] as string[]).Select(s => int.Parse(s)));
+                    set.UnionWith((collection[0] as string[]).Select(s => int.Parse(s)));
                 }
                 else
                 {
@@ -77,7 +77,7 @@ namespace FakeXrmEasy.Extensions
             }
             else if (isOptionSetValueCollectionAccepted && input is OptionSetValueCollection)
             {
-                set = new HashSet<int>((input as OptionSetValueCollection).Select(osv => osv.Value));
+                set.UnionWith((input as OptionSetValueCollection).Select(osv => osv.Value));
             }
             else if (typeof(IEnumerable).IsAssignableFrom(type))
             {

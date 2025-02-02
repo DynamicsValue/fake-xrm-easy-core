@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
+using Microsoft.Xrm.Sdk.Messages;
 using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.UpdateRequestTests

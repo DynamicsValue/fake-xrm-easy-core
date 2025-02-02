@@ -3,6 +3,7 @@ using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Reflection;
+using FakeXrmEasy.Core.Exceptions.Query.FetchXml;
 using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
@@ -21,7 +22,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            Assert.Throws<Exception>(() => fetchXml.ToQueryExpression(_context));
+            Assert.Throws<ArithmeticTypeConversionException>(() => fetchXml.ToQueryExpression(_context));
         }
 
         [Fact]

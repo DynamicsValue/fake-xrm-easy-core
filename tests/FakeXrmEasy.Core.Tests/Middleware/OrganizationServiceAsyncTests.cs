@@ -88,7 +88,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
 
             A.CallTo(() => _service.Update(entity)).MustHaveHappened(); 
         }
-        
+
         [Fact]
         public async void Should_call_delete_when_calling_async_delete() 
         {
@@ -257,8 +257,4 @@ namespace FakeXrmEasy.Core.Tests.Middleware
             A.CallTo(() => _service.Disassociate(Team.EntityLogicalName, _team.Id, relationShip, relatedEntities)).MustHaveHappened(); 
         }
     }
-
-
-    
-    
 }

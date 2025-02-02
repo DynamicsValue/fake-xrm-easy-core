@@ -29,6 +29,8 @@ namespace FakeXrmEasy
         /// <param name="args"></param>
         public void Trace(string format, params object[] args)
         {
+            Console.WriteLine(format, args);
+            
             if (args.Length == 0)
             {
                 Trace("{0}", format);

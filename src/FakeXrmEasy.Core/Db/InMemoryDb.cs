@@ -1,4 +1,5 @@
-﻿using FakeXrmEasy.Core.Db.Exceptions;
+﻿using System;
+using FakeXrmEasy.Core.Db.Exceptions;
 using FakeXrmEasy.Extensions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -105,13 +106,30 @@ namespace FakeXrmEasy.Core.Db
 
         protected internal void AddEntityRecord(Entity e)
         {
+            InMemoryTable table;
             if (!ContainsTable(e.LogicalName))
             {
-                InMemoryTable table;
                 AddTable(e.LogicalName, out table);
             }
+            else
+            {
+                table = GetTable(e.LogicalName);
+            }
+            
+            table.Add(e);
         }
 
+        protected internal bool ContainsEntityRecord(string logicalName, Guid id)
+        {
+            if (!ContainsTable(logicalName))
+            {
+                return false;
+            }
+
+            var table = GetTable(logicalName);
+            return table.Contains(id);
+        }
+        
         protected internal void AddOrReplaceEntityRecord(Entity e)
         {
             InMemoryTable table = null;

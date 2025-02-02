@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Reflection;
 using Xunit;
 using FakeXrmEasy.Abstractions.Settings;
+using FakeXrmEasy.Core.Exceptions.Query.FetchXml;
 using FakeXrmEasy.Query;
 
 namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
@@ -1313,9 +1314,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
         [Fact]
         public void FetchXml_Operator_Between_Execution_Without_Exact_Values_Raises_Exception()
         {
-            
-            
-
             var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
                               <entity name='contact'>
                                     <attribute name='anniversary' />
@@ -1339,7 +1337,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
+            Assert.Throws<ArithmeticTypeConversionException>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
         }
 
         [Fact]
@@ -1429,7 +1427,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
                                   </entity>
                             </fetch>";
 
-            Assert.Throws<Exception>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
+            Assert.Throws<ArithmeticTypeConversionException>(() => _service.RetrieveMultiple(new FetchExpression(fetchXml)));
         }
 
         [Fact]
