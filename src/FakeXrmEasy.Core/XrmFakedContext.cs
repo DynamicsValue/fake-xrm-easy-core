@@ -19,9 +19,13 @@ using System.Linq;
 using System.Reflection;
 
 using System.Runtime.CompilerServices;
+using FakeXrmEasy.Abstractions.FileStorage;
 using FakeXrmEasy.Core.Exceptions;
+using FakeXrmEasy.Core.FileStorage.Db;
 
 [assembly: InternalsVisibleTo("FakeXrmEasy.Core.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c124cb50761165a765adf6078bde555a7c5a2b692ed6e6ec9df0bd7d20da69170bae9bf95e874fa50995cc080af404ccad36515fa509c4ea6599a0502c1642db254a293e023c47c79ce69889c6ba921d124d896d87f0baaa9ea1d87b28589ffbe7b08492606bacef19dc4bc4cefb0d525be63ee722b02dc8c79688a7a8f623a2")]
+[assembly: InternalsVisibleTo("FakeXrmEasy.Messages, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c124cb50761165a765adf6078bde555a7c5a2b692ed6e6ec9df0bd7d20da69170bae9bf95e874fa50995cc080af404ccad36515fa509c4ea6599a0502c1642db254a293e023c47c79ce69889c6ba921d124d896d87f0baaa9ea1d87b28589ffbe7b08492606bacef19dc4bc4cefb0d525be63ee722b02dc8c79688a7a8f623a2")]
+[assembly: InternalsVisibleTo("FakeXrmEasy.Messages.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c124cb50761165a765adf6078bde555a7c5a2b692ed6e6ec9df0bd7d20da69170bae9bf95e874fa50995cc080af404ccad36515fa509c4ea6599a0502c1642db254a293e023c47c79ce69889c6ba921d124d896d87f0baaa9ea1d87b28589ffbe7b08492606bacef19dc4bc4cefb0d525be63ee722b02dc8c79688a7a8f623a2")]
 
 namespace FakeXrmEasy
 {
@@ -61,15 +65,30 @@ namespace FakeXrmEasy
         }
 
         /// <summary>
-        /// 
+        /// Flag to determine if InitializeMetadata has been called
         /// </summary>
-        protected internal bool Initialised { get; set; }
+        protected internal bool MetadataInitialized { get; set; }
+        
+        /// <summary>
+        /// Flag to check if the context has been already initialised
+        /// </summary>
+        protected internal bool Initialized { get; set; }
 
+        /// <summary>
+        /// Flag to check if the FileDb has been already initialised
+        /// </summary>
+        protected internal bool FilesInitialized { get; set; }
+        
         /// <summary>
         /// Internal In-Memory Database
         /// </summary>
         internal InMemoryDb Db { get; set; }
 
+        /// <summary>
+        /// Internal In-Memory File Storage
+        /// </summary>
+        internal InMemoryFileDb FileDb { get; set; }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -194,7 +213,8 @@ namespace FakeXrmEasy
 
             AttributeMetadataNames = new Dictionary<string, Dictionary<string, string>>();
             Db = new InMemoryDb();
-
+            FileDb = new InMemoryFileDb(Db);
+            
             _relationships = new Dictionary<string, XrmFakedRelationship>();
 
             EntityInitializerService = new DefaultEntityInitializerService();
@@ -210,6 +230,10 @@ namespace FakeXrmEasy
             _proxyTypesAssemblies = new List<Assembly>();
 
             GetOrganizationService();
+
+            Initialized = false;
+            MetadataInitialized = false;
+            FilesInitialized = false;
         }
 
         
@@ -291,7 +315,7 @@ namespace FakeXrmEasy
         /// <param name="entities"></param>
         public virtual void Initialize(IEnumerable<Entity> entities)
         {
-            if (Initialised)
+            if (Initialized)
             {
                 throw new Exception("Initialize should be called only once per unit test execution and XrmFakedContext instance.");
             }
@@ -303,11 +327,15 @@ namespace FakeXrmEasy
 
             foreach (var e in entities)
             {
+                if (e.Id == Guid.Empty)
+                {
+                    throw new InvalidOperationException("The Id property must not be empty");
+                }
                 ValidateEntityReferences(e);
                 AddEntityWithDefaults(e, true);
             }
 
-            Initialised = true;
+            Initialized = true;
         }
 
         /// <summary>
@@ -318,6 +346,8 @@ namespace FakeXrmEasy
         {
             this.Initialize(new List<Entity>() { entity });
         }
+
+
         
         private void ValidateEntityReferences(Entity e)
         {

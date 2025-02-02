@@ -14,7 +14,7 @@ namespace DataverseEntities
 	
 	[System.Runtime.Serialization.DataContractAttribute()]
 	[System.CodeDom.Compiler.GeneratedCodeAttribute("Dataverse Model Builder", "2.0.0.6")]
-	public enum dv_test_dv_choice_multiple
+	public enum dv_test_dv_choice
 	{
 		
 		[System.Runtime.Serialization.EnumMemberAttribute()]
@@ -29,7 +29,7 @@ namespace DataverseEntities
 	
 	[System.Runtime.Serialization.DataContractAttribute()]
 	[System.CodeDom.Compiler.GeneratedCodeAttribute("Dataverse Model Builder", "2.0.0.6")]
-	public enum dv_test_dv_choice_single
+	public enum dv_test_dv_choice_multiple
 	{
 		
 		[System.Runtime.Serialization.EnumMemberAttribute()]
@@ -43,7 +43,7 @@ namespace DataverseEntities
 	}
 	
 	/// <summary>
-	/// Status of the Test Table
+	/// Status of the DV Test Table
 	/// </summary>
 	[System.Runtime.Serialization.DataContractAttribute()]
 	[System.CodeDom.Compiler.GeneratedCodeAttribute("Dataverse Model Builder", "2.0.0.6")]
@@ -58,7 +58,7 @@ namespace DataverseEntities
 	}
 	
 	/// <summary>
-	/// Reason for the status of the Test Table
+	/// Reason for the status of the DV Test Table
 	/// </summary>
 	[System.Runtime.Serialization.DataContractAttribute()]
 	[System.CodeDom.Compiler.GeneratedCodeAttribute("Dataverse Model Builder", "2.0.0.6")]
@@ -95,10 +95,11 @@ namespace DataverseEntities
 			public const string dv_accountidYomiName = "dv_accountidyominame";
 			public const string dv_bool = "dv_bool";
 			public const string dv_boolName = "dv_boolname";
+			public const string dv_choice = "dv_choice";
 			public const string dv_choice_multiple = "dv_choice_multiple";
 			public const string dv_choice_multipleName = "dv_choice_multiplename";
-			public const string dv_choice_single = "dv_choice_single";
-			public const string dv_choice_singleName = "dv_choice_singlename";
+			public const string dv_choiceName = "dv_choicename";
+			public const string dv_code = "dv_code";
 			public const string dv_currency = "dv_currency";
 			public const string dv_currency_Base = "dv_currency_base";
 			public const string dv_customerid = "dv_customerid";
@@ -112,6 +113,10 @@ namespace DataverseEntities
 			public const string dv_file = "dv_file";
 			public const string dv_file_Name = "dv_file_name";
 			public const string dv_float = "dv_float";
+			public const string dv_fullimage = "dv_fullimage";
+			public const string dv_fullimage_Timestamp = "dv_fullimage_timestamp";
+			public const string dv_fullimage_URL = "dv_fullimage_url";
+			public const string dv_fullimageId = "dv_fullimageid";
 			public const string dv_image = "dv_image";
 			public const string dv_image_Timestamp = "dv_image_timestamp";
 			public const string dv_image_URL = "dv_image_url";
@@ -122,7 +127,7 @@ namespace DataverseEntities
 			public const string dv_string = "dv_string";
 			public const string dv_testId = "dv_testid";
 			public const string Id = "dv_testid";
-			public const string dv_textarea = "dv_textarea";
+			public const string dv_text_area = "dv_text_area";
 			public const string dv_ticker_symbol = "dv_ticker_symbol";
 			public const string dv_time_zone = "dv_time_zone";
 			public const string dv_url = "dv_url";
@@ -152,9 +157,12 @@ namespace DataverseEntities
 			public const string TransactionCurrencyIdName = "transactioncurrencyidname";
 			public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
 			public const string VersionNumber = "versionnumber";
-			public const string dv_account_dv_test_393 = "dv_account_dv_test_393";
-			public const string dv_contact_dv_test_393 = "dv_contact_dv_test_393";
+			public const string dv_test_FileAttachments = "dv_test_FileAttachments";
+			public const string dv_test_Contact_Contact = "dv_test_Contact_Contact";
+			public const string dv_account_dv_test_365 = "dv_account_dv_test_365";
+			public const string dv_contact_dv_test_365 = "dv_contact_dv_test_365";
 			public const string dv_test_accountid_account = "dv_test_accountid_account";
+			public const string FileAttachment_dv_test_dv_file = "FileAttachment_dv_test_dv_file";
 		}
 		
 		/// <summary>
@@ -171,7 +179,7 @@ namespace DataverseEntities
 		
 		public const string EntitySetName = "dv_tests";
 		
-		public const int EntityTypeCode = 10359;
+		public const int EntityTypeCode = 10319;
 		
 		/// <summary>
 		/// Unique identifier of the user who created the record.
@@ -347,6 +355,19 @@ namespace DataverseEntities
 			}
 		}
 		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_choice")]
+		public virtual dv_test_dv_choice? dv_choice
+		{
+			get
+			{
+				return ((dv_test_dv_choice?)(EntityOptionSetEnum.GetEnum(this, "dv_choice")));
+			}
+			set
+			{
+				this.SetAttributeValue("dv_choice", value.HasValue ? new Microsoft.Xrm.Sdk.OptionSetValue((int)value) : null);
+			}
+		}
+		
 		#if FAKE_XRM_EASY_9
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_choice_multiple")]
 		public virtual System.Collections.Generic.IEnumerable<dv_test_dv_choice_multiple> dv_choice_multiple
@@ -360,6 +381,7 @@ namespace DataverseEntities
 				this.SetAttributeValue("dv_choice_multiple", EntityOptionSetEnum.GetMultiEnum(this, "dv_choice_multiple", value));
 			}
 		}
+		
 		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_choice_multiplename")]
@@ -378,32 +400,32 @@ namespace DataverseEntities
 			}
 		}
 		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_choice_single")]
-		public virtual dv_test_dv_choice_single? dv_choice_single
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_choicename")]
+		public string dv_choiceName
 		{
 			get
 			{
-				return ((dv_test_dv_choice_single?)(EntityOptionSetEnum.GetEnum(this, "dv_choice_single")));
-			}
-			set
-			{
-				this.SetAttributeValue("dv_choice_single", value.HasValue ? new Microsoft.Xrm.Sdk.OptionSetValue((int)value) : null);
-			}
-		}
-		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_choice_singlename")]
-		public string dv_choice_singleName
-		{
-			get
-			{
-				if (this.FormattedValues.Contains("dv_choice_single"))
+				if (this.FormattedValues.Contains("dv_choice"))
 				{
-					return this.FormattedValues["dv_choice_single"];
+					return this.FormattedValues["dv_choice"];
 				}
 				else
 				{
 					return default(string);
 				}
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_code")]
+		public string dv_code
+		{
+			get
+			{
+				return this.GetAttributeValue<string>("dv_code");
+			}
+			set
+			{
+				this.SetAttributeValue("dv_code", value);
 			}
 		}
 		
@@ -542,6 +564,7 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if FAKE_XRM_EASY_9 
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_file")]
 		public object dv_file
 		{
@@ -566,6 +589,7 @@ namespace DataverseEntities
 				}
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_float")]
 		public System.Nullable<double> dv_float
@@ -580,6 +604,52 @@ namespace DataverseEntities
 			}
 		}
 		
+		#if !FAKE_XRM_EASY
+		/// <summary>
+		/// An image column that can store full images
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_fullimage")]
+		public byte[] dv_fullimage
+		{
+			get
+			{
+				return this.GetAttributeValue<byte[]>("dv_fullimage");
+			}
+			set
+			{
+				this.SetAttributeValue("dv_fullimage", value);
+			}
+		}
+		#endif
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_fullimage_timestamp")]
+		public System.Nullable<long> dv_fullimage_Timestamp
+		{
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<long>>("dv_fullimage_timestamp");
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_fullimage_url")]
+		public string dv_fullimage_URL
+		{
+			get
+			{
+				return this.GetAttributeValue<string>("dv_fullimage_url");
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_fullimageid")]
+		public System.Nullable<System.Guid> dv_fullimageId
+		{
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<System.Guid>>("dv_fullimageid");
+			}
+		}
+		
+		#if !FAKE_XRM_EASY
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_image")]
 		public byte[] dv_image
 		{
@@ -592,6 +662,7 @@ namespace DataverseEntities
 				this.SetAttributeValue("dv_image", value);
 			}
 		}
+		#endif
 		
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_image_timestamp")]
 		public System.Nullable<long> dv_image_Timestamp
@@ -709,16 +780,16 @@ namespace DataverseEntities
 			}
 		}
 		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_textarea")]
-		public string dv_textarea
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_text_area")]
+		public string dv_text_area
 		{
 			get
 			{
-				return this.GetAttributeValue<string>("dv_textarea");
+				return this.GetAttributeValue<string>("dv_text_area");
 			}
 			set
 			{
-				this.SetAttributeValue("dv_textarea", value);
+				this.SetAttributeValue("dv_text_area", value);
 			}
 		}
 		
@@ -1012,7 +1083,7 @@ namespace DataverseEntities
 		}
 		
 		/// <summary>
-		/// Status of the Test Table
+		/// Status of the DV Test Table
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("statecode")]
 		public virtual dv_test_statecode? statecode
@@ -1044,7 +1115,7 @@ namespace DataverseEntities
 		}
 		
 		/// <summary>
-		/// Reason for the status of the Test Table
+		/// Reason for the status of the DV Test Table
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("statuscode")]
 		public virtual dv_test_statuscode? statuscode
@@ -1152,36 +1223,68 @@ namespace DataverseEntities
 		}
 		
 		/// <summary>
-		/// N:1 dv_account_dv_test_393
+		/// 1:N dv_test_FileAttachments
 		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_customerid")]
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dv_account_dv_test_393")]
-		public DataverseEntities.Account dv_account_dv_test_393
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dv_test_FileAttachments")]
+		public System.Collections.Generic.IEnumerable<DataverseEntities.FileAttachment> dv_test_FileAttachments
 		{
 			get
 			{
-				return this.GetRelatedEntity<DataverseEntities.Account>("dv_account_dv_test_393", null);
+				return this.GetRelatedEntities<DataverseEntities.FileAttachment>("dv_test_FileAttachments", null);
 			}
 			set
 			{
-				this.SetRelatedEntity<DataverseEntities.Account>("dv_account_dv_test_393", null, value);
+				this.SetRelatedEntities<DataverseEntities.FileAttachment>("dv_test_FileAttachments", null, value);
 			}
 		}
 		
 		/// <summary>
-		/// N:1 dv_contact_dv_test_393
+		/// N:N dv_test_Contact_Contact
 		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_customerid")]
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dv_contact_dv_test_393")]
-		public DataverseEntities.Contact dv_contact_dv_test_393
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dv_test_Contact_Contact")]
+		public System.Collections.Generic.IEnumerable<DataverseEntities.Contact> dv_test_Contact_Contact
 		{
 			get
 			{
-				return this.GetRelatedEntity<DataverseEntities.Contact>("dv_contact_dv_test_393", null);
+				return this.GetRelatedEntities<DataverseEntities.Contact>("dv_test_Contact_Contact", null);
 			}
 			set
 			{
-				this.SetRelatedEntity<DataverseEntities.Contact>("dv_contact_dv_test_393", null, value);
+				this.SetRelatedEntities<DataverseEntities.Contact>("dv_test_Contact_Contact", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 dv_account_dv_test_365
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_customerid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dv_account_dv_test_365")]
+		public DataverseEntities.Account dv_account_dv_test_365
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.Account>("dv_account_dv_test_365", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.Account>("dv_account_dv_test_365", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 dv_contact_dv_test_365
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_customerid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("dv_contact_dv_test_365")]
+		public DataverseEntities.Contact dv_contact_dv_test_365
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.Contact>("dv_contact_dv_test_365", null);
+			}
+			set
+			{
+				this.SetRelatedEntity<DataverseEntities.Contact>("dv_contact_dv_test_365", null, value);
 			}
 		}
 		
@@ -1199,6 +1302,19 @@ namespace DataverseEntities
 			set
 			{
 				this.SetRelatedEntity<DataverseEntities.Account>("dv_test_accountid_account", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 FileAttachment_dv_test_dv_file
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("dv_file")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("FileAttachment_dv_test_dv_file")]
+		public DataverseEntities.FileAttachment FileAttachment_dv_test_dv_file
+		{
+			get
+			{
+				return this.GetRelatedEntity<DataverseEntities.FileAttachment>("FileAttachment_dv_test_dv_file", null);
 			}
 		}
 	}
