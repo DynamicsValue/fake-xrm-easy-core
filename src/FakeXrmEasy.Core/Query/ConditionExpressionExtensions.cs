@@ -288,6 +288,12 @@ namespace FakeXrmEasy.Query
                     break;
 #endif
 
+#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+                case ConditionOperator.AboveOrEqual:
+                    operatorExpression = c.ToAboveOrEqualExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
+#endif
+
                 default:
                     throw UnsupportedExceptionFactory.New(context.LicenseContext.Value, string.Format("Operator {0} not yet implemented for condition expression", c.CondExpression.Operator.ToString()));
 
