@@ -1,3 +1,9 @@
+## [2.6.1]
+
+### Added 
+
+- Introduced default email tracking settings, which are needed to solve - https://github.com/DynamicsValue/fake-xrm-easy/issues/186
+
 ## [2.6.0]
 
 ### Added
