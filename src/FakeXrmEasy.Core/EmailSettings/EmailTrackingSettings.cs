@@ -49,7 +49,7 @@ namespace FakeXrmEasy.Core.EmailSettings
                     NextTrackingNumber = 0;
                 }
                 NextTrackingNumber++;
-                return $"{TrackingPrefix}: 0235{NextTrackingNumber.ToString($"D{NumberOfDigits.ToString()}")}";
+                return $"{TrackingPrefix}:0235{NextTrackingNumber.ToString($"D{NumberOfDigits.ToString()}")}";
             }
         }
     }

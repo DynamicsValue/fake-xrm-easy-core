@@ -17,7 +17,7 @@ namespace FakeXrmEasy.Core.Tests.EmailSettings
         {
             var emailTrackingSettings = _context.GetProperty<IEmailTrackingSettings>();
             var trackingToken = emailTrackingSettings.GenerateNewTrackingTokenValue();
-            Assert.Equal($"CRM: 0235001", trackingToken);
+            Assert.Equal($"CRM:0235001", trackingToken);
         }
         
         [Fact]
@@ -26,7 +26,7 @@ namespace FakeXrmEasy.Core.Tests.EmailSettings
             var emailTrackingSettings = _context.GetProperty<IEmailTrackingSettings>();
             emailTrackingSettings.NextTrackingNumber = 101;
             var trackingToken = emailTrackingSettings.GenerateNewTrackingTokenValue();
-            Assert.Equal($"CRM: 0235102", trackingToken);
+            Assert.Equal($"CRM:0235102", trackingToken);
         }
         
         [Fact]
@@ -35,7 +35,7 @@ namespace FakeXrmEasy.Core.Tests.EmailSettings
             var emailTrackingSettings = _context.GetProperty<IEmailTrackingSettings>();
             emailTrackingSettings.NextTrackingNumber = 998;
             var trackingToken = emailTrackingSettings.GenerateNewTrackingTokenValue();
-            Assert.Equal($"CRM: 0235999", trackingToken);
+            Assert.Equal($"CRM:0235999", trackingToken);
         }
         
         [Fact]
@@ -44,7 +44,7 @@ namespace FakeXrmEasy.Core.Tests.EmailSettings
             var emailTrackingSettings = _context.GetProperty<IEmailTrackingSettings>();
             emailTrackingSettings.NextTrackingNumber = 999;
             var trackingToken = emailTrackingSettings.GenerateNewTrackingTokenValue();
-            Assert.Equal($"CRM: 0235001", trackingToken);
+            Assert.Equal($"CRM:0235001", trackingToken);
         }
     }
 }
