@@ -6,6 +6,12 @@ namespace FakeXrmEasy.Core.EmailSettings
         int NumberOfDigits { get; set; }
         int NextTrackingNumber { get; set; }
         int MaxTrackingNumber { get; set; }
+
+        /// <summary>
+        /// Gets the next available tracking token value and increments the counter
+        /// </summary>
+        /// <returns></returns>
+        string GenerateNewTrackingTokenValue();
     }
     
     /// <summary>
@@ -13,6 +19,7 @@ namespace FakeXrmEasy.Core.EmailSettings
     /// </summary>
     public class EmailTrackingSettings: IEmailTrackingSettings
     {
+        internal object _lock = new object();
         public string TrackingPrefix { get; set; }
         public int NumberOfDigits { get; set; }
         public int NextTrackingNumber { get; set; }
@@ -27,6 +34,23 @@ namespace FakeXrmEasy.Core.EmailSettings
             NumberOfDigits = 3;
             NextTrackingNumber = 0;
             MaxTrackingNumber = 999;
+        }
+
+        /// <summary>
+        /// Gets the next available tracking token value and increments the counter
+        /// </summary>
+        /// <returns></returns>
+        public string GenerateNewTrackingTokenValue()
+        {
+            lock (_lock)
+            {
+                if (NextTrackingNumber == 999)
+                {
+                    NextTrackingNumber = 0;
+                }
+                NextTrackingNumber++;
+                return $"{TrackingPrefix}: 0235{NextTrackingNumber.ToString($"D{NumberOfDigits.ToString()}")}";
+            }
         }
     }
 }
