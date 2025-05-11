@@ -13,6 +13,8 @@ namespace FakeXrmEasy.Core.Db
     /// </summary>
     internal class InMemoryDb
     {
+        private const string ORGANIZATION_TABLE_NAME = "organization";
+        
         /// <summary>
         /// A collection of tables indexed by their logical name
         /// </summary>
@@ -158,6 +160,17 @@ namespace FakeXrmEasy.Core.Db
                     .Select(t => t.Value._metadata._entityMetadata.Copy())
                     .AsEnumerable();
             }
+        }
+        
+        internal Entity GetOrganization()
+        {
+            if (!ContainsTable(ORGANIZATION_TABLE_NAME))
+            {
+                return null;
+            }
+
+            var orgTable = GetTable(ORGANIZATION_TABLE_NAME);
+            return orgTable.Rows.FirstOrDefault();
         }
     }
 }

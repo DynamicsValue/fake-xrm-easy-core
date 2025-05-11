@@ -160,17 +160,6 @@ namespace FakeXrmEasy.Core.FileStorage.Db
             return orgFileSettings;
         }
 
-        private Entity GetOrganization()
-        {
-            if (!_db.ContainsTable(ORGANIZATION_TABLE_NAME))
-            {
-                return null;
-            }
-
-            var orgTable = _db.GetTable(ORGANIZATION_TABLE_NAME);
-            return orgTable.Rows.FirstOrDefault();
-        }
-        
         private bool GetOrgBlockedAttachments(out string[] blockedAttachments)
         {
             return TryGetOrganizationFileSetting(BLOCKED_ATTACHMENTS_FIELD_NAME, out blockedAttachments);
@@ -189,7 +178,7 @@ namespace FakeXrmEasy.Core.FileStorage.Db
         private bool TryGetOrganizationFileSetting(string settingFieldName, out string[] fileSetting)
         {
             bool exists = false;
-            var organization = GetOrganization();
+            var organization = _db.GetOrganization();
             if (organization == null)
             {
                 fileSetting = new string[] { };
