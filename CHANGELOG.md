@@ -1,7 +1,8 @@
-## [2.6.1]
+## [2.7.0]
 
 ### Added 
 
+- Fixes an issue in FakeTracingService where an exception was raised if no args was passed - https://github.com/DynamicsValue/fake-xrm-easy/issues/189
 - Introduced default email tracking settings, which are needed to solve - https://github.com/DynamicsValue/fake-xrm-easy/issues/186
 
 ## [2.6.0]
