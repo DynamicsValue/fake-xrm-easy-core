@@ -21,6 +21,7 @@ using System.Reflection;
 
 using System.Runtime.CompilerServices;
 using FakeXrmEasy.Abstractions.FileStorage;
+using FakeXrmEasy.Core.EmailSettings;
 using FakeXrmEasy.Core.Exceptions;
 using FakeXrmEasy.Core.FileStorage.Db;
 
@@ -227,7 +228,8 @@ namespace FakeXrmEasy
             SetProperty<IAccessRightsRepository>(new AccessRightsRepository());
             SetProperty<IOptionSetMetadataRepository>(new OptionSetMetadataRepository());
             SetProperty<IStatusAttributeMetadataRepository>(new StatusAttributeMetadataRepository());
-
+            SetProperty<IEmailTrackingSettings>(new EmailTrackingSettings());
+            
             SystemTimeZone = TimeZoneInfo.Local;
 
             InitializationLevel = EntityInitializationLevel.Default;
