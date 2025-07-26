@@ -100,24 +100,11 @@ namespace FakeXrmEasy.Query
 
         internal static Expression ToExpression(this TypedConditionExpression c, QueryExpression qe, IXrmFakedContext context, ParameterExpression entity)
         {
-            Expression attributesProperty = Expression.Property(
-                entity,
-                "Attributes"
-                );
-            
             string attributeName = c.GetAttributeName();
-            Expression containsAttributeExpression = Expression.Call(
-                attributesProperty,
-                typeof(AttributeCollection).GetMethod("ContainsKey", new Type[] { typeof(string) }),
-                Expression.Constant(attributeName)
-            );
-
-            Expression getAttributeValueExpr = Expression.Property(
-                attributesProperty, "Item",
-                Expression.Constant(attributeName, typeof(string))
-            );
-
-            Expression getNonBasicValueExpr = getAttributeValueExpr;
+            
+            var getNonBasicValueExpr = entity.ToAttributeValueExpression(attributeName);
+            var containsAttributeExpression = entity.ToContainsAttributeExpression(attributeName);
+            
             Expression operatorExpression = null;
 
             switch (c.CondExpression.Operator)

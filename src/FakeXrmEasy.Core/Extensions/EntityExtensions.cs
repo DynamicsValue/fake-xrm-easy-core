@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Core.Exceptions.Extensions;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Extensions
@@ -704,5 +705,34 @@ namespace FakeXrmEasy.Extensions
 
 #endif
         
+        /// <summary>
+        /// Returns the specified attribute Id if a Primary Key or the Id of the EntityReference if an EntityReference
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="attributeName"></param>
+        /// <returns></returns>
+        internal static Guid GetAttributePrimaryKeyIdOrEntityReferenceId(this Entity e, string attributeName)
+        {
+            if (!e.Contains(attributeName))
+            {
+                throw new AttributeNotFoundInEntityException(attributeName);
+            }
+
+            if (e[attributeName] == null)
+            {
+                return Guid.Empty;
+            }
+            
+            if (e[attributeName] is Guid)
+            {
+                return (Guid)e[attributeName];
+            }
+            if (e[attributeName] is EntityReference)
+            {
+                return ((EntityReference)e[attributeName]).Id;
+            }
+
+            return Guid.Empty;
+        }
     }
 }

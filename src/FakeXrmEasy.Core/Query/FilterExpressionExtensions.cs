@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Extensions;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
@@ -67,6 +69,51 @@ namespace FakeXrmEasy.Query
                 expressionsList.Add(nestedFiltersExpression);
             }
 
+            //Any / NotAny / All / NotAll operators
+            if (fe.AnyAllFilterLinkEntity != null)
+            {
+                var le = fe.AnyAllFilterLinkEntity;
+                var constantExpression = Expression.Constant(false);
+                
+                //creates and evaluates the inner query expression, and then applies relevant filtering based on JoinOperator
+                var childQueryExpression = new QueryExpression()
+                {
+                    EntityName = le.LinkToEntityName,
+                    Criteria = le.LinkCriteria,
+                    ColumnSet = new ColumnSet(le.LinkToAttributeName),
+                };
+
+                var childQueryElements = childQueryExpression.ToQueryable(context)
+                    .ToList();
+                    
+                    
+                var childIds = childQueryElements.Select(e => e.GetAttributePrimaryKeyIdOrEntityReferenceId(le.LinkToAttributeName))
+                    .ToList();
+             
+                var getAttributeValueExpr = entity.ToAttributeValueExpression(le.LinkFromAttributeName);
+                var containsAttributeExpr = entity.ToContainsAttributeExpression(le.LinkFromAttributeName);
+                
+                if (fe.AnyAllFilterLinkEntity.JoinOperator == JoinOperator.Any)
+                {
+                    BinaryExpression orExpression = Expression.Or(Expression.Constant(false), Expression.Constant(false));
+                    foreach (var id in childIds)
+                    {
+                        var leftHandSideExpression =
+                            typeof(Guid).GetAppropriateCastExpressionBasedOnType(getAttributeValueExpr, id);
+                        var rightHandSideExpression =
+                            TypeCastExpressionExtensions.GetAppropriateTypedValueAndType(id, typeof(Guid));
+                        
+                        var matchExpression = Expression.AndAlso(containsAttributeExpr,
+                            Expression.Equal(leftHandSideExpression, rightHandSideExpression));
+
+                        orExpression = Expression.Or(orExpression, matchExpression);
+                    }
+
+                    expressionsList.Add(orExpression);
+                }
+                
+            }
+            
             return GenerateMultipleExpressionsWithOperator(fe.FilterOperator, expressionsList);
         }
 
