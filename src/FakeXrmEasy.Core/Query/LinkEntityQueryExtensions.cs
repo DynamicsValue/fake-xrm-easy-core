@@ -38,9 +38,6 @@ namespace FakeXrmEasy.Query
             IQueryable<Entity> inner = null;
             if (le.JoinOperator == JoinOperator.LeftOuter)
             {
-                //inner = context.CreateQuery<Entity>(le.LinkToEntityName);
-
-
                 //filters are applied in the inner query and then ignored during filter evaluation
                 var outerQueryExpression = new QueryExpression()
                 {
@@ -51,7 +48,6 @@ namespace FakeXrmEasy.Query
 
                 var outerQuery = outerQueryExpression.ToQueryable(context);
                 inner = outerQuery;
-
             }
             else
             {
