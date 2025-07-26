@@ -123,6 +123,28 @@ namespace FakeXrmEasy.Query
             //Therefore we need to prepend the alias attribute because the code to generate attributes for Joins (JoinAttribute extension) is common across versions
             var linkedEntitiesQueryExpressions = new List<Expression>();
 
+            le.PrependConditionsWithEntityAliasOrEntityName(context);
+
+            //Translate this specific Link Criteria
+            linkedEntitiesQueryExpressions.Add(le.LinkCriteria.TranslateFilterExpressionToExpression(qe, context, le.LinkToEntityName, entity, le.JoinOperator == JoinOperator.LeftOuter));
+
+            //Processed nested linked entities
+            foreach (var nestedLinkedEntity in le.LinkEntities)
+            {
+                var listOfExpressions = nestedLinkedEntity.TranslateLinkedEntityFilterExpressionToExpression(qe, context, entity);
+                linkedEntitiesQueryExpressions.AddRange(listOfExpressions);
+            }
+
+            return linkedEntitiesQueryExpressions;
+        }
+
+        /// <summary>
+        /// Prepends each condition expression inside this LinkedEntity with either the EntityAlias or the LinkToEntityName
+        /// </summary>
+        /// <param name="le">The LinkEntity</param>
+        /// <param name="context">The IXrmFakedContext used to retrieve metadata</param>
+        internal static void PrependConditionsWithEntityAliasOrEntityName(this LinkEntity le, IXrmFakedContext context)
+        {
             if (le.LinkCriteria != null)
             {
                 var earlyBoundType = context.FindReflectedType(le.LinkToEntityName);
@@ -177,18 +199,6 @@ namespace FakeXrmEasy.Query
                     }
                 }
             }
-
-            //Translate this specific Link Criteria
-            linkedEntitiesQueryExpressions.Add(le.LinkCriteria.TranslateFilterExpressionToExpression(qe, context, le.LinkToEntityName, entity, le.JoinOperator == JoinOperator.LeftOuter));
-
-            //Processed nested linked entities
-            foreach (var nestedLinkedEntity in le.LinkEntities)
-            {
-                var listOfExpressions = nestedLinkedEntity.TranslateLinkedEntityFilterExpressionToExpression(qe, context, entity);
-                linkedEntitiesQueryExpressions.AddRange(listOfExpressions);
-            }
-
-            return linkedEntitiesQueryExpressions;
         }
 
     }
