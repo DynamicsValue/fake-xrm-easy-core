@@ -50,7 +50,7 @@ namespace FakeXrmEasy.Query
         }
 
         /// <summary>
-        /// 
+        /// Converts a QueryExpression into a Queryable
         /// </summary>
         /// <param name="qe"></param>
         /// <param name="context"></param>

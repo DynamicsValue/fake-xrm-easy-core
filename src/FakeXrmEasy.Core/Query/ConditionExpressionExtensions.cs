@@ -315,5 +315,19 @@ namespace FakeXrmEasy.Query
                 }                
             }
         }
+
+        /// <summary>
+        /// Prepends the attribute name with either an entity alias (if present) or an entity name,
+        /// this is because query engine is flattened and conditions will be filtered used not just the attribute name,
+        /// but also the associated LinkEntity or EntityAlias where this condition expression came from
+        /// </summary>
+        /// <param name="ce">The condition expression whose attribute name will be prepended</param>
+        /// <param name="entityAlias">The entity alias of the entity or linkedentity where this conditionexpression lives</param>
+        /// <param name="linkToEntityName">The LinkToEntityName for condition expressions inside a LinkedEntity</param>
+        internal static void PrependEntityAliasOrEntityName(this ConditionExpression ce, string entityAlias, string linkToEntityName)
+        {
+            var entityAliasOrName = !string.IsNullOrEmpty(entityAlias) ? entityAlias : linkToEntityName;
+            ce.AttributeName = entityAliasOrName + "." + ce.AttributeName;
+        }
     }
 }

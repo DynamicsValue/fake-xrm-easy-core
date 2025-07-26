@@ -158,24 +158,21 @@ namespace FakeXrmEasy.Query
                         }
                     }
 
-                    var entityAlias = !string.IsNullOrEmpty(le.EntityAlias) ? le.EntityAlias : le.LinkToEntityName;
-                    ce.AttributeName = entityAlias + "." + ce.AttributeName;
+                    ce.PrependEntityAliasOrEntityName(le.EntityAlias, le.LinkToEntityName);
                 }
 
                 foreach (var fe in le.LinkCriteria.Filters)
                 {
                     foreach (var ce in fe.Conditions)
                     {
-                        var entityAlias = !string.IsNullOrEmpty(le.EntityAlias) ? le.EntityAlias : le.LinkToEntityName;
-                        ce.AttributeName = entityAlias + "." + ce.AttributeName;
+                        ce.PrependEntityAliasOrEntityName(le.EntityAlias, le.LinkToEntityName);
                     }
                     
                     foreach (var currentFe in fe.Filters)
                     {
                         foreach (var ce in currentFe.Conditions)
                         {
-                            var entityAlias = !string.IsNullOrEmpty(le.EntityAlias) ? le.EntityAlias : le.LinkToEntityName;
-                            ce.AttributeName = entityAlias + "." + ce.AttributeName;
+                            ce.PrependEntityAliasOrEntityName(le.EntityAlias, le.LinkToEntityName);
                         }
                     }
                 }
