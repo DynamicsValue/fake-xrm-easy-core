@@ -33,6 +33,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.JoinOperato
         public void Should_filter_records_with_any_operator()
         {
             _context.Initialize(new List<Entity>() {_contact, _account });
+            
             var query = new QueryExpression("contact")
             {
                 ColumnSet = new ColumnSet("fullname"),
