@@ -2,7 +2,7 @@
 
 ### Added 
 
-- Added support for new JoinOperators - https://github.com/DynamicsValue/fake-xrm-easy/issues/200
+- Added support for new JoinOperators: Any, NotAny, All, NotAll - https://github.com/DynamicsValue/fake-xrm-easy/issues/200
 
 ## [2.7.0]
 
