@@ -53,11 +53,11 @@ namespace FakeXrmEasy.Query
             var getAttributeValueExpr = entity.ToAttributeValueExpression(le.LinkFromAttributeName);
             var containsAttributeExpr = entity.ToContainsAttributeExpression(le.LinkFromAttributeName);
             
-            if (le.JoinOperator == JoinOperator.Any)
+            if (le.JoinOperator == JoinOperator.Any || le.JoinOperator == JoinOperator.NotAll)
             {
                 return childIds.ToAnyExpression(getAttributeValueExpr, containsAttributeExpr);
             }
-            else if (le.JoinOperator == JoinOperator.NotAny)
+            else if (le.JoinOperator == JoinOperator.NotAny || le.JoinOperator == JoinOperator.All)
             {
                 return Expression.Not(childIds.ToAnyExpression(getAttributeValueExpr, containsAttributeExpr));
             }
