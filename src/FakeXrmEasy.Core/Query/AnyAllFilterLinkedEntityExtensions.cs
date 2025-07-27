@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -54,3 +55,4 @@ namespace FakeXrmEasy.Query
         }
     }
 }
+#endif

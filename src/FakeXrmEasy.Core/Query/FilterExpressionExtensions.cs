@@ -69,6 +69,7 @@ namespace FakeXrmEasy.Query
                 expressionsList.Add(nestedFiltersExpression);
             }
 
+            #if FAKE_XRM_EASY_9
             //Any / NotAny / All / NotAll operators
             if (fe.AnyAllFilterLinkEntity != null)
             {
@@ -76,6 +77,7 @@ namespace FakeXrmEasy.Query
                 var anyAllFilterExpression = le.TranslateAnyAllLinkedEntityToExpression(context, entity);
                 expressionsList.Add(anyAllFilterExpression);
             }
+            #endif
             
             return GenerateMultipleExpressionsWithOperator(fe.FilterOperator, expressionsList);
         }
