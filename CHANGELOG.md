@@ -2,6 +2,7 @@
 
 ### Added 
 
+- Introduced new property to Email tracking token properties to disable it if needed - https://github.com/DynamicsValue/fake-xrm-easy/issues/196
 - Added support for new JoinOperators: Any, NotAny, All, NotAll - https://github.com/DynamicsValue/fake-xrm-easy/issues/200
 
 ## [2.7.0]

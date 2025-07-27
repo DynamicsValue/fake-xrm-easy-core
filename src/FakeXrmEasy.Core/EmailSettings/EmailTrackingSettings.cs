@@ -30,6 +30,11 @@ namespace FakeXrmEasy.Core.EmailSettings
         /// </summary>
         /// <returns></returns>
         string GenerateNewTrackingTokenValue();
+        
+        /// <summary>
+        /// True if tracking token will be generated, false otherwise. True by default
+        /// </summary>
+        bool IsEnabled { get; set; }
     }
     
     /// <summary>
@@ -60,6 +65,11 @@ namespace FakeXrmEasy.Core.EmailSettings
         public int MaxTrackingNumber { get; set; }
 
         /// <summary>
+        /// True if tracking token will be generated, false otherwise. True by default
+        /// </summary>
+        public bool IsEnabled { get; set; }
+        
+        /// <summary>
         /// Sets the default email tracking properties
         /// </summary>
         public EmailTrackingSettings()
@@ -68,6 +78,7 @@ namespace FakeXrmEasy.Core.EmailSettings
             NumberOfDigits = 3;
             NextTrackingNumber = 0;
             MaxTrackingNumber = 999;
+            IsEnabled = true;
         }
 
         /// <summary>
