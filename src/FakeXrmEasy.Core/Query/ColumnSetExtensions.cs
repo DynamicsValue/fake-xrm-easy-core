@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Query
@@ -24,3 +25,4 @@ namespace FakeXrmEasy.Query
         }
     }
 }
+#endif

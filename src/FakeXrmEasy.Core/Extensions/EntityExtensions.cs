@@ -112,6 +112,7 @@ namespace FakeXrmEasy.Extensions
             }
             else
             {
+                #if FAKE_XRM_EASY_9
                 le.Columns.AddMissingColumnAliases();
 
                 Dictionary<string, XrmAttributeExpression> attributeExpressionsDictionary = new Dictionary<string, XrmAttributeExpression>();
@@ -122,19 +123,23 @@ namespace FakeXrmEasy.Extensions
                         .ToDictionary(attrEx => attrEx.AttributeName, 
                             attrEx => attrEx);
                 }
-
+                #endif
+                
                 foreach (var attKey in le.Columns.Columns)
                 {
                     var linkedAttKey = sAlias + "." + attKey;
 
+                    #if FAKE_XRM_EASY_9
                     XrmAttributeExpression attrExp = null;
                     if (attributeExpressionsDictionary.ContainsKey(attKey))
                     {
                         attrExp = attributeExpressionsDictionary[attKey];
                     }
+                    #endif
                     
                     if (e.Attributes.ContainsKey(linkedAttKey))
                     {
+                        #if FAKE_XRM_EASY_9
                         if (attrExp != null)
                         {
                             projected[attrExp.Alias] = e[linkedAttKey]; //use custom alias
@@ -143,10 +148,15 @@ namespace FakeXrmEasy.Extensions
                         {
                             projected[linkedAttKey] = e[linkedAttKey]; //keep original generated alias
                         }
+                        #else
+                        projected[linkedAttKey] = e[linkedAttKey];
+                        #endif
+                        
                     }
                     
                     if (e.FormattedValues.ContainsKey(linkedAttKey))
                     {
+                        #if FAKE_XRM_EASY_9
                         if (attrExp != null)
                         {
                             projected.FormattedValues[attrExp.Alias] = e.FormattedValues[linkedAttKey]; //use custom alias
@@ -155,6 +165,9 @@ namespace FakeXrmEasy.Extensions
                         {
                             projected.FormattedValues[linkedAttKey] = e.FormattedValues[linkedAttKey]; //keep original generated alias
                         }
+                        #else
+                        projected.FormattedValues[linkedAttKey] = e.FormattedValues[linkedAttKey];
+                        #endif
                     }
                         
                 }
@@ -202,7 +215,9 @@ namespace FakeXrmEasy.Extensions
                     projected = new Entity(e.LogicalName) { Id = e.Id };
 
 
+                #if FAKE_XRM_EASY_9
                 qe.ColumnSet.AddMissingColumnAliases();
+                #endif
                 
                 foreach (var attKey in qe.ColumnSet.Columns)
                 {
@@ -248,6 +263,7 @@ namespace FakeXrmEasy.Extensions
                 return e;
             }
 
+            #if FAKE_XRM_EASY_9
             foreach (var attributeExpression in qe.ColumnSet.AttributeExpressions)
             {
                 if (attributeExpression.AggregateType == XrmAggregateType.None)
@@ -260,6 +276,8 @@ namespace FakeXrmEasy.Extensions
                     }
                 }
             }
+            #endif
+            
 
             return e;
         }

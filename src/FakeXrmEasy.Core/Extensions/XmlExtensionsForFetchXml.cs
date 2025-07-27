@@ -159,7 +159,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
 
             var columnSet = new ColumnSet(attributes);
             
-            
+            #if FAKE_XRM_EASY_9
             var columnAliases = el.Elements()
                 .Where(e => e.Name.LocalName.Equals("attribute"))
                 .Where(e => e.GetAttribute("alias") != null 
@@ -174,7 +174,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
                 .ToList();
             
             columnSet.AttributeExpressions.AddRange(columnAliases);
-            
+            #endif
 
             return columnSet;
         }
