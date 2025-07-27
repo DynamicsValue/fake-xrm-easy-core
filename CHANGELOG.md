@@ -1,3 +1,9 @@
+## [2.8.0]
+
+### Added 
+
+- Added support for new JoinOperators - https://github.com/DynamicsValue/fake-xrm-easy/issues/200
+
 ## [2.7.0]
 
 ### Added 
