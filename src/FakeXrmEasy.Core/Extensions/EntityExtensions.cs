@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Core.Exceptions.Extensions;
+using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Extensions
@@ -111,14 +112,51 @@ namespace FakeXrmEasy.Extensions
             }
             else
             {
+                le.Columns.AddMissingColumnAliases();
+
+                Dictionary<string, XrmAttributeExpression> attributeExpressionsDictionary = new Dictionary<string, XrmAttributeExpression>();
+                if (le.Columns.AttributeExpressions != null)
+                {
+                    attributeExpressionsDictionary = le.Columns.AttributeExpressions
+                        .Where(attrEx => attrEx.AggregateType == XrmAggregateType.None)
+                        .ToDictionary(attrEx => attrEx.AttributeName, 
+                            attrEx => attrEx);
+                }
+
                 foreach (var attKey in le.Columns.Columns)
                 {
                     var linkedAttKey = sAlias + "." + attKey;
-                    if (e.Attributes.ContainsKey(linkedAttKey))
-                        projected[linkedAttKey] = e[linkedAttKey];
 
+                    XrmAttributeExpression attrExp = null;
+                    if (attributeExpressionsDictionary.ContainsKey(attKey))
+                    {
+                        attrExp = attributeExpressionsDictionary[attKey];
+                    }
+                    
+                    if (e.Attributes.ContainsKey(linkedAttKey))
+                    {
+                        if (attrExp != null)
+                        {
+                            projected[attrExp.Alias] = e[linkedAttKey]; //use custom alias
+                        }
+                        else
+                        {
+                            projected[linkedAttKey] = e[linkedAttKey]; //keep original generated alias
+                        }
+                    }
+                    
                     if (e.FormattedValues.ContainsKey(linkedAttKey))
-                        projected.FormattedValues[linkedAttKey] = e.FormattedValues[linkedAttKey];
+                    {
+                        if (attrExp != null)
+                        {
+                            projected.FormattedValues[attrExp.Alias] = e.FormattedValues[linkedAttKey]; //use custom alias
+                        }
+                        else
+                        {
+                            projected.FormattedValues[linkedAttKey] = e.FormattedValues[linkedAttKey]; //keep original generated alias
+                        }
+                    }
+                        
                 }
 
             }
@@ -164,6 +202,8 @@ namespace FakeXrmEasy.Extensions
                     projected = new Entity(e.LogicalName) { Id = e.Id };
 
 
+                qe.ColumnSet.AddMissingColumnAliases();
+                
                 foreach (var attKey in qe.ColumnSet.Columns)
                 {
                     //Check if attribute really exists in metadata
@@ -184,8 +224,7 @@ namespace FakeXrmEasy.Extensions
                         }
                     }
                 }
-
-
+                
                 //Plus attributes from joins
                 foreach (var le in qe.LinkEntities)
                 {
@@ -193,6 +232,36 @@ namespace FakeXrmEasy.Extensions
                 }
                 return RemoveNullAttributes(projected);
             }
+        }
+
+        /// <summary>
+        /// Applies column aliases if there are any specified
+        /// </summary>
+        /// <param name="e">The entity record where attributes have already been projected</param>
+        /// <param name="qe">The QueryExpression with info about an possible column aliases</param>
+        /// <param name="context">The In-Memory IXrmFakedContext</param>
+        /// <returns></returns>
+        internal static Entity ApplyColumnAliases(this Entity e, QueryExpression qe, IXrmFakedContext context)
+        {
+            if (qe.ColumnSet == null)
+            {
+                return e;
+            }
+
+            foreach (var attributeExpression in qe.ColumnSet.AttributeExpressions)
+            {
+                if (attributeExpression.AggregateType == XrmAggregateType.None)
+                {
+                    if (e.Attributes.ContainsKey(attributeExpression.AttributeName))
+                    {
+                        var value = e[attributeExpression.AttributeName];
+                        e.Attributes.Remove(attributeExpression.AttributeName);
+                        e.Attributes.Add(attributeExpression.Alias, new AliasedValue(qe.EntityName, attributeExpression.AttributeName, value));
+                    }
+                }
+            }
+
+            return e;
         }
 
         /// <summary>

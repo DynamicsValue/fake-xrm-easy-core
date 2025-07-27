@@ -124,6 +124,9 @@ namespace FakeXrmEasy.Query
             //Project the attributes in the root column set  (must be applied after the where and order clauses, not before!!)
             query = query.Select(x => x.Clone(x.GetType(), context as XrmFakedContext).ProjectAttributes(qe, context as XrmFakedContext));
 
+            //Apply column aliases
+            query = query.Select(e => e.ApplyColumnAliases(qe, context));
+            
             return query;
         }
 
