@@ -10,6 +10,8 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.ColumnAliases
 {
     public class ColumnAliasesTests: FakeXrmEasyTestsBase
     {
+        private const string CONTACT_NAME_ALIAS = "contact_name";
+        
         private readonly Contact _contact;
         
         public ColumnAliasesTests()
@@ -43,6 +45,25 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.ColumnAliases
             Assert.Equal("role", attributeExpression.Alias);
             Assert.Equal("accountrolecode", attributeExpression.AttributeName);
             Assert.Equal(XrmAggregateType.None, attributeExpression.AggregateType);
+        }
+        
+        [Fact]
+        public void Should_return_aliased_value_when_a_column_has_an_alias()
+        {
+            _context.Initialize(new[] {
+                new Contact() { Id = Guid.NewGuid(), LastName = "Smith", FirstName = "John" }
+            });
+            
+            var fetchXml = $@"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+                              <entity name='contact'>
+                                    <attribute name='firstname' alias='{CONTACT_NAME_ALIAS}' />
+                              </entity>
+                            </fetch>";
+
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
+
+            Assert.Single(collection.Entities);
+            Assert.True(collection.Entities[0].Attributes.ContainsKey(CONTACT_NAME_ALIAS));
         }
     }
 }
