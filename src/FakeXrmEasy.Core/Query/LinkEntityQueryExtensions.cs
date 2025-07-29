@@ -74,6 +74,7 @@ namespace FakeXrmEasy.Query
                                     (outerEl, innerEl) => outerEl.Clone(outerEl.GetType(), context).JoinAttributes(innerEl, new ColumnSet(true), leAlias, context));
 
                     break;
+                
                 case JoinOperator.LeftOuter:
                     query = query.GroupJoin(inner,
                                     outerKey => outerKey.KeySelector(linkFromAlias, context),
@@ -85,7 +86,15 @@ namespace FakeXrmEasy.Query
 
 
                     break;
-                default: //This shouldn't be reached as there are only 3 types of Join...
+                
+                #if FAKE_XRM_EASY_9
+                case JoinOperator.Exists:
+                case JoinOperator.In: 
+                    //Do nothing at this stage of query execution, it'll be later on implemented as a subquery during the filtering phase
+                    break;
+                #endif
+                
+                default: //This shouldn't be reached unless a new operator is added...
                     throw UnsupportedExceptionFactory.New(context.LicenseContext.Value, string.Format("The join operator {0} is currently not supported. ", le.JoinOperator));
 
             }
@@ -111,14 +120,23 @@ namespace FakeXrmEasy.Query
 
         internal static List<Expression> TranslateLinkedEntityFilterExpressionToExpression(this LinkEntity le, QueryExpression qe, IXrmFakedContext context, ParameterExpression entity)
         {
+            var linkedEntitiesQueryExpressions = new List<Expression>();
+            
+            #if FAKE_XRM_EASY_9
+            if (le.JoinOperator == JoinOperator.Exists || le.JoinOperator == JoinOperator.In)
+            {
+                var existsOrInExpression = le.TranslateExistsOrInLinkedEntityToExpression(context, entity);
+                linkedEntitiesQueryExpressions.Add(existsOrInExpression);
+                return linkedEntitiesQueryExpressions;
+            }
+            #endif
+            
             //In CRM 2011, condition expressions are at the LinkEntity level without an entity name
             //From CRM 2013, condition expressions were moved to outside the LinkEntity object at the QueryExpression level,
             //with an EntityName alias attribute
 
             //If we reach this point, it means we are translating filters at the Link Entity level (2011),
             //Therefore we need to prepend the alias attribute because the code to generate attributes for Joins (JoinAttribute extension) is common across versions
-            var linkedEntitiesQueryExpressions = new List<Expression>();
-
             le.PrependConditionsWithEntityAliasOrEntityName(context);
 
             //Translate this specific Link Criteria

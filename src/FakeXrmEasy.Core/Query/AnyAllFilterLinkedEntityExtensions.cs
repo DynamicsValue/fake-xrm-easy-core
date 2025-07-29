@@ -31,6 +31,31 @@ namespace FakeXrmEasy.Query
             return orExpression;
         }
         
+        internal static Expression TranslateExistsOrInLinkedEntityToExpression(this LinkEntity le, IXrmFakedContext context, ParameterExpression entity)
+        {
+            var constantExpression = Expression.Constant(false);
+                
+            //creates and evaluates the inner query expression, and then applies relevant filtering based on JoinOperator
+            var childQueryExpression = new QueryExpression()
+            {
+                EntityName = le.LinkToEntityName,
+                Criteria = le.LinkCriteria,
+                ColumnSet = new ColumnSet(le.LinkToAttributeName),
+            };
+
+            var childQueryElements = childQueryExpression.ToQueryable(context)
+                .ToList();
+                
+                
+            var childIds = childQueryElements.Select(e => e.GetAttributePrimaryKeyIdOrEntityReferenceId(le.LinkToAttributeName))
+                .ToList();
+         
+            var getAttributeValueExpr = entity.ToAttributeValueExpression(le.LinkFromAttributeName);
+            var containsAttributeExpr = entity.ToContainsAttributeExpression(le.LinkFromAttributeName);
+            
+            return childIds.ToAnyExpression(getAttributeValueExpr, containsAttributeExpr);
+        }
+        
         internal static Expression TranslateAnyAllLinkedEntityToExpression(this LinkEntity le, IXrmFakedContext context, ParameterExpression entity)
         {
             var constantExpression = Expression.Constant(false);
