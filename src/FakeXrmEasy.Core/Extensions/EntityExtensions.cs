@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Core.Exceptions.Extensions;
+using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace FakeXrmEasy.Extensions
@@ -110,14 +112,64 @@ namespace FakeXrmEasy.Extensions
             }
             else
             {
+                #if FAKE_XRM_EASY_9
+                le.Columns.AddMissingColumnAliases();
+
+                Dictionary<string, XrmAttributeExpression> attributeExpressionsDictionary = new Dictionary<string, XrmAttributeExpression>();
+                if (le.Columns.AttributeExpressions != null)
+                {
+                    attributeExpressionsDictionary = le.Columns.AttributeExpressions
+                        .Where(attrEx => attrEx.AggregateType == XrmAggregateType.None)
+                        .ToDictionary(attrEx => attrEx.AttributeName, 
+                            attrEx => attrEx);
+                }
+                #endif
+                
                 foreach (var attKey in le.Columns.Columns)
                 {
                     var linkedAttKey = sAlias + "." + attKey;
-                    if (e.Attributes.ContainsKey(linkedAttKey))
-                        projected[linkedAttKey] = e[linkedAttKey];
 
+                    #if FAKE_XRM_EASY_9
+                    XrmAttributeExpression attrExp = null;
+                    if (attributeExpressionsDictionary.ContainsKey(attKey))
+                    {
+                        attrExp = attributeExpressionsDictionary[attKey];
+                    }
+                    #endif
+                    
+                    if (e.Attributes.ContainsKey(linkedAttKey))
+                    {
+                        #if FAKE_XRM_EASY_9
+                        if (attrExp != null)
+                        {
+                            projected[attrExp.Alias] = e[linkedAttKey]; //use custom alias
+                        }
+                        else
+                        {
+                            projected[linkedAttKey] = e[linkedAttKey]; //keep original generated alias
+                        }
+                        #else
+                        projected[linkedAttKey] = e[linkedAttKey];
+                        #endif
+                        
+                    }
+                    
                     if (e.FormattedValues.ContainsKey(linkedAttKey))
+                    {
+                        #if FAKE_XRM_EASY_9
+                        if (attrExp != null)
+                        {
+                            projected.FormattedValues[attrExp.Alias] = e.FormattedValues[linkedAttKey]; //use custom alias
+                        }
+                        else
+                        {
+                            projected.FormattedValues[linkedAttKey] = e.FormattedValues[linkedAttKey]; //keep original generated alias
+                        }
+                        #else
                         projected.FormattedValues[linkedAttKey] = e.FormattedValues[linkedAttKey];
+                        #endif
+                    }
+                        
                 }
 
             }
@@ -163,6 +215,10 @@ namespace FakeXrmEasy.Extensions
                     projected = new Entity(e.LogicalName) { Id = e.Id };
 
 
+                #if FAKE_XRM_EASY_9
+                qe.ColumnSet.AddMissingColumnAliases();
+                #endif
+                
                 foreach (var attKey in qe.ColumnSet.Columns)
                 {
                     //Check if attribute really exists in metadata
@@ -183,8 +239,7 @@ namespace FakeXrmEasy.Extensions
                         }
                     }
                 }
-
-
+                
                 //Plus attributes from joins
                 foreach (var le in qe.LinkEntities)
                 {
@@ -192,6 +247,39 @@ namespace FakeXrmEasy.Extensions
                 }
                 return RemoveNullAttributes(projected);
             }
+        }
+
+        /// <summary>
+        /// Applies column aliases if there are any specified
+        /// </summary>
+        /// <param name="e">The entity record where attributes have already been projected</param>
+        /// <param name="qe">The QueryExpression with info about an possible column aliases</param>
+        /// <param name="context">The In-Memory IXrmFakedContext</param>
+        /// <returns></returns>
+        internal static Entity ApplyColumnAliases(this Entity e, QueryExpression qe, IXrmFakedContext context)
+        {
+            if (qe.ColumnSet == null)
+            {
+                return e;
+            }
+
+            #if FAKE_XRM_EASY_9
+            foreach (var attributeExpression in qe.ColumnSet.AttributeExpressions)
+            {
+                if (attributeExpression.AggregateType == XrmAggregateType.None)
+                {
+                    if (e.Attributes.ContainsKey(attributeExpression.AttributeName))
+                    {
+                        var value = e[attributeExpression.AttributeName];
+                        e.Attributes.Remove(attributeExpression.AttributeName);
+                        e.Attributes.Add(attributeExpression.Alias, new AliasedValue(qe.EntityName, attributeExpression.AttributeName, value));
+                    }
+                }
+            }
+            #endif
+            
+
+            return e;
         }
 
         /// <summary>
@@ -704,5 +792,34 @@ namespace FakeXrmEasy.Extensions
 
 #endif
         
+        /// <summary>
+        /// Returns the specified attribute Id if a Primary Key or the Id of the EntityReference if an EntityReference
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="attributeName"></param>
+        /// <returns></returns>
+        internal static Guid GetAttributePrimaryKeyIdOrEntityReferenceId(this Entity e, string attributeName)
+        {
+            if (!e.Contains(attributeName))
+            {
+                throw new AttributeNotFoundInEntityException(attributeName);
+            }
+
+            if (e[attributeName] == null)
+            {
+                return Guid.Empty;
+            }
+            
+            if (e[attributeName] is Guid)
+            {
+                return (Guid)e[attributeName];
+            }
+            if (e[attributeName] is EntityReference)
+            {
+                return ((EntityReference)e[attributeName]).Id;
+            }
+
+            return Guid.Empty;
+        }
     }
 }

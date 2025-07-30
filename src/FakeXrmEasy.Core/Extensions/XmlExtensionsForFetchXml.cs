@@ -144,8 +144,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
         public static ColumnSet ToColumnSet(this XElement el)
         {
             var allAttributes = el.Elements()
-                    .Where(e => e.Name.LocalName.Equals("all-attributes"))
-                    .FirstOrDefault();
+                .FirstOrDefault(e => e.Name.LocalName.Equals("all-attributes"));
 
             if (allAttributes != null)
             {
@@ -154,11 +153,30 @@ namespace FakeXrmEasy.Extensions.FetchXml
 
             var attributes = el.Elements()
                                 .Where(e => e.Name.LocalName.Equals("attribute"))
+                                //.Where(e => e.GetAttribute("alias") == null)
                                 .Select(e => e.GetAttribute("name").Value)
                                 .ToArray();
 
+            var columnSet = new ColumnSet(attributes);
+            
+            #if FAKE_XRM_EASY_9
+            var columnAliases = el.Elements()
+                .Where(e => e.Name.LocalName.Equals("attribute"))
+                .Where(e => e.GetAttribute("alias") != null 
+                            && e.GetAttribute("aggregate") == null
+                            && e.GetAttribute("groupby") == null)
+                .Select(e => new XrmAttributeExpression()
+                {
+                    AttributeName = e.GetAttribute("name").Value,
+                    AggregateType = XrmAggregateType.None,
+                    Alias = e.GetAttribute("alias").Value
+                })
+                .ToList();
+            
+            columnSet.AttributeExpressions.AddRange(columnAliases);
+            #endif
 
-            return new ColumnSet(attributes);
+            return columnSet;
         }
 
         /// <summary>
