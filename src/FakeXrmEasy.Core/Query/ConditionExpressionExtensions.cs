@@ -100,24 +100,11 @@ namespace FakeXrmEasy.Query
 
         internal static Expression ToExpression(this TypedConditionExpression c, QueryExpression qe, IXrmFakedContext context, ParameterExpression entity)
         {
-            Expression attributesProperty = Expression.Property(
-                entity,
-                "Attributes"
-                );
-            
             string attributeName = c.GetAttributeName();
-            Expression containsAttributeExpression = Expression.Call(
-                attributesProperty,
-                typeof(AttributeCollection).GetMethod("ContainsKey", new Type[] { typeof(string) }),
-                Expression.Constant(attributeName)
-            );
-
-            Expression getAttributeValueExpr = Expression.Property(
-                attributesProperty, "Item",
-                Expression.Constant(attributeName, typeof(string))
-            );
-
-            Expression getNonBasicValueExpr = getAttributeValueExpr;
+            
+            var getNonBasicValueExpr = entity.ToAttributeValueExpression(attributeName);
+            var containsAttributeExpression = entity.ToContainsAttributeExpression(attributeName);
+            
             Expression operatorExpression = null;
 
             switch (c.CondExpression.Operator)
@@ -314,6 +301,20 @@ namespace FakeXrmEasy.Query
                         $"Condition for attribute '{name}.{c.GetAttributeName()}': expected argument(s) of a different type but received '{value.GetType()}'.");
                 }                
             }
+        }
+
+        /// <summary>
+        /// Prepends the attribute name with either an entity alias (if present) or an entity name,
+        /// this is because query engine is flattened and the conditions in the where expression will be filtered based on not just the attribute name,
+        /// but also the associated LinkEntity or EntityAlias where that ConditionExpression came from
+        /// </summary>
+        /// <param name="ce">The condition expression whose attribute name will be prepended</param>
+        /// <param name="entityAlias">The entity alias of the entity or linkedentity where this conditionexpression lives</param>
+        /// <param name="linkToEntityName">The LinkToEntityName for condition expressions inside a LinkedEntity</param>
+        internal static void PrependEntityAliasOrEntityName(this ConditionExpression ce, string entityAlias, string linkToEntityName)
+        {
+            var entityAliasOrName = !string.IsNullOrEmpty(entityAlias) ? entityAlias : linkToEntityName;
+            ce.AttributeName = entityAliasOrName + "." + ce.AttributeName;
         }
     }
 }

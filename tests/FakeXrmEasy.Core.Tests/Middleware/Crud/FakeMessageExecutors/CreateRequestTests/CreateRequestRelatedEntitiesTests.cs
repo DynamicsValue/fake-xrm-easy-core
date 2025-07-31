@@ -11,15 +11,6 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.CreateRequ
 {
     public class CreateRequestRelatedEntitiesTests : FakeXrmEasyTestsBase
     {
-        private readonly SalesOrder _salesOrder;
-        private readonly SalesOrderDetail _salesOrderDetail1;
-        private readonly SalesOrderDetail _salesOrderDetail2;
-        
-        public CreateRequestRelatedEntitiesTests()
-        {
-            
-        }
-        
         [Fact]
         public void When_related_entities_are_used_without_relationship_info_exception_is_raised()
         {

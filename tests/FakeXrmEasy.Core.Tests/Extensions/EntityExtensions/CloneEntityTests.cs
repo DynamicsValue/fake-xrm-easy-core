@@ -11,8 +11,7 @@ namespace FakeXrmEasy.Core.Tests.Extensions
     {
         private readonly Entity _earlyBoundSource;
         private readonly Entity _lateBoundSource;
-        private Entity _clone;
-        
+
         public CloneEntityTests()
         {
             _earlyBoundSource = new Account() { Id = Guid.NewGuid() };
