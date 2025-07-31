@@ -355,6 +355,28 @@ namespace FakeXrmEasy.Extensions.FetchXml
         }
 
         /// <summary>
+        /// Extracts the JoinOperator from the current link-entity node
+        /// </summary>
+        /// <param name="el"></param>
+        /// <returns></returns>
+        internal static JoinOperator ToJoinOperator(this XElement el)
+        {
+            if (el.GetAttribute("link-type") != null)
+            {
+                switch (el.GetAttribute("link-type").Value)
+                {
+                    case "any":
+                        return JoinOperator.Any;
+                    case "outer":
+                        return JoinOperator.LeftOuter;
+                    default:
+                        return JoinOperator.Inner;
+                }
+            }
+            return JoinOperator.Inner;
+        }
+        
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="el"></param>
@@ -376,18 +398,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
             }
 
             //Join operator
-            if (el.GetAttribute("link-type") != null)
-            {
-                switch (el.GetAttribute("link-type").Value)
-                {
-                    case "outer":
-                        linkEntity.JoinOperator = JoinOperator.LeftOuter;
-                        break;
-                    default:
-                        linkEntity.JoinOperator = JoinOperator.Inner;
-                        break;
-                }
-            }
+            linkEntity.JoinOperator = el.ToJoinOperator();
 
             //Process other link entities recursively
             var convertedLinkEntityNodes = el.Elements()
@@ -412,6 +423,47 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return linkEntity;
         }
 
+        internal static LinkEntity ToAnyAllFilterLinkEntity(this XElement el, IXrmFakedContext ctx)
+        {
+            //Create this node
+            var linkEntity = new LinkEntity();
+
+            linkEntity.LinkFromEntityName = el.Parent.Parent.GetAttribute("name").Value;
+            linkEntity.LinkFromAttributeName = el.GetAttribute("to").Value;
+            linkEntity.LinkToAttributeName = el.GetAttribute("from").Value;
+            linkEntity.LinkToEntityName = el.GetAttribute("name").Value;
+
+            if (el.GetAttribute("alias") != null)
+            {
+                linkEntity.EntityAlias = el.GetAttribute("alias").Value;
+            }
+
+            //Join operator
+            linkEntity.JoinOperator = el.ToJoinOperator();
+
+            //Process other link entities recursively
+            var convertedLinkEntityNodes = el.Elements()
+                .Where(e => e.Name.LocalName.Equals("link-entity"))
+                .Select(e => e.ToLinkEntity(ctx))
+                .ToList();
+
+            foreach (var le in convertedLinkEntityNodes)
+            {
+                linkEntity.LinkEntities.Add(le);
+            }
+
+            //Process column sets
+            linkEntity.Columns = el.ToColumnSet();
+
+            //Process filter
+            linkEntity.LinkCriteria = el.Elements()
+                .Where(e => e.Name.LocalName.Equals("filter"))
+                .Select(e => e.ToFilterExpression(ctx))
+                .FirstOrDefault();
+
+            return linkEntity;
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -451,10 +503,10 @@ namespace FakeXrmEasy.Extensions.FetchXml
         }
 
         /// <summary>
-        /// 
+        /// Converts a <filter> FetchXml node into a FilterExpression
         /// </summary>
-        /// <param name="elem"></param>
-        /// <param name="ctx"></param>
+        /// <param name="elem">Assumes the current element is a "filter" node</param>
+        /// <param name="ctx">The IXrmFakedContext</param>
         /// <returns></returns>
         public static FilterExpression ToFilterExpression(this XElement elem, IXrmFakedContext ctx)
         {
@@ -486,6 +538,18 @@ namespace FakeXrmEasy.Extensions.FetchXml
                         .Select(el => el.ToConditionExpression(ctx))
                         .ToList();
 
+            //Process child linked-entity as an AnyAllFilterLinkEntity
+            var linkedEntity = elem
+                .Elements()
+                .Where(el => el.Name.LocalName.Equals("link-entity"))
+                .Select(el => el.ToAnyAllFilterLinkEntity(ctx))
+                .FirstOrDefault();
+            
+            if (linkedEntity != null)
+            {
+                filterExpression.AnyAllFilterLinkEntity = linkedEntity;
+            }
+            
             foreach (var c in conditions)
                 filterExpression.AddCondition(c);
 
