@@ -46,5 +46,12 @@ namespace FakeXrmEasy.Core.Tests.EmailSettings
             var trackingToken = emailTrackingSettings.GenerateNewTrackingTokenValue();
             Assert.Equal($"CRM:0235001", trackingToken);
         }
+        
+        [Fact]
+        public void Should_have_tracking_token_generation_enabled_by_default() 
+        {
+            var emailTrackingSettings = _context.GetProperty<IEmailTrackingSettings>();
+            Assert.True(emailTrackingSettings.IsEnabled);
+        }
     }
 }

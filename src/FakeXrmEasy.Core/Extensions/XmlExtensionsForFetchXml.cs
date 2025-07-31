@@ -144,8 +144,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
         public static ColumnSet ToColumnSet(this XElement el)
         {
             var allAttributes = el.Elements()
-                    .Where(e => e.Name.LocalName.Equals("all-attributes"))
-                    .FirstOrDefault();
+                .FirstOrDefault(e => e.Name.LocalName.Equals("all-attributes"));
 
             if (allAttributes != null)
             {
@@ -154,11 +153,30 @@ namespace FakeXrmEasy.Extensions.FetchXml
 
             var attributes = el.Elements()
                                 .Where(e => e.Name.LocalName.Equals("attribute"))
+                                //.Where(e => e.GetAttribute("alias") == null)
                                 .Select(e => e.GetAttribute("name").Value)
                                 .ToArray();
 
+            var columnSet = new ColumnSet(attributes);
+            
+            #if FAKE_XRM_EASY_9
+            var columnAliases = el.Elements()
+                .Where(e => e.Name.LocalName.Equals("attribute"))
+                .Where(e => e.GetAttribute("alias") != null 
+                            && e.GetAttribute("aggregate") == null
+                            && e.GetAttribute("groupby") == null)
+                .Select(e => new XrmAttributeExpression()
+                {
+                    AttributeName = e.GetAttribute("name").Value,
+                    AggregateType = XrmAggregateType.None,
+                    Alias = e.GetAttribute("alias").Value
+                })
+                .ToList();
+            
+            columnSet.AttributeExpressions.AddRange(columnAliases);
+            #endif
 
-            return new ColumnSet(attributes);
+            return columnSet;
         }
 
         /// <summary>
@@ -337,6 +355,40 @@ namespace FakeXrmEasy.Extensions.FetchXml
         }
 
         /// <summary>
+        /// Extracts the JoinOperator from the current link-entity node
+        /// </summary>
+        /// <param name="el"></param>
+        /// <returns></returns>
+        internal static JoinOperator ToJoinOperator(this XElement el)
+        {
+            if (el.GetAttribute("link-type") != null)
+            {
+                switch (el.GetAttribute("link-type").Value)
+                {
+                    #if FAKE_XRM_EASY_9
+                    case "all":
+                        return JoinOperator.All;
+                    case "not-all":
+                        return JoinOperator.NotAll;
+                    case "any":
+                        return JoinOperator.Any;
+                    case "not-any":
+                        return JoinOperator.NotAny;
+                    case "exists":
+                        return JoinOperator.Exists;
+                    case "in":
+                        return JoinOperator.In;
+                    #endif
+                    case "outer":
+                        return JoinOperator.LeftOuter;
+                    default:
+                        return JoinOperator.Inner;
+                }
+            }
+            return JoinOperator.Inner;
+        }
+        
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="el"></param>
@@ -358,18 +410,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
             }
 
             //Join operator
-            if (el.GetAttribute("link-type") != null)
-            {
-                switch (el.GetAttribute("link-type").Value)
-                {
-                    case "outer":
-                        linkEntity.JoinOperator = JoinOperator.LeftOuter;
-                        break;
-                    default:
-                        linkEntity.JoinOperator = JoinOperator.Inner;
-                        break;
-                }
-            }
+            linkEntity.JoinOperator = el.ToJoinOperator();
 
             //Process other link entities recursively
             var convertedLinkEntityNodes = el.Elements()
@@ -394,6 +435,47 @@ namespace FakeXrmEasy.Extensions.FetchXml
             return linkEntity;
         }
 
+        internal static LinkEntity ToAnyAllFilterLinkEntity(this XElement el, IXrmFakedContext ctx)
+        {
+            //Create this node
+            var linkEntity = new LinkEntity();
+
+            linkEntity.LinkFromEntityName = el.Parent.Parent.GetAttribute("name").Value;
+            linkEntity.LinkFromAttributeName = el.GetAttribute("to").Value;
+            linkEntity.LinkToAttributeName = el.GetAttribute("from").Value;
+            linkEntity.LinkToEntityName = el.GetAttribute("name").Value;
+
+            if (el.GetAttribute("alias") != null)
+            {
+                linkEntity.EntityAlias = el.GetAttribute("alias").Value;
+            }
+
+            //Join operator
+            linkEntity.JoinOperator = el.ToJoinOperator();
+
+            //Process other link entities recursively
+            var convertedLinkEntityNodes = el.Elements()
+                .Where(e => e.Name.LocalName.Equals("link-entity"))
+                .Select(e => e.ToLinkEntity(ctx))
+                .ToList();
+
+            foreach (var le in convertedLinkEntityNodes)
+            {
+                linkEntity.LinkEntities.Add(le);
+            }
+
+            //Process column sets
+            linkEntity.Columns = el.ToColumnSet();
+
+            //Process filter
+            linkEntity.LinkCriteria = el.Elements()
+                .Where(e => e.Name.LocalName.Equals("filter"))
+                .Select(e => e.ToFilterExpression(ctx))
+                .FirstOrDefault();
+
+            return linkEntity;
+        }
+        
         /// <summary>
         /// 
         /// </summary>
@@ -433,10 +515,10 @@ namespace FakeXrmEasy.Extensions.FetchXml
         }
 
         /// <summary>
-        /// 
+        /// Converts a <filter> FetchXml node into a FilterExpression
         /// </summary>
-        /// <param name="elem"></param>
-        /// <param name="ctx"></param>
+        /// <param name="elem">Assumes the current element is a "filter" node</param>
+        /// <param name="ctx">The IXrmFakedContext</param>
         /// <returns></returns>
         public static FilterExpression ToFilterExpression(this XElement elem, IXrmFakedContext ctx)
         {
@@ -467,6 +549,20 @@ namespace FakeXrmEasy.Extensions.FetchXml
                         .Where(el => el.Name.LocalName.Equals("condition"))
                         .Select(el => el.ToConditionExpression(ctx))
                         .ToList();
+
+            #if FAKE_XRM_EASY_9
+            //Process child linked-entity as an AnyAllFilterLinkEntity
+            var linkedEntity = elem
+                .Elements()
+                .Where(el => el.Name.LocalName.Equals("link-entity"))
+                .Select(el => el.ToAnyAllFilterLinkEntity(ctx))
+                .FirstOrDefault();
+            
+            if (linkedEntity != null)
+            {
+                filterExpression.AnyAllFilterLinkEntity = linkedEntity;
+            }
+            #endif
 
             foreach (var c in conditions)
                 filterExpression.AddCondition(c);
