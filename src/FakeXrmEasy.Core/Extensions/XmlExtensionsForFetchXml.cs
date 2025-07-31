@@ -366,10 +366,14 @@ namespace FakeXrmEasy.Extensions.FetchXml
                 switch (el.GetAttribute("link-type").Value)
                 {
                     #if FAKE_XRM_EASY_9
+                    case "all":
+                        return JoinOperator.All;
                     case "not-all":
                         return JoinOperator.NotAll;
                     case "any":
                         return JoinOperator.Any;
+                    case "not-any":
+                        return JoinOperator.NotAny;
                     #endif
                     case "outer":
                         return JoinOperator.LeftOuter;

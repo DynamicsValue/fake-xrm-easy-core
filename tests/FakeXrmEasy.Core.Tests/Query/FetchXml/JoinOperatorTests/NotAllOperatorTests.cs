@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 
 #if FAKE_XRM_EASY_9
-namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.JoinOperatorTests
+namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
 {
     public class NotAllOperatorTests: FakeXrmEasyTestsBase
     {
