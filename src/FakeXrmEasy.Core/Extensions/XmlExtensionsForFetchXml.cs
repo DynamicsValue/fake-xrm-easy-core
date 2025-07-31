@@ -365,8 +365,10 @@ namespace FakeXrmEasy.Extensions.FetchXml
             {
                 switch (el.GetAttribute("link-type").Value)
                 {
+                    #if FAKE_XRM_EASY_9
                     case "any":
                         return JoinOperator.Any;
+                    #endif
                     case "outer":
                         return JoinOperator.LeftOuter;
                     default:
@@ -538,6 +540,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
                         .Select(el => el.ToConditionExpression(ctx))
                         .ToList();
 
+            #if FAKE_XRM_EASY_9
             //Process child linked-entity as an AnyAllFilterLinkEntity
             var linkedEntity = elem
                 .Elements()
@@ -549,7 +552,8 @@ namespace FakeXrmEasy.Extensions.FetchXml
             {
                 filterExpression.AnyAllFilterLinkEntity = linkedEntity;
             }
-            
+            #endif
+
             foreach (var c in conditions)
                 filterExpression.AddCondition(c);
 
