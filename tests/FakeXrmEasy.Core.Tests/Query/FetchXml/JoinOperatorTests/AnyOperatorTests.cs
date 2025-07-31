@@ -67,11 +67,11 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
             Assert.NotNull(query.Criteria.AnyAllFilterLinkEntity);
 
             var linkEntity = query.Criteria.AnyAllFilterLinkEntity;
-            Assert.Equal(JoinOperator.Any, query.Criteria.AnyAllFilterLinkEntity.JoinOperator);
-            Assert.Equal("contact", query.Criteria.AnyAllFilterLinkEntity.LinkFromEntityName);
-            Assert.Equal("account", query.Criteria.AnyAllFilterLinkEntity.LinkToEntityName);
-            Assert.Equal("contactid", query.Criteria.AnyAllFilterLinkEntity.LinkFromAttributeName);
-            Assert.Equal("primarycontactid", query.Criteria.AnyAllFilterLinkEntity.LinkToAttributeName);
+            Assert.Equal(JoinOperator.Any, linkEntity.JoinOperator);
+            Assert.Equal("contact", linkEntity.LinkFromEntityName);
+            Assert.Equal("account", linkEntity.LinkToEntityName);
+            Assert.Equal("contactid", linkEntity.LinkFromAttributeName);
+            Assert.Equal("primarycontactid", linkEntity.LinkToAttributeName);
 
             Assert.NotNull(linkEntity.LinkCriteria);
             

@@ -374,6 +374,10 @@ namespace FakeXrmEasy.Extensions.FetchXml
                         return JoinOperator.Any;
                     case "not-any":
                         return JoinOperator.NotAny;
+                    case "exists":
+                        return JoinOperator.Exists;
+                    case "in":
+                        return JoinOperator.In;
                     #endif
                     case "outer":
                         return JoinOperator.LeftOuter;
