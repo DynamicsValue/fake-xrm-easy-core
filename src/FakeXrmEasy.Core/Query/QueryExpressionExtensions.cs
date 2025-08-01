@@ -50,7 +50,7 @@ namespace FakeXrmEasy.Query
         }
 
         /// <summary>
-        /// 
+        /// Converts a QueryExpression into a Queryable
         /// </summary>
         /// <param name="qe"></param>
         /// <param name="context"></param>
@@ -124,6 +124,9 @@ namespace FakeXrmEasy.Query
             //Project the attributes in the root column set  (must be applied after the where and order clauses, not before!!)
             query = query.Select(x => x.Clone(x.GetType(), context as XrmFakedContext).ProjectAttributes(qe, context as XrmFakedContext));
 
+            //Apply column aliases
+            query = query.Select(e => e.ApplyColumnAliases(qe, context));
+            
             return query;
         }
 
@@ -244,34 +247,19 @@ namespace FakeXrmEasy.Query
                 linkedEntitiesQueryExpressions.AddRange(listOfExpressions);
             }
 
-            if (linkedEntitiesQueryExpressions.Count > 0 && qe.Criteria != null)
+            Expression combinedExpressions = Expression.Constant(true);
+            foreach (var e in linkedEntitiesQueryExpressions)
             {
-                //Return the and of the two
-                Expression andExpression = Expression.Constant(true);
-                foreach (var e in linkedEntitiesQueryExpressions)
-                {
-                    andExpression = Expression.And(e, andExpression);
+                combinedExpressions = Expression.And(e, combinedExpressions);
+            }
 
-                }
-                var feExpression = qe.Criteria.TranslateFilterExpressionToExpression(qe, context, qe.EntityName, entity, false);
-                return Expression.And(andExpression, feExpression);
-            }
-            else if (linkedEntitiesQueryExpressions.Count > 0)
+            if (qe.Criteria != null)
             {
-                //Linked entity expressions only
-                Expression andExpression = Expression.Constant(true);
-                foreach (var e in linkedEntitiesQueryExpressions)
-                {
-                    andExpression = Expression.And(e, andExpression);
-
-                }
-                return andExpression;
+                var criteriaExpression = qe.Criteria.TranslateFilterExpressionToExpression(qe, context, qe.EntityName, entity, false);
+                combinedExpressions = Expression.And(criteriaExpression, combinedExpressions);
             }
-            else
-            {
-                //Criteria only
-                return qe.Criteria.TranslateFilterExpressionToExpression(qe, context, qe.EntityName, entity, false);
-            }
+            
+            return combinedExpressions;
         }
 
 

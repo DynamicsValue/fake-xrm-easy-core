@@ -1,7 +1,7 @@
 param (
     [string]$packageSource = "local-packages",
     [string]$versionSuffix = "",
-    [string]$targetFrameworks = "net6.0"
+    [string]$targetFrameworks = "net8.0"
  )
 
 Write-Host "Running with versionSuffix '$($versionSuffix)'..."

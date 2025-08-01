@@ -107,6 +107,11 @@ namespace FakeXrmEasy.Extensions
             return attributeInfo;
         }
 
+        /// <summary>
+        /// Returns the field name that represents the entity record primary key based on the generated type of that entity
+        /// </summary>
+        /// <param name="earlyBoundType">The generated assembly to search for the given type</param>
+        /// <returns></returns>
         public static string GetPrimaryIdFieldName(this Type earlyBoundType)
         {
             return earlyBoundType.GetProperties()

@@ -30,7 +30,6 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
             var utcNow = DateTime.UtcNow;
 
             var deltaMiliseconds = utcNow.Subtract(previousTraceTime).TotalMilliseconds;
-            var message = "Fake Message";
             var zeroMessage = "{0}";
 
             string[] args = { "Some message" };

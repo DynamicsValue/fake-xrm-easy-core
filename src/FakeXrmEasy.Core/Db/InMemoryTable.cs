@@ -144,8 +144,7 @@ namespace FakeXrmEasy.Core.Db
         /// <summary>
         /// Checks if there is a matching record that matches the alternate key provided.
         /// </summary>
-        /// <param name="key">The metadata of the Alternate Key</param>
-        /// <param name="key">The key values</param>
+        /// <param name="keyAttributeValues">The key values</param>
         /// <returns></returns>
         protected internal Entity GetByKeyAttributeCollection(KeyAttributeCollection keyAttributeValues)
         {
@@ -157,7 +156,8 @@ namespace FakeXrmEasy.Core.Db
         /// Checks if the record exists using any of the alternate keys currently present in metadata, and if so, returns the matched key metadata
         /// </summary>
         /// <param name="record">The record whose attribute values will be used for searching</param>
-        /// <returns>The record that matches one of the entity key metadata, null if none found otherwise</returns>
+        /// <param name="matchedKeyMetadata">The keyMetadata that matched</param>
+        /// <returns>The record that matches one of the entity key metadata, null otherwise</returns>
         protected internal Entity GetByAlternateKeys(Entity record, out EntityKeyMetadata matchedKeyMetadata)
         {
             matchedKeyMetadata = null;
