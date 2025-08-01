@@ -387,6 +387,41 @@ namespace FakeXrmEasy.Extensions.FetchXml
             }
             return JoinOperator.Inner;
         }
+
+        private static void PopulateLinkEntityAttributes(XElement el, LinkEntity linkEntity)
+        {
+            linkEntity.LinkFromAttributeName = el.GetAttribute("to").Value;
+            linkEntity.LinkToAttributeName = el.GetAttribute("from").Value;
+            linkEntity.LinkToEntityName = el.GetAttribute("name").Value;
+            
+            if (el.GetAttribute("alias") != null)
+            {
+                linkEntity.EntityAlias = el.GetAttribute("alias").Value;
+            }
+        }
+
+        private static void PopulateChildLinkedEntities(XElement el, LinkEntity linkEntity,
+            IXrmFakedContext context)
+        {
+            //Process other link entities recursively
+            var convertedLinkEntityNodes = el.Elements()
+                .Where(e => e.Name.LocalName.Equals("link-entity"))
+                .Select(e => e.ToLinkEntity(context))
+                .ToList();
+
+            foreach (var le in convertedLinkEntityNodes)
+            {
+                linkEntity.LinkEntities.Add(le);
+            }
+        }
+
+        private static void PopulateLinkCriteria(XElement el, LinkEntity linkEntity, IXrmFakedContext ctx)
+        {
+            linkEntity.LinkCriteria = el.Elements()
+                .Where(e => e.Name.LocalName.Equals("filter"))
+                .Select(e => e.ToFilterExpression(ctx))
+                .FirstOrDefault();
+        }
         
         /// <summary>
         /// 
@@ -400,37 +435,18 @@ namespace FakeXrmEasy.Extensions.FetchXml
             var linkEntity = new LinkEntity();
 
             linkEntity.LinkFromEntityName = el.Parent.GetAttribute("name").Value;
-            linkEntity.LinkFromAttributeName = el.GetAttribute("to").Value;
-            linkEntity.LinkToAttributeName = el.GetAttribute("from").Value;
-            linkEntity.LinkToEntityName = el.GetAttribute("name").Value;
-
-            if (el.GetAttribute("alias") != null)
-            {
-                linkEntity.EntityAlias = el.GetAttribute("alias").Value;
-            }
+            PopulateLinkEntityAttributes(el, linkEntity);
 
             //Join operator
             linkEntity.JoinOperator = el.ToJoinOperator();
 
-            //Process other link entities recursively
-            var convertedLinkEntityNodes = el.Elements()
-                                .Where(e => e.Name.LocalName.Equals("link-entity"))
-                                .Select(e => e.ToLinkEntity(ctx))
-                                .ToList();
-
-            foreach (var le in convertedLinkEntityNodes)
-            {
-                linkEntity.LinkEntities.Add(le);
-            }
+            PopulateChildLinkedEntities(el, linkEntity, ctx);
 
             //Process column sets
             linkEntity.Columns = el.ToColumnSet();
 
             //Process filter
-            linkEntity.LinkCriteria = el.Elements()
-                                        .Where(e => e.Name.LocalName.Equals("filter"))
-                                        .Select(e => e.ToFilterExpression(ctx))
-                                        .FirstOrDefault();
+            PopulateLinkCriteria(el, linkEntity, ctx);
 
             return linkEntity;
         }
@@ -441,37 +457,19 @@ namespace FakeXrmEasy.Extensions.FetchXml
             var linkEntity = new LinkEntity();
 
             linkEntity.LinkFromEntityName = el.Parent.Parent.GetAttribute("name").Value;
-            linkEntity.LinkFromAttributeName = el.GetAttribute("to").Value;
-            linkEntity.LinkToAttributeName = el.GetAttribute("from").Value;
-            linkEntity.LinkToEntityName = el.GetAttribute("name").Value;
-
-            if (el.GetAttribute("alias") != null)
-            {
-                linkEntity.EntityAlias = el.GetAttribute("alias").Value;
-            }
+            
+            PopulateLinkEntityAttributes(el, linkEntity);
 
             //Join operator
             linkEntity.JoinOperator = el.ToJoinOperator();
 
-            //Process other link entities recursively
-            var convertedLinkEntityNodes = el.Elements()
-                .Where(e => e.Name.LocalName.Equals("link-entity"))
-                .Select(e => e.ToLinkEntity(ctx))
-                .ToList();
-
-            foreach (var le in convertedLinkEntityNodes)
-            {
-                linkEntity.LinkEntities.Add(le);
-            }
+            PopulateChildLinkedEntities(el, linkEntity, ctx);
 
             //Process column sets
             linkEntity.Columns = el.ToColumnSet();
 
             //Process filter
-            linkEntity.LinkCriteria = el.Elements()
-                .Where(e => e.Name.LocalName.Equals("filter"))
-                .Select(e => e.ToFilterExpression(ctx))
-                .FirstOrDefault();
+            PopulateLinkCriteria(el, linkEntity, ctx);
 
             return linkEntity;
         }
