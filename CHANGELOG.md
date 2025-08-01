@@ -1,3 +1,12 @@
+## [2.8.0]
+
+### Added 
+
+- Added support for new JoinOperators: Exists, In - https://github.com/DynamicsValue/fake-xrm-easy/issues/202
+- Added initial support for column aliases in QueryExpression - https://github.com/DynamicsValue/fake-xrm-easy/issues/191
+- Introduced new property to Email tracking token properties to disable it if needed - https://github.com/DynamicsValue/fake-xrm-easy/issues/196
+- Added support for new JoinOperators: Any, NotAny, All, NotAll - https://github.com/DynamicsValue/fake-xrm-easy/issues/200
+
 ## [2.7.0]
 
 ### Added 

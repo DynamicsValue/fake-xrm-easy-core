@@ -62,7 +62,8 @@ namespace FakeXrmEasy
         /// <summary>
         /// Creates a new entity record
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">The entity to create</param>
+        /// <param name="isUpsert">true if this method is being called from within an Upsert operation, false otherwise</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
         public Guid CreateEntity(Entity e, bool isUpsert = false)
