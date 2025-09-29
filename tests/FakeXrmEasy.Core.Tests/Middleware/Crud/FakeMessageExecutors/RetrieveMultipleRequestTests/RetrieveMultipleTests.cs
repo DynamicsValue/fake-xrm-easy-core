@@ -347,11 +347,11 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveMu
             var expectedPage6 = new List<Guid> { entities[15].Id, entities[16].Id, entities[17].Id };
             Assert.Equal(expectedPage6, page6.Entities.Select(e => e.Id).ToList());
 
-            // After deleting [13]
+            // After deleting [13] we expect to get all entities after cookie.last, so the next lot is 12, 14, 15
             var expectedPage5AfterDelete = new List<Guid> { entities[12].Id, entities[14].Id, entities[15].Id };
             Assert.Equal(expectedPage5AfterDelete, page5AfterDelete.Entities.Select(e => e.Id).ToList());
 
-            // After deleting [16]
+            // After deleting [16], and grabbing page 6, we expect to get everything past cookie.last skip 3, so 17, 18, 19
             var expectedPage6AfterDelete = new List<Guid> { entities[17].Id, entities[18].Id, entities[19].Id };
             Assert.Equal(expectedPage6AfterDelete, page6AfterDelete.Entities.Select(e => e.Id).ToList());
         }
