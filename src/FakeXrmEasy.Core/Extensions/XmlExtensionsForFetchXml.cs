@@ -325,12 +325,15 @@ namespace FakeXrmEasy.Extensions.FetchXml
         /// <returns></returns>
         public static FilterExpression ToCriteria(this XDocument xlDoc, IXrmFakedContext ctx)
         {
+            // Create a shared alias cache for this fetch evaluation
+            var aliasToEntityMap = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+
             return xlDoc.Elements()   //fetch
-                    .Elements()     //entity
-                    .Elements()     //child nodes of entity
-                    .Where(el => el.Name.LocalName.Equals("filter"))
-                    .Select(el => el.ToFilterExpression(ctx))
-                    .FirstOrDefault();
+                .Elements()     //entity
+                .Elements()     //child nodes of entity
+                .Where(el => el.Name.LocalName.Equals("filter"))
+                .Select(el => el.ToFilterExpression(ctx, aliasToEntityMap))
+                .FirstOrDefault();
         }
 
         /// <summary>
@@ -351,6 +354,79 @@ namespace FakeXrmEasy.Extensions.FetchXml
                 el = parent;
             }
 
+            return null;
+        }
+
+        /// <summary>
+        /// Resolves a FetchXML alias to the actual entity name by finding the corresponding link-entity.
+        /// </summary>
+        /// <param name="el">The current element (typically a condition element).</param>
+        /// <param name="alias">The alias to resolve.</param>
+        /// <param name="aliasToEntityMap">Optional shared cache of alias-to-entity name mappings for the current fetch.</param>
+        /// <returns>The entity logical name for the alias, or null if not found.</returns>
+        public static string ResolveAliasToEntityName(this XElement el, string alias, Dictionary<string, string> aliasToEntityMap = null)
+        {
+            if (string.IsNullOrWhiteSpace(alias))
+            {
+                return null;
+            }
+
+            // Check cache first if provided
+            if (aliasToEntityMap != null && aliasToEntityMap.TryGetValue(alias, out var cachedEntityName))
+            {
+                return cachedEntityName;
+            }
+
+            // Traverse up to find the root fetch element
+            var current = el;
+            while (current != null && !current.Name.LocalName.Equals("fetch"))
+            {
+                current = current.Parent;
+            }
+            if (current == null)
+            {
+                return null;
+            }
+
+            // Try to find the alias in link-entity nodes
+            var linkEntity = current.Descendants()
+                .Where(e => e.Name.LocalName.Equals("link-entity"))
+                .FirstOrDefault(e =>
+                {
+                    var aliasAttr = e.GetAttribute("alias");
+                    return aliasAttr != null && aliasAttr.Value.Equals(alias, StringComparison.InvariantCultureIgnoreCase);
+                });
+            if (linkEntity != null)
+            {
+                var nameAttr = linkEntity.GetAttribute("name");
+                if (nameAttr != null)
+                {
+                    // Cache the result if cache dictionary is provided
+                    if (aliasToEntityMap != null)
+                    {
+                        aliasToEntityMap[alias] = nameAttr.Value;
+                    }
+                    return nameAttr.Value;
+                }
+            }
+
+            // If alias doesn't match any link-entity, it might be the entity name itself (no alias case)
+            var linkEntityByName = current.Descendants()
+                .Where(e => e.Name.LocalName.Equals("link-entity"))
+                .FirstOrDefault(e =>
+                {
+                    var nameAttr = e.GetAttribute("name");
+                    return nameAttr != null && nameAttr.Value.Equals(alias, StringComparison.InvariantCultureIgnoreCase);
+                });
+            if (linkEntityByName != null)
+            {
+                // Cache the result if cache dictionary is provided
+                if (aliasToEntityMap != null)
+                {
+                    aliasToEntityMap[alias] = alias;
+                }
+                return alias;
+            }
             return null;
         }
 
@@ -513,12 +589,13 @@ namespace FakeXrmEasy.Extensions.FetchXml
         }
 
         /// <summary>
-        /// Converts a <filter> FetchXml node into a FilterExpression
+        /// Converts a FetchXML filter node into a FilterExpression.
         /// </summary>
-        /// <param name="elem">Assumes the current element is a "filter" node</param>
-        /// <param name="ctx">The IXrmFakedContext</param>
-        /// <returns></returns>
-        public static FilterExpression ToFilterExpression(this XElement elem, IXrmFakedContext ctx)
+        /// <param name="elem">The current element, expected to be a filter node.</param>
+        /// <param name="ctx">The execution context.</param>
+        /// <param name="aliasToEntityMap">Optional shared cache of alias-to-entity name mappings for the current fetch.</param>
+        /// <returns>The constructed FilterExpression.</returns>
+        public static FilterExpression ToFilterExpression(this XElement elem, IXrmFakedContext ctx, Dictionary<string, string> aliasToEntityMap = null)
         {
             var filterExpression = new FilterExpression();
 
@@ -533,11 +610,17 @@ namespace FakeXrmEasy.Extensions.FetchXml
                                                   LogicalOperator.And : LogicalOperator.Or;
             }
 
+            // Build alias cache once if not provided
+            if (aliasToEntityMap == null)
+            {
+                aliasToEntityMap = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+            }
+
             //Process other filters recursively
             var otherFilters = elem
                         .Elements() //child nodes of this filter
                         .Where(el => el.Name.LocalName.Equals("filter"))
-                        .Select(el => el.ToFilterExpression(ctx))
+                        .Select(el => el.ToFilterExpression(ctx, aliasToEntityMap))
                         .ToList();
 
 
@@ -545,7 +628,7 @@ namespace FakeXrmEasy.Extensions.FetchXml
             var conditions = elem
                         .Elements() //child nodes of this filter
                         .Where(el => el.Name.LocalName.Equals("condition"))
-                        .Select(el => el.ToConditionExpression(ctx))
+                        .Select(el => el.ToConditionExpression(ctx, aliasToEntityMap))
                         .ToList();
 
             #if FAKE_XRM_EASY_9
@@ -586,12 +669,13 @@ namespace FakeXrmEasy.Extensions.FetchXml
         }
 
         /// <summary>
-        /// 
+        /// Converts a FetchXML condition node into a ConditionExpression.
         /// </summary>
-        /// <param name="elem"></param>
-        /// <param name="ctx"></param>
-        /// <returns></returns>
-        public static ConditionExpression ToConditionExpression(this XElement elem, IXrmFakedContext ctx)
+        /// <param name="elem">The current element, expected to be a condition node.</param>
+        /// <param name="ctx">The execution context.</param>
+        /// <param name="aliasToEntityMap">Optional shared cache of alias-to-entity name mappings for the current fetch.</param>
+        /// <returns>The constructed ConditionExpression.</returns>
+        public static ConditionExpression ToConditionExpression(this XElement elem, IXrmFakedContext ctx, Dictionary<string, string> aliasToEntityMap = null)
         {
             var conditionExpression = new ConditionExpression();
 
@@ -798,16 +882,25 @@ namespace FakeXrmEasy.Extensions.FetchXml
             //Process values
             object[] values = null;
 
-
             var entityName = GetAssociatedEntityNameForConditionExpression(elem);
+
+            // When entityname is specified (alias or entity name), resolve it to the actual entity name for type lookup
+            var entityNameForTypeLookup = entityName;
+            if (!string.IsNullOrWhiteSpace(conditionEntityName))
+            {
+                var resolvedEntityName = elem.ResolveAliasToEntityName(conditionEntityName, aliasToEntityMap);
+                if (!string.IsNullOrWhiteSpace(resolvedEntityName))
+                {
+                    entityNameForTypeLookup = resolvedEntityName;
+                }
+            }
 
             //Find values inside the condition expression, if apply
             values = elem
                         .Elements() //child nodes of this filter
                         .Where(el => el.Name.LocalName.Equals("value"))
-                        .Select(el => el.ToValue(ctx, entityName, attributeName, op))
+                        .Select(el => el.ToValue(ctx, entityNameForTypeLookup, attributeName, op))
                         .ToArray();
-
 
             //Otherwise, a single value was used
             if (value != null)
@@ -815,15 +908,15 @@ namespace FakeXrmEasy.Extensions.FetchXml
 #if FAKE_XRM_EASY_2013 || FAKE_XRM_EASY_2015 || FAKE_XRM_EASY_2016 || FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
                 if (string.IsNullOrWhiteSpace(conditionEntityName))
                 {
-                    return new ConditionExpression(attributeName, op, GetConditionExpressionValueCast(value, ctx, entityName, attributeName, op));
+                    return new ConditionExpression(attributeName, op, GetConditionExpressionValueCast(value, ctx, entityNameForTypeLookup, attributeName, op));
                 }
                 else
                 {
-                    return new ConditionExpression(conditionEntityName, attributeName, op, GetConditionExpressionValueCast(value, ctx, entityName, attributeName, op));
+                    return new ConditionExpression(conditionEntityName, attributeName, op, GetConditionExpressionValueCast(value, ctx, entityNameForTypeLookup, attributeName, op));
                 }
 
 #else
-                return new ConditionExpression(attributeName, op, GetConditionExpressionValueCast(value, ctx, entityName, attributeName, op));
+                return new ConditionExpression(attributeName, op, GetConditionExpressionValueCast(value, ctx, entityNameForTypeLookup, attributeName, op));
            
 #endif
             }
@@ -841,9 +934,6 @@ namespace FakeXrmEasy.Extensions.FetchXml
 #else
             return new ConditionExpression(attributeName, op, values);
 #endif
-
-
-
         }
 
         /// <summary>
