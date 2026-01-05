@@ -1,0 +1,51 @@
+using System;
+using System.Linq;
+using Crm;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
+using Xunit;
+
+namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.AggregationsTests
+{
+    public class CountTests: FakeXrmEasyTestsBase
+    {
+        
+        [Fact]
+        public void Should_return_correct_count_value_as_an_aliased_value()
+        {
+            // Arrange
+            var numberOfAccounts = 10;
+            var accounts = Enumerable.Range(1, numberOfAccounts)
+                .Select(i => new Account() {
+                    Id = Guid.NewGuid(),
+                    Name = $"Test {i}",
+                })
+                .ToList();
+            
+            _context.Initialize(accounts);
+            
+            QueryExpression query = new QueryExpression("account")
+            {
+                ColumnSet = new ColumnSet(false)
+                {
+                    AttributeExpressions = {
+                        new XrmAttributeExpression{
+                            AttributeName = "accountid",
+                            Alias = "accountcount",
+                            AggregateType = XrmAggregateType.Count
+                        }
+                    }
+                }
+            };
+            
+            var entityCollection = _service.RetrieveMultiple(query);
+            Assert.Single(entityCollection.Entities);
+
+            var resultingEntity = entityCollection.Entities[0];
+            var aggregatedField = resultingEntity["accountcount"];
+            Assert.IsType<AliasedValue>(aggregatedField);
+
+            Assert.Equal(numberOfAccounts, ((AliasedValue) aggregatedField).Value);
+        }
+    }
+}

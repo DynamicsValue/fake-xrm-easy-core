@@ -73,7 +73,12 @@ namespace FakeXrmEasy.Query
 
             var linkedEntities = new Dictionary<string, int>();
 
+            bool hasAggregates = false;
+            
 #if  !FAKE_XRM_EASY
+            var aggregateExpressions = GetAggregateAttributeExpressions(qe);
+            hasAggregates = aggregateExpressions.Count > 0;
+            ValidateAggregates(qe, aggregateExpressions);
             ValidateAliases(qe, context as XrmFakedContext);
 #endif
 
@@ -120,10 +125,15 @@ namespace FakeXrmEasy.Query
                     query = orderedQuery;
                 }
             }
-
+            
+            if (hasAggregates)
+            {
+                return TranslateAggregateExpressions(query, qe, aggregateExpressions, context);
+            }
+            
             //Project the attributes in the root column set  (must be applied after the where and order clauses, not before!!)
             query = query.Select(x => x.Clone(x.GetType(), context as XrmFakedContext).ProjectAttributes(qe, context as XrmFakedContext));
-
+            
             //Apply column aliases
             query = query.Select(e => e.ApplyColumnAliases(qe, context));
             
@@ -131,6 +141,41 @@ namespace FakeXrmEasy.Query
         }
 
         #if !FAKE_XRM_EASY
+        private static List<XrmAttributeExpression> GetAggregateAttributeExpressions(QueryExpression qe)
+        {
+            return qe.ColumnSet
+                .AttributeExpressions
+                .Where(ae => ae.AggregateType != XrmAggregateType.None)
+                .ToList();
+        }
+
+        private static IQueryable<Entity> TranslateAggregateExpressions(IQueryable<Entity> sequence, QueryExpression qe,
+            List<XrmAttributeExpression> attributeExpressions, IXrmFakedContext context)
+        {
+            var seq = sequence.ToList();
+            var aggregateRecord = context.NewEntityRecord(qe.EntityName);
+
+            foreach (var attExpression in attributeExpressions)
+            {
+                attExpression.ToAggregatedAttributeValue(qe, seq, aggregateRecord, context);
+            }
+
+            return new List<Entity>() { aggregateRecord }.AsQueryable();
+        }
+        
+        private static void ValidateAggregates(QueryExpression qe, List<XrmAttributeExpression> attributeExpressions)
+        {
+            var hasAggregateAttributeExpressions =
+                attributeExpressions.Count > 0;
+
+            if (hasAggregateAttributeExpressions)
+            {
+                if (qe.ColumnSet.AllColumns || qe.ColumnSet.Columns.Count > 0)
+                {
+                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidOperation,$"Attribute can not be specified if an aggregate operation is requested.");
+                }
+            }
+        }
         private static void ValidateAliases(QueryExpression qe, XrmFakedContext context)
         {
             if (qe.Criteria != null)

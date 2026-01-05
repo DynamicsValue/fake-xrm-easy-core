@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Core.Exceptions.Extensions;
+using FakeXrmEasy.Core.Query.Aggregations;
 using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk.Metadata;
 
@@ -821,5 +822,40 @@ namespace FakeXrmEasy.Extensions
 
             return Guid.Empty;
         }
+
+        internal static AggregationValue GetAggregationValue(this Entity e, string attributeName, IXrmFakedContext context)
+        {
+            var attributeType = context.FindReflectedAttributeType(context.FindReflectedType(e.LogicalName),
+                e.LogicalName, attributeName);
+
+            if (attributeType == typeof(int))
+            {
+                var intValue = e.GetAttributeValue<int>(attributeName);
+                return new IntAggregationValue(intValue);
+            }
+            
+            if (attributeType == typeof(double))
+            {
+                var doubleValue = e.GetAttributeValue<double>(attributeName);
+                return new DoubleAggregationValue(doubleValue);
+            }
+            
+            if (attributeType == typeof(decimal))
+            {
+                var decValue = e.GetAttributeValue<decimal>(attributeName);
+                return new DecimalAggregationValue(decValue);
+            }
+            
+            if (attributeType == typeof(Money))
+            {
+                var moneyValue = e.GetAttributeValue<Money>(attributeName);
+                return new MoneyAggregationValue(moneyValue);
+            }
+            
+
+            return null;
+        }
+
+        
     }
 }
