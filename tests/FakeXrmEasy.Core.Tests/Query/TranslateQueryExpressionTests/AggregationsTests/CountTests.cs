@@ -19,8 +19,17 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
                 .Select(i => new Account() {
                     Id = Guid.NewGuid(),
                     Name = $"Test {i}",
+                    NumberOfEmployees = i
                 })
                 .ToList();
+            
+            //Adds null value
+            accounts.Add(new Account()
+            {
+                Id = Guid.NewGuid(),
+                Name = $"Test 11",
+                NumberOfEmployees = null
+            });
             
             _context.Initialize(accounts);
             
@@ -30,7 +39,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
                 {
                     AttributeExpressions = {
                         new XrmAttributeExpression{
-                            AttributeName = "accountid",
+                            AttributeName = "numberofemployees",
                             Alias = "accountcount",
                             AggregateType = XrmAggregateType.Count
                         }
@@ -45,7 +54,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             var aggregatedField = resultingEntity["accountcount"];
             Assert.IsType<AliasedValue>(aggregatedField);
 
-            Assert.Equal(numberOfAccounts, ((AliasedValue) aggregatedField).Value);
+            Assert.Equal(numberOfAccounts + 1, ((AliasedValue) aggregatedField).Value);
         }
     }
 }

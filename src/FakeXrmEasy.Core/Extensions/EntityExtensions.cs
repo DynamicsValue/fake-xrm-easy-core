@@ -18,6 +18,20 @@ namespace FakeXrmEasy.Extensions
     public static class EntityExtensions
     {
         /// <summary>
+        /// Returns true if the entity contains the attribute specified AND is not null (there is data in that column)
+        /// </summary>
+        /// <param name="e">The entity record</param>
+        /// <param name="attributeName">The attribute name</param>
+        /// <returns></returns>
+        public static bool ContainsData(this Entity e, string attributeName)
+        {
+            if (!e.Contains(attributeName))
+                return false;
+            
+            return e[attributeName] != null;
+        }
+        
+        /// <summary>
         /// Extension method to add an attribute and return the entity itself
         /// </summary>
         /// <param name="e"></param>

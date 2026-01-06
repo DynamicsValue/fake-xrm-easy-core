@@ -7,11 +7,11 @@ using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.AggregationsTests
 {
-    public class CountTests: FakeXrmEasyTestsBase
+    public class CountColumnTests: FakeXrmEasyTestsBase
     {
         
         [Fact]
-        public void Should_return_correct_count_value_as_an_aliased_value()
+        public void Should_return_correct_count_column_value_as_an_aliased_value()
         {
             // Arrange
             var numberOfAccounts = 10;
@@ -23,7 +23,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
                 })
                 .ToList();
             
-            //Adds null value
+            //Adds null value (which should be excluded)
             accounts.Add(new Account()
             {
                 Id = Guid.NewGuid(),
@@ -41,7 +41,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
                         new XrmAttributeExpression{
                             AttributeName = "numberofemployees",
                             Alias = "accountcount",
-                            AggregateType = XrmAggregateType.Count
+                            AggregateType = XrmAggregateType.CountColumn
                         }
                     }
                 }
@@ -54,7 +54,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             var aggregatedField = resultingEntity["accountcount"];
             Assert.IsType<AliasedValue>(aggregatedField);
 
-            Assert.Equal(numberOfAccounts + 1, ((AliasedValue) aggregatedField).Value);
+            Assert.Equal(numberOfAccounts, ((AliasedValue) aggregatedField).Value);
         }
     }
 }

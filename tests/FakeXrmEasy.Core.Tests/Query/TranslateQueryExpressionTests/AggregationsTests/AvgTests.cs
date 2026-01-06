@@ -36,6 +36,21 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
                 });
                 _totalSum += i;
             }
+            
+            _entities.Add(new Account()
+            {
+                Id = Guid.NewGuid(),
+                Name = $"Test 11",
+                NumberOfEmployees = null,
+                CreditLimit = null,
+                Address1_Latitude = null
+            });
+                
+            _entities.Add(new dv_test()
+            {
+                Id = Guid.NewGuid(),
+                dv_decimal = null
+            });
         }
         
         [Fact]

@@ -24,6 +24,10 @@ namespace FakeXrmEasy.Query
                 case XrmAggregateType.Count:
                     aggregateRecord[expr.Alias] = new AliasedValue(qe.EntityName, expr.AttributeName, sequence.Count());
                     break;
+                
+                case XrmAggregateType.CountColumn:
+                    aggregateRecord[expr.Alias] = new AliasedValue(qe.EntityName, expr.AttributeName, sequence.Count(e => e.ContainsData(expr.AttributeName)));
+                    break;
                 case XrmAggregateType.Sum:
                     var sumSeed = GetAggregationDefaultSumValue(qe.EntityName, expr.AttributeName, context);
 
@@ -40,7 +44,7 @@ namespace FakeXrmEasy.Query
                         (accumulation, entity) =>
                             accumulation + entity.GetAggregationValue(expr.AttributeName, context));
 
-                    var avgAggregationValue = sumValue / sequence.Count();
+                    var avgAggregationValue = sumValue / sequence.Count(e => e.ContainsData(expr.AttributeName));
                     
                     aggregateRecord[expr.Alias] = new AliasedValue(qe.EntityName, expr.AttributeName, avgAggregationValue.GetValue());
                     break;
