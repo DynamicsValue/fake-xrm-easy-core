@@ -29,5 +29,21 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             
             return new DecimalAggregationValue(value1 / b);
         }
+        
+        public static bool operator <(DecimalAggregationValue a, DecimalAggregationValue b)
+        {
+            decimal? value1 = a?._decValue;
+            decimal? value2 = b?._decValue;
+            
+            return value1 < value2;
+        }
+        
+        public static bool operator >(DecimalAggregationValue a, DecimalAggregationValue b)
+        {
+            decimal? value1 = a?._decValue;
+            decimal? value2 = b?._decValue;
+            
+            return value1 > value2;
+        }
     }
 }

@@ -44,6 +44,31 @@ namespace FakeXrmEasy.Query
                     
                     aggregateRecord[expr.Alias] = new AliasedValue(qe.EntityName, expr.AttributeName, avgAggregationValue.GetValue());
                     break;
+                case XrmAggregateType.Min:
+                    var minSeed = GetAggregationDefaultMinValue(qe.EntityName, expr.AttributeName, context);
+
+                    var minValue = sequence.Aggregate<Entity, AggregationValue>(minSeed,
+                        (accumulation, entity) =>
+                        {
+                            var currentValue = entity.GetAggregationValue(expr.AttributeName, context);
+                            return currentValue < accumulation ? currentValue : accumulation;
+                        });
+                    
+                    aggregateRecord[expr.Alias] = new AliasedValue(qe.EntityName, expr.AttributeName, minValue.GetValue());
+                    break;
+                
+                case XrmAggregateType.Max:
+                    var maxSeed = GetAggregationDefaultMaxValue(qe.EntityName, expr.AttributeName, context);
+
+                    var maxValue = sequence.Aggregate<Entity, AggregationValue>(maxSeed,
+                        (accumulation, entity) =>
+                        {
+                            var currentValue =  entity.GetAggregationValue(expr.AttributeName, context);
+                            return currentValue > accumulation ? currentValue : accumulation;
+                        });
+                    
+                    aggregateRecord[expr.Alias] = new AliasedValue(qe.EntityName, expr.AttributeName, maxValue.GetValue());
+                    break;
             }
         }
 
@@ -71,6 +96,58 @@ namespace FakeXrmEasy.Query
             }
             
 
+            return null;
+        }
+        
+        private static AggregationValue GetAggregationDefaultMinValue(string entityLogicalName, string attributeName,
+            IXrmFakedContext context)
+        {
+            var attributeType = context.FindReflectedAttributeType(context.FindReflectedType(entityLogicalName),
+                entityLogicalName, attributeName);
+
+            if (attributeType == typeof(int))
+            {
+                return new IntAggregationValue(int.MaxValue);
+            }
+            if (attributeType == typeof(double))
+            {
+                return new DoubleAggregationValue(double.MaxValue);
+            }
+            if (attributeType == typeof(decimal))
+            {
+                return new DecimalAggregationValue(decimal.MaxValue);
+            }
+            if (attributeType == typeof(Money))
+            {
+                return new MoneyAggregationValue(new Money(decimal.MaxValue));
+            }
+            
+            return null;
+        }
+        
+        private static AggregationValue GetAggregationDefaultMaxValue(string entityLogicalName, string attributeName,
+            IXrmFakedContext context)
+        {
+            var attributeType = context.FindReflectedAttributeType(context.FindReflectedType(entityLogicalName),
+                entityLogicalName, attributeName);
+
+            if (attributeType == typeof(int))
+            {
+                return new IntAggregationValue(int.MinValue);
+            }
+            if (attributeType == typeof(double))
+            {
+                return new DoubleAggregationValue(double.MinValue);
+            }
+            if (attributeType == typeof(decimal))
+            {
+                return new DecimalAggregationValue(decimal.MinValue);
+            }
+            if (attributeType == typeof(Money))
+            {
+                return new MoneyAggregationValue(new Money(decimal.MinValue));
+            }
+            
             return null;
         }
     }

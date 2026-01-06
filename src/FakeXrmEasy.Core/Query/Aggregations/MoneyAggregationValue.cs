@@ -31,5 +31,21 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             
             return new MoneyAggregationValue(new Money(value1 / b));
         }
+        
+        public static bool operator <(MoneyAggregationValue a, MoneyAggregationValue b)
+        {
+            decimal? value1 = a?._moneyValue?.Value;
+            decimal? value2 = b?._moneyValue?.Value;
+            
+            return value1 < value2;
+        }
+        
+        public static bool operator >(MoneyAggregationValue a, MoneyAggregationValue b)
+        {
+            decimal? value1 = a?._moneyValue?.Value;
+            decimal? value2 = b?._moneyValue?.Value;
+            
+            return value1 > value2;
+        }
     }
 }

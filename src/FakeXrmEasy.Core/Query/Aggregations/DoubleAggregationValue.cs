@@ -29,5 +29,21 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             
             return new DoubleAggregationValue(value1 / b);
         }
+        
+        public static bool operator <(DoubleAggregationValue a, DoubleAggregationValue b)
+        {
+            double? value1 = a?._doubleValue;
+            double? value2 = b?._doubleValue;
+            
+            return value1 < value2;
+        }
+        
+        public static bool operator >(DoubleAggregationValue a, DoubleAggregationValue b)
+        {
+            double? value1 = a?._doubleValue;
+            double? value2 = b?._doubleValue;
+            
+            return value1 > value2;
+        }
     }
 }

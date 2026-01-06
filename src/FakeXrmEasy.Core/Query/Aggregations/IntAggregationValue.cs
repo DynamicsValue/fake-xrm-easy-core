@@ -26,5 +26,21 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             
             return new IntAggregationValue(value1 / b);
         }
+        
+        public static bool operator <(IntAggregationValue a, IntAggregationValue b)
+        {
+            int? value1 = a?._intValue;
+            int? value2 = b?._intValue;
+            
+            return value1 < value2;
+        }
+        
+        public static bool operator >(IntAggregationValue a, IntAggregationValue b)
+        {
+            int? value1 = a?._intValue;
+            int? value2 = b?._intValue;
+            
+            return value1 > value2;
+        }
     }
 }

@@ -66,6 +66,49 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             return null;
         }
         
+        public static bool operator <(AggregationValue a, AggregationValue b)
+        {
+            if (a._type != b._type)
+            {
+                throw new DifferentAggregationValueTypeException(a, b);
+            }
+
+            switch (a._type)
+            {
+                case AggregationValueType.Int:
+                    return (IntAggregationValue) a < (IntAggregationValue) b;
+                case AggregationValueType.Decimal:
+                    return (DecimalAggregationValue) a < (DecimalAggregationValue) b;
+                case AggregationValueType.Double:
+                    return (DoubleAggregationValue) a < (DoubleAggregationValue) b;
+                case AggregationValueType.Money:
+                    return (MoneyAggregationValue) a < (MoneyAggregationValue) b;
+            }
+
+            return false;
+        }
+        
+        public static bool operator >(AggregationValue a, AggregationValue b)
+        {
+            if (a._type != b._type)
+            {
+                throw new DifferentAggregationValueTypeException(a, b);
+            }
+
+            switch (a._type)
+            {
+                case AggregationValueType.Int:
+                    return (IntAggregationValue) a > (IntAggregationValue) b;
+                case AggregationValueType.Decimal:
+                    return (DecimalAggregationValue) a > (DecimalAggregationValue) b;
+                case AggregationValueType.Double:
+                    return (DoubleAggregationValue) a > (DoubleAggregationValue) b;
+                case AggregationValueType.Money:
+                    return (MoneyAggregationValue) a > (MoneyAggregationValue) b;
+            }
+
+            return false;
+        }
         
     }
 }
