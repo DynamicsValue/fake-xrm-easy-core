@@ -865,6 +865,11 @@ namespace FakeXrmEasy.Extensions
                 var moneyValue = e.GetAttributeValue<Money>(attributeName);
                 return new MoneyAggregationValue(moneyValue);
             }
+            if (attributeType == typeof(DateTime))
+            {
+                var dateTimeValue = e.GetAttributeValue<DateTime>(attributeName);
+                return new DateTimeAggregationValue(dateTimeValue);
+            }
             
 
             return null;

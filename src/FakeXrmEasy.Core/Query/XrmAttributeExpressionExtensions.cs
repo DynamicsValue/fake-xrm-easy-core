@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
@@ -125,6 +126,10 @@ namespace FakeXrmEasy.Query
             {
                 return new MoneyAggregationValue(new Money(decimal.MaxValue));
             }
+            if (attributeType == typeof(DateTime))
+            {
+                return new DateTimeAggregationValue(DateTime.MaxValue);
+            }
             
             return null;
         }
@@ -150,6 +155,10 @@ namespace FakeXrmEasy.Query
             if (attributeType == typeof(Money))
             {
                 return new MoneyAggregationValue(new Money(decimal.MinValue));
+            }
+            if (attributeType == typeof(DateTime))
+            {
+                return new DateTimeAggregationValue(DateTime.MinValue);
             }
             
             return null;

@@ -12,21 +12,27 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
     {
         private int _numberOfAccounts = 3;
         private List<Entity> _entities;
+        private List<Entity> _accounts;
         private void InitEntities()
         {
             // Arrange
             _entities = new List<Entity>();
+            _accounts = new List<Entity>();
             for (var i = 1; i <= _numberOfAccounts; i++)
             {
-                _entities.Add(new Account()
+                var account = new Account()
                 {
                     Id = Guid.NewGuid(),
                     Name = $"Test {i}",
                     NumberOfEmployees = i,
                     CreditLimit = new Money(i),
-                    Address1_Latitude = i
-                });
+                    Address1_Latitude = i,
+                    LastOnHoldTime = DateTime.Now.AddDays(i)
+                };
                 
+                _accounts.Add(account);
+                _entities.Add(account);
+
                 _entities.Add(new dv_test()
                 {
                     Id = Guid.NewGuid(),
@@ -153,6 +159,37 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.IsType<AliasedValue>(aggregatedField);
 
             Assert.Equal(3m, ((AliasedValue) aggregatedField).Value);
+        }
+        
+        [Fact]
+        public void Should_return_correct_datetime_max_value_as_an_aliased_value()
+        {
+            InitEntities();
+            _context.Initialize(_entities);
+            
+            QueryExpression query = new QueryExpression("account")
+            {
+                ColumnSet = new ColumnSet(false)
+                {
+                    AttributeExpressions = {
+                        new XrmAttributeExpression{
+                            AttributeName = "lastonholdtime",
+                            Alias = "accountmax",
+                            AggregateType = XrmAggregateType.Max
+                        }
+                    }
+                },
+                Criteria = new FilterExpression(LogicalOperator.And)
+            };
+            
+            var entityCollection = _service.RetrieveMultiple(query);
+            Assert.Single(entityCollection.Entities);
+
+            var resultingEntity = entityCollection.Entities[0];
+            var aggregatedField = resultingEntity["accountmax"];
+            Assert.IsType<AliasedValue>(aggregatedField);
+
+            Assert.Equal(((Account)_accounts[_numberOfAccounts - 1]).LastOnHoldTime.Value.ToUniversalTime().Date, ((DateTime) ((AliasedValue) aggregatedField).Value).Date);
         }
     }
 }

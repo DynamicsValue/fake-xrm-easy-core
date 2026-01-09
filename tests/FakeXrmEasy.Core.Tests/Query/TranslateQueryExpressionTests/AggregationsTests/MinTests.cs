@@ -25,7 +25,8 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
                     Name = $"Test {i}",
                     NumberOfEmployees = i,
                     CreditLimit = new Money(i),
-                    Address1_Latitude = i
+                    Address1_Latitude = i,
+                    LastOnHoldTime = DateTime.Now.AddDays(i)
                 });
                 
                 _entities.Add(new dv_test()
@@ -154,6 +155,37 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.IsType<AliasedValue>(aggregatedField);
 
             Assert.Equal(1m, ((AliasedValue) aggregatedField).Value);
+        }
+        
+        [Fact]
+        public void Should_return_correct_datetime_min_value_as_an_aliased_value()
+        {
+            InitEntities();
+            _context.Initialize(_entities);
+            
+            QueryExpression query = new QueryExpression("account")
+            {
+                ColumnSet = new ColumnSet(false)
+                {
+                    AttributeExpressions = {
+                        new XrmAttributeExpression{
+                            AttributeName = "lastonholdtime",
+                            Alias = "accountmin",
+                            AggregateType = XrmAggregateType.Min
+                        }
+                    }
+                },
+                Criteria = new FilterExpression(LogicalOperator.And)
+            };
+            
+            var entityCollection = _service.RetrieveMultiple(query);
+            Assert.Single(entityCollection.Entities);
+
+            var resultingEntity = entityCollection.Entities[0];
+            var aggregatedField = resultingEntity["accountmin"];
+            Assert.IsType<AliasedValue>(aggregatedField);
+
+            Assert.Equal(((Account)_entities[0]).LastOnHoldTime.Value.ToUniversalTime().Date, ((DateTime) ((AliasedValue) aggregatedField).Value).Date);
         }
     }
 }

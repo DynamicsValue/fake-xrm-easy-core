@@ -1,3 +1,4 @@
+using System;
 using FakeXrmEasy.Core.Exceptions.Query.Aggregations;
 using Microsoft.Xrm.Sdk;
 
@@ -8,7 +9,8 @@ namespace FakeXrmEasy.Core.Query.Aggregations
         Int = 0,
         Decimal = 1,
         Double = 2,
-        Money = 3
+        Money = 3,
+        DateTime = 4
     }
     
     internal class AggregationValue
@@ -83,6 +85,8 @@ namespace FakeXrmEasy.Core.Query.Aggregations
                     return (DoubleAggregationValue) a < (DoubleAggregationValue) b;
                 case AggregationValueType.Money:
                     return (MoneyAggregationValue) a < (MoneyAggregationValue) b;
+                case AggregationValueType.DateTime:
+                    return (DateTimeAggregationValue) a < (DateTimeAggregationValue) b;
             }
 
             return false;
@@ -105,6 +109,8 @@ namespace FakeXrmEasy.Core.Query.Aggregations
                     return (DoubleAggregationValue) a > (DoubleAggregationValue) b;
                 case AggregationValueType.Money:
                     return (MoneyAggregationValue) a > (MoneyAggregationValue) b;
+                case AggregationValueType.DateTime:
+                    return (DateTimeAggregationValue) a > (DateTimeAggregationValue) b;
             }
 
             return false;
