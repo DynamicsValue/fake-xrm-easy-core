@@ -81,6 +81,8 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.IsType<AliasedValue>(aggregatedField);
 
             Assert.Equal(_totalSum / _numberOfAccounts, ((AliasedValue) aggregatedField).Value);
+            Assert.Equal("numberofemployees", ((AliasedValue) aggregatedField).AttributeLogicalName);
+            Assert.Equal("account", ((AliasedValue) aggregatedField).EntityLogicalName);
         }
         
         [Fact]
@@ -111,6 +113,8 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.IsType<AliasedValue>(aggregatedField);
 
             Assert.Equal((double) _totalSum / _numberOfAccounts, ((AliasedValue) aggregatedField).Value);
+            Assert.Equal("address1_latitude", ((AliasedValue) aggregatedField).AttributeLogicalName);
+            Assert.Equal("account", ((AliasedValue) aggregatedField).EntityLogicalName);
         }
         
         [Fact]
@@ -141,6 +145,8 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.IsType<AliasedValue>(aggregatedField);
 
             Assert.Equal((decimal) _totalSum / _numberOfAccounts, ((Money)((AliasedValue) aggregatedField).Value).Value);
+            Assert.Equal("creditlimit", ((AliasedValue) aggregatedField).AttributeLogicalName);
+            Assert.Equal("account", ((AliasedValue) aggregatedField).EntityLogicalName);
         }
         
         [Fact]
@@ -171,6 +177,8 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.IsType<AliasedValue>(aggregatedField);
 
             Assert.Equal((decimal) _totalSum / _numberOfAccounts, ((AliasedValue) aggregatedField).Value);
+            Assert.Equal("dv_decimal", ((AliasedValue) aggregatedField).AttributeLogicalName);
+            Assert.Equal(dv_test.EntityLogicalName, ((AliasedValue) aggregatedField).EntityLogicalName);
         }
     }
 }

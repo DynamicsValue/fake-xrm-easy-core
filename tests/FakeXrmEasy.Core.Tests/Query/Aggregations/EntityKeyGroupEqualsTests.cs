@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FakeXrmEasy.Core.Query.Aggregations;
 using Microsoft.Xrm.Sdk;
@@ -61,21 +62,24 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
         }
         
         [Fact]
-        public void Should_only_project_attributes_present_in_group_by_attribute_expression()
+        public void Should_only_project_attributes_present_in_group_by_attribute_expression_that_are_not_null()
         {
             _entity["name"] = "test";
+            _entity["createdon"] = DateTime.UtcNow;
+            _entity["desc"] = null;
             _entity["othernamenotgrouped"] = "test";
             
             var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
             
             Assert.True(entityGroupKey._attributes.ContainsKey("nameAlias"));
-            Assert.True(entityGroupKey._attributes.ContainsKey("descAlias"));
             Assert.True(entityGroupKey._attributes.ContainsKey("createdOnAlias"));
+            Assert.False(entityGroupKey._attributes.ContainsKey("descAlias"));
             Assert.False(entityGroupKey._attributes.ContainsKey("othernamenotgrouped"));
-            
-            Assert.Equal("test", entityGroupKey._attributes["nameAlias"]);
-            Assert.Null(entityGroupKey._attributes["descAlias"]);
-            Assert.Null(entityGroupKey._attributes["createdOnAlias"]);
+
+            var nameAlias = (AliasedValue)entityGroupKey._attributes["nameAlias"];
+            var createdOnAlias = (AliasedValue)entityGroupKey._attributes["createdOnAlias"];
+            Assert.Equal("test", nameAlias.Value);
+            Assert.Equal(_entity["createdon"], createdOnAlias.Value);
         }
         
         [Theory]

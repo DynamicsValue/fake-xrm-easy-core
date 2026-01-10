@@ -27,7 +27,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
                     NumberOfEmployees = i,
                     CreditLimit = new Money(i),
                     Address1_Latitude = i,
-                    LastOnHoldTime = DateTime.Now.AddDays(i)
+                    LastOnHoldTime = DateTime.UtcNow.AddDays(i)
                 };
                 
                 _accounts.Add(account);
@@ -189,7 +189,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             var aggregatedField = resultingEntity["accountmax"];
             Assert.IsType<AliasedValue>(aggregatedField);
 
-            Assert.Equal(((Account)_accounts[_numberOfAccounts - 1]).LastOnHoldTime.Value.ToUniversalTime().Date, ((DateTime) ((AliasedValue) aggregatedField).Value).Date);
+            Assert.Equal(((Account)_accounts[_numberOfAccounts - 1]).LastOnHoldTime.Value.Date, ((DateTime) ((AliasedValue) aggregatedField).Value).Date);
         }
     }
 }

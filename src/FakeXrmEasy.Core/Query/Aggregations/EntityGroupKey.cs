@@ -14,13 +14,9 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             _attributes = new Dictionary<string, object>();
             foreach (var attrEx in attributeExpressions)
             {
-                if (attrEx.HasGroupBy && e.Contains(attrEx.AttributeName))
+                if (attrEx.HasGroupBy && e.Contains(attrEx.AttributeName) && e[attrEx.AttributeName] != null)
                 {
-                    _attributes.Add(attrEx.Alias, e[attrEx.AttributeName]);
-                }
-                else
-                {
-                    _attributes.Add(attrEx.Alias, null);
+                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, e[attrEx.AttributeName]));
                 }
             }
         }
@@ -74,7 +70,10 @@ namespace FakeXrmEasy.Core.Query.Aggregations
                     continue;
                 }
                 
-                if (!thisValue.Equals(otherValue))
+                var aliasedValue = thisValue as AliasedValue;
+                var otherAliasedValue = otherValue as AliasedValue;
+                
+                if (!aliasedValue?.Value?.Equals(otherAliasedValue?.Value) == true)
                 {
                     return false;
                 }
@@ -88,7 +87,7 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             int hashCode = 0;
             foreach (var attr in _attributes)
             {
-                hashCode ^= attr.Value != null ? attr.Key.GetHashCode() ^ attr.Value.GetHashCode() : attr.Key.GetHashCode();
+                hashCode ^= attr.Value != null ? attr.Key.GetHashCode() ^ ((AliasedValue)attr.Value).Value.GetHashCode() : attr.Key.GetHashCode();
             }
 
             return hashCode;
