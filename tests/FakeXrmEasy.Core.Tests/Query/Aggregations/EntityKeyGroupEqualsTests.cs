@@ -21,16 +21,19 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
                 new XrmAttributeExpression()
                 {
                     AttributeName = "name",
+                    Alias = "nameAlias",
                     HasGroupBy = true
                 },
                 new XrmAttributeExpression()
                 {
                     AttributeName = "desc",
+                    Alias = "descAlias",
                     HasGroupBy = true
                 },
                 new XrmAttributeExpression()
                 {
                     AttributeName = "createdon",
+                    Alias = "createdOnAlias",
                     HasGroupBy = true,
                     DateTimeGrouping = XrmDateTimeGrouping.Year
                 }
@@ -65,14 +68,14 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             
             var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
             
-            Assert.True(entityGroupKey._attributes.ContainsKey("name"));
-            Assert.True(entityGroupKey._attributes.ContainsKey("desc"));
-            Assert.True(entityGroupKey._attributes.ContainsKey("createdon"));
+            Assert.True(entityGroupKey._attributes.ContainsKey("nameAlias"));
+            Assert.True(entityGroupKey._attributes.ContainsKey("descAlias"));
+            Assert.True(entityGroupKey._attributes.ContainsKey("createdOnAlias"));
             Assert.False(entityGroupKey._attributes.ContainsKey("othernamenotgrouped"));
             
-            Assert.Equal("test", entityGroupKey._attributes["name"]);
-            Assert.Null(entityGroupKey._attributes["desc"]);
-            Assert.Null(entityGroupKey._attributes["createdon"]);
+            Assert.Equal("test", entityGroupKey._attributes["nameAlias"]);
+            Assert.Null(entityGroupKey._attributes["descAlias"]);
+            Assert.Null(entityGroupKey._attributes["createdOnAlias"]);
         }
         
         [Theory]

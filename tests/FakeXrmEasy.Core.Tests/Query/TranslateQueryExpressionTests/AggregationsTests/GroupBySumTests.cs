@@ -85,11 +85,13 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             var barcelonaSumEmployees = barcelonaAccounts["sumofemployees"];
             Assert.IsType<AliasedValue>(barcelonaSumEmployees);
             Assert.Equal(15, ((AliasedValue) barcelonaSumEmployees).Value);
+            Assert.Equal("Barcelona", barcelonaAccounts["city"]);
             
             var tarragonaAccounts = entityCollection.Entities[1];
             var tarragonaSumEmployees = tarragonaAccounts["sumofemployees"];
             Assert.IsType<AliasedValue>(tarragonaSumEmployees);
             Assert.Equal(3, ((AliasedValue) tarragonaSumEmployees).Value);
+            Assert.Equal("Tarragona", tarragonaAccounts["city"]);
         }
     }
 }

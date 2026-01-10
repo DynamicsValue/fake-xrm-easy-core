@@ -16,11 +16,11 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             {
                 if (attrEx.HasGroupBy && e.Contains(attrEx.AttributeName))
                 {
-                    _attributes.Add(attrEx.AttributeName, e[attrEx.AttributeName]);
+                    _attributes.Add(attrEx.Alias, e[attrEx.AttributeName]);
                 }
                 else
                 {
-                    _attributes.Add(attrEx.AttributeName, null);
+                    _attributes.Add(attrEx.Alias, null);
                 }
             }
         }
