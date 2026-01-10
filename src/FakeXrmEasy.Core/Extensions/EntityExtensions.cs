@@ -263,6 +263,11 @@ namespace FakeXrmEasy.Extensions
                 return RemoveNullAttributes(projected);
             }
         }
+        
+        internal static EntityGroupKey ToGroupByKeySelector(this Entity e, List<XrmAttributeExpression> groupByExpressions, IXrmFakedContext context)
+        {
+            return new EntityGroupKey(e, groupByExpressions);
+        }
 
         /// <summary>
         /// Applies column aliases if there are any specified

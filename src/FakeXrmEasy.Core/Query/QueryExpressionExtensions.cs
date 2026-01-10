@@ -128,7 +128,7 @@ namespace FakeXrmEasy.Query
             
             if (hasAggregates)
             {
-                return TranslateAggregateExpressions(query, qe, aggregateExpressions, context);
+                return TranslateAggregateExpressions(query, qe, qe.ColumnSet.AttributeExpressions.ToList(), context);
             }
             
             //Project the attributes in the root column set  (must be applied after the where and order clauses, not before!!)
@@ -153,15 +153,45 @@ namespace FakeXrmEasy.Query
             List<XrmAttributeExpression> attributeExpressions, IXrmFakedContext context)
         {
             var seq = sequence.ToList();
+            var aggregatedRows = new List<Entity>();
+            
+            var groupByAttributes = attributeExpressions.Where(att => att.HasGroupBy).ToList();
+            if (groupByAttributes.Count > 0)
+            {
+                var groupedSequence = seq.GroupBy(e => e.ToGroupByKeySelector(groupByAttributes, context))
+                    .Select(group =>
+                    {
+                        var result = group.Key;
+                        var aggregateRecord = TranslateAggregateExpressionsInSubSequence(group.ToList().AsQueryable(), qe, attributeExpressions, context);
+                        group.Key.AddGroupKeyAttributes(aggregateRecord);
+                        return aggregateRecord;
+                    });
+                                                    
+                return groupedSequence.AsQueryable();
+            }
+            else
+            {
+
+                var aggregatedRecord = TranslateAggregateExpressionsInSubSequence(sequence, qe, attributeExpressions, context);
+                return new List<Entity> { aggregatedRecord }.AsQueryable();
+            }
+        }
+        
+        private static Entity TranslateAggregateExpressionsInSubSequence(IQueryable<Entity> sequence, QueryExpression qe,
+            List<XrmAttributeExpression> attributeExpressions, IXrmFakedContext context)
+        {
+            var seq = sequence.ToList();
+            
             var aggregateRecord = context.NewEntityRecord(qe.EntityName);
 
             foreach (var attExpression in attributeExpressions)
             {
                 attExpression.ToAggregatedAttributeValue(qe, seq, aggregateRecord, context);
             }
-
-            return new List<Entity>() { aggregateRecord }.AsQueryable();
+            
+            return  aggregateRecord;
         }
+        
         
         private static void ValidateAggregates(QueryExpression qe, List<XrmAttributeExpression> attributeExpressions)
         {
