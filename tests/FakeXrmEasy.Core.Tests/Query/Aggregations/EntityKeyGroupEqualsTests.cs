@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System;
 using System.Collections.Generic;
 using FakeXrmEasy.Core.Query.Aggregations;
@@ -113,3 +114,4 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
         }
     }
 }
+#endif

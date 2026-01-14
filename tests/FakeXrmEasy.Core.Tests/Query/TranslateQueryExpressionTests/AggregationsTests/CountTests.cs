@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System;
 using System.Linq;
 using Crm;
@@ -58,3 +59,4 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
         }
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
@@ -49,3 +50,4 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
         }
     }
 }
+#endif

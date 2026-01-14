@@ -76,10 +76,12 @@ namespace FakeXrmEasy.Query
             bool hasAggregates = false;
             
 #if  !FAKE_XRM_EASY
+            ValidateAliases(qe, context as XrmFakedContext);
+#endif
+#if FAKE_XRM_EASY_9
             var aggregateExpressions = GetAggregateAttributeExpressions(qe);
             hasAggregates = aggregateExpressions.Count > 0;
             ValidateAggregates(qe, aggregateExpressions);
-            ValidateAliases(qe, context as XrmFakedContext);
 #endif
 
             // Add as many Joins as linked entities
@@ -126,10 +128,12 @@ namespace FakeXrmEasy.Query
                 }
             }
             
+            #if FAKE_XRM_EASY_9
             if (hasAggregates)
             {
                 return TranslateAggregateExpressions(query, qe, qe.ColumnSet.AttributeExpressions.ToList(), context);
             }
+            #endif
             
             //Project the attributes in the root column set  (must be applied after the where and order clauses, not before!!)
             query = query.Select(x => x.Clone(x.GetType(), context as XrmFakedContext).ProjectAttributes(qe, context as XrmFakedContext));
@@ -140,7 +144,7 @@ namespace FakeXrmEasy.Query
             return query;
         }
 
-        #if !FAKE_XRM_EASY
+        #if FAKE_XRM_EASY_9
         private static List<XrmAttributeExpression> GetAggregateAttributeExpressions(QueryExpression qe)
         {
             return qe.ColumnSet
@@ -206,6 +210,8 @@ namespace FakeXrmEasy.Query
                 }
             }
         }
+#endif
+        #if !FAKE_XRM_EASY 
         private static void ValidateAliases(QueryExpression qe, XrmFakedContext context)
         {
             if (qe.Criteria != null)

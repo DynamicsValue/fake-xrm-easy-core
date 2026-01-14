@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_9
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -165,3 +166,4 @@ namespace FakeXrmEasy.Query
         }
     }
 }
+#endif

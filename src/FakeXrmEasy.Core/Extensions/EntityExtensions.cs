@@ -264,11 +264,13 @@ namespace FakeXrmEasy.Extensions
             }
         }
         
+        #if FAKE_XRM_EASY_9
         internal static EntityGroupKey ToGroupByKeySelector(this Entity e, List<XrmAttributeExpression> groupByExpressions, IXrmFakedContext context)
         {
             return new EntityGroupKey(e, groupByExpressions);
         }
-
+        #endif
+        
         /// <summary>
         /// Applies column aliases if there are any specified
         /// </summary>

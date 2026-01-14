@@ -1,7 +1,6 @@
+#if FAKE_XRM_EASY_9
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 
 namespace FakeXrmEasy.Core.Query.Aggregations
 {
@@ -94,3 +93,4 @@ namespace FakeXrmEasy.Core.Query.Aggregations
         }
     }
 }
+#endif
