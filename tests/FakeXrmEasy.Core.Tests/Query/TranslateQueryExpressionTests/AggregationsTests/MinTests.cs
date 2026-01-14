@@ -11,9 +11,8 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
 {
     public class MinTests: FakeXrmEasyTestsBase
     {
-        private int _numberOfAccounts = 3;
+        private readonly int _numberOfAccounts = 3;
         private List<Entity> _entities;
-        private int _minValue = 3;
         private void InitEntities()
         {
             // Arrange

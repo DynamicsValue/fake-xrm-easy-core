@@ -157,7 +157,6 @@ namespace FakeXrmEasy.Query
             List<XrmAttributeExpression> attributeExpressions, IXrmFakedContext context)
         {
             var seq = sequence.ToList();
-            var aggregatedRows = new List<Entity>();
             
             var groupByAttributes = attributeExpressions.Where(att => att.HasGroupBy).ToList();
             if (groupByAttributes.Count > 0)
@@ -165,7 +164,6 @@ namespace FakeXrmEasy.Query
                 var groupedSequence = seq.GroupBy(e => e.ToGroupByKeySelector(groupByAttributes, context))
                     .Select(group =>
                     {
-                        var result = group.Key;
                         var aggregateRecord = TranslateAggregateExpressionsInSubSequence(group.ToList().AsQueryable(), qe, attributeExpressions, context);
                         group.Key.AddGroupKeyAttributes(aggregateRecord);
                         return aggregateRecord;
@@ -202,12 +200,9 @@ namespace FakeXrmEasy.Query
             var hasAggregateAttributeExpressions =
                 attributeExpressions.Count > 0;
 
-            if (hasAggregateAttributeExpressions)
+            if (hasAggregateAttributeExpressions && (qe.ColumnSet.AllColumns || qe.ColumnSet.Columns.Count > 0))
             {
-                if (qe.ColumnSet.AllColumns || qe.ColumnSet.Columns.Count > 0)
-                {
-                    throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidOperation,$"Attribute can not be specified if an aggregate operation is requested.");
-                }
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidOperation,$"Attribute can not be specified if an aggregate operation is requested.");
             }
         }
 #endif

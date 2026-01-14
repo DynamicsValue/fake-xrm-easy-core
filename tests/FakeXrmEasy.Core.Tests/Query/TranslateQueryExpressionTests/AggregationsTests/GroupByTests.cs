@@ -10,13 +10,11 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
 {
     public class GroupByTests: FakeXrmEasyTestsBase
     {
-        private int _totalSum = 0;
         private List<Entity> _entities;
 
         private void InitEntities()
         {
             // Arrange
-            var numberOfAccounts = 10;
             _entities = new List<Entity>();
             _entities.Add(new Account()
             {

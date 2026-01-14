@@ -3,6 +3,9 @@ using FakeXrmEasy.Core.Query.Aggregations;
 
 namespace FakeXrmEasy.Core.Exceptions.Query.Aggregations
 {
+    /// <summary>
+    /// Exception thrown when aggregating two different values that have different data types
+    /// </summary>
     internal class DifferentAggregationValueTypeException: Exception
     {
         /// <summary>

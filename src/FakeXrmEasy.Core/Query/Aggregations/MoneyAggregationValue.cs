@@ -4,7 +4,7 @@ namespace FakeXrmEasy.Core.Query.Aggregations
 {
     internal class MoneyAggregationValue: AggregationValue
     {
-        private Money _moneyValue;
+        private readonly Money _moneyValue;
         
         internal MoneyAggregationValue(Money value)
         {

@@ -19,6 +19,7 @@ namespace FakeXrmEasy.Query
         /// <param name="qe">The QueryExpression to which this attribute expression belongs</param>
         /// <param name="sequence">The precomputed sequence where the aggregate function will be calculated</param>
         /// <param name="aggregateRecord">The resulting record where the aggregate function result will be added</param>
+        /// <param name="context">The current In-Memory context</param>
         internal static void ToAggregatedAttributeValue(this XrmAttributeExpression expr, QueryExpression qe, List<Entity> sequence, Entity aggregateRecord, IXrmFakedContext context)
         {
             switch (expr.AggregateType)

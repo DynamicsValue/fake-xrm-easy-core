@@ -33,14 +33,14 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             }
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object obj)
         {
-            if (!(other is EntityGroupKey))
+            if (!(obj is EntityGroupKey))
             {
                 return false;
             }
 
-            var otherEntityGroupKey = (EntityGroupKey)other;
+            var otherEntityGroupKey = (EntityGroupKey)obj;
             var keysLength = _attributes.Keys.Count;
             var otherKeysLength = otherEntityGroupKey._attributes.Keys.Count;
 
