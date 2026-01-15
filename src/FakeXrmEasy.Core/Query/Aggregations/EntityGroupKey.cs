@@ -1,4 +1,5 @@
 #if FAKE_XRM_EASY_9
+using System;
 using System.Collections.Generic;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -16,7 +17,36 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             {
                 if (attrEx.HasGroupBy && e.Contains(attrEx.AttributeName) && e[attrEx.AttributeName] != null)
                 {
-                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, e[attrEx.AttributeName]));
+                    if (attrEx.DateTimeGrouping == XrmDateTimeGrouping.None)
+                    {
+                        _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, e[attrEx.AttributeName]));
+                    }
+                    else
+                    {
+                        object value = e[attrEx.AttributeName];
+                        if (value == null)
+                        {
+                            _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, e[attrEx.AttributeName]));
+                        }
+                        else
+                        {
+                            var dateTimeValue = (DateTime)value;
+                            switch (attrEx.DateTimeGrouping)
+                            {
+                                case XrmDateTimeGrouping.Year:
+                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Year));
+                                    break;
+                                case XrmDateTimeGrouping.Month:
+                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Month));
+                                    break;
+                                case XrmDateTimeGrouping.Day:
+                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Day));
+                                    break;
+                            }
+                        }
+                       
+                    }
+                    
                 }
             }
         }

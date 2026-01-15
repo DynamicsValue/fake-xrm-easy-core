@@ -1,0 +1,138 @@
+#if FAKE_XRM_EASY_9
+using System;
+using System.Collections.Generic;
+using FakeXrmEasy.Core.Query.Aggregations;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
+using Xunit;
+
+namespace FakeXrmEasy.Core.Tests.Query.Aggregations
+{
+    public class EntityKeyGroupDateTimeGroupingEqualsTests
+    {
+        private readonly Entity _entity;
+        private readonly Entity _otherEntity;
+        private List<XrmAttributeExpression> _attributeExpressions;
+        private readonly XrmAttributeExpression _dateTimeGrouping;
+        
+        public EntityKeyGroupDateTimeGroupingEqualsTests()
+        {
+            _dateTimeGrouping = new XrmAttributeExpression()
+            {
+                AttributeName = "createdon",
+                Alias = "createdOnAlias",
+                HasGroupBy = true,
+                DateTimeGrouping = XrmDateTimeGrouping.Year
+            };
+            _entity = new Entity();
+            _otherEntity = new Entity();
+        }
+
+        [Theory]
+        [InlineData(true, 2025, 2025)]
+        [InlineData(false, 2023, 2022)]
+        [InlineData(false, 2022, 2023)]
+        [InlineData(true, null, null)]
+        [InlineData(false, null, 2026)]
+        [InlineData(false, 2026, null)]
+        public void Should_return_correct_result_when_using_date_time_grouping_by_year(bool areEqual, int? year1, int? year2)
+        {
+            _attributeExpressions = new List<XrmAttributeExpression>()
+            {
+                _dateTimeGrouping
+            };
+            
+            object value1 = null;
+            if (year1 != null)
+            {
+                value1 = new DateTime(year1.Value, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            }
+
+            object value2 = null;
+            if (year2 != null)
+            {
+                value2 = new DateTime(year2.Value, 2, 2, 2, 2, 2, DateTimeKind.Utc);
+            }
+            _entity["createdon"] = value1;
+            _otherEntity["createdon"]  = value2;
+            
+            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            
+            Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
+        }
+        
+        [Theory]
+        [InlineData(true, 1, 1)]
+        [InlineData(true, 12, 12)]
+        [InlineData(false, 1, 2)]
+        [InlineData(false, 4, 3)]
+        [InlineData(true, null, null)]
+        [InlineData(false, null, 2)]
+        [InlineData(false, 12, null)]
+        public void Should_return_correct_result_when_using_date_time_grouping_by_month(bool areEqual, int? month1, int? month2)
+        {
+            _dateTimeGrouping.DateTimeGrouping = XrmDateTimeGrouping.Month;
+            _attributeExpressions = new List<XrmAttributeExpression>()
+            {
+                _dateTimeGrouping
+            };
+            
+            object value1 = null;
+            if (month1 != null)
+            {
+                value1 = new DateTime(2026, month1.Value, 1, 1, 1, 1, DateTimeKind.Utc);
+            }
+
+            object value2 = null;
+            if (month2 != null)
+            {
+                value2 = new DateTime(2026, month2.Value, 2, 2, 2, 2, DateTimeKind.Utc);
+            }
+            _entity["createdon"] = value1;
+            _otherEntity["createdon"]  = value2;
+            
+            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            
+            Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
+        }
+        
+        [Theory]
+        [InlineData(true, 1, 1)]
+        [InlineData(true, 28, 28)]
+        [InlineData(false, 1, 2)]
+        [InlineData(false, 4, 3)]
+        [InlineData(true, null, null)]
+        [InlineData(false, null, 28)]
+        [InlineData(false, 31, null)]
+        public void Should_return_correct_result_when_using_date_time_grouping_by_day(bool areEqual, int? day1, int? day2)
+        {
+            _dateTimeGrouping.DateTimeGrouping = XrmDateTimeGrouping.Day;
+            _attributeExpressions = new List<XrmAttributeExpression>()
+            {
+                _dateTimeGrouping
+            };
+            
+            object value1 = null;
+            if (day1 != null)
+            {
+                value1 = new DateTime(2026, 1, day1.Value, 1, 1, 1, DateTimeKind.Utc);
+            }
+
+            object value2 = null;
+            if (day2 != null)
+            {
+                value2 = new DateTime(2026, 2, day2.Value, 2, 2, 2, DateTimeKind.Utc);
+            }
+            _entity["createdon"] = value1;
+            _otherEntity["createdon"]  = value2;
+            
+            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            
+            Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
+        }
+    }
+}
+#endif

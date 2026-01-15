@@ -37,7 +37,6 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
                     AttributeName = "createdon",
                     Alias = "createdOnAlias",
                     HasGroupBy = true,
-                    DateTimeGrouping = XrmDateTimeGrouping.Year
                 }
             };
         }
