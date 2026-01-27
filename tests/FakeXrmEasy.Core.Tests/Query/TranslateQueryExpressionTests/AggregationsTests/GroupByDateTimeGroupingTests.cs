@@ -227,6 +227,69 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.Equal(0, ((AliasedValue) nextWeekDaySumEmployees).Value);
             Assert.Equal(8, ((AliasedValue) nextWeekDay).Value);
         }
+        
+        [Fact]
+        public void Should_return_correct_sum_when_grouping_by_week()
+        {
+            InitEntities();
+            _context.Initialize(_entities);
+            
+            QueryExpression query = new QueryExpression("account")
+            {
+                ColumnSet = new ColumnSet(false)
+                {
+                    AttributeExpressions = {
+                        new XrmAttributeExpression{
+                            AttributeName = "numberofemployees",
+                            Alias = "sumofemployees",
+                            AggregateType = XrmAggregateType.Sum
+                        },
+                        new XrmAttributeExpression{
+                            AttributeName = "lastonholdtime",
+                            Alias = "week",
+                            AggregateType = XrmAggregateType.None,
+                            HasGroupBy = true,
+                            DateTimeGrouping = XrmDateTimeGrouping.Week
+                        }
+                    }
+                },
+                Criteria = new FilterExpression(LogicalOperator.And),
+                Orders = { new OrderExpression("lastonholdtime", OrderType.Ascending, "week") }
+            };
+            
+            var entityCollection = _service.RetrieveMultiple(query);
+            Assert.Equal(4, entityCollection.Entities.Count);
+
+            var nullAccounts = entityCollection.Entities[0];
+            var nullAccountSumEmployees = nullAccounts["sumofemployees"];
+            Assert.False(nullAccounts.Contains("week"));
+            Assert.IsType<AliasedValue>(nullAccountSumEmployees);
+            Assert.Equal(40, ((AliasedValue) nullAccountSumEmployees).Value);
+            
+            var thisWeekAccounts = entityCollection.Entities[1];
+            var thisWeekSumEmployees = thisWeekAccounts["sumofemployees"];
+            var thisWeek = thisWeekAccounts["week"];
+            Assert.IsType<AliasedValue>(thisWeekSumEmployees);
+            Assert.IsType<AliasedValue>(thisWeek);
+            Assert.Equal(16, ((AliasedValue) thisWeekSumEmployees).Value);
+            Assert.Equal(1, ((AliasedValue) thisWeek).Value);
+            
+            var nextWeekAccounts = entityCollection.Entities[2];
+            var nextWeekSumEmployees = nextWeekAccounts["sumofemployees"];
+            var nextWeek = nextWeekAccounts["week"];
+            Assert.IsType<AliasedValue>(nextWeekSumEmployees);
+            Assert.IsType<AliasedValue>(nextWeek);
+            Assert.Equal(0, ((AliasedValue) nextWeekSumEmployees).Value);
+            Assert.Equal(2, ((AliasedValue) nextWeek).Value);
+            
+            var weekInNextMonthAccounts = entityCollection.Entities[3];
+            var weekInNextMonthSumEmployees = weekInNextMonthAccounts["sumofemployees"];
+            var weekInNextMonth = weekInNextMonthAccounts["week"];
+            Assert.IsType<AliasedValue>(weekInNextMonthSumEmployees);
+            Assert.IsType<AliasedValue>(weekInNextMonth);
+            Assert.Equal(2, ((AliasedValue) weekInNextMonthSumEmployees).Value);
+            Assert.Equal(6, ((AliasedValue) weekInNextMonth).Value);
+        }
     }
 }
 #endif
