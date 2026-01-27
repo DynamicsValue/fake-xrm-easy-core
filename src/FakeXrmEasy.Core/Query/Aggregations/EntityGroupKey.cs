@@ -42,6 +42,9 @@ namespace FakeXrmEasy.Core.Query.Aggregations
                                 case XrmDateTimeGrouping.Day:
                                     _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Day));
                                     break;
+                                case XrmDateTimeGrouping.Week:
+                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, Week.GetWeek(dateTimeValue)));
+                                    break;
                             }
                         }
                        
