@@ -38,7 +38,7 @@ namespace FakeXrmEasy.Query
                 }
                 regExBuilder.Append("$");
 
-                regex = new Regex(regExBuilder.ToString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                regex = new Regex(regExBuilder.ToString(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline);
 
                 expOrValues = Expression.Or(expOrValues, Expression.Call(
                     Expression.Constant(regex),
