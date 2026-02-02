@@ -133,6 +133,83 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             
             Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
         }
+        
+        [Theory]
+        [InlineData(true, 1, 1, 1, 1)]
+        [InlineData(true, 1, 3, 1, 1)]
+        [InlineData(true, 4, 10, 1, 1)]
+        [InlineData(false, 4, 11, 1, 1)]
+        [InlineData(false, 1, 8, 1, 1)]
+        [InlineData(false, 1, 1, 1, 2)]
+        [InlineData(true, null, null, 1, 1)]
+        [InlineData(false, null, 1, 1,1)]
+        public void Should_return_correct_result_when_using_date_time_grouping_by_week(bool areEqual, int? day1, int? day2, int month1, int month2)
+        {
+            _dateTimeGrouping.DateTimeGrouping = XrmDateTimeGrouping.Week;
+            _attributeExpressions = new List<XrmAttributeExpression>()
+            {
+                _dateTimeGrouping
+            };
+            
+            object value1 = null;
+            if (day1 != null)
+            {
+                value1 = new DateTime(2026, month1, day1.Value, 1, 1, 1, DateTimeKind.Utc);
+            }
+
+            object value2 = null;
+            if (day2 != null)
+            {
+                value2 = new DateTime(2026, month2, day2.Value, 2, 2, 2, DateTimeKind.Utc);
+            }
+            _entity["createdon"] = value1;
+            _otherEntity["createdon"]  = value2;
+            
+            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            
+            Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
+        }
+        
+        [Theory]
+        [InlineData(true, 1, 1, 1, 1)] //Same date
+        [InlineData(true, 1, 1, 31, 3)] // 1/1 => 31/3 == Q1
+        [InlineData(false, 1, 1, 1, 4)] // 1/1 (Q1) => 1/4 (Q2)
+        [InlineData(true, 1, 4, 30, 6)] // 1/4 => 30/6 == Q2
+        [InlineData(false, 1, 4, 1, 7)] // 1/4 (Q2) => 1/7 (Q3)
+        [InlineData(true, 1, 7, 30, 9)] // 1/7 => 30/9 == Q3
+        [InlineData(false, 1, 7, 1, 10)] // 1/7 (Q3) => 1/10 (Q4)
+        [InlineData(true, 1, 10, 31, 12)] // 1/10 => 31/12 == Q4
+        [InlineData(false, 1, 10, 1, 1)] // 1/10 (Q4) => 1/1 (Q1)
+        [InlineData(true, null, 1, null, 1)]
+        [InlineData(false, null, 1, 1,1)]
+        public void Should_return_correct_result_when_using_date_time_grouping_by_quarter(bool areEqual, int? day1, int month1, int? day2, int month2)
+        {
+            _dateTimeGrouping.DateTimeGrouping = XrmDateTimeGrouping.Quarter;
+            _attributeExpressions = new List<XrmAttributeExpression>()
+            {
+                _dateTimeGrouping
+            };
+            
+            object value1 = null;
+            if (day1 != null)
+            {
+                value1 = new DateTime(2026, month1, day1.Value, 1, 1, 1, DateTimeKind.Utc);
+            }
+
+            object value2 = null;
+            if (day2 != null)
+            {
+                value2 = new DateTime(2026, month2, day2.Value, 2, 2, 2, DateTimeKind.Utc);
+            }
+            _entity["createdon"] = value1;
+            _otherEntity["createdon"]  = value2;
+            
+            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            
+            Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
+        }
     }
 }
 #endif
