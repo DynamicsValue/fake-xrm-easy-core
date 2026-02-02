@@ -290,6 +290,53 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.Equal(2, ((AliasedValue) weekInNextMonthSumEmployees).Value);
             Assert.Equal(6, ((AliasedValue) weekInNextMonth).Value);
         }
+        
+        [Fact]
+        public void Should_return_correct_sum_when_grouping_by_quarter()
+        {
+            InitEntities();
+            _context.Initialize(_entities);
+            
+            QueryExpression query = new QueryExpression("account")
+            {
+                ColumnSet = new ColumnSet(false)
+                {
+                    AttributeExpressions = {
+                        new XrmAttributeExpression{
+                            AttributeName = "numberofemployees",
+                            Alias = "sumofemployees",
+                            AggregateType = XrmAggregateType.Sum
+                        },
+                        new XrmAttributeExpression{
+                            AttributeName = "lastonholdtime",
+                            Alias = "quarter",
+                            AggregateType = XrmAggregateType.None,
+                            HasGroupBy = true,
+                            DateTimeGrouping = XrmDateTimeGrouping.Quarter
+                        }
+                    }
+                },
+                Criteria = new FilterExpression(LogicalOperator.And),
+                Orders = { new OrderExpression("lastonholdtime", OrderType.Ascending, "quarter") }
+            };
+            
+            var entityCollection = _service.RetrieveMultiple(query);
+            Assert.Equal(2, entityCollection.Entities.Count);
+
+            var nullAccounts = entityCollection.Entities[0];
+            var nullAccountSumEmployees = nullAccounts["sumofemployees"];
+            Assert.False(nullAccounts.Contains("quarter"));
+            Assert.IsType<AliasedValue>(nullAccountSumEmployees);
+            Assert.Equal(40, ((AliasedValue) nullAccountSumEmployees).Value);
+            
+            var quarterAccounts = entityCollection.Entities[1];
+            var quarterSumEmployees = quarterAccounts["sumofemployees"];
+            var quarterValue = quarterAccounts["quarter"];
+            Assert.IsType<AliasedValue>(quarterSumEmployees);
+            Assert.IsType<AliasedValue>(quarterValue);
+            Assert.Equal(18, ((AliasedValue) quarterSumEmployees).Value);
+            Assert.Equal(1, ((AliasedValue) quarterValue).Value);
+        }
     }
 }
 #endif
