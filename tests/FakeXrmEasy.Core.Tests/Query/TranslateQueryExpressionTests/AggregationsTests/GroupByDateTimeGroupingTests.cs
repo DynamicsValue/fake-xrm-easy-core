@@ -337,6 +337,62 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.Equal(18, ((AliasedValue) quarterSumEmployees).Value);
             Assert.Equal(1, ((AliasedValue) quarterValue).Value);
         }
+        
+        //The below uses Fiscal Year start date of 1/1/2025 and Quarterly options
+        [Fact]
+        public void Should_return_correct_sum_when_grouping_by_fiscal_year()
+        {
+            InitEntities();
+            _context.Initialize(_entities);
+            
+            QueryExpression query = new QueryExpression("account")
+            {
+                ColumnSet = new ColumnSet(false)
+                {
+                    AttributeExpressions = {
+                        new XrmAttributeExpression{
+                            AttributeName = "numberofemployees",
+                            Alias = "sumofemployees",
+                            AggregateType = XrmAggregateType.Sum
+                        },
+                        new XrmAttributeExpression{
+                            AttributeName = "lastonholdtime",
+                            Alias = "fy",
+                            AggregateType = XrmAggregateType.None,
+                            HasGroupBy = true,
+                            DateTimeGrouping = XrmDateTimeGrouping.FiscalYear
+                        }
+                    }
+                },
+                Criteria = new FilterExpression(LogicalOperator.And),
+                Orders = { new OrderExpression("lastonholdtime", OrderType.Ascending, "fy") }
+            };
+            
+            var entityCollection = _service.RetrieveMultiple(query);
+            Assert.Equal(3, entityCollection.Entities.Count);
+
+            var nullAccounts = entityCollection.Entities[0];
+            var nullAccountSumEmployees = nullAccounts["sumofemployees"];
+            Assert.False(nullAccounts.Contains("fy"));
+            Assert.IsType<AliasedValue>(nullAccountSumEmployees);
+            Assert.Equal(40, ((AliasedValue) nullAccountSumEmployees).Value);
+            
+            var fiscalYear2025Accounts = entityCollection.Entities[1];
+            var fiscalYear2025SumEmployees = fiscalYear2025Accounts["sumofemployees"];
+            var fiscalYear2025Value = fiscalYear2025Accounts["fy"];
+            Assert.IsType<AliasedValue>(fiscalYear2025SumEmployees);
+            Assert.IsType<AliasedValue>(fiscalYear2025Value);
+            Assert.Equal(10, ((AliasedValue) fiscalYear2025SumEmployees).Value);
+            Assert.Equal(2025, ((AliasedValue) fiscalYear2025Value).Value);
+            
+            var fiscalYear2026Accounts = entityCollection.Entities[2];
+            var fiscalYear2026SumEmployees = fiscalYear2026Accounts["sumofemployees"];
+            var fiscalYear2026Value = fiscalYear2026Accounts["fy"];
+            Assert.IsType<AliasedValue>(fiscalYear2026SumEmployees);
+            Assert.IsType<AliasedValue>(fiscalYear2026Value);
+            Assert.Equal(8, ((AliasedValue) fiscalYear2026SumEmployees).Value);
+            Assert.Equal(2026, ((AliasedValue) fiscalYear2026Value).Value);
+        }
     }
 }
 #endif

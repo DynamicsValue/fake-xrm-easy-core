@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.Query.Aggregations
 {
-    public class EntityKeyGroupEqualsTests
+    public class EntityKeyGroupEqualsTests: FakeXrmEasyTestsBase
     {
         private readonly Entity _entity;
         private readonly Entity _otherEntity;
@@ -44,7 +44,7 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
         [Fact]
         public void Should_return_false_when_other_object_is_not_an_entity_group_key()
         {
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context, _entity, _attributeExpressions);
             
             Assert.False(entityGroupKey.Equals(_entity));
         }
@@ -55,8 +55,8 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             _entity["name"] = "test";
             _otherEntity["othername"] = "test";
             
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
-            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context, _entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_context, _otherEntity, _attributeExpressions);
             
             Assert.False(entityGroupKey.Equals(otherEntityGroupKey));
         }
@@ -69,7 +69,7 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             _entity["desc"] = null;
             _entity["othernamenotgrouped"] = "test";
             
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context, _entity, _attributeExpressions);
             
             Assert.True(entityGroupKey._attributes.ContainsKey("nameAlias"));
             Assert.True(entityGroupKey._attributes.ContainsKey("createdOnAlias"));
@@ -91,8 +91,8 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             _entity["name"] = value1;
             _otherEntity["name"] = value2;
             
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
-            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context, _entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_context, _otherEntity, _attributeExpressions);
             
             Assert.False(entityGroupKey.Equals(otherEntityGroupKey));
         }
@@ -106,8 +106,8 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             _otherEntity["name"] = "test";
             _otherEntity["desc"] = "desc";
             
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
-            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context, _entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_context, _otherEntity, _attributeExpressions);
             
             Assert.True(entityGroupKey.Equals(otherEntityGroupKey));
         }

@@ -1,6 +1,7 @@
 #if FAKE_XRM_EASY_9
 using System;
 using System.Collections.Generic;
+using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
@@ -10,7 +11,7 @@ namespace FakeXrmEasy.Core.Query.Aggregations
     {
         internal readonly Dictionary<string, object> _attributes;
         
-        internal EntityGroupKey(Entity e, List<XrmAttributeExpression> attributeExpressions)
+        internal EntityGroupKey(IXrmFakedContext context, Entity e, List<XrmAttributeExpression> attributeExpressions)
         {
             _attributes = new Dictionary<string, object>();
             foreach (var attrEx in attributeExpressions)
@@ -47,6 +48,9 @@ namespace FakeXrmEasy.Core.Query.Aggregations
                                     break;
                                 case XrmDateTimeGrouping.Quarter:
                                     _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, Quarter.GetQuarter(dateTimeValue)));
+                                    break;
+                                case XrmDateTimeGrouping.FiscalYear:
+                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, FiscalYear.GetFiscalYear(context, dateTimeValue)));
                                     break;
                             }
                         }

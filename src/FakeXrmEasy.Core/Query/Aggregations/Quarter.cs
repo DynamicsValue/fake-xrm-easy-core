@@ -2,7 +2,10 @@ using System;
 
 namespace FakeXrmEasy.Core.Query.Aggregations
 {
-    public static class Quarter
+    /// <summary>
+    /// Implements quarter functionality
+    /// </summary>
+    internal static class Quarter
     {
         /// <summary>
         /// Returns the quarter for the specified date

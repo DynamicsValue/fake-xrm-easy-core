@@ -8,7 +8,7 @@ using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.Query.Aggregations
 {
-    public class EntityKeyGroupDateTimeGroupingEqualsTests
+    public class EntityKeyGroupDateTimeGroupingEqualsTests: FakeXrmEasyTestsBase
     {
         private readonly Entity _entity;
         private readonly Entity _otherEntity;
@@ -56,8 +56,8 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             _entity["createdon"] = value1;
             _otherEntity["createdon"]  = value2;
             
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
-            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context, _entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_context,_otherEntity, _attributeExpressions);
             
             Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
         }
@@ -92,8 +92,8 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             _entity["createdon"] = value1;
             _otherEntity["createdon"]  = value2;
             
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
-            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context,_entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_context,_otherEntity, _attributeExpressions);
             
             Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
         }
@@ -128,8 +128,8 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             _entity["createdon"] = value1;
             _otherEntity["createdon"]  = value2;
             
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
-            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context,_entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_context,_otherEntity, _attributeExpressions);
             
             Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
         }
@@ -165,8 +165,8 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             _entity["createdon"] = value1;
             _otherEntity["createdon"]  = value2;
             
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
-            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context, _entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_context, _otherEntity, _attributeExpressions);
             
             Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
         }
@@ -205,8 +205,50 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
             _entity["createdon"] = value1;
             _otherEntity["createdon"]  = value2;
             
-            var entityGroupKey = new EntityGroupKey(_entity, _attributeExpressions);
-            var otherEntityGroupKey = new EntityGroupKey(_otherEntity, _attributeExpressions);
+            var entityGroupKey = new EntityGroupKey(_context,_entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_context,_otherEntity, _attributeExpressions);
+            
+            Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
+        }
+        
+        [Theory]
+        [InlineData(true, 1, 1, 2026,1, 1, 2026)] //Same date
+        [InlineData(true, 1, 1, 2026, 31, 3, 2026)] // 1/1 => 31/3 == Q1
+        [InlineData(true, 1, 1, 2026,1, 4, 2026)] // 1/1 (Q1) => 1/4 (Q2)
+        [InlineData(true, 1, 4, 2026,30, 6, 2026)] // 1/4 => 30/6 == Q2
+        [InlineData(true, 1, 4,2026, 1, 7, 2026)] // 1/4 (Q2) => 1/7 (Q3)
+        [InlineData(true, 1, 7, 2026,30, 9, 2026)] // 1/7 => 30/9 == Q3
+        [InlineData(true, 1, 7, 2026,1, 10, 2026)] // 1/7 (Q3) => 1/10 (Q4)
+        [InlineData(true, 1, 10, 2026,31, 12, 2026)] // 1/10 => 31/12 == Q4
+        [InlineData(true, 1, 10, 2026,1, 1, 2026)] // 1/10 (Q4) => 1/1 (Q1)
+        [InlineData(true, 1, 1, 2026,31, 12, 2026)] // 1/1 (Q1) => 31/12 (Q4)
+        [InlineData(false, 1, 1, 2025,31, 3, 2026)] // 1/1/2025 => 31/3/2026 (different years)
+        [InlineData(true, null, 1, 2026,null, 1, 2026)] //null and null
+        [InlineData(false, null, 1,2026, 1,1, 2026)] //null and not null
+        public void Should_return_correct_result_when_using_date_time_grouping_by_fiscal_year_when_fiscal_year_starts_on_Jan_1st(bool areEqual, int? day1, int month1, int year1, int? day2, int month2, int year2)
+        {
+            _dateTimeGrouping.DateTimeGrouping = XrmDateTimeGrouping.FiscalYear;
+            _attributeExpressions = new List<XrmAttributeExpression>()
+            {
+                _dateTimeGrouping
+            };
+            
+            object value1 = null;
+            if (day1 != null)
+            {
+                value1 = new DateTime(year1, month1, day1.Value, 1, 1, 1, DateTimeKind.Utc);
+            }
+
+            object value2 = null;
+            if (day2 != null)
+            {
+                value2 = new DateTime(year2, month2, day2.Value, 2, 2, 2, DateTimeKind.Utc);
+            }
+            _entity["createdon"] = value1;
+            _otherEntity["createdon"]  = value2;
+            
+            var entityGroupKey = new EntityGroupKey(_context,_entity, _attributeExpressions);
+            var otherEntityGroupKey = new EntityGroupKey(_context,_otherEntity, _attributeExpressions);
             
             Assert.Equal(areEqual, entityGroupKey.Equals(otherEntityGroupKey));
         }
