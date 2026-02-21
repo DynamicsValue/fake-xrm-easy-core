@@ -29,7 +29,7 @@ namespace FakeXrmEasy.Core.Tests.Query.Aggregations
         [InlineData(2023, 2024,2,29)]
         public void Should_return_expected_fiscal_year_non_default_fiscal_year_settings(int expectedYear, int year, int month, int day)
         {
-            _context.SetProperty<FiscalYearSettings>(new FiscalYearSettings()
+            _context.SetProperty(new FiscalYearSettings()
             {
                 StartDate = new DateTime(2026, 7, 1) //July 1st
             });
