@@ -31,11 +31,8 @@ namespace FakeXrmEasy.Core.Query.Aggregations
                     var fiscalYear = FiscalYear.GetFiscalYear(context, date);
                     var quarter = Quarter.GetQuarter(date, fiscalYearStartDate);
                     return $"{fiscalYear}-{quarter.ToString().PadLeft(2, '0')}";
-                    break;
             }
 
-            
-            
             return "";
         }
     }

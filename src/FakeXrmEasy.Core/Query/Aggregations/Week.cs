@@ -64,6 +64,19 @@ namespace FakeXrmEasy.Core.Query.Aggregations
 
             return weekNumber;
         }
+        
+        /// <summary>
+        /// Returns the week number using a SQL Server DATEFIRST value.
+        ///
+        /// Reference: https://learn.microsoft.com/en-us/sql/t-sql/statements/set-datefirst-transact-sql
+        /// </summary>
+        /// <param name="date">The date to get the week number for.</param>
+        /// <param name="dateFirst">SQL Server DATEFIRST value (1-7, where 7=Sunday is default).</param>
+        /// <returns>Week number (1-54).</returns>
+        public static int GetWeek(DateTime date, int dateFirst)
+        {
+            return GetWeek(date, DateFirstToDayOfWeek(dateFirst));
+        }
 
         /// <summary>
         /// Returns the ISO 8601 week number of the year.
@@ -119,19 +132,6 @@ namespace FakeXrmEasy.Core.Query.Aggregations
             // SQL Server: 1=Monday, 7=Sunday
             // .NET DayOfWeek: 0=Sunday, 1=Monday, ..., 6=Saturday
             return dateFirst == 7 ? DayOfWeek.Sunday : (DayOfWeek)dateFirst;
-        }
-
-        /// <summary>
-        /// Returns the week number using a SQL Server DATEFIRST value.
-        ///
-        /// Reference: https://learn.microsoft.com/en-us/sql/t-sql/statements/set-datefirst-transact-sql
-        /// </summary>
-        /// <param name="date">The date to get the week number for.</param>
-        /// <param name="dateFirst">SQL Server DATEFIRST value (1-7, where 7=Sunday is default).</param>
-        /// <returns>Week number (1-54).</returns>
-        public static int GetWeek(DateTime date, int dateFirst)
-        {
-            return GetWeek(date, DateFirstToDayOfWeek(dateFirst));
         }
     }
 }
