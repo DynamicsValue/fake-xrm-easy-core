@@ -8,14 +8,27 @@ namespace FakeXrmEasy.Core.Query.Aggregations
     internal static class Quarter
     {
         /// <summary>
-        /// Returns the quarter for the specified date
+        /// Returns the quarter for the specified date where the first quarter starts on Jan 1st
         /// </summary>
-        /// <param name="date"></param>
+        /// <param name="date">Date to retrieve the quarter from</param>
         /// <returns></returns>
-        public static int GetQuarter(DateTime date)
+        internal static int GetQuarter(DateTime date)
+        {
+            var quarterStart = new DateTime(date.Year, 1, 1);
+            return GetQuarter(date, quarterStart);
+        }
+
+        /// <summary>
+        /// Returns the quarter for the specified date where the first quarter starts on a specified start date
+        /// </summary>
+        /// <param name="date">Date to retrieve the quarter from</param>
+        /// <param name="firstQuarterStartDate">The start date of the 1st quarter</param>
+        /// <returns></returns>
+        internal static int GetQuarter(DateTime date, DateTime firstQuarterStartDate)
         {
             var dateOnly = date.Date;
-            var quarterStart = new DateTime(date.Year, 1, 1);
+
+            var quarterStart = firstQuarterStartDate;
             var quarterEnd = quarterStart.AddMonths(3).AddDays(-1);
 
             if (dateOnly >= quarterStart && dateOnly <= quarterEnd)
@@ -37,7 +50,7 @@ namespace FakeXrmEasy.Core.Query.Aggregations
                 return 3;
             }
 
-            return 4;
+            return 4; 
         }
     }
 }

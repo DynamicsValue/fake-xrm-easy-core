@@ -393,6 +393,63 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.Aggregation
             Assert.Equal(8, ((AliasedValue) fiscalYear2026SumEmployees).Value);
             Assert.Equal(2026, ((AliasedValue) fiscalYear2026Value).Value);
         }
+        
+        //The below uses Fiscal Year start date of 1/1/2025 and Quarterly options
+        [Fact]
+        public void Should_return_correct_sum_when_grouping_by_fiscal_period()
+        {
+            InitEntities();
+            _context.Initialize(_entities);
+            
+            QueryExpression query = new QueryExpression("account")
+            {
+                ColumnSet = new ColumnSet(false)
+                {
+                    AttributeExpressions = {
+                        new XrmAttributeExpression{
+                            AttributeName = "numberofemployees",
+                            Alias = "sumofemployees",
+                            AggregateType = XrmAggregateType.Sum
+                        },
+                        new XrmAttributeExpression{
+                            AttributeName = "lastonholdtime",
+                            Alias = "fiscalPeriod",
+                            AggregateType = XrmAggregateType.None,
+                            HasGroupBy = true,
+                            DateTimeGrouping = XrmDateTimeGrouping.FiscalPeriod
+                        }
+                    }
+                },
+                Criteria = new FilterExpression(LogicalOperator.And),
+                Orders = { new OrderExpression("lastonholdtime", OrderType.Ascending, "fiscalPeriod") }
+            };
+            
+            var entityCollection = _service.RetrieveMultiple(query);
+            Assert.Equal(3, entityCollection.Entities.Count);
+
+            var nullAccounts = entityCollection.Entities[0];
+            var nullAccountSumEmployees = nullAccounts["sumofemployees"];
+            Assert.False(nullAccounts.Contains("fiscalPeriod"));
+            Assert.IsType<AliasedValue>(nullAccountSumEmployees);
+            Assert.Equal(40, ((AliasedValue) nullAccountSumEmployees).Value);
+            
+            var fiscalPeriod2025Accounts = entityCollection.Entities[1];
+            var fiscalPeriod2025SumEmployees = fiscalPeriod2025Accounts["sumofemployees"];
+            var fiscalPeriod2025Value = fiscalPeriod2025Accounts["fiscalPeriod"];
+            Assert.IsType<AliasedValue>(fiscalPeriod2025SumEmployees);
+            Assert.IsType<AliasedValue>(fiscalPeriod2025Value);
+            Assert.Equal(10, ((AliasedValue) fiscalPeriod2025SumEmployees).Value);
+            Assert.Equal("2025-01", ((AliasedValue) fiscalPeriod2025Value).Value); //Seems formatting in Environment's Fiscal Year Settings is ignored.... always displays YYYY-MM regardless.
+            
+            var fiscalPeriod2026Accounts = entityCollection.Entities[2];
+            var fiscalPeriod2026SumEmployees = fiscalPeriod2026Accounts["sumofemployees"];
+            var fiscalPeriod2026Value = fiscalPeriod2026Accounts["fiscalPeriod"];
+            Assert.IsType<AliasedValue>(fiscalPeriod2026SumEmployees);
+            Assert.IsType<AliasedValue>(fiscalPeriod2026Value);
+            Assert.Equal(8, ((AliasedValue) fiscalPeriod2026SumEmployees).Value);
+            Assert.Equal("2026-01", ((AliasedValue) fiscalPeriod2026Value).Value); //Seems formatting in Environment's Fiscal Year Settings is ignored.... always displays YYYY-MM regardless.
+            
+        }
     }
 }
 #endif

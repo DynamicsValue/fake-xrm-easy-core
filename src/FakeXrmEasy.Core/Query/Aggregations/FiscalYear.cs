@@ -15,7 +15,7 @@ namespace FakeXrmEasy.Core.Query.Aggregations
         /// <param name="context">The current IXrmFakedContext In-Memory context</param>
         /// <param name="date">The date to retrieve the fiscal year from</param>
         /// <returns></returns>
-        public static int GetFiscalYear(IXrmFakedContext context, DateTime date)
+        internal static int GetFiscalYear(IXrmFakedContext context, DateTime date)
         {
             DateTime fiscalYearDateInCurrentYear = new DateTime(date.Year, 1, 1);
             var hasFiscalYearSettings = context.HasProperty<FiscalYearSettings>();

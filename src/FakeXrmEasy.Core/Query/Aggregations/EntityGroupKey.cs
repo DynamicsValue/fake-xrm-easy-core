@@ -52,6 +52,9 @@ namespace FakeXrmEasy.Core.Query.Aggregations
                                 case XrmDateTimeGrouping.FiscalYear:
                                     _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, FiscalYear.GetFiscalYear(context, dateTimeValue)));
                                     break;
+                                case XrmDateTimeGrouping.FiscalPeriod:
+                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, FiscalPeriod.GetFiscalPeriod(context, dateTimeValue)));
+                                    break;
                             }
                         }
                        
