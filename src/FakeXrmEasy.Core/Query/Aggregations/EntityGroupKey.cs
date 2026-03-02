@@ -24,43 +24,51 @@ namespace FakeXrmEasy.Core.Query.Aggregations
                     }
                     else
                     {
-                        object value = e[attrEx.AttributeName];
-                        if (value == null)
-                        {
-                            _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, e[attrEx.AttributeName]));
-                        }
-                        else
-                        {
-                            var dateTimeValue = (DateTime)value;
-                            switch (attrEx.DateTimeGrouping)
-                            {
-                                case XrmDateTimeGrouping.Year:
-                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Year));
-                                    break;
-                                case XrmDateTimeGrouping.Month:
-                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Month));
-                                    break;
-                                case XrmDateTimeGrouping.Day:
-                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Day));
-                                    break;
-                                case XrmDateTimeGrouping.Week:
-                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, Week.GetWeek(dateTimeValue)));
-                                    break;
-                                case XrmDateTimeGrouping.Quarter:
-                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, Quarter.GetQuarter(dateTimeValue)));
-                                    break;
-                                case XrmDateTimeGrouping.FiscalYear:
-                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, FiscalYear.GetFiscalYear(context, dateTimeValue)));
-                                    break;
-                                case XrmDateTimeGrouping.FiscalPeriod:
-                                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, FiscalPeriod.GetFiscalPeriod(context, dateTimeValue)));
-                                    break;
-                            }
-                        }
-                       
+                        AddDateTimeGroupingField(context, e, attrEx);
                     }
-                    
                 }
+            }
+        }
+
+        private void AddDateTimeGroupingField(IXrmFakedContext context, Entity e, XrmAttributeExpression attrEx)
+        {
+            object value = e[attrEx.AttributeName];
+            if (value == null)
+            {
+                _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, e[attrEx.AttributeName]));
+            }
+            else
+            {
+                AddNonNullDateTimeGroupingField(context, e, value, attrEx);
+            }
+        }
+
+        private void AddNonNullDateTimeGroupingField(IXrmFakedContext context, Entity e, object value, XrmAttributeExpression attrEx)
+        {
+            var dateTimeValue = (DateTime)value;
+            switch (attrEx.DateTimeGrouping)
+            {
+                case XrmDateTimeGrouping.Year:
+                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Year));
+                    break;
+                case XrmDateTimeGrouping.Month:
+                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Month));
+                    break;
+                case XrmDateTimeGrouping.Day:
+                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, dateTimeValue.Day));
+                    break;
+                case XrmDateTimeGrouping.Week:
+                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, Week.GetWeek(dateTimeValue)));
+                    break;
+                case XrmDateTimeGrouping.Quarter:
+                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, Quarter.GetQuarter(dateTimeValue)));
+                    break;
+                case XrmDateTimeGrouping.FiscalYear:
+                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, FiscalYear.GetFiscalYear(context, dateTimeValue)));
+                    break;
+                case XrmDateTimeGrouping.FiscalPeriod:
+                    _attributes.Add(attrEx.Alias, new AliasedValue(e.LogicalName, attrEx.AttributeName, FiscalPeriod.GetFiscalPeriod(context, dateTimeValue)));
+                    break;
             }
         }
 
