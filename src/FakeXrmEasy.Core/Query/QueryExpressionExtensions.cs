@@ -73,8 +73,15 @@ namespace FakeXrmEasy.Query
 
             var linkedEntities = new Dictionary<string, int>();
 
+            bool hasAggregates = false;
+            
 #if  !FAKE_XRM_EASY
             ValidateAliases(qe, context as XrmFakedContext);
+#endif
+#if FAKE_XRM_EASY_9
+            var aggregateExpressions = GetAggregateAttributeExpressions(qe);
+            hasAggregates = aggregateExpressions.Count > 0;
+            ValidateAggregates(qe, aggregateExpressions);
 #endif
 
             // Add as many Joins as linked entities
@@ -120,17 +127,86 @@ namespace FakeXrmEasy.Query
                     query = orderedQuery;
                 }
             }
-
+            
+            #if FAKE_XRM_EASY_9
+            if (hasAggregates)
+            {
+                return TranslateAggregateExpressions(query, qe, qe.ColumnSet.AttributeExpressions.ToList(), context);
+            }
+            #endif
+            
             //Project the attributes in the root column set  (must be applied after the where and order clauses, not before!!)
             query = query.Select(x => x.Clone(x.GetType(), context as XrmFakedContext).ProjectAttributes(qe, context as XrmFakedContext));
-
+            
             //Apply column aliases
             query = query.Select(e => e.ApplyColumnAliases(qe, context));
             
             return query;
         }
 
-        #if !FAKE_XRM_EASY
+        #if FAKE_XRM_EASY_9
+        private static List<XrmAttributeExpression> GetAggregateAttributeExpressions(QueryExpression qe)
+        {
+            return qe.ColumnSet
+                .AttributeExpressions
+                .Where(ae => ae.AggregateType != XrmAggregateType.None)
+                .ToList();
+        }
+
+        private static IQueryable<Entity> TranslateAggregateExpressions(IQueryable<Entity> sequence, QueryExpression qe,
+            List<XrmAttributeExpression> attributeExpressions, IXrmFakedContext context)
+        {
+            var seq = sequence.ToList();
+            
+            var groupByAttributes = attributeExpressions.Where(att => att.HasGroupBy).ToList();
+            if (groupByAttributes.Count > 0)
+            {
+                var groupedSequence = seq.GroupBy(e => e.ToGroupByKeySelector(groupByAttributes, context))
+                    .Select(group =>
+                    {
+                        var aggregateRecord = TranslateAggregateExpressionsInSubSequence(group.ToList().AsQueryable(), qe, attributeExpressions, context);
+                        group.Key.AddGroupKeyAttributes(aggregateRecord);
+                        return aggregateRecord;
+                    });
+                                                    
+                return groupedSequence.AsQueryable();
+            }
+            else
+            {
+
+                var aggregatedRecord = TranslateAggregateExpressionsInSubSequence(sequence, qe, attributeExpressions, context);
+                return new List<Entity> { aggregatedRecord }.AsQueryable();
+            }
+        }
+        
+        private static Entity TranslateAggregateExpressionsInSubSequence(IQueryable<Entity> sequence, QueryExpression qe,
+            List<XrmAttributeExpression> attributeExpressions, IXrmFakedContext context)
+        {
+            var seq = sequence.ToList();
+            
+            var aggregateRecord = context.NewEntityRecord(qe.EntityName);
+
+            foreach (var attExpression in attributeExpressions)
+            {
+                attExpression.ToAggregatedAttributeValue(qe, seq, aggregateRecord, context);
+            }
+            
+            return  aggregateRecord;
+        }
+        
+        
+        private static void ValidateAggregates(QueryExpression qe, List<XrmAttributeExpression> attributeExpressions)
+        {
+            var hasAggregateAttributeExpressions =
+                attributeExpressions.Count > 0;
+
+            if (hasAggregateAttributeExpressions && (qe.ColumnSet.AllColumns || qe.ColumnSet.Columns.Count > 0))
+            {
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.InvalidOperation,$"Attribute can not be specified if an aggregate operation is requested.");
+            }
+        }
+#endif
+        #if !FAKE_XRM_EASY 
         private static void ValidateAliases(QueryExpression qe, XrmFakedContext context)
         {
             if (qe.Criteria != null)
