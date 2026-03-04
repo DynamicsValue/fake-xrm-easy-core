@@ -80,7 +80,7 @@ namespace FakeXrmEasy.Query
 #endif
 #if FAKE_XRM_EASY_9
             var aggregateExpressions = GetAggregateAttributeExpressions(qe);
-            hasAggregates = aggregateExpressions.Count > 0;
+            hasAggregates = aggregateExpressions?.Count > 0;
             ValidateAggregates(qe, aggregateExpressions);
 #endif
 
@@ -147,7 +147,7 @@ namespace FakeXrmEasy.Query
         #if FAKE_XRM_EASY_9
         private static List<XrmAttributeExpression> GetAggregateAttributeExpressions(QueryExpression qe)
         {
-            return qe.ColumnSet
+            return qe.ColumnSet?
                 .AttributeExpressions
                 .Where(ae => ae.AggregateType != XrmAggregateType.None)
                 .ToList();
@@ -197,6 +197,11 @@ namespace FakeXrmEasy.Query
         
         private static void ValidateAggregates(QueryExpression qe, List<XrmAttributeExpression> attributeExpressions)
         {
+            if (qe.ColumnSet == null)
+            {
+                return;
+            }
+            
             var hasAggregateAttributeExpressions =
                 attributeExpressions.Count > 0;
 
