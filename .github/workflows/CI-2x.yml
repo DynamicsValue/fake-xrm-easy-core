@@ -11,7 +11,9 @@ on:
 env: 
   dotnet-version: 3.1.201
   source-url: "https://nuget.pkg.github.com/${{github.repository_owner}}/index.json"
-
+  GH_HEAD_REF: ${{ github.head_ref }}
+  GH_RUN_NUMBER: ${{ github.run_number }}
+  
 jobs:
   build-windows:
     strategy:
@@ -91,9 +93,9 @@ jobs:
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ vars.SONAR_PROJECT_PREFIX }}_fake-xrm-easy-core" /o:"${{ vars.SONAR_ORG_NAME }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.verbose="true" /d:sonar.qualitygate.wait="true" /d:sonar.cs.opencover.reportsPaths="coverage/**/coverage.opencover.xml" /d:sonar.coverage.exclusions="tests/**/**"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{ vars.SONAR_PROJECT_PREFIX }}_fake-xrm-easy-core" /o:"${{ vars.SONAR_ORG_NAME }}" /d:sonar.login="$env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.verbose="true" /d:sonar.qualitygate.wait="true" /d:sonar.cs.opencover.reportsPaths="coverage/**/coverage.opencover.xml" /d:sonar.coverage.exclusions="tests/**/**"
           .\build.ps1 -configuration FAKE_XRM_EASY_9 -targetFrameworks 'all'
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="$env:SONAR_TOKEN"
 
   pack-push:
     needs:  [build-windows, sonar]
@@ -120,7 +122,7 @@ jobs:
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
       - name: Pack Src
-        run: pwsh ./pack-src.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
+        run: pwsh ./pack-src.ps1 -targetFrameworks 'all' -versionSuffix "zci.$env:GH_HEAD_REF$env:GH_RUN_NUMBER"
         env: 
           NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
@@ -133,7 +135,7 @@ jobs:
           NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pack Tests
-        run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "zci.${{ github.head_ref }}${{ github.run_number }}"
+        run: pwsh ./pack-tests.ps1 -targetFrameworks 'all' -versionSuffix "zci.$env:GH_HEAD_REF$env:GH_RUN_NUMBER"
         env: 
           NUGET_USERNAME: ${{github.repository_owner}}
           NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
