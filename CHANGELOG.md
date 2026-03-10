@@ -1,3 +1,13 @@
+## [3.9.0]
+
+### Added
+
+- Adds support for Aggregations in QueryExpressions - https://github.com/DynamicsValue/fake-xrm-easy/issues/192
+
+### Changed
+
+- Fixes dependencies in this version: https://github.com/DynamicsValue/fake-xrm-easy/issues/218
+
 ## [3.8.0]
 
 ### Added 

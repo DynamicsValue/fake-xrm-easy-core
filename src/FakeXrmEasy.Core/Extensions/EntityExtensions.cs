@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Core.Exceptions.Extensions;
+using FakeXrmEasy.Core.Query.Aggregations;
 using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk.Metadata;
 
@@ -16,6 +17,20 @@ namespace FakeXrmEasy.Extensions
     /// </summary>
     public static class EntityExtensions
     {
+        /// <summary>
+        /// Returns true if the entity contains the attribute specified AND is not null (there is data in that column)
+        /// </summary>
+        /// <param name="e">The entity record</param>
+        /// <param name="attributeName">The attribute name</param>
+        /// <returns></returns>
+        public static bool ContainsData(this Entity e, string attributeName)
+        {
+            if (!e.Contains(attributeName))
+                return false;
+            
+            return e[attributeName] != null;
+        }
+        
         /// <summary>
         /// Extension method to add an attribute and return the entity itself
         /// </summary>
@@ -248,7 +263,14 @@ namespace FakeXrmEasy.Extensions
                 return RemoveNullAttributes(projected);
             }
         }
-
+        
+        #if FAKE_XRM_EASY_9
+        internal static EntityGroupKey ToGroupByKeySelector(this Entity e, List<XrmAttributeExpression> groupByExpressions, IXrmFakedContext context)
+        {
+            return new EntityGroupKey(context, e, groupByExpressions);
+        }
+        #endif
+        
         /// <summary>
         /// Applies column aliases if there are any specified
         /// </summary>
@@ -821,5 +843,45 @@ namespace FakeXrmEasy.Extensions
 
             return Guid.Empty;
         }
+
+        internal static AggregationValue GetAggregationValue(this Entity e, string attributeName, IXrmFakedContext context)
+        {
+            var attributeType = context.FindReflectedAttributeType(context.FindReflectedType(e.LogicalName),
+                e.LogicalName, attributeName);
+
+            if (attributeType == typeof(int))
+            {
+                var intValue = e.GetAttributeValue<int>(attributeName);
+                return new IntAggregationValue(intValue);
+            }
+            
+            if (attributeType == typeof(double))
+            {
+                var doubleValue = e.GetAttributeValue<double>(attributeName);
+                return new DoubleAggregationValue(doubleValue);
+            }
+            
+            if (attributeType == typeof(decimal))
+            {
+                var decValue = e.GetAttributeValue<decimal>(attributeName);
+                return new DecimalAggregationValue(decValue);
+            }
+            
+            if (attributeType == typeof(Money))
+            {
+                var moneyValue = e.GetAttributeValue<Money>(attributeName);
+                return new MoneyAggregationValue(moneyValue);
+            }
+            if (attributeType == typeof(DateTime))
+            {
+                var dateTimeValue = e.GetAttributeValue<DateTime>(attributeName);
+                return new DateTimeAggregationValue(dateTimeValue);
+            }
+            
+
+            return null;
+        }
+
+        
     }
 }
