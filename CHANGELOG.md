@@ -2,6 +2,7 @@
 
 ### Added
 
+- Resolves an issue where Like operator was not searching for substrings in multiline fields - https://github.com/DynamicsValue/fake-xrm-easy/issues/219
 - Adds support for Aggregations in QueryExpressions - https://github.com/DynamicsValue/fake-xrm-easy/issues/192
 
 ### Changed
