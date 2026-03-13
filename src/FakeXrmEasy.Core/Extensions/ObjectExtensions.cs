@@ -51,6 +51,22 @@ namespace FakeXrmEasy.Extensions
         }
 
         /// <summary>
+        /// Determines whether the specified object contains a field with the given name.
+        /// </summary>
+        /// <param name="obj">The object to inspect for the presence of the field. Cannot be null.</param>
+        /// <param name="fieldName">The name of the field to search for. The comparison is case-sensitive.</param>
+        /// <returns>true if a field with the specified name exists on the object; otherwise, false.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if obj is null.</exception>
+        public static bool HasField(this object obj, string fieldName)
+        {
+            if (obj == null)
+                throw new ArgumentNullException("obj");
+            Type objType = obj.GetType();
+            FieldInfo fieldInfo = GetFieldInfo(objType, fieldName);
+            return fieldInfo != null;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="obj"></param>
@@ -65,8 +81,19 @@ namespace FakeXrmEasy.Extensions
             Type objType = obj.GetType();
             FieldInfo fieldInfo = GetFieldInfo(objType, fieldName);
             if (fieldInfo == null)
-                throw new ArgumentOutOfRangeException("fieldName",
-                  string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+            {
+                fieldInfo = GetFieldInfo(objType, "_inner");
+                if (fieldInfo == null)
+                {
+                    throw new ArgumentOutOfRangeException("fieldName",
+                string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+                }
+                else
+                {
+                    return GetFieldValue(fieldInfo.GetValue(obj), fieldName);
+                }
+            }
+
             return fieldInfo.GetValue(obj);
         }
 
@@ -85,8 +112,20 @@ namespace FakeXrmEasy.Extensions
             Type objType = obj.GetType();
             FieldInfo fieldInfo = GetFieldInfo(objType, fieldName);
             if (fieldInfo == null)
-                throw new ArgumentOutOfRangeException("fieldName",
-                  string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+            {
+                fieldInfo = GetFieldInfo(objType, "_inner") as FieldInfo;
+                if (fieldInfo == null)
+                {
+                    throw new ArgumentOutOfRangeException("fieldName",
+                      string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+                }
+                else
+                {
+                    SetFieldValue(fieldInfo.GetValue(obj), fieldName, val);
+                    return;
+                }
+            }
+
             fieldInfo.SetValue(obj, val);
         }
 
