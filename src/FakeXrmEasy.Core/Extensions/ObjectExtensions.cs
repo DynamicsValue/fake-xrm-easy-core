@@ -97,7 +97,7 @@ namespace FakeXrmEasy.Extensions
             FieldInfo fieldInfo = GetFieldInfo(objType, fieldName);
             if (fieldInfo == null)
             {
-                fieldInfo = GetFieldInfo(objType, "_inner") as FieldInfo;
+                fieldInfo = GetFieldInfo(objType, "_inner");
                 if (fieldInfo == null)
                 {
                     throw new ArgumentOutOfRangeException("fieldName",
