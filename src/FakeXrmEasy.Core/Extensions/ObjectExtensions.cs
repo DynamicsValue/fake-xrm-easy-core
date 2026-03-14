@@ -86,7 +86,7 @@ namespace FakeXrmEasy.Extensions
                 if (fieldInfo == null)
                 {
                     throw new ArgumentOutOfRangeException("fieldName",
-                string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+                        string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
                 }
                 else
                 {
@@ -117,7 +117,7 @@ namespace FakeXrmEasy.Extensions
                 if (fieldInfo == null)
                 {
                     throw new ArgumentOutOfRangeException("fieldName",
-                      string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+                        string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
                 }
                 else
                 {
@@ -128,7 +128,8 @@ namespace FakeXrmEasy.Extensions
 
             fieldInfo.SetValue(obj, val);
         }
-
+        
+        
         /// <summary>
         /// Produces a deep copy of a given object
         /// </summary>
