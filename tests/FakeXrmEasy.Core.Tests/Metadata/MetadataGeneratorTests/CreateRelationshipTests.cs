@@ -1,11 +1,10 @@
-using System;
 using System.Linq;
 using DataverseEntities;
 using FakeXrmEasy.Metadata;
 using Microsoft.Xrm.Sdk.Metadata;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.Metadata
+namespace FakeXrmEasy.Core.Tests.Metadata.MetadataGeneratorTests
 {
     public class CreateRelationshipTests: FakeXrmEasyTestsBase
     {

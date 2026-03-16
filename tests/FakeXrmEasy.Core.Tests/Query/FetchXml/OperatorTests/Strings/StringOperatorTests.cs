@@ -52,7 +52,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
             var ct1 = new Contact() { Id = Guid.NewGuid(), NickName = "Alice" };
             var ct2 = new Contact() { Id = Guid.NewGuid(), NickName = "Bob" };
             var ct3 = new Contact() { Id = Guid.NewGuid(), NickName = "Nati" };
-            
+
             _context.Initialize(new[] { ct1, ct2, ct3 });
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
@@ -103,7 +103,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
             var ct1 = new Contact() { Id = Guid.NewGuid(), NickName = "Alice" };
             var ct2 = new Contact() { Id = Guid.NewGuid(), NickName = "Bob" };
             var ct3 = new Contact() { Id = Guid.NewGuid(), NickName = "Nati" };
-            
+
             _context.Initialize(new[] { ct1, ct2, ct3 });
 
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
@@ -222,11 +222,34 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml.OperatorTests.Strings
             var ct2 = new Contact() { Id = Guid.NewGuid(), NickName = "Bob" };
             var ct3 = new Contact() { Id = Guid.NewGuid(), NickName = "Nati" };
             _context.Initialize(new[] { ct1, ct2, ct3 });
-           
+
             var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
 
             Assert.Single(collection.Entities);
             Assert.Equal("Alice", collection.Entities[0]["nickname"]);
+        }
+
+        [Fact]
+        public void FetchXml_Operator_LikeMultiline_Execution()
+        {
+            var fetchXml = @"<fetch version='1.0' output-format='xml-platform' mapping='logical' distinct='false'>
+                              <entity name='contact'>
+                                    <attribute name='description' />
+                                        <filter type='and'>
+                                            <condition attribute='description' operator='like' value='%Second line%' />
+                                        </filter>
+                                  </entity>
+                            </fetch>";
+
+            var ct1 = new Contact() { Id = Guid.NewGuid(), Description = "C1" };
+            var ct2 = new Contact() { Id = Guid.NewGuid(), Description = "-First line-\n-Second line-\n-Third line-" };
+            var ct3 = new Contact() { Id = Guid.NewGuid(), Description = "C3" };
+            _context.Initialize(new[] { ct1, ct2, ct3 });
+
+            var collection = _service.RetrieveMultiple(new FetchExpression(fetchXml));
+
+            Assert.Single(collection.Entities);
+            Assert.Equal(ct2.Id, collection.Entities[0].Id);
         }
 
         [Fact]
