@@ -65,8 +65,19 @@ namespace FakeXrmEasy.Extensions
             Type objType = obj.GetType();
             FieldInfo fieldInfo = GetFieldInfo(objType, fieldName);
             if (fieldInfo == null)
-                throw new ArgumentOutOfRangeException("fieldName",
-                  string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+            {
+                fieldInfo = GetFieldInfo(objType, "_inner");
+                if (fieldInfo == null)
+                {
+                    throw new ArgumentOutOfRangeException("fieldName",
+                        string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+                }
+                else
+                {
+                    return GetFieldValue(fieldInfo.GetValue(obj), fieldName);
+                }
+            }
+
             return fieldInfo.GetValue(obj);
         }
 
@@ -85,11 +96,24 @@ namespace FakeXrmEasy.Extensions
             Type objType = obj.GetType();
             FieldInfo fieldInfo = GetFieldInfo(objType, fieldName);
             if (fieldInfo == null)
-                throw new ArgumentOutOfRangeException("fieldName",
-                  string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+            {
+                fieldInfo = GetFieldInfo(objType, "_inner");
+                if (fieldInfo == null)
+                {
+                    throw new ArgumentOutOfRangeException("fieldName",
+                        string.Format("Couldn't find field {0} in type {1}", fieldName, objType.FullName));
+                }
+                else
+                {
+                    SetFieldValue(fieldInfo.GetValue(obj), fieldName, val);
+                    return;
+                }
+            }
+
             fieldInfo.SetValue(obj, val);
         }
-
+        
+        
         /// <summary>
         /// Produces a deep copy of a given object
         /// </summary>
