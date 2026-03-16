@@ -3,7 +3,6 @@
 ### Added
 
 - Resolves issue about accessing properties in EntityMetadata introduced after a breaking change in Microsoft.CrmSdk.CoreAssemblies v9.0.2.60 - https://github.com/DynamicsValue/fake-xrm-easy/issues/217
-- Upgrade Microsoft.CrmSdk.CoreAssemblies to 9.0.2.60 
 - Resolves an issue where Like operator was not searching for substrings in multiline fields - https://github.com/DynamicsValue/fake-xrm-easy/issues/219
 - Adds support for Aggregations in QueryExpressions - https://github.com/DynamicsValue/fake-xrm-easy/issues/192
 
