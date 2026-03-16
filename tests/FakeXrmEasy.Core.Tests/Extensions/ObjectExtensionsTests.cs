@@ -1,6 +1,7 @@
 using System;
 using DataverseEntities;
 using FakeXrmEasy.Extensions;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Xunit;
@@ -66,5 +67,26 @@ namespace FakeXrmEasy.Core.Tests.Extensions
             EntityMetadata metadata = null;
             Assert.Throws<ArgumentNullException>(() => metadata.SetFieldValue("_objectTypeCode", 1));
         }
+
+        [Fact]
+        public void Should_get_fake_entity_metadata_field_value()
+        {
+            var metadata = new FakeEntityMetadata(new EntityMetadata());
+            metadata.SetFieldValue("_objectTypeCode", 1);
+            
+            var objectTypeCode = metadata.GetFieldValue("_objectTypeCode");
+            Assert.Equal(1, objectTypeCode);
+        }
+        
+        private class FakeEntityMetadata
+        {
+            private EntityMetadata _inner;
+
+            public FakeEntityMetadata(EntityMetadata metadata)
+            {
+                _inner = metadata;
+            }
+        }
+        
     }
 }
