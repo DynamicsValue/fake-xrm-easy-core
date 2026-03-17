@@ -4,7 +4,7 @@ using FakeXrmEasy.Metadata;
 using Microsoft.Xrm.Sdk.Metadata;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.Metadata
+namespace FakeXrmEasy.Core.Tests.Metadata.MetadataGeneratorTests
 {
     public class CreateAttributeMetadataTests: FakeXrmEasyTestsBase
     {
