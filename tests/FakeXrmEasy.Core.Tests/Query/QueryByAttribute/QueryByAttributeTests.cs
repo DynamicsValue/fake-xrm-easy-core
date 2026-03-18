@@ -223,6 +223,35 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.QueryByAttributeTests
             Assert.Equal(5, results.Entities.Count);
         }
 
+        [Fact]
+        public void Should_execute_a_query_without_a_specific_column_set()
+        {
+            var contact1 = new Contact
+            {
+                Id = Guid.NewGuid(),
+                LastName = "asdf"
+            };
+
+            var contact2 = new Contact
+            {
+                Id = Guid.NewGuid(),
+                LastName = "qwer"
+            };
+
+            _context.Initialize(new List<Entity> { contact1, contact2 });
+
+            QueryByAttribute query = new QueryByAttribute("contact");
+            query.PageInfo = new PagingInfo()
+            {
+                PageNumber = 1,
+                Count = 1,
+                ReturnTotalRecordCount = true
+            };
+            var results = _service.RetrieveMultiple(query);
+
+            Assert.Single(results.Entities);
+            Assert.Equal(2, results.TotalRecordCount);
+        }
         
     }
 }

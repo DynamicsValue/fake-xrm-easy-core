@@ -1,10 +1,10 @@
-﻿using Crm;
-using FakeXrmEasy.Metadata;
-using System;
+﻿using System;
 using System.Linq;
+using Crm;
+using FakeXrmEasy.Metadata;
 using Xunit;
 
-namespace FakeXrmEasy.Core.Tests.Metadata
+namespace FakeXrmEasy.Core.Tests.Metadata.MetadataGeneratorTests
 {
     public class MetadataGeneratorTests: FakeXrmEasyTestsBase
     {
