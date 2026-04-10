@@ -1,3 +1,10 @@
+## [2.9.1]
+
+### Changed
+
+- Resolves a confusing issue where value attribute on the 'in' operator might be blank but still have nested value elements  (thanks Betim!) - https://github.com/DynamicsValue/fake-xrm-easy/issues/45 
+- Resolves an issue when using ValidateEntityReferences where the CallerId systemuser might get overriden if already initialised - https://github.com/DynamicsValue/fake-xrm-easy/issues/232
+
 ## [2.9.0]
 
 ### Added
