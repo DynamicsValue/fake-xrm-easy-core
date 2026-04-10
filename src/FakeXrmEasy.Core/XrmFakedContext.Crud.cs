@@ -378,16 +378,7 @@ namespace FakeXrmEasy
             {
                 if (!ContainsEntity("systemuser", CallerProperties.CallerId.Id))
                 {
-                    Entity caller;
-                    if (e.IsStronglyTyped(this))
-                    {
-                        var systemUserStrongType = "systemuser".GetStrongType(this);
-                        caller = NewEntityRecordFromStrongType(systemUserStrongType);
-                    }
-                    else
-                    {
-                        caller = new Entity("systemuser");
-                    }
+                    var caller = NewEntityRecord("systemuser");
                     caller.Id = CallerProperties.CallerId.Id;
                     AddEntityRecordInternal(caller);
                 }
