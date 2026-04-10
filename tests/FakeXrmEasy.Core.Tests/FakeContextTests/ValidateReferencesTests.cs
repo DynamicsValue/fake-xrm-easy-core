@@ -11,6 +11,7 @@ using FakeXrmEasy.Abstractions.Enums;
 using Crm;
 using FakeXrmEasy.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 #if !FAKE_XRM_EASY && !FAKE_XRM_EASY_2013 && !FAKE_XRM_EASY_2015
 using Microsoft.Xrm.Sdk.Metadata;
@@ -145,6 +146,52 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
             Entity entity = new Entity("entity");
 
             Assert.Throws<InvalidOperationException>(() => (_contextWithIntegrity as XrmFakedContext).ValidateEntity(null));
+        }
+        
+        [Fact]
+        public void Should_not_overwrite_a_preexisting_system_user_by_caller_id_when_integrity_is_enabled()
+        {
+            var existingSystemUser = new SystemUser()
+            {
+                Id = _contextWithIntegrity.CallerProperties.CallerId.Id,
+                FirstName = "Satya"
+            };
+            
+            _contextWithIntegrity.Initialize(existingSystemUser);
+            
+            var systemUserAfter = _contextWithIntegrity.CreateQuery<SystemUser>().First();
+            Assert.Equal(existingSystemUser.Id, systemUserAfter.Id);
+            Assert.Equal("Satya", systemUserAfter.FirstName);
+        }
+        
+        [Fact]
+        public void Should_create_system_user_with_caller_id_when_integrity_is_enabled_and_none_is_initialized()
+        {
+            var contact = new Entity("contact")
+            {
+                Id = Guid.NewGuid(),
+                ["firstname"] = "Satya"
+            };
+            
+            _contextWithIntegrity.Initialize(contact);
+            
+            var systemUserAfter = _contextWithIntegrity.CreateQuery("systemuser").First();
+            Assert.Equal(_contextWithIntegrity.CallerProperties.CallerId.Id, systemUserAfter.Id);
+        }
+        
+        [Fact]
+        public void Should_create_strongly_typed_system_user_with_caller_id_when_integrity_is_enabled_and_none_is_initialized()
+        {
+            var contact = new Contact()
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Satya"
+            };
+            
+            _contextWithIntegrity.Initialize(contact);
+            
+            var systemUserAfter = _contextWithIntegrity.CreateQuery<SystemUser>().First();
+            Assert.Equal(_contextWithIntegrity.CallerProperties.CallerId.Id, systemUserAfter.Id);
         }
     }
 }

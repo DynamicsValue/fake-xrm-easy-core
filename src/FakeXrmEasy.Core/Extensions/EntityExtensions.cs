@@ -882,6 +882,19 @@ namespace FakeXrmEasy.Extensions
             return null;
         }
 
-        
+        internal static Type GetStrongType(this Entity e, IXrmFakedContext context)
+        {
+            return context.FindReflectedType(e.LogicalName);
+        }
+
+        internal static Type GetStrongType(this string logicalName, IXrmFakedContext context)
+        {
+            return context.FindReflectedType(logicalName);
+        }
+
+        internal static bool IsStronglyTyped(this Entity e, IXrmFakedContext context)
+        {
+            return context.FindReflectedType(e.LogicalName) != null;
+        }
     }
 }

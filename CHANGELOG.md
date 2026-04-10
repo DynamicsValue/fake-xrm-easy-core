@@ -1,5 +1,9 @@
 ## [2.9.1]
 
+### Changed
+
+- Resolves an issue when using ValidateEntityReferences where the CallerId systemuser might get overriden if already initialised - https://github.com/DynamicsValue/fake-xrm-easy/issues/232
+
 ## [2.9.0]
 
 ### Added

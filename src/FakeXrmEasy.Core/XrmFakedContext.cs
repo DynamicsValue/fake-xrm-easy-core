@@ -554,5 +554,16 @@ namespace FakeXrmEasy
             };
         }
 
+        /// <summary>
+        /// Creates a new entity record that is consistent with the current type, this is useful in the Initialization step where we might not have any proxy types assemblies until after the Initialize step is executed
+        /// </summary>
+        /// <param name="t">The type of the entity to create a new entity record from</param>
+        /// <returns></returns>
+        internal Entity NewEntityRecordFromStrongType(Type t)
+        {
+            var instance = Activator.CreateInstance(t);
+            return (Entity) instance;   
+        }
+        
     }
 }
