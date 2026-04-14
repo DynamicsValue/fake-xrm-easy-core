@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Core.Exceptions.Metadata;
 using FakeXrmEasy.Core.Extensions;
 using FakeXrmEasy.Core.FileStorage;
 
@@ -154,7 +155,7 @@ namespace FakeXrmEasy.Metadata
             }
             else
             {
-                attributeMetadata = CreateAttributeMetadata(property.PropertyType, context);
+                attributeMetadata = CreateAttributeMetadata(metadata.LogicalName, attributeLogicalNameAttribute.LogicalName, property.PropertyType, context);
             }
 
             attributeMetadata.SetFieldValue("_entityLogicalName", metadata.LogicalName);
@@ -209,7 +210,7 @@ namespace FakeXrmEasy.Metadata
             return (T)Attribute.GetCustomAttribute(member, typeof(T));
         }
 
-        internal static AttributeMetadata CreateAttributeMetadata(Type propertyType, IXrmFakedContext context)
+        internal static AttributeMetadata CreateAttributeMetadata(string entityLogicalName, string attributeName, Type propertyType, IXrmFakedContext context)
         {
             var fileStorageSettings = context.GetProperty<IFileStorageSettings>();
             
@@ -274,7 +275,7 @@ namespace FakeXrmEasy.Metadata
 #endif
             else
             {
-                throw new Exception($"Type {propertyType.Name} has not been mapped to an AttributeMetadata.");
+                throw new AttributeMetadataGenerationException(propertyType.Name,  attributeName, entityLogicalName);
             }
         }
 
