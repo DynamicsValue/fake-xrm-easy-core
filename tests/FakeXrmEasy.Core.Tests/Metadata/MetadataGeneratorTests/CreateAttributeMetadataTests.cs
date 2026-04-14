@@ -18,7 +18,7 @@ namespace FakeXrmEasy.Core.Tests.Metadata.MetadataGeneratorTests
         [Fact]
         public void Should_generate_file_type()
         {
-            var attributeMetadata = MetadataGenerator.CreateAttributeMetadata(typeof(object), _context);
+            var attributeMetadata = MetadataGenerator.CreateAttributeMetadata(dv_test.EntityLogicalName, "dv_file", typeof(object), _context);
             Assert.NotNull(attributeMetadata);
             Assert.IsType<FileAttributeMetadata>(attributeMetadata);
         }

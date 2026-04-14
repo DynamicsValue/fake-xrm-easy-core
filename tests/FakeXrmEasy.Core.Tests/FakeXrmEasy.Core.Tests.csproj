@@ -60,7 +60,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DataverseEntities\DataverseEntities.csproj" />
+    <ProjectReference Include="..\DataverseEntities\DataverseEntities.csproj" /><ProjectReference Include="..\DataverseEntities2\DataverseEntities2.csproj" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' And '$(Configuration)'=='FAKE_XRM_EASY_9'">
