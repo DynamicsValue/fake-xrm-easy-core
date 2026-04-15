@@ -376,9 +376,12 @@ namespace FakeXrmEasy
 
             if (integrityOptions.ValidateEntityReferences)
             {
-                var caller = new Entity("systemuser") { Id = CallerProperties.CallerId.Id };
-
-                AddEntityRecordInternal(caller);
+                if (!ContainsEntity("systemuser", CallerProperties.CallerId.Id))
+                {
+                    var caller = NewEntityRecord("systemuser");
+                    caller.Id = CallerProperties.CallerId.Id;
+                    AddEntityRecordInternal(caller);
+                }
             }
 
             var isManyToManyRelationshipEntity = e.LogicalName != null && this._relationships.ContainsKey(e.LogicalName);

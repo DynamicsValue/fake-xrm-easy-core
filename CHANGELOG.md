@@ -1,3 +1,13 @@
+## [3.9.1]
+
+### Changed
+
+- Upgraded Microsoft.PowerPlatform.Dataverse.Client package to 1.2.10
+- Resolves issue with MetadataGenerator crashing for unsupported types for versions earlier than v9 - https://github.com/DynamicsValue/fake-xrm-easy/issues/235
+- Added net48 as the target framework along with net462 - https://github.com/DynamicsValue/fake-xrm-easy/issues/233
+- Resolves a confusing issue where value attribute on the 'in' operator might be blank but still have nested value elements  (thanks Betim!) - https://github.com/DynamicsValue/fake-xrm-easy/issues/45 
+- Resolves an issue when using ValidateEntityReferences where the CallerId systemuser might get overriden if already initialised - https://github.com/DynamicsValue/fake-xrm-easy/issues/232
+
 ## [3.9.0]
 
 ### Added
