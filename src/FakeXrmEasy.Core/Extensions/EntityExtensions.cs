@@ -881,7 +881,5 @@ namespace FakeXrmEasy.Extensions
 
             return null;
         }
-
-        
     }
 }
