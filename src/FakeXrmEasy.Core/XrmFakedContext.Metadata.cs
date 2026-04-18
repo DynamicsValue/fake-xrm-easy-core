@@ -38,7 +38,7 @@ namespace FakeXrmEasy
 
                 if (Db.ContainsTableMetadata(eMetadata.LogicalName))
                 {
-                    throw new Exception("An entity metadata record with the same logical name was previously added. ");
+                    throw new Exception($"An entity metadata record with the same logical name '{eMetadata.LogicalName}' was previously added. ");
                 }
                 Db.AddOrUpdateMetadata(eMetadata.LogicalName, eMetadata);
             }
