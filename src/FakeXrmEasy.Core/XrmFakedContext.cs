@@ -556,6 +556,5 @@ namespace FakeXrmEasy
                 Id = Guid.Empty
             };
         }
-
     }
 }
