@@ -1,3 +1,9 @@
+## [2.9.2]
+
+### Changed
+
+- Fixes an issue where the new QueryExpression aggregations functionality needed early bound types. Now it will support EntityMetadata as well. https://github.com/DynamicsValue/fake-xrm-easy/issues/192
+
 ## [2.9.1]
 
 ### Changed
