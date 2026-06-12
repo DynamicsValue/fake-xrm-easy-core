@@ -2,6 +2,7 @@
 
 ### Changed
 
+- Add .net ref assemblies - https://github.com/DynamicsValue/fake-xrm-easy/issues/249
 - Fixes an issue where the new QueryExpression aggregations functionality needed early bound types. Now it will support EntityMetadata as well. https://github.com/DynamicsValue/fake-xrm-easy/issues/192
 
 ## [2.9.1]
