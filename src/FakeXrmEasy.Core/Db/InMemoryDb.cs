@@ -151,7 +151,7 @@ namespace FakeXrmEasy.Core.Db
                 table.Add(e);
             }
         }
-
+        
         protected internal IEnumerable<EntityMetadata> AllMetadata
         {
             get {
