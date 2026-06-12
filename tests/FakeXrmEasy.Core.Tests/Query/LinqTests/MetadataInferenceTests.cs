@@ -7,7 +7,8 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;  //TypedEntities generated code for testing
+using System.Reflection;
+using FakeXrmEasy.Core.Exceptions; //TypedEntities generated code for testing
 using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.FakeContextTests.LinqTests
@@ -204,7 +205,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.LinqTests
 
             using (XrmServiceContext ctx = new XrmServiceContext(_service))
             {
-                Assert.Throws<Exception>(() => (from c in ctx.CreateQuery<Contact>()
+                Assert.Throws<FindReflectedAttributeTypeNotFoundException>(() => (from c in ctx.CreateQuery<Contact>()
                                where c["injectedAttribute"].Equals("Contact 1")
                                select c).ToList());
             }

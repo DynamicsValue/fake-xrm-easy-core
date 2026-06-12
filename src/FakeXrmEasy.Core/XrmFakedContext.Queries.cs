@@ -138,20 +138,24 @@ namespace FakeXrmEasy
         public Type FindReflectedAttributeType(Type earlyBoundType, string sEntityName, string attributeName)
         {
             //Get that type properties
-            var attributeInfo = earlyBoundType.GetEarlyBoundTypeAttribute(attributeName);
-            if (attributeInfo == null && attributeName.EndsWith("name"))
+            PropertyInfo attributeInfo = null;
+            if (earlyBoundType != null)
             {
-                // Special case for referencing the name of a EntityReference
-                attributeName = attributeName.Substring(0, attributeName.Length - 4);
                 attributeInfo = earlyBoundType.GetEarlyBoundTypeAttribute(attributeName);
-
-                if (attributeInfo.PropertyType != typeof(EntityReference))
+                if (attributeInfo == null && attributeName.EndsWith("name"))
                 {
-                    // Don't mess up if other attributes follow this naming pattern
-                    attributeInfo = null;
+                    // Special case for referencing the name of a EntityReference
+                    attributeName = attributeName.Substring(0, attributeName.Length - 4);
+                    attributeInfo = earlyBoundType.GetEarlyBoundTypeAttribute(attributeName);
+
+                    if (attributeInfo.PropertyType != typeof(EntityReference))
+                    {
+                        // Don't mess up if other attributes follow this naming pattern
+                        attributeInfo = null;
+                    }
                 }
             }
-
+            
             if (attributeInfo == null || attributeInfo.PropertyType.FullName == null)
             {
                 //Try with metadata
@@ -159,7 +163,7 @@ namespace FakeXrmEasy
 
                 if (injectedType == null)
                 {
-                    throw new Exception($"XrmFakedContext.FindReflectedAttributeType: Attribute {attributeName} not found for type {earlyBoundType}");
+                    throw new FindReflectedAttributeTypeNotFoundException(sEntityName, attributeName);
                 }
 
                 return injectedType;
