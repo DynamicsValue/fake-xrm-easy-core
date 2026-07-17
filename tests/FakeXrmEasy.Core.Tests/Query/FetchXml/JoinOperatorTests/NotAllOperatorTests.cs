@@ -161,6 +161,29 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
             var result = _service.RetrieveMultiple(new FetchExpression(fetch));
             Assert.Empty(result.Entities);
         }
+        
+        [Fact]
+        public void Should_return_contact_with_any_operator_that_matches_an_account_record_nested_directly_under_entity()
+        {
+            _context.Initialize(new List<Entity>() {_contact, _contosoAccount });
+            
+            var fetch = @"
+                    <fetch distinct='false' useraworderby='false' no-lock='false' mapping='logical'>
+                        <entity name='contact'>
+                            <attribute name='firstname' />
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not all'>
+                                <filter type='and'>
+                                    <condition attribute='name' operator='eq' value='Contoso' />
+                                </filter>
+                            </link-entity>
+                    </entity>
+                   </fetch>
+                ";
+
+            var result = _service.RetrieveMultiple(new FetchExpression(fetch));
+            Assert.Single(result.Entities);
+            Assert.Equal("Joe", result.Entities[0]["firstname"]);
+        }
     }
 }
 #endif

@@ -92,6 +92,8 @@ namespace FakeXrmEasy.Query
                 case JoinOperator.In:
                 case JoinOperator.All:
                 case JoinOperator.Any:
+                case JoinOperator.NotAny:
+                case JoinOperator.NotAll:
                     //Do nothing at this stage of query execution, it'll be later on implemented as a subquery during the filtering phase
                     break;
                 #endif
@@ -133,7 +135,10 @@ namespace FakeXrmEasy.Query
                 linkedEntitiesQueryExpressions.Add(existsOrInExpression);
                 return linkedEntitiesQueryExpressions;
             }
-            else if (le.JoinOperator == JoinOperator.All || le.JoinOperator == JoinOperator.Any)
+            else if (le.JoinOperator == JoinOperator.All 
+                     || le.JoinOperator == JoinOperator.Any
+                     || le.JoinOperator == JoinOperator.NotAll
+                     || le.JoinOperator == JoinOperator.NotAny)
             {
                 var existsOrInExpression = le.TranslateAnyAllLinkedEntityToExpression(context, entity);
                 linkedEntitiesQueryExpressions.Add(existsOrInExpression);
