@@ -50,7 +50,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-any'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not any'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Other name' />
                                 </filter>
@@ -93,7 +93,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-any'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not any'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Other name' />
                                 </filter>
@@ -119,7 +119,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-any'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not any'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Contoso' />
                                 </filter>
@@ -144,7 +144,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-any'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not any'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Other name' />
                                 </filter>
