@@ -1,3 +1,9 @@
+## [2.9.4]
+
+### Changed
+
+- Resolves edge case in All, NotAll, Any, NotAny Join operators - https://github.com/DynamicsValue/fake-xrm-easy/issues/260
+
 ## [2.9.3]
 
 ### Changed

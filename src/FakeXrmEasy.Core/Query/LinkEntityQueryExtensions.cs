@@ -97,6 +97,7 @@ namespace FakeXrmEasy.Query
                 #endif
                 
                 default: //This shouldn't be reached unless a new operator is added...
+                    
                     throw UnsupportedExceptionFactory.New(context.LicenseContext.Value, string.Format("The join operator {0} is currently not supported. ", le.JoinOperator));
 
             }

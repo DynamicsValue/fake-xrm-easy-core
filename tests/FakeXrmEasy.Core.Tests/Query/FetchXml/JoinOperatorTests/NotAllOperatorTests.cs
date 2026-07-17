@@ -15,7 +15,6 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
         private readonly Contact _contact;
         private readonly Account _contosoAccount;
         private readonly Account _contAccount;
-        
         public NotAllOperatorTests()
         {
             _contact = new Contact()
@@ -50,7 +49,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-all'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not all'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Contoso' />
                                 </filter>
@@ -93,7 +92,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-all'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not all'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Contoso' />
                                 </filter>
@@ -119,7 +118,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-all'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not all'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='begins-with' value='Cont' />
                                 </filter>
@@ -147,7 +146,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-all'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not all'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Cont' />
                                     <condition attribute='name' operator='eq' value='Some other' />
