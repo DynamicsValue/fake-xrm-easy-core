@@ -380,6 +380,10 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     case "in":
                         return JoinOperator.In;
                     #endif
+                    case "natural":
+                        return JoinOperator.Natural;
+                    case "inner":
+                        return JoinOperator.Inner;
                     case "outer":
                         return JoinOperator.LeftOuter;
                     default:
