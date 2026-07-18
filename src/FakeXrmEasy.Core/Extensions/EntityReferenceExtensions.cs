@@ -1,7 +1,4 @@
 ﻿using Microsoft.Xrm.Sdk;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FakeXrmEasy.Extensions
 {
@@ -34,7 +31,7 @@ namespace FakeXrmEasy.Extensions
         /// </summary>
         /// <param name="er">The original to create the copy from</param>
         /// <returns>The cloned object</returns>
-        internal static EntityReference Clone(this EntityReference er)
+        public static EntityReference Clone(this EntityReference er)
         {
             return EntityExtensions.CloneAttribute(er) as EntityReference;
         }
