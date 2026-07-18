@@ -28,5 +28,15 @@ namespace FakeXrmEasy.Extensions
             return false;
 #endif
         }
+
+        /// <summary>
+        /// Clones an entity reference object, creating a new object copy
+        /// </summary>
+        /// <param name="er">The original to create the copy from</param>
+        /// <returns>The cloned object</returns>
+        internal static EntityReference Clone(this EntityReference er)
+        {
+            return EntityExtensions.CloneAttribute(er) as EntityReference;
+        }
     }
 }
