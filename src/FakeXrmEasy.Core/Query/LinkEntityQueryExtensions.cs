@@ -89,12 +89,17 @@ namespace FakeXrmEasy.Query
                 
                 #if FAKE_XRM_EASY_9
                 case JoinOperator.Exists:
-                case JoinOperator.In: 
+                case JoinOperator.In:
+                case JoinOperator.All:
+                case JoinOperator.Any:
+                case JoinOperator.NotAny:
+                case JoinOperator.NotAll:
                     //Do nothing at this stage of query execution, it'll be later on implemented as a subquery during the filtering phase
                     break;
                 #endif
                 
                 default: //This shouldn't be reached unless a new operator is added...
+                    
                     throw UnsupportedExceptionFactory.New(context.LicenseContext.Value, string.Format("The join operator {0} is currently not supported. ", le.JoinOperator));
 
             }
@@ -123,9 +128,19 @@ namespace FakeXrmEasy.Query
             var linkedEntitiesQueryExpressions = new List<Expression>();
             
             #if FAKE_XRM_EASY_9
-            if (le.JoinOperator == JoinOperator.Exists || le.JoinOperator == JoinOperator.In)
+            if (le.JoinOperator == JoinOperator.Exists 
+                || le.JoinOperator == JoinOperator.In)
             {
                 var existsOrInExpression = le.TranslateExistsOrInLinkedEntityToExpression(context, entity);
+                linkedEntitiesQueryExpressions.Add(existsOrInExpression);
+                return linkedEntitiesQueryExpressions;
+            }
+            else if (le.JoinOperator == JoinOperator.All 
+                     || le.JoinOperator == JoinOperator.Any
+                     || le.JoinOperator == JoinOperator.NotAll
+                     || le.JoinOperator == JoinOperator.NotAny)
+            {
+                var existsOrInExpression = le.TranslateAnyAllLinkedEntityToExpression(context, entity);
                 linkedEntitiesQueryExpressions.Add(existsOrInExpression);
                 return linkedEntitiesQueryExpressions;
             }
