@@ -2,6 +2,7 @@
 
 ### Changed
 
+- Adds cloning of entity reference objects, which was already there, but only as part of cloning of entity records, not a direct extension method - https://github.com/DynamicsValue/fake-xrm-easy/issues/264
 - Resolves edge case in All, NotAll, Any, NotAny Join operators - https://github.com/DynamicsValue/fake-xrm-easy/issues/260
 
 ## [2.9.3]
