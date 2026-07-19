@@ -363,26 +363,32 @@ namespace FakeXrmEasy.Extensions.FetchXml
         {
             if (el.GetAttribute("link-type") != null)
             {
-                switch (el.GetAttribute("link-type").Value)
+                var linkType = el.GetAttribute("link-type").Value;
+                switch (linkType)
                 {
                     #if FAKE_XRM_EASY_9
                     case "all":
                         return JoinOperator.All;
-                    case "not-all":
+                    case "not all":
                         return JoinOperator.NotAll;
                     case "any":
                         return JoinOperator.Any;
-                    case "not-any":
+                    case "not any":
                         return JoinOperator.NotAny;
                     case "exists":
                         return JoinOperator.Exists;
                     case "in":
                         return JoinOperator.In;
                     #endif
+                    case "natural":
+                        return JoinOperator.Natural;
+                    case "inner":
+                        return JoinOperator.Inner;
                     case "outer":
                         return JoinOperator.LeftOuter;
                     default:
-                        return JoinOperator.Inner;
+                        throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.QueryBuilderDeserializeInvalidLinkType,
+                            $"Invalid link-type specified, valid values are: 'natural', 'inner', 'in', 'matchfirstrowusingcrossapply','exists' and 'outer'. link-type = {linkType}");
                 }
             }
             return JoinOperator.Inner;

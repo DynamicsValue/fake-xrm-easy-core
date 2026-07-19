@@ -50,7 +50,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-any'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not any'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Other name' />
                                 </filter>
@@ -93,7 +93,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-any'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not any'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Other name' />
                                 </filter>
@@ -119,7 +119,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-any'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not any'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Contoso' />
                                 </filter>
@@ -144,7 +144,7 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                         <entity name='contact'>
                             <attribute name='firstname' />
                         <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not-any'>
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not any'>
                                 <filter type='and'>
                                     <condition attribute='name' operator='eq' value='Other name' />
                                 </filter>
@@ -156,6 +156,30 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                 ";
             
             var result = _service.RetrieveMultiple(new FetchExpression(fetchXml));
+            Assert.Single(result.Entities);
+            Assert.Equal("Joe", result.Entities[0]["firstname"]);
+        }
+        
+        [Fact]
+        public void Should_return_contact_records_with_any_of_the_conditions_are_met_nested_directly_under_entity()
+        {
+            _context.Initialize(new List<Entity>() {_contact, _contosoAccount, _contAccount });
+            
+            var fetch = @"
+                    <fetch distinct='false' useraworderby='false' no-lock='false' mapping='logical'>
+                        <entity name='contact'>
+                            <attribute name='firstname' />
+                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='not any'>
+                                <filter type='and'>
+                                    <condition attribute='name' operator='eq' value='Cont' />
+                                    <condition attribute='name' operator='eq' value='Other name' />
+                                </filter>
+                            </link-entity>
+                        </entity>
+                   </fetch>
+                ";
+            
+            var result = _service.RetrieveMultiple(new FetchExpression(fetch));
             Assert.Single(result.Entities);
             Assert.Equal("Joe", result.Entities[0]["firstname"]);
         }
