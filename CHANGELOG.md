@@ -2,6 +2,7 @@
 
 ### Changed
 
+- **Possible breaking change**: When a string field is updated to an empty string, the platform saves it as null and not empty, and now FXE it will behave like that - https://github.com/DynamicsValue/fake-xrm-easy/issues/215
 - Resolves an issue where the 2x branch would not build on Linux - https://github.com/DynamicsValue/fake-xrm-easy/issues/273
 - Increment version
 

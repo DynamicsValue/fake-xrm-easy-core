@@ -128,7 +128,7 @@ namespace FakeXrmEasy
             foreach (var sAttributeName in clone.Attributes.Keys.ToList())
             {
                 var attribute = clone[sAttributeName];
-                if (attribute == null)
+                if (attribute == null || "".Equals(attribute))
                 {
                     cachedEntity.Attributes.Remove(sAttributeName);
                 }
