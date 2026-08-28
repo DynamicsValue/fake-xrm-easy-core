@@ -404,5 +404,23 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.UpdateRequ
             var updatedAccount = _context.CreateQuery<Account>().FirstOrDefault();
             Assert.Equal("Updated name", updatedAccount.Name);
         }
+        
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public void Should_update_string_attribute_and_set_value_to_null_when_empty_or_null(string value)
+        {
+            var account = new Account() { Id = Guid.NewGuid(), Name = "test" };
+            _context.Initialize(account);
+
+            _service.Update(new Account()
+            {
+                Id = account.Id,
+                Name = value
+            });
+            
+            var updatedAccount = _context.CreateQuery<Account>().FirstOrDefault();
+            Assert.Null(updatedAccount.Name);
+        }
     }
 }
