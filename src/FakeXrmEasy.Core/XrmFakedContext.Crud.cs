@@ -382,6 +382,13 @@ namespace FakeXrmEasy
                     caller.Id = CallerProperties.CallerId.Id;
                     AddEntityRecordInternal(caller);
                 }
+                
+                if (!ContainsEntity("systemuser", CallerProperties.SystemUserId.Id))
+                {
+                    var system = NewEntityRecord("systemuser");
+                    system.Id = CallerProperties.SystemUserId.Id;
+                    AddEntityRecordInternal(system);
+                }
             }
 
             var isManyToManyRelationshipEntity = e.LogicalName != null && this._relationships.ContainsKey(e.LogicalName);
