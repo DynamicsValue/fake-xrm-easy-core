@@ -20,11 +20,17 @@ namespace FakeXrmEasy
         public EntityReference BusinessUnitId { get; set; }
 
         /// <summary>
+        /// Implements the default SYSTEM account
+        /// </summary>
+        public EntityReference SystemUserId { get; set; }
+
+        /// <summary>
         /// Caller Properties
         /// </summary>
         public CallerProperties() 
         {
             CallerId = new EntityReference("systemuser", Guid.NewGuid());
+            SystemUserId = new EntityReference("systemuser", Guid.NewGuid());
             BusinessUnitId = new EntityReference("businessunit", Guid.NewGuid());
         }
     }

@@ -2,6 +2,7 @@
 
 ### Changed
 
+- Adds a new SYSTEM account to CallerProperties, while making sure it's also added to the database when Integrity is enabled - https://github.com/DynamicsValue/fake-xrm-easy/issues/274
 - **Possible breaking change**: When a string field is updated to an empty string, the platform saves it as null and not empty, and now FXE it will behave like that - https://github.com/DynamicsValue/fake-xrm-easy/issues/215
 - Resolves an issue where the 2x branch would not build on Linux - https://github.com/DynamicsValue/fake-xrm-easy/issues/273
 - Increment version
