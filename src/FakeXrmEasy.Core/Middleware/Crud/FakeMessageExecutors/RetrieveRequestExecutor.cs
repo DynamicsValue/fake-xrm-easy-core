@@ -3,6 +3,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System;
+using System.Collections.Generic;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.FakeMessageExecutors;
 using FakeXrmEasy.Query;
@@ -105,7 +106,7 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
 
                 if (fakeRelationship.RelationshipType == XrmFakedRelationship.FakeRelationshipType.OneToMany)
                 {
-                    AddRelatedEntitiesOneToMany(req, resultEntity, fakeRelationship, relatedEntitiesQueryValue, retrieveRelatedEntitiesQuery);
+                    AddRelatedEntitiesOneToMany(req, resultEntity, fakeRelationship, relatedEntitiesQuery, retrieveRelatedEntitiesQuery);
                 }
                 else
                 {
@@ -156,12 +157,19 @@ namespace FakeXrmEasy.Middleware.Crud.FakeMessageExecutors
             retrieveRelatedEntitiesQuery.LinkEntities.Add(linkEntity);
         }
 
-        private static void AddRelatedEntitiesOneToMany(RetrieveRequest req, Entity resultEntity, XrmFakedRelationship fakeRelationship, QueryExpression relatedEntitiesQueryValue, QueryExpression retrieveRelatedEntitiesQuery)
+        private static void AddRelatedEntitiesOneToMany(RetrieveRequest req, Entity resultEntity, XrmFakedRelationship fakeRelationship, KeyValuePair<Relationship,QueryBase> relatedEntitiesQuery, QueryExpression retrieveRelatedEntitiesQuery)
         {
+            var relatedEntitiesQueryValue = relatedEntitiesQuery.Value as QueryExpression;
+            
             var isFrom1to2 = relatedEntitiesQueryValue.EntityName == fakeRelationship.Entity1LogicalName
                                     || req.Target.LogicalName != fakeRelationship.Entity1LogicalName
-                                    || string.IsNullOrWhiteSpace(relatedEntitiesQueryValue.EntityName);
+                                    || string.IsNullOrWhiteSpace(relatedEntitiesQueryValue.EntityName); //Referenced role
 
+            if (relatedEntitiesQuery.Key.PrimaryEntityRole == EntityRole.Referencing)
+            {
+                isFrom1to2 = !isFrom1to2;
+            }
+            
             if (isFrom1to2)
             {
                 var fromAttribute = fakeRelationship.Entity1Attribute;

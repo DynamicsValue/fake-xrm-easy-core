@@ -128,7 +128,7 @@ namespace FakeXrmEasy
             foreach (var sAttributeName in clone.Attributes.Keys.ToList())
             {
                 var attribute = clone[sAttributeName];
-                if (attribute == null)
+                if (attribute == null || "".Equals(attribute))
                 {
                     cachedEntity.Attributes.Remove(sAttributeName);
                 }
@@ -381,6 +381,13 @@ namespace FakeXrmEasy
                     var caller = NewEntityRecord("systemuser");
                     caller.Id = CallerProperties.CallerId.Id;
                     AddEntityRecordInternal(caller);
+                }
+                
+                if (!ContainsEntity("systemuser", CallerProperties.SystemUserId.Id))
+                {
+                    var system = NewEntityRecord("systemuser");
+                    system.Id = CallerProperties.SystemUserId.Id;
+                    AddEntityRecordInternal(system);
                 }
             }
 
