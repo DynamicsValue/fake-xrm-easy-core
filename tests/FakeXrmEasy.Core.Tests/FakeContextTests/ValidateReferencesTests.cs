@@ -149,7 +149,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
         }
         
         [Fact]
-        public void Should_not_overwrite_a_preexisting_system_user_by_caller_id_when_integrity_is_enabled()
+        public void Should_allow_overriding_default_caller_id_system_user_attributes_when_integrity_is_enabled()
         {
             var existingSystemUser = new SystemUser()
             {
@@ -159,13 +159,51 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
             
             _contextWithIntegrity.Initialize(existingSystemUser);
             
-            var systemUserAfter = _contextWithIntegrity.CreateQuery<SystemUser>().First();
-            Assert.Equal(existingSystemUser.Id, systemUserAfter.Id);
-            Assert.Equal("Satya", systemUserAfter.FirstName);
+            var systemUsersAfter = _contextWithIntegrity.CreateQuery<SystemUser>().ToList();
+            var callerIdSystemUser =
+                systemUsersAfter.First(s => s.Id == _contextWithIntegrity.CallerProperties.CallerId.Id);
+            Assert.Equal(existingSystemUser.Id, callerIdSystemUser.Id);
+            Assert.Equal("Satya", callerIdSystemUser.FirstName);
         }
         
         [Fact]
-        public void Should_create_system_user_with_caller_id_when_integrity_is_enabled_and_none_is_initialized()
+        public void Should_allow_overriding_default_system_user_id_system_user_attributes_when_integrity_is_enabled()
+        {
+            var existingSystemUser = new SystemUser()
+            {
+                Id = _contextWithIntegrity.CallerProperties.SystemUserId.Id,
+                FirstName = "Satya"
+            };
+            
+            _contextWithIntegrity.Initialize(existingSystemUser);
+            
+            var systemUsersAfter = _contextWithIntegrity.CreateQuery<SystemUser>().ToList();
+            var systemIdSystemUser =
+                systemUsersAfter.First(s => s.Id == _contextWithIntegrity.CallerProperties.SystemUserId.Id);
+            Assert.Equal(existingSystemUser.Id, systemIdSystemUser.Id);
+            Assert.Equal("Satya", systemIdSystemUser.FirstName);
+        }
+        
+        [Fact]
+        public void Should_not_duplicate_a_preexisting_system_user_by_caller_id_when_integrity_is_enabled()
+        {
+            var existingSystemUser = new SystemUser()
+            {
+                Id = _contextWithIntegrity.CallerProperties.CallerId.Id,
+                FirstName = "Satya"
+            };
+            
+            _contextWithIntegrity.Initialize(existingSystemUser);
+            
+            var systemUsersAfter = _contextWithIntegrity.CreateQuery<SystemUser>().ToList();
+            var callerIdSystemUser =
+                systemUsersAfter.First(s => s.Id == _contextWithIntegrity.CallerProperties.CallerId.Id);
+            Assert.Equal(existingSystemUser.Id, callerIdSystemUser.Id);
+            Assert.Equal("Satya", callerIdSystemUser.FirstName);
+        }
+        
+        [Fact]
+        public void Should_create_system_user_with_caller_id_and_system_user_id_when_integrity_is_enabled_and_none_is_initialized()
         {
             var contact = new Entity("contact")
             {
@@ -175,12 +213,18 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
             
             _contextWithIntegrity.Initialize(contact);
             
-            var systemUserAfter = _contextWithIntegrity.CreateQuery("systemuser").First();
-            Assert.Equal(_contextWithIntegrity.CallerProperties.CallerId.Id, systemUserAfter.Id);
+            var systemUsersAfter = _contextWithIntegrity.CreateQuery("systemuser").ToList();
+            var callerIdSystemUser =
+                systemUsersAfter.First(s => s.Id == _contextWithIntegrity.CallerProperties.CallerId.Id);
+            var systemAccountSystemUser =
+                systemUsersAfter.First(s => s.Id == _contextWithIntegrity.CallerProperties.SystemUserId.Id);
+            
+            Assert.Equal(_contextWithIntegrity.CallerProperties.CallerId.Id, callerIdSystemUser.Id);
+            Assert.Equal(_contextWithIntegrity.CallerProperties.SystemUserId.Id, systemAccountSystemUser.Id);
         }
         
         [Fact]
-        public void Should_create_strongly_typed_system_user_with_caller_id_when_integrity_is_enabled_and_none_is_initialized()
+        public void Should_create_strongly_typed_system_users_that_match_caller_properties_when_integrity_is_enabled_and_none_is_initialized()
         {
             var contact = new Contact()
             {
@@ -190,8 +234,14 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests
             
             _contextWithIntegrity.Initialize(contact);
             
-            var systemUserAfter = _contextWithIntegrity.CreateQuery<SystemUser>().First();
-            Assert.Equal(_contextWithIntegrity.CallerProperties.CallerId.Id, systemUserAfter.Id);
+            var systemUsersAfter = _contextWithIntegrity.CreateQuery<SystemUser>().ToList();
+            var callerIdSystemUser =
+                systemUsersAfter.First(s => s.Id == _contextWithIntegrity.CallerProperties.CallerId.Id);
+            var systemAccountSystemUser =
+                systemUsersAfter.First(s => s.Id == _contextWithIntegrity.CallerProperties.SystemUserId.Id);
+            
+            Assert.Equal(_contextWithIntegrity.CallerProperties.CallerId.Id, callerIdSystemUser.Id);
+            Assert.Equal(_contextWithIntegrity.CallerProperties.SystemUserId.Id, systemAccountSystemUser.Id);
         }
     }
 }

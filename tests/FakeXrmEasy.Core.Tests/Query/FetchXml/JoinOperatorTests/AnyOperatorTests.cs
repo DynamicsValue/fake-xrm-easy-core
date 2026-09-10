@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataverseEntities;
+using System.Reflection;
+using Crm;
 using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
+using Account = DataverseEntities.Account;
+using Contact = DataverseEntities.Contact;
 
 #if FAKE_XRM_EASY_9
 namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
@@ -49,14 +52,14 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
                     <fetch distinct='false' useraworderby='false' no-lock='false' mapping='logical'>
                         <entity name='contact'>
                             <attribute name='firstname' />
-                        <filter type='or'>
-                            <link-entity name='account' to='contactid' from='primarycontactid' link-type='any'>
-                                <filter type='and'>
-                                    <condition attribute='name' operator='eq' value='Contoso' />
-                                </filter>
-                            </link-entity>
-                        <condition attribute='statecode' operator='eq' value='1' />
-                        </filter>
+                            <filter type='or'>
+                                <link-entity name='account' to='contactid' from='primarycontactid' link-type='any'>
+                                    <filter type='and'>
+                                        <condition attribute='name' operator='eq' value='Contoso' />
+                                    </filter>
+                                </link-entity>
+                                <condition attribute='statecode' operator='eq' value='1' />
+                            </filter>
                     </entity>
                    </fetch>
                 ";
@@ -82,6 +85,68 @@ namespace FakeXrmEasy.Core.Tests.Query.FetchXml.JoinOperatorTests
             Assert.Equal(ConditionOperator.Equal, linkCriteria.Conditions[0].Operator);
             Assert.Equal("Contoso", linkCriteria.Conditions[0].Values.FirstOrDefault());
         }
+
+        /*
+        [Fact]
+        public void Should_translate_multiple_and_deeper_any_linked_entities()
+        {
+            _context.EnableProxyTypes(typeof(SystemUser).Assembly);
+            
+            var fetchXml = @"
+                <fetch returntotalrecordcount='true' count='1' page='1'>
+                      <entity name='systemuser'>
+                        <attribute name='systemuserid' />
+                        <filter>
+                          <condition attribute='isdisabled' operator='eq' value='0' />
+                          <condition attribute='accessmode' operator='eq' value='0' />
+                          <filter type='or'>
+                            <link-entity name='systemuserroles' from='systemuserid' to='systemuserid' link-type='any' alias='userrole' />
+                            <link-entity name='teammembership' from='systemuserid' to='systemuserid' link-type='any' alias='T'>
+                              <link-entity name='team' from='teamid' to='teamid' link-type='inner' alias='TM'>
+                                <filter>
+                                  <link-entity name='teamroles' from='teamid' to='teamid' link-type='any' alias='TMR' />
+                                </filter>
+                              </link-entity>
+                            </link-entity>
+                          </filter>
+                        </filter>
+                      </entity>
+                    </fetch>    
+                    ";
+            
+            
+            var query = fetchXml.ToQueryExpression(_context);
+            
+            Assert.NotNull(query);
+            Assert.Null(query.Criteria.AnyAllFilterLinkEntity);
+            
+            Assert.NotEmpty(query.Criteria.Filters);
+
+            var orFilter = query.Criteria.Filters[0];
+            Assert.NotNull(orFilter);
+            
+            var subnestedFilters = orFilter.Filters;
+            Assert.Equal(2, subnestedFilters.Count);
+
+            var systemUserLinkEntity = subnestedFilters[0].AnyAllFilterLinkEntity;
+            var teamMembershipLinkEntity = subnestedFilters[1].AnyAllFilterLinkEntity;
+            
+            Assert.NotNull(systemUserLinkEntity);
+            Assert.NotNull(teamMembershipLinkEntity);
+            
+            Assert.Equal(JoinOperator.Any, systemUserLinkEntity.JoinOperator);
+            Assert.Equal("systemuser", systemUserLinkEntity.LinkFromEntityName);
+            Assert.Equal("systemuserroles", systemUserLinkEntity.LinkToEntityName);
+            Assert.Equal("systemuserid", systemUserLinkEntity.LinkFromAttributeName);
+            Assert.Equal("systemuserid", systemUserLinkEntity.LinkToAttributeName);
+            
+            Assert.Equal(JoinOperator.Any, teamMembershipLinkEntity.JoinOperator);
+            Assert.Equal("systemuser", teamMembershipLinkEntity.LinkFromEntityName);
+            Assert.Equal("teammembership", teamMembershipLinkEntity.LinkToEntityName);
+            Assert.Equal("systemuserid", teamMembershipLinkEntity.LinkFromAttributeName);
+            Assert.Equal("systemuserid", teamMembershipLinkEntity.LinkToAttributeName);
+        }
+        */
         
         [Fact]
         public void Should_return_contact_with_any_operator_that_matches_an_account_record()
