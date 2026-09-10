@@ -406,6 +406,17 @@ namespace FakeXrmEasy.Extensions.FetchXml
             }
         }
 
+        private static string GetLinkEntityFromEntityName(XElement el)
+        {
+            var nameAttribute = el.GetAttribute("name");
+            if (nameAttribute != null)
+            {
+                return nameAttribute.Value;
+            }
+
+            return GetLinkEntityFromEntityName(el.Parent); //Recursive call
+        }
+
         private static void PopulateChildLinkedEntities(XElement el, LinkEntity linkEntity,
             IXrmFakedContext context)
         {
@@ -462,7 +473,8 @@ namespace FakeXrmEasy.Extensions.FetchXml
             //Create this node
             var linkEntity = new LinkEntity();
 
-            linkEntity.LinkFromEntityName = el.Parent.Parent.GetAttribute("name").Value;
+            
+            linkEntity.LinkFromEntityName = GetLinkEntityFromEntityName(el.Parent);
             
             PopulateLinkEntityAttributes(el, linkEntity);
 
