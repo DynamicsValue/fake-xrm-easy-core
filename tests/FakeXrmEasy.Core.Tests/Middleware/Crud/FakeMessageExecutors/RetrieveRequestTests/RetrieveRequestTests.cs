@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
+using FakeXrmEasy.Abstractions.Integrity;
+using FakeXrmEasy.Integrity;
 using Xunit;
 
 namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveRequestTests
@@ -894,6 +896,69 @@ namespace FakeXrmEasy.Core.Tests.Middleware.Crud.FakeMessageExecutors.RetrieveRe
             Assert.NotNull(resultAccount.contact_customer_accounts);
             Assert.Single(resultAccount.contact_customer_accounts);
             Assert.Equal(contact3.Id, resultAccount.contact_customer_accounts.First().Id);
+        }
+        
+        [Fact]
+        public void Should_Retrieve_A_Correct_Entity_With_1_To_N_Related_Records_And_Related_Record_Query_Criteria_issue_271()
+        {
+            _context.EnableProxyTypes(typeof(Account).Assembly);
+            _context.SetProperty<IIntegrityOptions>(new IntegrityOptions() { ValidateEntityReferences = true });
+
+            const string schema_relationship_name = "account_parent_account";
+            _context.AddRelationship(schema_relationship_name, new XrmFakedRelationship()
+            {
+                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany,
+                Entity1LogicalName = Account.EntityLogicalName,
+                Entity1Attribute = "parentaccountid",
+                Entity2LogicalName = Account.EntityLogicalName,
+                Entity2Attribute = "accountid",
+            });
+            
+            var parentAccountId = _service.Create(new Account
+            {
+                Name = "Parent Account"
+            });
+            var subAccountId = _service.Create(new Account
+            {
+                Name = "Sub Account",
+                ParentAccountId = new EntityReference(Account.EntityLogicalName, parentAccountId)
+            });
+            Console.WriteLine($"Created parent account: {parentAccountId}");
+            Console.WriteLine($"Created sub account: {subAccountId}");
+
+            // Act
+            var retrieveRequest = new RetrieveRequest
+            {
+                Target = new EntityReference(Account.EntityLogicalName, subAccountId),
+                ColumnSet = new ColumnSet(true),
+                RelatedEntitiesQuery = new RelationshipQueryCollection
+                {
+                    {
+                        new Relationship()
+                        {
+                            SchemaName = schema_relationship_name,
+                            PrimaryEntityRole = EntityRole.Referencing
+                        },
+                        //new Relationship(schema_relationship_name),
+                        new QueryExpression()
+                        {
+                            EntityName = Account.EntityLogicalName,
+                            ColumnSet = new ColumnSet(true),
+                        }
+                    }
+                }
+            };
+            var retrieveResponse = (RetrieveResponse)_service.Execute(retrieveRequest);
+            var retrievedAccount = retrieveResponse.Entity.ToEntity<Account>();
+
+            // Assert
+            var retrievedAccountId = retrievedAccount.Id;
+            Console.WriteLine($"Retrieved sub account: {retrievedAccountId}");
+            var retrievedParentAccountId = retrievedAccount.Referencingaccount_parent_account?.Id;
+            Console.WriteLine($"Retrieved parent account: {retrievedParentAccountId}");
+
+            Assert.Equal(subAccountId, retrievedAccountId);
+            Assert.Equal(parentAccountId, retrievedParentAccountId);
         }
 
         [Fact]
