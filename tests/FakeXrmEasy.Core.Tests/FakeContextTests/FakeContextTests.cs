@@ -375,5 +375,53 @@ namespace FakeXrmEasy.Core.Tests
             
             Assert.Throws<MultipleEarlyBoundTypesFoundException>(() => _context.FindReflectedType(Account.EntityTypeCode));
         }
+
+        [Fact]
+        public void Should_return_null_when_finding_reflected_type_by_entity_logical_name_that_is_not_early_bound()
+        {
+            var assembly = typeof(Crm.Account).Assembly;
+            _context.EnableProxyTypes(assembly);
+
+            Assert.Null(_context.FindReflectedType("thisDoesntExist"));
+            Assert.Null(_context.FindReflectedType("thisDoesntExist"));
+        }
+
+        [Fact]
+        public void Should_find_reflected_type_by_entity_logical_name_after_enabling_proxy_types_if_a_previous_lookup_returned_null()
+        {
+            Assert.Null(_context.FindReflectedType(Account.EntityLogicalName));
+
+            _context.EnableProxyTypes(typeof(Crm.Account).Assembly);
+
+            Assert.Equal(typeof(Account), _context.FindReflectedType(Account.EntityLogicalName));
+        }
+
+        [Fact]
+        public void Should_throw_exception_when_finding_reflected_type_by_entity_logical_name_after_enabling_a_second_assembly_with_the_same_type()
+        {
+            _context.EnableProxyTypes(typeof(Crm.Account).Assembly);
+            Assert.Equal(typeof(Account), _context.FindReflectedType(Account.EntityLogicalName));
+
+            _context.EnableProxyTypes(typeof(DataverseEntities.Account).Assembly);
+
+            Assert.Throws<MultipleEarlyBoundTypesFoundException>(() => _context.FindReflectedType(Account.EntityLogicalName));
+        }
+
+#pragma warning disable CS0618 // ProxyTypesAssembly is obsolete but still supported
+        [Fact]
+        public void Should_find_reflected_type_by_entity_logical_name_from_the_new_assembly_after_replacing_proxy_types_assembly()
+        {
+            var context = _context as XrmFakedContext;
+
+            context.ProxyTypesAssembly = typeof(Crm.Account).Assembly;
+            Assert.Equal(typeof(Account), context.FindReflectedType(Account.EntityLogicalName));
+
+            context.ProxyTypesAssembly = typeof(DataverseEntities.Account).Assembly;
+            Assert.Equal(typeof(DataverseEntities.Account), context.FindReflectedType(Account.EntityLogicalName));
+
+            context.ProxyTypesAssembly = null;
+            Assert.Null(context.FindReflectedType(Account.EntityLogicalName));
+        }
+#pragma warning restore CS0618
     }
 }
