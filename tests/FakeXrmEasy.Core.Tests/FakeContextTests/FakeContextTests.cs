@@ -407,6 +407,23 @@ namespace FakeXrmEasy.Core.Tests
             Assert.Throws<MultipleEarlyBoundTypesFoundException>(() => _context.FindReflectedType(Account.EntityLogicalName));
         }
 
+        [Fact]
+        public void Should_return_record_id_for_an_early_bound_entity_without_records_when_using_proxy_types()
+        {
+            _context.EnableProxyTypes(typeof(Crm.Account).Assembly);
+            var id = Guid.NewGuid();
+
+            Assert.Equal(id, (_context as XrmFakedContext).GetRecordUniqueId(new EntityReference(Account.EntityLogicalName, id)));
+        }
+
+        [Fact]
+        public void Should_throw_exception_when_getting_record_id_for_an_entity_that_is_not_early_bound_when_using_proxy_types()
+        {
+            _context.EnableProxyTypes(typeof(Crm.Account).Assembly);
+
+            Assert.Throws<InvalidOperationException>(() => (_context as XrmFakedContext).GetRecordUniqueId(new EntityReference("thisDoesntExist", Guid.NewGuid())));
+        }
+
 #pragma warning disable CS0618 // ProxyTypesAssembly is obsolete but still supported
         [Fact]
         public void Should_find_reflected_type_by_entity_logical_name_from_the_new_assembly_after_replacing_proxy_types_assembly()
