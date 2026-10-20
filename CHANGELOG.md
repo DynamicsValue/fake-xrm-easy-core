@@ -1,3 +1,9 @@
+## [3.9.6]
+
+### Changed
+
+- Increment version
+
 ## [3.9.5]
 
 ### Changed
