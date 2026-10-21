@@ -26,16 +26,28 @@ namespace FakeXrmEasy
         /// <exception cref="InvalidOperationException"></exception>
         public Type FindReflectedType(string logicalName)
         {
+            if (logicalName != null && _reflectedTypesByLogicalName.TryGetValue(logicalName, out var cachedType))
+            {
+                return cachedType;
+            }
+
             var types =
                 ProxyTypesAssemblies.Select(a => FindReflectedType(logicalName, a))
-                                    .Where(t => t != null);
+                                    .Where(t => t != null)
+                                    .ToList();
 
-            if (types.Count() > 1)
+            if (types.Count > 1)
             {
                 throw new MultipleEarlyBoundTypesFoundException(logicalName, types);
             }
 
-            return types.SingleOrDefault();
+            var type = types.SingleOrDefault();
+            if (logicalName != null)
+            {
+                _reflectedTypesByLogicalName[logicalName] = type;
+            }
+
+            return type;
         }
         
         /// <summary>
