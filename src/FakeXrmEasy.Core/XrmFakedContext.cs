@@ -15,6 +15,7 @@ using FakeXrmEasy.Services;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -57,6 +58,12 @@ namespace FakeXrmEasy
         /// All proxy type assemblies available on mocked database.
         /// </summary>
         private List<Assembly> _proxyTypesAssemblies { get; set; }
+
+        /// <summary>
+        /// Cached results of FindReflectedType(logicalName), including misses (null), as scanning proxy types assemblies via reflection is expensive.
+        /// Must be cleared whenever the proxy types assemblies change.
+        /// </summary>
+        private readonly ConcurrentDictionary<string, Type> _reflectedTypesByLogicalName = new ConcurrentDictionary<string, Type>();
 
         /// <summary>
         /// 
@@ -104,6 +111,7 @@ namespace FakeXrmEasy
             set
             {
                 _proxyTypesAssemblies = new List<Assembly>();
+                _reflectedTypesByLogicalName.Clear();
                 if (value != null)
                 {
                     _proxyTypesAssemblies.Add(value);
@@ -388,6 +396,7 @@ namespace FakeXrmEasy
             }
 
             _proxyTypesAssemblies.Add(assembly);
+            _reflectedTypesByLogicalName.Clear();
         }
 
         /// <summary>
