@@ -1,5 +1,8 @@
 ## [2.9.6]
 
+### Changed
+
+- Performance improvement: Caches early bound types to avoid multiple reflection calls - https://github.com/DynamicsValue/fake-xrm-easy/issues/281
 - Increment version
 
 ## [2.9.5]
