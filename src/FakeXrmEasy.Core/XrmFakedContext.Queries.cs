@@ -26,7 +26,12 @@ namespace FakeXrmEasy
         /// <exception cref="InvalidOperationException"></exception>
         public Type FindReflectedType(string logicalName)
         {
-            if (logicalName != null && _reflectedTypesByLogicalName.TryGetValue(logicalName, out var cachedType))
+            if (logicalName == null)
+            {
+                return null;
+                
+            }
+            if (_reflectedTypesByLogicalName.TryGetValue(logicalName, out var cachedType))
             {
                 return cachedType;
             }
@@ -42,10 +47,7 @@ namespace FakeXrmEasy
             }
 
             var type = types.SingleOrDefault();
-            if (logicalName != null)
-            {
-                _reflectedTypesByLogicalName[logicalName] = type;
-            }
+            _reflectedTypesByLogicalName[logicalName] = type;
 
             return type;
         }
