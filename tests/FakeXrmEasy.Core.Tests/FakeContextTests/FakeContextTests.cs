@@ -383,7 +383,6 @@ namespace FakeXrmEasy.Core.Tests
             _context.EnableProxyTypes(assembly);
 
             Assert.Null(_context.FindReflectedType("thisDoesntExist"));
-            Assert.Null(_context.FindReflectedType("thisDoesntExist"));
         }
 
         [Fact]
