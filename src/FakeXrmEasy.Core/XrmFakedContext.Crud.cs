@@ -53,7 +53,7 @@ namespace FakeXrmEasy
                     throw new InvalidOperationException($"The entity logical name {record.LogicalName} is not valid.");
                 }
 
-                if (!ProxyTypesAssemblies.SelectMany(p=> p.GetTypes()).Any(type => FindReflectedType(record.LogicalName) != null))
+                if (FindReflectedType(record.LogicalName) == null)
                 {
                     throw new InvalidOperationException($"The entity logical name {record.LogicalName} is not valid.");
                 }
