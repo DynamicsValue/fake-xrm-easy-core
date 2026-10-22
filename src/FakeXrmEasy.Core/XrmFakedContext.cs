@@ -21,6 +21,7 @@ using System.Reflection;
 
 using System.Runtime.CompilerServices;
 using FakeXrmEasy.Abstractions.FileStorage;
+using FakeXrmEasy.Core;
 using FakeXrmEasy.Core.EmailSettings;
 using FakeXrmEasy.Core.Exceptions;
 using FakeXrmEasy.Core.FileStorage.Db;
@@ -62,7 +63,7 @@ namespace FakeXrmEasy
         /// Cached results of FindReflectedType(logicalName), including misses (null), as scanning proxy types assemblies via reflection is expensive.
         /// Must be cleared whenever the proxy types assemblies change.
         /// </summary>
-        private readonly ConcurrentDictionary<string, Type> _reflectedTypesByLogicalName = new ConcurrentDictionary<string, Type>();
+        private readonly ConcurrentDictionary<string, CachedReflectedType> _reflectedTypesByLogicalName = new ConcurrentDictionary<string, CachedReflectedType>();
 
         /// <summary>
         /// 
