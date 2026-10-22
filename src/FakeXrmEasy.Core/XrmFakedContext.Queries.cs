@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Core;
 using FakeXrmEasy.Core.Exceptions;
 using FakeXrmEasy.Extensions;
 using FakeXrmEasy.Extensions.FetchXml;
@@ -33,7 +34,7 @@ namespace FakeXrmEasy
             }
             if (_reflectedTypesByLogicalName.TryGetValue(logicalName, out var cachedType))
             {
-                return cachedType;
+                return cachedType.ReflectedType;
             }
 
             var types =
@@ -47,7 +48,7 @@ namespace FakeXrmEasy
             }
 
             var type = types.SingleOrDefault();
-            _reflectedTypesByLogicalName[logicalName] = type;
+            _reflectedTypesByLogicalName[logicalName] = new CachedReflectedType() { ReflectedType = type };
 
             return type;
         }
@@ -141,15 +142,7 @@ namespace FakeXrmEasy
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="earlyBoundType"></param>
-        /// <param name="sEntityName"></param>
-        /// <param name="attributeName"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public Type FindReflectedAttributeType(Type earlyBoundType, string sEntityName, string attributeName)
+        internal Type FindReflectedAttributeTypeInternal(Type earlyBoundType, string sEntityName, string attributeName)
         {
             //Get that type properties
             PropertyInfo attributeInfo = null;
@@ -211,6 +204,34 @@ namespace FakeXrmEasy
 #endif
 
             return attributeInfo.PropertyType;
+        } 
+            
+        /// <summary>
+        /// Returns an attribute type via reflection, or if not found, then via metadata
+        /// </summary>
+        /// <param name="earlyBoundType"></param>
+        /// <param name="sEntityName"></param>
+        /// <param name="attributeName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public Type FindReflectedAttributeType(Type earlyBoundType, string sEntityName, string attributeName)
+        {
+            var existsEntityType = _reflectedTypesByLogicalName.TryGetValue(sEntityName, out var reflectedType);
+            if (existsEntityType && reflectedType != null)
+            {
+                var existsAttributeType = reflectedType.ReflectedAttributes.TryGetValue(attributeName, out var reflectedAttributeType);
+                if (existsAttributeType && reflectedAttributeType != null)
+                {
+                    return reflectedAttributeType;
+                }
+            }
+            var attributeType = FindReflectedAttributeTypeInternal(earlyBoundType, sEntityName, attributeName);
+            if (existsEntityType && reflectedType != null)
+            {
+                reflectedType.ReflectedAttributes.AddOrUpdate(attributeName, (string k) => attributeType, (string k, Type existing) => attributeType);
+            }
+
+            return attributeType;
         }
 
         
