@@ -90,7 +90,7 @@ jobs:
       run: dotnet nuget enable source github 
 
     - name: Quality Gate
-      uses: DynamicsValue/dotnet-sonarscanner@v2.6.1
+      uses: DynamicsValue/dotnet-sonarscanner@v2.6.4
       with:
         buildCommand: dotnet build . --configuration 'FAKE_XRM_EASY_9' --framework net8.0
         testCommand: dotnet test . --configuration 'FAKE_XRM_EASY_9' --framework net8.0 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
@@ -101,7 +101,7 @@ jobs:
             /d:sonar.verbose="true"
             /d:sonar.qualitygate.wait="true"
             /d:sonar.cs.opencover.reportsPaths='"coverage/**/coverage.opencover.xml"'
-            /d:sonar.coverage.exclusions='"tests/**/**"'
+            /d:sonar.coverage.exclusions='"tests/**/**","**/*.ps1",".vscode/**/**"'
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
