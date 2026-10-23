@@ -8,6 +8,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
+using Threading = System.Threading.Tasks;
 
 namespace FakeXrmEasy.Core.Tests.Middleware
 {
@@ -26,7 +27,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_create_when_calling_async_create_with_cancellation() 
+        public async Threading.Task Should_call_create_when_calling_async_create_with_cancellation() 
         {
             var asyncResult = await _serviceAsync2.CreateAsync(_contact, new CancellationToken());
 
@@ -34,7 +35,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_update_when_calling_async_update_with_cancellation() 
+        public async Threading.Task Should_call_update_when_calling_async_update_with_cancellation() 
         {
             _context.Initialize(_contact);
 
@@ -45,7 +46,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_delete_when_calling_async_delete_with_cancellation() 
+        public async Threading.Task Should_call_delete_when_calling_async_delete_with_cancellation() 
         {
             _context.Initialize(_contact);
 
@@ -55,7 +56,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_retrieve_when_calling_async_retrieve_with_cancellation() 
+        public async Threading.Task Should_call_retrieve_when_calling_async_retrieve_with_cancellation() 
         {
             _context.Initialize(_contact);
 
@@ -66,7 +67,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_retrieve_multiple_when_calling_async_retrieve_multiple_with_cancellation() 
+        public async Threading.Task Should_call_retrieve_multiple_when_calling_async_retrieve_multiple_with_cancellation() 
         {
             _context.Initialize(_contact);
 
@@ -81,7 +82,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_execute_when_calling_async_execute_with_cancellation() 
+        public async Threading.Task Should_call_execute_when_calling_async_execute_with_cancellation() 
         {
             var request = new CreateRequest() { Target = _contact };
 
@@ -91,7 +92,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_associate_when_calling_async_associate_with_cancellation() 
+        public async Threading.Task Should_call_associate_when_calling_async_associate_with_cancellation() 
         {
             _context.Initialize(new List<Entity>() { _team, _user });
 
@@ -107,7 +108,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_disassociate_when_calling_async_disassociate_with_cancellation() 
+        public async Threading.Task Should_call_disassociate_when_calling_async_disassociate_with_cancellation() 
         {
             var intersect = new TeamMembership()
             {
