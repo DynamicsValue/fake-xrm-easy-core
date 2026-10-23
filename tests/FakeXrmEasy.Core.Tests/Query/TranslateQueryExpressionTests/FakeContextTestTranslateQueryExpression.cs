@@ -875,5 +875,54 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests
             Assert.Single(invoiceDetails.Entities);
             Assert.Equal(invoicedetail02.Id, invoiceDetails.Entities[0].Id);
         }
+
+#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+        [Fact]
+        public void When_executing_a_queryexpression_with_aboveorequal_all_records_in_hierarchy_are_returned()
+        {
+            Entity parentParentAccount = new Entity("account");
+            parentParentAccount.Id = Guid.NewGuid();
+            parentParentAccount.Attributes.Add("name", "Parent Parent Account");
+
+            Entity parentAccount = new Entity("account");
+            parentAccount.Id = Guid.NewGuid();
+            parentAccount.Attributes.Add("name", "Parent Account");
+            parentAccount.Attributes.Add("parentaccountid", new EntityReference("account", parentParentAccount.Id));
+
+            Entity childAccount = new Entity("account");
+            childAccount.Id = Guid.NewGuid();
+            childAccount.Attributes.Add("name", "Child Account");
+            childAccount.Attributes.Add("parentaccountid", new EntityReference("account", parentAccount.Id));
+
+            //Important step to specify the hierarchical relation ship.
+            _context.AddRelationship("account_parent_account", new XrmFakedRelationship
+            {
+                RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany,
+                IsHierarchical = true,
+                Entity1LogicalName = "account",
+                Entity1Attribute = "accountid",
+                Entity2LogicalName = "account",
+                Entity2Attribute = "parentaccountid"
+            });
+
+            _service.Create(parentParentAccount);
+            _service.Create(parentAccount);
+            _service.Create(childAccount);
+
+            QueryExpression query = new QueryExpression { EntityName = "account", ColumnSet = new ColumnSet(true) };
+            query.Criteria.AddCondition("accountid", ConditionOperator.AboveOrEqual, childAccount.Id);
+
+            var result = _service.RetrieveMultiple(query);
+
+            Assert.NotNull(result);
+            Assert.NotNull(result.Entities);
+            Assert.True(result.Entities.Count == 3);
+
+            foreach (var item in result.Entities)
+            {
+                Assert.True(item.Id == childAccount.Id || item.Id == parentAccount.Id || item.Id == parentParentAccount.Id);
+            }            
+        }
+#endif
     }
 }
