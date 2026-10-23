@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Threading = System.Threading.Tasks;
 using Crm;
 using FakeItEasy;
 using FakeXrmEasy.Abstractions;
@@ -52,7 +53,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_create_when_calling_async_create() 
+        public async Threading.Task Should_call_create_when_calling_async_create() 
         {
             var asyncResult = await _serviceAsync.CreateAsync(_contact);
 
@@ -68,7 +69,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_update_when_calling_async_update() 
+        public async Threading.Task Should_call_update_when_calling_async_update() 
         {
             _context.Initialize(_contact);
 
@@ -90,7 +91,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_delete_when_calling_async_delete() 
+        public async Threading.Task Should_call_delete_when_calling_async_delete() 
         {
             _context.Initialize(_contact);
 
@@ -110,7 +111,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_retrieve_when_calling_async_retrieve() 
+        public async Threading.Task Should_call_retrieve_when_calling_async_retrieve() 
         {
             _context.Initialize(_contact);
 
@@ -132,7 +133,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_retrieve_multiple_when_calling_async_retrieve_multiple() 
+        public async Threading.Task Should_call_retrieve_multiple_when_calling_async_retrieve_multiple() 
         {
             _context.Initialize(_contact);
 
@@ -162,7 +163,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_execute_when_calling_async_execute() 
+        public async Threading.Task Should_call_execute_when_calling_async_execute() 
         {
             var request = new CreateRequest() { Target = _contact };
 
@@ -182,7 +183,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_associate_when_calling_async_associate() 
+        public async Threading.Task Should_call_associate_when_calling_async_associate() 
         {
             _context.Initialize(new List<Entity>() { _team, _user });
 
@@ -214,7 +215,7 @@ namespace FakeXrmEasy.Core.Tests.Middleware
         }
 
         [Fact]
-        public async void Should_call_disassociate_when_calling_async_disassociate() 
+        public async Threading.Task Should_call_disassociate_when_calling_async_disassociate() 
         {
             var intersect = new TeamMembership()
             {
