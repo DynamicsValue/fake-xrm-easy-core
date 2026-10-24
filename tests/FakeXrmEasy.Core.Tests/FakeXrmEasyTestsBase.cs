@@ -9,7 +9,6 @@ namespace FakeXrmEasy.Core.Tests
     {
         protected readonly IXrmFakedContext _context;
         protected readonly IOrganizationService _service;
-        
         protected FakeXrmEasyTestsBase()
         {
             _context = XrmFakedContextFactory.New(FakeXrmEasyLicense.RPL_1_5);
