@@ -1,3 +1,12 @@
+## [3.9.6]
+
+### Changed
+
+- Upgraded to latest Microsoft.PowerPlatform.Dataverse.Client 1.2.27 with support for .net10 - https://github.com/DynamicsValue/fake-xrm-easy/issues/282
+- Performance improvement: extends caching of early bound types to attributes too - https://github.com/DynamicsValue/fake-xrm-easy/issues/281
+- Performance improvement: Caches early bound types to avoid multiple reflection calls - https://github.com/DynamicsValue/fake-xrm-easy/issues/281
+- Increment version
+
 ## [3.9.5]
 
 ### Changed

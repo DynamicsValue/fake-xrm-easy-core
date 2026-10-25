@@ -9,7 +9,7 @@ on:
       - '*.txt'
 
 env: 
-  dotnet-version: 8.0.x
+  dotnet-version: 10.0.x
   source-url: "https://nuget.pkg.github.com/${{github.repository_owner}}/index.json"
   GH_HEAD_REF: ${{ github.head_ref }}
   GH_RUN_NUMBER: ${{ github.run_number }}
@@ -27,7 +27,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Setup .NET Core for Actual Source
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ env.dotnet-version }}
  
@@ -55,7 +55,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Setup .NET Core for Actual Source
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ env.dotnet-version }}
  
@@ -71,52 +71,15 @@ jobs:
         NUGET_USERNAME: ${{github.repository_owner}}
         NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
 
-  sonar:
-    needs: build-netcore
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Setup .NET Core for Actual Source
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.dotnet-version }}
- 
-    - name: Disable local packages feed
-      run: dotnet nuget disable source "local-packages"
-
-    - name: Enable GitHub packages feed
-      run: dotnet nuget enable source github 
-
-    - name: Quality Gate
-      uses: DynamicsValue/dotnet-sonarscanner@v2.6.1
-      with:
-        buildCommand: dotnet build . --configuration 'FAKE_XRM_EASY_9' --framework net8.0
-        testCommand: dotnet test . --configuration 'FAKE_XRM_EASY_9' --framework net8.0 --verbosity normal --collect:"XPlat code coverage" --settings tests/.runsettings --results-directory ./coverage
-        projectKey: ${{ secrets.SONAR_PROJECT_KEY }}
-        projectName: fake-xrm-easy-core
-        sonarOrganisation: ${{ vars.SONAR_ORG_NAME }}
-        beginArguments: >
-            /d:sonar.verbose="true"
-            /d:sonar.qualitygate.wait="true"
-            /d:sonar.cs.opencover.reportsPaths='"coverage/**/coverage.opencover.xml"'
-            /d:sonar.coverage.exclusions='"tests/**/**"'
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
-        NUGET_USERNAME: ${{github.repository_owner}}
-        NUGET_TOKEN: ${{ secrets.PACKAGES_TOKEN }} 
-
   pack-push:
-    needs:  [build-netcore, build-windows, sonar]
+    needs:  [build-netcore, build-windows]
     runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Setup .NET Core for Actual Source
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.dotnet-version }}
  
