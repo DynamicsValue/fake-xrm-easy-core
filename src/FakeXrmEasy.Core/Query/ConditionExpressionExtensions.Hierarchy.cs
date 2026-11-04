@@ -10,7 +10,7 @@ namespace FakeXrmEasy.Query
 {
     internal static partial class ConditionExpressionExtensions    
     {
-        private static void RetrieveParentEntity(IXrmFakedContext context, XrmFakedRelationship hierarchicalRelationship, Entity currentRecord, DataCollection<object> values)
+        private static void RetrieveParentEntities(IXrmFakedContext context, XrmFakedRelationship hierarchicalRelationship, Entity currentRecord, DataCollection<object> values)
         {
             if (!currentRecord.Attributes.ContainsKey(hierarchicalRelationship.Entity2Attribute) || currentRecord.Attributes[hierarchicalRelationship.Entity2Attribute] == null)
             {
@@ -21,7 +21,20 @@ namespace FakeXrmEasy.Query
             if (parentRecord != null)
             {
                 values.Add(parentRecord.Id);
-                RetrieveParentEntity(context, hierarchicalRelationship, parentRecord, values);
+                RetrieveParentEntities(context, hierarchicalRelationship, parentRecord, values);
+            }
+        }
+        
+        private static void RetrieveChildEntities(IXrmFakedContext context, XrmFakedRelationship hierarchicalRelationship, Entity currentRecord, DataCollection<object> values)
+        {
+            var childAccounts = context.CreateQuery(hierarchicalRelationship.Entity1LogicalName)
+                .Where(childAccount => childAccount.Attributes.Contains(hierarchicalRelationship.Entity2Attribute) && ((EntityReference)childAccount.Attributes[hierarchicalRelationship.Entity2Attribute]).Id == (Guid) currentRecord.Attributes[hierarchicalRelationship.Entity1Attribute])
+                .ToList();
+
+            foreach (var childAccount in childAccounts)
+            {
+                values.Add(childAccount.Id);
+                RetrieveChildEntities(context, hierarchicalRelationship, childAccount, values);
             }
         }
 

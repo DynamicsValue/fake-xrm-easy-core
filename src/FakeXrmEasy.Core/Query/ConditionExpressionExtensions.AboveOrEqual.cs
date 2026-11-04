@@ -29,7 +29,7 @@ namespace FakeXrmEasy.Query
             }
 
             //Iterate through parents via the relationship attributes to walk through the entire hierarchy and build a list of identifiers of the nodes in the hierarchy.
-            RetrieveParentEntity(context, hierarchicalRelationship, currentRecord, c.Values);
+            RetrieveParentEntities(context, hierarchicalRelationship, currentRecord, c.Values);
 
             return tc.ToInExpression(getAttributeValueExpr, containsAttributeExpr);
         }

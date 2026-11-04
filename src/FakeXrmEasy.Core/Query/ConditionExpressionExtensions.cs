@@ -282,6 +282,13 @@ namespace FakeXrmEasy.Query
                 case ConditionOperator.AboveOrEqual:
                     operatorExpression = c.ToAboveOrEqualExpression(getNonBasicValueExpr, containsAttributeExpression, context);
                     break;
+                case ConditionOperator.UnderOrEqual:
+                    operatorExpression = c.ToUnderOrEqualExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
+                case ConditionOperator.Under:
+                    operatorExpression = c.ToUnderExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
+                
 #endif
 
                 default:
