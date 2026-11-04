@@ -276,6 +276,9 @@ namespace FakeXrmEasy.Query
 #endif
 
 #if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+                case ConditionOperator.Above:
+                    operatorExpression = c.ToAboveExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
                 case ConditionOperator.AboveOrEqual:
                     operatorExpression = c.ToAboveOrEqualExpression(getNonBasicValueExpr, containsAttributeExpression, context);
                     break;
