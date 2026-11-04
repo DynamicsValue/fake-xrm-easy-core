@@ -1,3 +1,8 @@
+## [2.10.0]
+
+- Adds support for Hierarchical condition operators - https://github.com/DynamicsValue/fake-xrm-easy/issues/147
+- Increment version
+
 ## [2.9.6]
 
 ### Changed
