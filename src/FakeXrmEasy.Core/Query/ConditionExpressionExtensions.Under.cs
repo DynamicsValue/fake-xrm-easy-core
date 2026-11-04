@@ -16,10 +16,6 @@ namespace FakeXrmEasy.Query
             var entityLogicalName = !string.IsNullOrEmpty(c.EntityName) ? c.EntityName : tc.QueryExpression.EntityName;
             
             var hierarchicalRelationship = GetHierarchicalRelationship(context, tc);
-            if(hierarchicalRelationship == null)
-            {
-                return Expression.Constant(false);
-            }
             
             //Retrieve initial record from the hierarchical tree
             var currentRecord = GetCurrentRecord(context, tc);

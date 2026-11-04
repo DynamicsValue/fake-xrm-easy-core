@@ -15,6 +15,8 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
         protected readonly Account _nestedChildAccount1;
         protected readonly Account _nestedChildAccount2;
 
+        protected readonly dv_test _noHierarchyEntity;
+        
         public HierarchyOperatorTestsBase()
         {
             _grandParentAccount = new Account()
@@ -47,6 +49,12 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
                 ParentAccountId = _childAccount.ToEntityReference()
             };
             
+            _noHierarchyEntity = new dv_test()
+            {
+                Id = new Guid("E06F83C0-B5D8-48E6-9048-DDCF26200407"),
+                dv_string = "No hierarchy test"
+            };
+            
             _context.AddRelationship("account_parent_account", new XrmFakedRelationship
             {
                 RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany,
@@ -63,7 +71,8 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
                 _parentAccount,
                 _childAccount,
                 _nestedChildAccount1,
-                _nestedChildAccount2
+                _nestedChildAccount2,
+                _noHierarchyEntity
             });
         }
     }

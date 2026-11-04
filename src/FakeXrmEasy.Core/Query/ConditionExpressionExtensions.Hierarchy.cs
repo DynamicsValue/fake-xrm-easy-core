@@ -43,7 +43,13 @@ namespace FakeXrmEasy.Query
         {
             var c = tc.CondExpression;
             var entityLogicalName = !string.IsNullOrEmpty(c.EntityName) ? c.EntityName : tc.QueryExpression.EntityName;
-            return context.Relationships.FirstOrDefault(r => r.IsHierarchical && r.Entity1LogicalName.Equals(entityLogicalName) && r.Entity1Attribute.Equals(c.AttributeName));
+            var relationship = context.Relationships.FirstOrDefault(r => r.IsHierarchical && r.Entity1LogicalName.Equals(entityLogicalName) && r.Entity1Attribute.Equals(c.AttributeName));
+            if(relationship == null)
+            {
+                throw FakeOrganizationServiceFaultFactory.New(ErrorCodes.MissingHierarchicalRelationshipForOperator,
+                    $"This query uses a hierarchical operator, but the {entityLogicalName} entity doesn't have a hierarchical relationship.");
+            }
+            return relationship;
         }
 
         private static Entity GetCurrentRecord(IXrmFakedContext context,

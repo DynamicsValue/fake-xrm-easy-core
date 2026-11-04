@@ -1,6 +1,7 @@
 #if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
 using System.Linq;
 using DataverseEntities;
+using FakeXrmEasy.Abstractions;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 
@@ -47,6 +48,15 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
             Assert.NotNull(result.Entities.FirstOrDefault(e => e.Id == _grandParentAccount.Id));
             Assert.NotNull(result.Entities.FirstOrDefault(e => e.Id == _parentAccount.Id));
             Assert.NotNull(result.Entities.FirstOrDefault(e => e.Id == _childAccount.Id));
+        }
+        
+        [Fact]
+        public void Should_throw_exception_when_the_entity_does_not_have_a_hierarchical_relationship()
+        {
+            var query = new QueryExpression { EntityName = dv_test.EntityLogicalName, ColumnSet = new ColumnSet(true) };
+            query.Criteria.AddCondition("dv_testid", ConditionOperator.Above, _noHierarchyEntity.Id); 
+            
+            XAssert.ThrowsFaultCode(ErrorCodes.MissingHierarchicalRelationshipForOperator, () => _service.RetrieveMultiple(query));
         }
     }
 }
