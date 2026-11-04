@@ -1,3 +1,4 @@
+#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
 using System.Linq;
 using DataverseEntities;
 using Microsoft.Xrm.Sdk.Query;
@@ -49,3 +50,4 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
         }
     }
 }
+#endif
