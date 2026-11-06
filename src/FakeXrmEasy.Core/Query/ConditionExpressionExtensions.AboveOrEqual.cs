@@ -1,9 +1,5 @@
 ﻿#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
 using FakeXrmEasy.Abstractions;
-using FakeXrmEasy.Query;
-using Microsoft.Xrm.Sdk;
-using System;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace FakeXrmEasy.Query

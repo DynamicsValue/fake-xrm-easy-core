@@ -118,7 +118,7 @@ namespace FakeXrmEasy.Core.Tests.FakeContextTests.FetchXml
      
      */
     /// </summary>
-    public class ConditionOperatorTests : FakeXrmEasyTestsBase
+    public partial class ConditionOperatorTests : FakeXrmEasyTestsBase
     {
         private DateTime GetFirstDayOfWeek(DateTime date)
         {

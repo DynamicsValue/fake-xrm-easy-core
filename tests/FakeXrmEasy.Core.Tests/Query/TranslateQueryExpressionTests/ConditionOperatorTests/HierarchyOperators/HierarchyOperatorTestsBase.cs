@@ -14,7 +14,9 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
         protected readonly Account _childAccount;
         protected readonly Account _nestedChildAccount1;
         protected readonly Account _nestedChildAccount2;
-
+        
+        protected readonly Account _unrelatedAccount;
+        
         protected readonly dv_test _noHierarchyEntity;
         
         public HierarchyOperatorTestsBase()
@@ -55,6 +57,12 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
                 dv_string = "No hierarchy test"
             };
             
+            _unrelatedAccount = new Account()
+            {
+                Id = new Guid("AB23D2FE-E43E-49C4-980F-87B64B7F4F8B"),
+                Name = "Unrelated account",
+            };
+            
             _context.AddRelationship("account_parent_account", new XrmFakedRelationship
             {
                 RelationshipType = XrmFakedRelationship.FakeRelationshipType.OneToMany,
@@ -72,6 +80,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
                 _childAccount,
                 _nestedChildAccount1,
                 _nestedChildAccount2,
+                _unrelatedAccount,
                 _noHierarchyEntity
             });
         }
