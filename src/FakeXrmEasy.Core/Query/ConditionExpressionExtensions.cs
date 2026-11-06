@@ -288,6 +288,9 @@ namespace FakeXrmEasy.Query
                 case ConditionOperator.Under:
                     operatorExpression = c.ToUnderExpression(getNonBasicValueExpr, containsAttributeExpression, context);
                     break;
+                case ConditionOperator.NotUnder:
+                    operatorExpression = c.ToNotUnderExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
                 
 #endif
 
