@@ -99,6 +99,26 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
             var ex = XAssert.ThrowsFaultCode(ErrorCodes.EntityLoopExists, () => _service.RetrieveMultiple(query));
             Assert.Contains("Loop exists in this entity hierarchy", ex.Message);
         }
+        
+        [Fact]
+        public void Should_return_all_accounts_when_querying_a_non_existing_account()
+        {
+            InitializeDefaultDataSet();
+            var query = new QueryExpression { EntityName = Account.EntityLogicalName, ColumnSet = new ColumnSet(true) };
+            query.Criteria.AddCondition("accountid", ConditionOperator.NotUnder, Guid.NewGuid());
+
+            var result = _service.RetrieveMultiple(query);
+            
+            Assert.NotNull(result);
+            Assert.Equal(6, result.Entities.Count);
+            
+            Assert.NotNull(result.Entities.FirstOrDefault(e => e.Id == _grandParentAccount.Id));
+            Assert.NotNull(result.Entities.FirstOrDefault(e => e.Id == _parentAccount.Id));
+            Assert.NotNull(result.Entities.FirstOrDefault(e => e.Id == _childAccount.Id));
+            Assert.NotNull(result.Entities.FirstOrDefault(e => e.Id == _nestedChildAccount1.Id));
+            Assert.NotNull(result.Entities.FirstOrDefault(e => e.Id == _nestedChildAccount2.Id));
+            Assert.NotNull(result.Entities.FirstOrDefault(e => e.Id == _unrelatedAccount.Id));
+        }
     }
 }
 #endif
