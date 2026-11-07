@@ -100,7 +100,7 @@ jobs:
         beginArguments: >
             /d:sonar.verbose="true"
             /d:sonar.qualitygate.wait="true"
-            /d:sonar.cs.opencover.reportsPaths='"coverage/**/coverage.opencover.xml"'
+            /d:sonar.cs.opencover.reportsPaths='"coverage/*.xml"'
             /d:sonar.coverage.exclusions='"**/*.ps1",".vscode/**/**"'
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
