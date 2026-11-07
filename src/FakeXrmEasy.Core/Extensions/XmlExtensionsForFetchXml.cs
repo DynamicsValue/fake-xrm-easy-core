@@ -809,6 +809,23 @@ namespace FakeXrmEasy.Extensions.FetchXml
                     op = ConditionOperator.DoesNotContainValues;
                     break;
 #endif
+#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+                case "above":
+                    op = ConditionOperator.Above;
+                    break;
+                case "eq-or-above":
+                    op = ConditionOperator.AboveOrEqual;
+                    break;
+                case "under":
+                    op = ConditionOperator.Under;
+                    break;
+                case "eq-or-under":
+                    op = ConditionOperator.UnderOrEqual;
+                    break;
+                case "not-under":
+                    op = ConditionOperator.NotUnder;
+                    break;
+#endif
                 default:
                     throw UnsupportedExceptionFactory.FetchXmlOperatorNotImplemented(ctx.LicenseContext.Value, elem.GetAttribute("operator").Value);
             }
