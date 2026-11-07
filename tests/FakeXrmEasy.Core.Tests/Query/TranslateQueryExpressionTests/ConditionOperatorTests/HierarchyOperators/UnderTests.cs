@@ -94,6 +94,18 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
             var ex = XAssert.ThrowsFaultCode(ErrorCodes.EntityLoopExists, () => _service.RetrieveMultiple(query));
             Assert.Contains("Loop exists in this entity hierarchy", ex.Message);
         }
+        
+        [Fact]
+        public void Should_return_empty_when_querying_a_non_existing_account()
+        {
+            InitializeDefaultDataSet();
+            var query = new QueryExpression { EntityName = Account.EntityLogicalName, ColumnSet = new ColumnSet(true) };
+            query.Criteria.AddCondition("accountid", ConditionOperator.Under, Guid.NewGuid());
+
+            var result = _service.RetrieveMultiple(query);
+            
+            Assert.Empty(result.Entities);
+        }
     }
 }
 #endif
