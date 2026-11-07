@@ -1,7 +1,10 @@
 #if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using DataverseEntities;
 using FakeXrmEasy.Abstractions;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Xunit;
 
@@ -13,6 +16,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
         [Fact]
         public void Should_return_the_grand_parent_account_when_querying_above_the_top_most_account()
         {
+            InitializeDefaultDataSet();
             var query = new QueryExpression { EntityName = Account.EntityLogicalName, ColumnSet = new ColumnSet(true) };
             query.Criteria.AddCondition("accountid", ConditionOperator.AboveOrEqual, _grandParentAccount.Id);
 
@@ -26,6 +30,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
         [Fact]
         public void Should_return_parent_and_grand_parent_account_when_querying_the_parent_account()
         {
+            InitializeDefaultDataSet();
             var query = new QueryExpression { EntityName = Account.EntityLogicalName, ColumnSet = new ColumnSet(true) };
             query.Criteria.AddCondition("accountid", ConditionOperator.AboveOrEqual, _parentAccount.Id);
 
@@ -40,6 +45,7 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
         [Fact]
         public void Should_return_all_the_parent_accounts_of_the_most_nested_child_account_including_the_most_nested_child_account()
         {
+            InitializeDefaultDataSet();
             var query = new QueryExpression { EntityName = Account.EntityLogicalName, ColumnSet = new ColumnSet(true) };
             query.Criteria.AddCondition("accountid", ConditionOperator.AboveOrEqual, _nestedChildAccount1.Id);
 
@@ -61,6 +67,34 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
             query.Criteria.AddCondition("dv_testid", ConditionOperator.AboveOrEqual, _noHierarchyEntity.Id); 
             
             XAssert.ThrowsFaultCode(ErrorCodes.MissingHierarchicalRelationshipForOperator, () => _service.RetrieveMultiple(query));
+        }
+        
+        [Fact]
+        public void Should_detect_and_raise_appropriate_infinite_loop_exception()
+        {
+            var parentAccount = new Account()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Parent"
+            };
+            var childAccount = new Account()
+            {
+                Id = Guid.NewGuid(),
+                Name =  "Child",
+                ParentAccountId = parentAccount.ToEntityReference()
+            };
+            parentAccount.ParentAccountId = childAccount.ToEntityReference();
+            
+            _context.Initialize(new List<Entity>()
+            {
+                parentAccount, childAccount
+            });
+            
+            var query = new QueryExpression { EntityName = Account.EntityLogicalName, ColumnSet = new ColumnSet(true) };
+            query.Criteria.AddCondition("accountid", ConditionOperator.AboveOrEqual, childAccount.Id); 
+            
+            var ex = XAssert.ThrowsFaultCode(ErrorCodes.EntityLoopExists, () => _service.RetrieveMultiple(query));
+            Assert.Contains("Loop exists in this entity hierarchy", ex.Message);
         }
     }
 }

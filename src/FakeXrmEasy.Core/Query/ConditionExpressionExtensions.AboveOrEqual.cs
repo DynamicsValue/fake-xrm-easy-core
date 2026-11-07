@@ -1,4 +1,6 @@
 ﻿#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+using System;
+using System.Collections.Generic;
 using FakeXrmEasy.Abstractions;
 using System.Linq.Expressions;
 
@@ -21,7 +23,7 @@ namespace FakeXrmEasy.Query
             }
 
             //Iterate through parents via the relationship attributes to walk through the entire hierarchy and build a list of identifiers of the nodes in the hierarchy.
-            RetrieveParentEntities(context, hierarchicalRelationship, currentRecord, c.Values);
+            RetrieveParentEntities(context, hierarchicalRelationship, currentRecord, c.Values, new HashSet<Guid>());
 
             return tc.ToInExpression(getAttributeValueExpr, containsAttributeExpr);
         }

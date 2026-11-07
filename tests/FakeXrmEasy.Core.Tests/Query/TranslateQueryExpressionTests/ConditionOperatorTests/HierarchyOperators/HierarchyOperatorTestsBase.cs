@@ -72,7 +72,10 @@ namespace FakeXrmEasy.Core.Tests.Query.TranslateQueryExpressionTests.ConditionOp
                 Entity2LogicalName = "account",
                 Entity2Attribute = "parentaccountid"
             });
-            
+        }
+
+        protected void InitializeDefaultDataSet()
+        {
             _context.Initialize(new List<Entity>()
             {
                 _grandParentAccount,

@@ -3,6 +3,7 @@ using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Query;
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -25,7 +26,7 @@ namespace FakeXrmEasy.Query
             }
 
             //Iterate through parents via the relationship attributes to walk through the entire hierarchy and build a list of identifiers of the nodes in the hierarchy.
-            RetrieveParentEntities(context, hierarchicalRelationship, currentRecord, c.Values);
+            RetrieveParentEntities(context, hierarchicalRelationship, currentRecord, c.Values, new HashSet<Guid>());
 
             c.Values.RemoveAt(0); //removes the first value from the list to exclude the "equal current record" condition
             
