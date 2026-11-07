@@ -275,6 +275,25 @@ namespace FakeXrmEasy.Query
                     break;
 #endif
 
+#if FAKE_XRM_EASY_365 || FAKE_XRM_EASY_9
+                case ConditionOperator.Above:
+                    operatorExpression = c.ToAboveExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
+                case ConditionOperator.AboveOrEqual:
+                    operatorExpression = c.ToAboveOrEqualExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
+                case ConditionOperator.UnderOrEqual:
+                    operatorExpression = c.ToUnderOrEqualExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
+                case ConditionOperator.Under:
+                    operatorExpression = c.ToUnderExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
+                case ConditionOperator.NotUnder:
+                    operatorExpression = c.ToNotUnderExpression(getNonBasicValueExpr, containsAttributeExpression, context);
+                    break;
+                
+#endif
+
                 default:
                     throw UnsupportedExceptionFactory.New(context.LicenseContext.Value, string.Format("Operator {0} not yet implemented for condition expression", c.CondExpression.Operator.ToString()));
 
