@@ -10,7 +10,7 @@
     <IsPackable>true</IsPackable>
 
     <PackageId>FakeXrmEasy.CoreTests</PackageId>
-    <VersionPrefix>3.9.6</VersionPrefix>
+    <VersionPrefix>3.10.0</VersionPrefix>
     <Authors>Jordi Montaña</Authors>
     <Company>Dynamics Value S.L.</Company>
     <Title>Internal Unit test suite for FakeXrmEasy.Core package</Title>
